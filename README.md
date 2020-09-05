@@ -41,16 +41,9 @@ The emulator also has these features:
 * Screenshots
 * Pausing the emulation
 * Support for gamepaks that contain a realtime clock (e.g. Pokemon Ruby and Sapphire)
+* Savestates (not currently exposed through the interface)
 
-Features that may be implemented in the future include:
-
-* Savestates
-* Remappable controls
-* Gamepad support
-* Link cable over Web Sockets
-* Cheat code support
-* Fullscreen support
-* Support for gamepaks that have other sensors (e.g. WarioWare Twisted!, Boktai)
+[Suggest features!](https://github.com/andychase/gbajs2/wiki/Feature-suggestions)
 
 ## License
 Copyright © 2012 – 2013, Jeffrey Pfau
