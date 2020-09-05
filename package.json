@@ -1,0 +1,23 @@
+{
+	"name": "gbajs2",
+	"version": "1.0.0",
+	"description": "JavaScript-based Game Boy Advance emulator",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"serve": "http-server ."
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/rettgerst/gbajs2.git"
+	},
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/rettgerst/gbajs2/issues"
+	},
+	"homepage": "https://github.com/rettgerst/gbajs2#readme",
+	"devDependencies": {
+		"http-server": "^0.12.3",
+		"prettier": "^2.1.1",
+		"typescript": "^4.0.2"
+	}
+}
