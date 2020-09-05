@@ -84,7 +84,7 @@ GameBoyAdvance.prototype.setCanvas = function(canvas) {
 		this.setCanvasDirect(this.indirectCanvas);
 		var targetContext = canvas.getContext('2d');
 		this.video.drawCallback = function() {
-			targetContext.drawImage(self.indirectCanvas, 0, 0, canvas.offsetWidth, canvas.offsetHeight);
+			targetContext.drawImage(self.indirectCanvas, 0, 0, canvas.width, canvas.height);
 		}
 	} else {
 		this.setCanvasDirect(canvas);
