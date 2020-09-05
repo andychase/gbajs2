@@ -286,6 +286,35 @@ document.addEventListener('webkitfullscreenchange', function() {
 </head>
 <body>
 <canvas id="screen" width="480" height="320"></canvas>
+<section id="gameinfo">
+	<p>The Game Boy Advance's buttons are mapped as follows:</p>
+	<table id="mapping">
+		<tr>
+			<td>A</td>
+			<td>Z</td>
+		</tr>
+		<tr>
+			<td>B</td>
+			<td>X</td>
+		</tr>
+		<tr>
+			<td>L</td>
+			<td>A</td>
+		</tr>
+		<tr>
+			<td>R</td>
+			<td>S</td>
+		</tr>
+		<tr>
+			<td>Start</td>
+			<td>Enter</td>
+		</tr>
+		<tr>
+			<td>Select</td>
+			<td>\</td>
+		</tr>
+	</table>
+</section>
 <section id="controls">
 	<div id="preload">
 		<button class="bigbutton" id="select" onclick="document.getElementById('loader').click()">SELECT</button>
@@ -310,10 +339,18 @@ document.addEventListener('webkitfullscreenchange', function() {
 		<p id="openDebug" onclick="enableDebug()">Debugger</p>
 	</div>
 </section>
-<ul id="links">
-	<li><a href="http://github.com/endrift/gbajs/">Fork me on GitHub!</a></li>
-	<li><a href="https://github.com/endrift/gbajs/wiki/Compatibility-List">Compatibility list</a></li>
-</ul>
-<footer>© 2012 – 2013 <a href="http://endrift.com/">Jeffrey Pfau</a></footer>
+<section id="instructions">
+	<p>
+		For legal reasons, GBA.js is presented without any included games. Please click Select
+		below to choose a Game Boy Advance game image from your hard drive that you'd like to play.
+		The games must be uncompressed, so unzip them as needed.
+	</p>
+	<p>
+		Please note that this is a beta and there might be compatibility problems. More
+		information and a link to a compatibility table can be found on the sidebar. If you're
+		feeling daring, please submit problem reports to the GitHub page.
+	</p>
+</section>
+<footer style="float: left;">© 2012 – 2013 <a href="http://endrift.com/">Endrift</a></footer>
 </body>
 </html>
