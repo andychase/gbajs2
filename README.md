@@ -4,8 +4,8 @@ gbajs2 -- Community Fork
 
 gbajs2 is a Game Boy Advance emulator written from scratch to employ HTML5 technologies like Canvas and Web Audio. 
 It uses no plugins, and is designed to run on cutting edge web browsers. 
-It is hosted [on GitHub](https://github.com/endrift/gbajs) and is made available under the 2-clause BSD license. 
-The most recent version can be found at [http://endrift.github.io/gbajs/](http://endrift.github.io/gbajs/).
+It is hosted [on GitHub](https://github.com/andychase/gbajs2) and is made available under the 2-clause BSD license. 
+The most recent version can be found at [https://andychase.me/gbajs2](https://andychase.me/gbajs2).
 
 ## Browser Compatibility
 The current version of GBA.js is known to work in the following web browsers:
