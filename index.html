@@ -214,28 +214,7 @@ function setVolume(value) {
 function setPixelated(pixelated) {
 	var screen = document.getElementById('screen');
 	var context = screen.getContext('2d');
-	if (context.webkitImageSmoothingEnabled) {
-		context.webkitImageSmoothingEnabled = !pixelated;
-	} else if (context.mozImageSmoothingEnabled) {
-		context.mozImageSmoothingEnabled = !pixelated;
-	} else if (window.navigator.appName != 'Microsoft Internet Explorer') {
-			if (pixelated) {
-				screen.setAttribute('width', '240');
-				screen.setAttribute('height', '160');
-			} else {
-				screen.setAttribute('width', '480');
-				screen.setAttribute('height', '320');
-			}
-			if (window.navigator.appName == 'Opera') {
-			// Ugly hack! Ew!
-			if (pixelated) {
-				screen.style.marginTop = '0';
-				screen.style.marginBottom = '-325px';
-			} else {
-				delete screen.style;
-			}
-		}
-	}
+	context.imageSmoothingEnabled = !pixelated;
 }
 
 function enableDebug() {
@@ -332,7 +311,7 @@ document.addEventListener('webkitfullscreenchange', function() {
 			<p>Pixelated</p>
 		</label>
 		<div id="sound">
-			<input type="checkbox" checked onchange="gba.audio.masterEnable = this.checked">
+			<input type="checkbox" onchange="gba.audio.masterEnable = this.checked; if (gba.audio.context.state !== 'running') {gba.audio.context.resume();}">
 			<p>Sound</p>
 			<input type="range" min="0" max="1" value="1" step="any" onchange="setVolume(this.value)" oninput="setVolume(this.value)">
 		</div>
