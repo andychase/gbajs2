@@ -45,6 +45,10 @@ The emulator also has these features:
 
 [Suggest features!](https://github.com/andychase/gbajs2/wiki/Feature-suggestions)
 
+## Original Author
+
+Original work by Endrift. Repo: (Archived / No longer maintained) https://github.com/endrift/gbajs
+
 ## License
 Copyright © 2012 – 2013, Jeffrey Pfau
 Copyright © 2020, Andrew Chase
