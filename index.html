@@ -261,6 +261,10 @@ document.addEventListener('webkitfullscreenchange', function() {
 		canvas.removeAttribute('style');
 	}
 }, false);
+
+const fullScreen = () => {
+	document.getElementById('screen').requestFullscreen();
+};
 </script>
 </head>
 <body>
@@ -268,6 +272,22 @@ document.addEventListener('webkitfullscreenchange', function() {
 <section id="gameinfo">
 	<p>The Game Boy Advance's buttons are mapped as follows:</p>
 	<table id="mapping">
+		<tr>
+			<td>Up</td>
+			<td>Up</td>
+		</tr>
+		<tr>
+			<td>Down</td>
+			<td>Down</td>
+		</tr>
+		<tr>
+			<td>Left</td>
+			<td>Left</td>
+		</tr>
+		<tr>
+			<td>Right</td>
+			<td>Right</td>
+		</tr>
 		<tr>
 			<td>A</td>
 			<td>Z</td>
@@ -306,6 +326,7 @@ document.addEventListener('webkitfullscreenchange', function() {
 		<button class="bigbutton" onclick="reset()">RESET</button>
 		<button onclick="gba.downloadSavedata()">Download Savegame</button>
 		<button onclick="screenshot()">Screenshot</button>
+		<button onclick="fullScreen()">Full screen</button>
 		<label id="pixelated">
 			<input type="checkbox" onchange="setPixelated(this.checked)">
 			<p>Pixelated</p>
