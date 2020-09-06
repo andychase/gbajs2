@@ -75,7 +75,6 @@ class GameBoyAdvance {
 		};
 	}
 	setCanvas(canvas) {
-		var self = this;
 		if (canvas.offsetWidth != 240 || canvas.offsetHeight != 160) {
 			this.indirectCanvas = document.createElement("canvas");
 			this.indirectCanvas.setAttribute("height", "160");
@@ -85,11 +84,11 @@ class GameBoyAdvance {
 			var targetContext = canvas.getContext("2d");
 			this.video.drawCallback = function () {
 				targetContext.drawImage(
-					self.indirectCanvas,
+					this.indirectCanvas,
 					0,
 					0,
-					canvas.offsetWidth,
-					canvas.offsetHeight
+					canvas.width,
+					canvas.height
 				);
 			};
 		} else {
