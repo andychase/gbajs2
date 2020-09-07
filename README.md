@@ -4,7 +4,7 @@ gbajs2 -- Community Fork
 gbajs2 is a Game Boy Advance emulator written in Javascript from scratch using HTML5 technologies like Canvas and Web Audio. 
 It is freely licensed and works in any modern browser without plugins.
 
-Use it online! <https://andychase.me/gbajs2>
+Use it online! <https://gbajs2.com>
 
 See the [issues page](https://github.com/andychase/gbajs2/issues) for feature suggestions and ways you can help contribute!
 
