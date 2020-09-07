@@ -8,6 +8,8 @@ Use it online! <https://andychase.me/gbajs2>
 
 See the [issues page](https://github.com/andychase/gbajs2/issues) for feature suggestions and ways you can help contribute!
 
+Mailing list for general discussion or if you want to just be kept in the loop: https://groups.google.com/forum/#!forum/gbajs2
+
 ## Feature List
 
 * Playable compatibility, see [compatibility](https://github.com/andychase/gbajs2/wiki/Compatibility-List)
