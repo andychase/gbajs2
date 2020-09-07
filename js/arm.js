@@ -1363,11 +1363,10 @@ class ARMCoreArm {
 				cpu.unpackCPSR(cpu.spsr);
 			} else {
 				cpu.cpsrN = d >> 31;
-				cpu.cpsrZ = !(d & 0xffffffff);
-				cpu.cpsrC = gprs[rn] >>> 0 >= cpu.shifterOperand >>> 0;
-				cpu.cpsrV =
-					gprs[rn] >> 31 != cpu.shifterOperand >> 31 &&
-					gprs[rn] >> 31 != d >> 31;
+			cpu.cpsrZ = !(d & 0xFFFFFFFF);
+			cpu.cpsrC = (gprs[rn] >>> 0) >= (cpu.shifterOperand >>> 0);
+			cpu.cpsrV = (gprs[rn] >> 31) != (cpu.shifterOperand >> 31) &&
+						(gprs[rn] >> 31) != (d >> 31);
 			}
 			gprs[rd] = d;
 		};

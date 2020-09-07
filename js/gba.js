@@ -76,6 +76,7 @@ class GameBoyAdvance {
 	}
 	setCanvas(canvas) {
 		if (canvas.offsetWidth != 240 || canvas.offsetHeight != 160) {
+			var self = this;
 			this.indirectCanvas = document.createElement("canvas");
 			this.indirectCanvas.setAttribute("height", "160");
 			this.indirectCanvas.setAttribute("width", "240");
@@ -84,7 +85,7 @@ class GameBoyAdvance {
 			var targetContext = canvas.getContext("2d");
 			this.video.drawCallback = function () {
 				targetContext.drawImage(
-					this.indirectCanvas,
+					self.indirectCanvas,
 					0,
 					0,
 					canvas.width,
