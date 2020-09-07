@@ -1,6 +1,12 @@
 class GameBoyAdvanceVideo {
 	constructor() {
-		this.renderPath = new GameBoyAdvanceRenderProxy();
+		try {
+			this.renderPath = new GameBoyAdvanceRenderProxy();
+		} catch(err) {
+			console.log("Service worker renderer couldn't load. Save states (not save files) may be glitchy")
+			this.renderPath = new GameBoyAdvanceSoftwareRenderer();
+		}
+
 
 		this.CYCLES_PER_PIXEL = 4;
 

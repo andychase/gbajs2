@@ -20,6 +20,7 @@
 <script src="js/gpio.js"></script>
 <script src="js/gba.js"></script>
 <script src="resources/xhr.js"></script>
+<script src="resources/biosbin.js"></script>
 
 <script>
 var gba;
@@ -54,9 +55,7 @@ window.onload = function() {
 
 		gba.logLevel = gba.LOG_ERROR;
 
-		loadRom('resources/bios.bin', function(bios) {
-			gba.setBios(bios);
-		});
+		gba.setBios(biosBin);
 
 		if (!gba.audio.context) {
 			// Remove the sound box if sound isn't available
