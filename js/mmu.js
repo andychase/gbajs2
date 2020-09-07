@@ -303,10 +303,10 @@ class GameBoyAdvanceMMU {
 			this.badMemory,
 			new MemoryBlock(this.SIZE_WORKING_RAM, 9),
 			new MemoryBlock(this.SIZE_WORKING_IRAM, 7),
-			null,
-			null,
-			null,
-			null,
+		null, // This is owned by GameBoyAdvanceIO
+		null, // This is owned by GameBoyAdvancePalette
+		null, // This is owned by GameBoyAdvanceVRAM
+		null, // This is owned by GameBoyAdvanceOAM
 			this.badMemory,
 			this.badMemory,
 			this.badMemory,

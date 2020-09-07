@@ -609,14 +609,7 @@ class GameBoyAdvanceInterruptHandler {
 			case 0x1f:
 				// MidiKey2Freq
 				var key = this.cpu.mmu.load32(this.cpu.gprs[0] + 4);
-				this.cpu.gprs[0] =
-					(key /
-						Math.pow(
-							2,
-							(180 - this.cpu.gprs[1] - this.cpu.gprs[2] / 256) /
-								12
-						)) >>>
-					0;
+				this.cpu.gprs[0] = key / Math.pow(2, (180 - this.cpu.gprs[1] - this.cpu.gprs[2] / 256) / 12) >>> 0;
 				break;
 			default:
 				throw (

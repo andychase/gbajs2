@@ -56,13 +56,13 @@ class GameBoyAdvanceRTC {
 		this.direction = 0;
 
 		this.totalBytes = [
-			0,
-			0,
-			7,
-			0,
-			1,
-			0,
-			3,
+		0, // Force reset
+		0, // Empty
+		7, // Date/Time
+		0, // Force IRQ
+		1, // Control register
+		0, // Empty
+		3, // Time
 			0 // Empty
 		];
 		this.bytesRemaining = 0;
@@ -86,12 +86,12 @@ class GameBoyAdvanceRTC {
 
 		this.control = 0x40;
 		this.time = [
-			0,
-			0,
-			0,
-			0,
-			0,
-			0,
+		0, // Year
+		0, // Month
+		0, // Day
+		0, // Day of week
+		0, // Hour
+		0, // Minute
 			0 // Second
 		];
 	}

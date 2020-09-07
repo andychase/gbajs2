@@ -164,11 +164,11 @@ class GameBoyAdvancePalette {
 		this.colors = [new Array(0x100), new Array(0x100)];
 		this.adjustedColors = [new Array(0x100), new Array(0x100)];
 		this.passthroughColors = [
-			this.colors[0],
-			this.colors[0],
-			this.colors[0],
-			this.colors[0],
-			this.colors[1],
+			this.colors[0], // BG0
+			this.colors[0], // BG1
+			this.colors[0], // BG2
+			this.colors[0], // BG3
+			this.colors[1], // OBJ
 			this.colors[0] // Backdrop
 		];
 		this.blendY = 1;
@@ -337,30 +337,8 @@ class GameBoyAdvancePalette {
 		}
 	}
 }
-;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 GameBoyAdvancePalette.prototype.adjustColor = GameBoyAdvancePalette.prototype.adjustColorBright;
-
 
 class GameBoyAdvanceOBJ {
 	constructor(oam, index) {
@@ -603,10 +581,6 @@ class GameBoyAdvanceOBJ {
 		}
 	}
 }
-;
-
-
-
 
 class GameBoyAdvanceOBJLayer {
 	constructor(video, index) {
@@ -821,7 +795,7 @@ class GameBoyAdvanceSoftwareRenderer {
 
 		this.bgModes = [
 			this.drawScanlineBGMode0,
-			this.drawScanlineBGMode2,
+			this.drawScanlineBGMode2, // Modes 1 and 2 are identical for layers 2 and 3
 			this.drawScanlineBGMode2,
 			this.drawScanlineBGMode3,
 			this.drawScanlineBGMode4,
@@ -1141,6 +1115,100 @@ class GameBoyAdvanceSoftwareRenderer {
 		offset |= y << 2;
 
 		return this.vram.load32(offset);
+	}
+	static pushPixel(layer, map, video, row, x, offset, backing, mask, raw) {
+		var index;
+		if (!raw) {
+			if (this.multipalette) {
+				index = (row >> (x << 3)) & 0xFF;
+			}
+			else {
+				index = (row >> (x << 2)) & 0xF;
+			}
+			// Index 0 is transparent
+			if (!index) {
+				return;
+			}
+			else if (!this.multipalette) {
+				index |= map.palette;
+			}
+		}
+
+		var stencil = video.WRITTEN_MASK;
+		var oldStencil = backing.stencil[offset];
+		var blend = video.blendMode;
+		if (video.objwinActive) {
+			if (oldStencil & video.OBJWIN_MASK) {
+				if (video.windows[3].enabled[layer]) {
+					video.setBlendEnabled(layer, video.windows[3].special && video.target1[layer], blend);
+					if (video.windows[3].special && video.alphaEnabled) {
+						mask |= video.target1[layer];
+					}
+					stencil |= video.OBJWIN_MASK;
+				}
+				else {
+					return;
+				}
+			}
+			else if (video.windows[2].enabled[layer]) {
+				video.setBlendEnabled(layer, video.windows[2].special && video.target1[layer], blend);
+				if (video.windows[2].special && video.alphaEnabled) {
+					mask |= video.target1[layer];
+				}
+			}
+			else {
+				return;
+			}
+		}
+
+		if ((mask & video.TARGET1_MASK) && (oldStencil & video.TARGET2_MASK)) {
+			video.setBlendEnabled(layer, true, 1);
+		}
+
+		var pixel = raw ? row : video.palette.accessColor(layer, index);
+
+		if (mask & video.TARGET1_MASK) {
+			video.setBlendEnabled(layer, !!blend, blend);
+		}
+		var highPriority = (mask & video.PRIORITY_MASK) < (oldStencil & video.PRIORITY_MASK);
+		// Backgrounds can draw over each other, too.
+		if ((mask & video.PRIORITY_MASK) == (oldStencil & video.PRIORITY_MASK)) {
+			highPriority = mask & video.BACKGROUND_MASK;
+		}
+
+		if (!(oldStencil & video.WRITTEN_MASK)) {
+			// Nothing here yet, just continue
+			stencil |= mask;
+		}
+		else if (highPriority) {
+			// We are higher priority
+			if (mask & video.TARGET1_MASK && oldStencil & video.TARGET2_MASK) {
+				pixel = video.palette.mix(video.blendA, pixel, video.blendB, backing.color[offset]);
+			}
+			// We just drew over something, so it doesn't make sense for us to be a TARGET1 anymore...
+			stencil |= mask & ~video.TARGET1_MASK;
+		}
+		else if ((mask & video.PRIORITY_MASK) > (oldStencil & video.PRIORITY_MASK)) {
+			// We're below another layer, but might be the blend target for it
+			stencil = oldStencil & ~(video.TARGET1_MASK | video.TARGET2_MASK);
+			if (mask & video.TARGET2_MASK && oldStencil & video.TARGET1_MASK) {
+				pixel = video.palette.mix(video.blendB, pixel, video.blendA, backing.color[offset]);
+			}
+			else {
+				return;
+			}
+		}
+		else {
+			return;
+		}
+
+		if (mask & video.OBJWIN_MASK) {
+			// We ARE the object window, don't draw pixels!
+			backing.stencil[offset] |= video.OBJWIN_MASK;
+			return;
+		}
+		backing.color[offset] = pixel;
+		backing.stencil[offset] = stencil;
 	}
 	identity(x) {
 		return x;
@@ -1513,145 +1581,4 @@ class GameBoyAdvanceSoftwareRenderer {
 		this.bg[3].sy = this.bg[3].refy;
 		caller.finishDraw(this.pixelData);
 	}
-	static pushPixel(layer, map, video, row, x, offset, backing, mask, raw) {
-		var index;
-		if (!raw) {
-			if (this.multipalette) {
-				index = (row >> (x << 3)) & 0xFF;
-			}
-			else {
-				index = (row >> (x << 2)) & 0xF;
-			}
-			// Index 0 is transparent
-			if (!index) {
-				return;
-			}
-			else if (!this.multipalette) {
-				index |= map.palette;
-			}
-		}
-
-		var stencil = video.WRITTEN_MASK;
-		var oldStencil = backing.stencil[offset];
-		var blend = video.blendMode;
-		if (video.objwinActive) {
-			if (oldStencil & video.OBJWIN_MASK) {
-				if (video.windows[3].enabled[layer]) {
-					video.setBlendEnabled(layer, video.windows[3].special && video.target1[layer], blend);
-					if (video.windows[3].special && video.alphaEnabled) {
-						mask |= video.target1[layer];
-					}
-					stencil |= video.OBJWIN_MASK;
-				}
-				else {
-					return;
-				}
-			}
-			else if (video.windows[2].enabled[layer]) {
-				video.setBlendEnabled(layer, video.windows[2].special && video.target1[layer], blend);
-				if (video.windows[2].special && video.alphaEnabled) {
-					mask |= video.target1[layer];
-				}
-			}
-			else {
-				return;
-			}
-		}
-
-		if ((mask & video.TARGET1_MASK) && (oldStencil & video.TARGET2_MASK)) {
-			video.setBlendEnabled(layer, true, 1);
-		}
-
-		var pixel = raw ? row : video.palette.accessColor(layer, index);
-
-		if (mask & video.TARGET1_MASK) {
-			video.setBlendEnabled(layer, !!blend, blend);
-		}
-		var highPriority = (mask & video.PRIORITY_MASK) < (oldStencil & video.PRIORITY_MASK);
-		// Backgrounds can draw over each other, too.
-		if ((mask & video.PRIORITY_MASK) == (oldStencil & video.PRIORITY_MASK)) {
-			highPriority = mask & video.BACKGROUND_MASK;
-		}
-
-		if (!(oldStencil & video.WRITTEN_MASK)) {
-			// Nothing here yet, just continue
-			stencil |= mask;
-		}
-		else if (highPriority) {
-			// We are higher priority
-			if (mask & video.TARGET1_MASK && oldStencil & video.TARGET2_MASK) {
-				pixel = video.palette.mix(video.blendA, pixel, video.blendB, backing.color[offset]);
-			}
-			// We just drew over something, so it doesn't make sense for us to be a TARGET1 anymore...
-			stencil |= mask & ~video.TARGET1_MASK;
-		}
-		else if ((mask & video.PRIORITY_MASK) > (oldStencil & video.PRIORITY_MASK)) {
-			// We're below another layer, but might be the blend target for it
-			stencil = oldStencil & ~(video.TARGET1_MASK | video.TARGET2_MASK);
-			if (mask & video.TARGET2_MASK && oldStencil & video.TARGET1_MASK) {
-				pixel = video.palette.mix(video.blendB, pixel, video.blendA, backing.color[offset]);
-			}
-			else {
-				return;
-			}
-		}
-		else {
-			return;
-		}
-
-		if (mask & video.OBJWIN_MASK) {
-			// We ARE the object window, don't draw pixels!
-			backing.stencil[offset] |= video.OBJWIN_MASK;
-			return;
-		}
-		backing.color[offset] = pixel;
-		backing.stencil[offset] = stencil;
-	}
 }
-;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
