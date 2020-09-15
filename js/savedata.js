@@ -151,10 +151,10 @@ class FlashSavedata extends MemoryView {
 		}
 	}
 	store16(offset, value) {
-		throw new Error("Unaligned save to flash!");
+		throw new Error('Unaligned save to flash!');
 	}
 	store32(offset, value) {
-		throw new Error("Unaligned save to flash!");
+		throw new Error('Unaligned save to flash!');
 	}
 	replaceData(memory) {
 		var bank = this.view === this.bank1;
@@ -170,9 +170,9 @@ class FlashSavedata extends MemoryView {
 	}
 }
 
-class EEPROMSavedata {
+class EEPROMSavedata extends MemoryView {
 	constructor(size, mmu) {
-		MemoryView.call(this, new ArrayBuffer(size), 0);
+		super(new ArrayBuffer(size), 0);
 
 		this.writeAddress = 0;
 		this.readBitsRemaining = 0;
@@ -194,13 +194,13 @@ class EEPROMSavedata {
 		this.COMMAND_READ = 4;
 	}
 	load8(offset) {
-		throw new Error("Unsupported 8-bit access!");
+		throw new Error('Unsupported 8-bit access!');
 	}
 	load16(offset) {
 		return this.loadU16(offset);
 	}
 	loadU8(offset) {
-		throw new Error("Unsupported 8-bit access!");
+		throw new Error('Unsupported 8-bit access!');
 	}
 	loadU16(offset) {
 		if (this.command != this.COMMAND_READ || !this.dma.enable) {
@@ -220,10 +220,10 @@ class EEPROMSavedata {
 		return 0;
 	}
 	load32(offset) {
-		throw new Error("Unsupported 32-bit access!");
+		throw new Error('Unsupported 32-bit access!');
 	}
 	store8(offset, value) {
-		throw new Error("Unsupported 8-bit access!");
+		throw new Error('Unsupported 8-bit access!');
 	}
 	store16(offset, value) {
 		switch (this.command) {
@@ -286,7 +286,7 @@ class EEPROMSavedata {
 		}
 	}
 	store32(offset, value) {
-		throw new Error("Unsupported 32-bit access!");
+		throw new Error('Unsupported 32-bit access!');
 	}
 	replaceData(memory) {
 		MemoryView.prototype.replaceData.call(this, memory, 0);
