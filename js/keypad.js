@@ -38,9 +38,20 @@ class GameBoyAdvanceKeypad {
 		this.eatInput = false;
 
 		this.gamepads = [];
+
+		this.remappingKeyId = "";
 	}
 	keyboardHandler(e) {
 		var toggle = 0;
+
+		// Check for a remapping
+		if (this.remappingKeyId != "") {
+			this.remapKeycode(this.remappingKeyId, e.keyCode);
+			this.remappingKeyId = "";
+			e.preventDefault();
+			return; // Could do an else and wrap the rest of the function in it, but this is cleaner
+		}
+
 		switch (e.keyCode) {
 			case this.KEYCODE_START:
 				toggle = this.START;
@@ -139,6 +150,7 @@ class GameBoyAdvanceKeypad {
 		}
 
 		// Let's all give a shout out to Chrome for making us get the gamepads EVERY FRAME
+		/* How big of a performance draw is this? Would it be worth letting users know? */
 		if (navigatorList.length) {
 			this.gamepads = [];
 		}
@@ -190,5 +202,50 @@ class GameBoyAdvanceKeypad {
 			this.gamepadDisconnectHandler.bind(this),
 			true
 		);
+	}
+	// keyId is ["A", "B", "SELECT", "START", "RIGHT", "LEFT", "UP", "DOWN", "R", "L"]
+	initKeycodeRemap(keyId) {
+		// Ensure valid keyId
+		var validKeyIds = ["A", "B", "SELECT", "START", "RIGHT", "LEFT", "UP", "DOWN", "R", "L"];
+		if (validKeyIds.indexOf(keyId) != -1) {
+			/* If remappingKeyId holds a value, the keydown event above will
+			wait for the next keypress to assign the keycode */
+			this.remappingKeyId = keyId;
+		}
+	}
+	// keyId is ["A", "B", "SELECT", "START", "RIGHT", "LEFT", "UP", "DOWN", "R", "L"]
+	remapKeycode(keyId, keycode) {
+		switch (keyId) {
+			case "A":
+				this.KEYCODE_A = keycode;
+				break;
+			case "B":
+				this.KEYCODE_B = keycode;
+				break;
+			case "SELECT":
+				this.KEYCODE_SELECT = keycode;
+				break;
+			case "START":
+				this.KEYCODE_START = keycode;
+				break;
+			case "RIGHT":
+				this.KEYCODE_RIGHT = keycode;
+				break;
+			case "LEFT":
+				this.KEYCODE_LEFT = keycode;
+				break;
+			case "UP":
+				this.KEYCODE_UP = keycode;
+				break;
+			case "DOWN":
+				this.KEYCODE_DOWN = keycode;
+				break;
+			case "R":
+				this.KEYCODE_R = keycode;
+				break;
+			case "L":
+				this.KEYCODE_L = keycode;
+				break;
+		}
 	}
 }
