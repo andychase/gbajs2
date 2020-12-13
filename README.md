@@ -1,7 +1,7 @@
 gbajs2-mobile -- mobile porting version
 ======
-gbajs2-mobile be forked from gbajs2.
-This is mobile version that remake to play in mobile device ( safari ) and access from outside.
+
+This be forked from gbajs2 that remake to play in mobile device ( safari ) and access from outside.
 ======
 
 ## Preparations
