@@ -1,436 +1,271 @@
+<!DOCTYPE html>
 <html>
-	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-		<title>gbajs2</title>
-		<link rel="stylesheet" href="resources/main.css" />
-		<script src="js/util.js"></script>
-		<script src="js/core.js"></script>
-		<script src="js/arm.js"></script>
-		<script src="js/thumb.js"></script>
-		<script src="js/mmu.js"></script>
-		<script src="js/io.js"></script>
-		<script src="js/audio.js"></script>
-		<script src="js/video.js"></script>
-		<script src="js/video/proxy.js"></script>
-		<script src="js/video/software.js"></script>
-		<script src="js/irq.js"></script>
-		<script src="js/keypad.js"></script>
-		<script src="js/sio.js"></script>
-		<script src="js/savedata.js"></script>
-		<script src="js/gpio.js"></script>
-		<script src="js/gba.js"></script>
-		<script src="resources/xhr.js"></script>
-		<script src="resources/biosbin.js"></script>
 
-		<script>
-			let gba;
-			let runCommands = [];
-			let debug = null;
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
+    <link rel="stylesheet" href="resources/main.css" />
+    <script type='text/javascript' src="js/util.js"></script>
+    <script type='text/javascript' src="js/core.js"></script>
+    <script type='text/javascript' src="js/arm.js"></script>
+    <script type='text/javascript' src="js/thumb.js"></script>
+    <script type='text/javascript' src="js/mmu.js"></script>
+    <script type='text/javascript' src="js/io.js"></script>
+    <script type='text/javascript' src="js/audio.js"></script>
+    <script type='text/javascript' src="js/video.js"></script>
+    <script type='text/javascript' src="js/video/proxy.js"></script>
+    <script type='text/javascript' src="js/video/software.js"></script>
+    <script type='text/javascript' src="js/irq.js"></script>
+    <script type='text/javascript' src="js/keypad.js"></script>
+    <script type='text/javascript' src="js/sio.js"></script>
+    <script type='text/javascript' src="js/savedata.js"></script>
+    <script type='text/javascript' src="js/gpio.js"></script>
+    <script type='text/javascript' src="js/gba.js"></script>
+    <script type='text/javascript' src="resources/xhr.js"></script>
+    <script type='text/javascript' src="resources/biosbin.js"></script>
+</head>
 
-			try {
-				gba = new GameBoyAdvance();
-				gba.keypad.eatInput = true;
-				gba.setLogger(function (level, error) {
-					console.log(error);
-					gba.pause();
-					let screen = document.getElementById('screen');
-					if (screen.getAttribute('class') === 'dead') {
-						console.log(
-							'We appear to have crashed multiple times without reseting.'
-						);
-						return;
-					}
-					let crash = document.createElement('img');
-					crash.setAttribute('id', 'crash');
-					crash.setAttribute('src', 'resources/crash.png');
-					screen.parentElement.insertBefore(crash, screen);
-					screen.setAttribute('class', 'dead');
-				});
-			} catch (exception) {
-				gba = null;
-			}
+<body>
+    <label id="status">READY</label>
+    <br>
+    <label>Sevar a rom:</label>
+    <select name="roms" id="rom-select">
+        <option value="">--Please choose an option--</option>
+    </select>
 
-			window.onload = function () {
-				if (gba && FileReader) {
-					let canvas = document.getElementById('screen');
-					gba.setCanvas(canvas);
+    <button class="bigbutton" id="select" onclick="run();">
+        SELECT
+    </button>
 
-					gba.logLevel = gba.LOG_ERROR;
+    <button class="bigbutton" id="select" onclick="save();">
+        SAVE
+    </button>
 
-					gba.setBios(biosBin);
+    <button class="bigbutton" id="select" onclick="load();">
+        LOAD
+    </button>
+    <br>
+    <canvas id="screen" width="480" height="320" style='left:0px; top:0px;'></canvas>
 
-					if (!gba.audio.context) {
-						// Remove the sound box if sound isn't available
-						let soundbox = document.getElementById('sound');
-						soundbox.parentElement.removeChild(soundbox);
-					}
+    <br>
+    <div id="virtual-pad">
+        <button style="height: 5%; width: 20%; position: absolute; left: 0%;" class="bigbutton" id="L">L</button>
+        <button style="height: 5%; width: 20%; position: absolute; right: 0%;" class="bigbutton" id="R">R</button>
+        <button style="height: 10%; width: 13%; position: absolute; left: 12%; bottom: 26%;" class="bigbutton"
+            id="UP">↑</button>
+        <button style="height: 10%; width: 13%; position: absolute; left: 24%; bottom: 16%;" class="bigbutton"
+            id="RIGHT">→</button>
+        <button style="height: 10%; width: 13%; position: absolute; left: 12%; bottom: 6%;" class="bigbutton"
+            id="DOWN">↓</button>
+        <button style="height: 10%; width: 13%; position: absolute; left: 0%;  bottom: 16%;" class="bigbutton"
+            id="LEFT">←</button>
 
-					if (
-						window.navigator.appName ===
-						'Microsoft Internet Explorer'
-					) {
-						// Remove the pixelated option if it doesn't work
-						let pixelatedBox = document.getElementById('pixelated');
-						pixelatedBox.parentElement.removeChild(pixelatedBox);
-					}
-				} else {
-					let dead = document.getElementById('controls');
-					dead.parentElement.removeChild(dead);
-				}
-			};
+        <button style="height: 12%; width: 20%; position: absolute; right: 0%; bottom: 22%;" class="bigbutton"
+            id="A">A</button>
+        <button style="height: 12%; width: 20%; position: absolute; right: 20%; bottom: 10%;" class="bigbutton"
+            id="B">B</button>
 
-			function fadeOut(id, nextId, kill) {
-				let e = document.getElementById(id);
-				let e2 = document.getElementById(nextId);
-				if (!e) {
-					return;
-				}
-				let removeSelf = function () {
-					if (kill) {
-						e.parentElement.removeChild(e);
-					} else {
-						e.setAttribute('class', 'dead');
-						e.removeEventListener(
-							'webkitTransitionEnd',
-							removeSelf
-						);
-						e.removeEventListener('oTransitionEnd', removeSelf);
-						e.removeEventListener('transitionend', removeSelf);
-					}
-					if (e2) {
-						e2.setAttribute('class', 'hidden');
-						setTimeout(function () {
-							e2.removeAttribute('class');
-						}, 0);
-					}
-				};
+        <button style="height: 5%; width: 20%; position: absolute; left: 30%; bottom: 0%;" class="bigbutton"
+            id="START">START</button>
+        <button style="height: 5%; width: 20%; position: absolute; left: 60%; bottom: 0%;" class="bigbutton"
+            id="SELECT">SELECT</button>
+    </div>
+    <!-- for body-->
+    <script>
+        // TODO: Write private ip address.
+        var ip = 'https://192.168.219.100:3000/';
 
-				e.addEventListener('webkitTransitionEnd', removeSelf, false);
-				e.addEventListener('oTransitionEnd', removeSelf, false);
-				e.addEventListener('transitionend', removeSelf, false);
-				e.setAttribute('class', 'hidden');
-			}
+        var selectElement = document.getElementById('rom-select');
+        // Get rom list from server
+        var xhr = new XMLHttpRequest();
+        xhr.responseType = 'text';
 
-			function run(file) {
-				let dead = document.getElementById('loader');
-				dead.value = '';
-				let load = document.getElementById('select');
-				load.textContent = 'Loading...';
-				load.removeAttribute('onclick');
-				let pause = document.getElementById('pause');
-				pause.textContent = 'PAUSE';
-				gba.loadRomFromFile(file, function (result) {
-					if (result) {
-						for (let i = 0; i < runCommands.length; ++i) {
-							runCommands[i]();
-						}
-						runCommands = [];
-						fadeOut('preload', 'ingame');
-						fadeOut('instructions', null, true);
-						gba.runStable();
-					} else {
-						load.textContent = 'FAILED';
-						setTimeout(function () {
-							load.textContent = 'SELECT';
-							load.onclick = function () {
-								document.getElementById('loader').click();
-							};
-						}, 3000);
-					}
-				});
-			}
+        xhr.onload = function () {
+            if (this.status === 404) return;
 
-			function reset() {
-				gba.pause();
-				gba.reset();
-				let load = document.getElementById('select');
-				load.textContent = 'SELECT';
-				let crash = document.getElementById('crash');
-				if (crash) {
-					let context = gba.targetCanvas.getContext('2d');
-					context.clearRect(0, 0, 480, 320);
-					gba.video.drawCallback();
-					crash.parentElement.removeChild(crash);
-					let canvas = document.getElementById('screen');
-					canvas.removeAttribute('class');
-				} else {
-					lcdFade(
-						gba.context,
-						gba.targetCanvas.getContext('2d'),
-						gba.video.drawCallback
-					);
-				}
-				load.onclick = function () {
-					document.getElementById('loader').click();
-				};
-				fadeOut('ingame', 'preload');
-			}
+            var rom_list = xhr.responseText.split(',');
+            rom_list.forEach(function (rom_name) {
+                var new_option = document.createElement('option');
+                new_option.value = new_option.innerHTML = rom_name;
+                selectElement.appendChild(new_option);
+            })
+        };
 
-			function uploadSavedataPending(file) {
-				runCommands.push(function () {
-					gba.loadSavedataFromFile(file);
-				});
-			}
+        xhr.open("GET", ip + "rom_list");
+        xhr.send();
 
-			function togglePause() {
-				let e = document.getElementById('pause');
-				if (gba.paused) {
-					if (debug && debug.gbaCon) {
-						debug.gbaCon.run();
-					} else {
-						gba.runStable();
-					}
-					e.textContent = 'PAUSE';
-				} else {
-					if (debug && debug.gbaCon) {
-						debug.gbaCon.pause();
-					} else {
-						gba.pause();
-					}
-					e.textContent = 'UNPAUSE';
-				}
-			}
+        selectElement.addEventListener("change", function () {
+            if (selectElement.value !== "") {
+                selected_rom_name = selectElement.value;
+            }
+        });
 
-			function screenshot() {
-				let canvas = gba.indirectCanvas;
-				let data = canvas.toDataURL('image/png');
-				let image = new Image();
-        image.src = data;
-        let w = window.open("");
-        w.document.write(image.outerHTML);
-			}
+    </script>
+    <!-- for rom-->
+    <script>
+        var gba;
+        var runCommands = [];
+        var selected_rom_name = "";
 
-			function lcdFade(context, target, callback) {
-				let i = 0;
-				let drawInterval = setInterval(function () {
-					i++;
-					let pixelData = context.getImageData(0, 0, 240, 160);
-					for (let y = 0; y < 160; ++y) {
-						for (let x = 0; x < 240; ++x) {
-							let xDiff = Math.abs(x - 120);
-							let yDiff = Math.abs(y - 80) * 0.8;
-							let xFactor = (120 - i - xDiff) / 120;
-							let yFactor =
-								(80 -
-									i -
-									(y & 1) * 10 -
-									yDiff +
-									Math.pow(xDiff, 1 / 2)) /
-								80;
-							pixelData.data[(x + y * 240) * 4 + 3] *=
-								Math.pow(xFactor, 1 / 3) *
-								Math.pow(yFactor, 1 / 2);
-						}
-					}
-					context.putImageData(pixelData, 0, 0);
-					target.clearRect(0, 0, 480, 320);
-					if (i > 40) {
-						clearInterval(drawInterval);
-					} else {
-						callback();
-					}
-				}, 50);
-			}
+        try {
+            gba = new GameBoyAdvance();
+            gba.keypad.eatInput = true;
+        } catch (exception) {
+            gba = null;
+        }
 
-			function setVolume(value) {
-				gba.audio.masterVolume = Math.pow(2, value) - 1;
-			}
+        window.onload = function () {
+            if (gba) {
+                var canvas = document.getElementById('screen');
+                canvas.width = window.innerWidth;
+                canvas.height = canvas.width * 0.6666;
 
-			function setPixelated(pixelated) {
-				let screen = document.getElementById('screen');
-				let context = screen.getContext('2d');
-				context.imageSmoothingEnabled = !pixelated;
-			}
+                gba.setCanvas(canvas);
 
-			function enableDebug() {
-				window.onmessage = function (message) {
-					if (
-						message.origin != document.domain &&
-						(message.origin != 'file://' || document.domain)
-					) {
-						console.log('Failed XSS');
-						return;
-					}
-					switch (message.data) {
-						case 'connect':
-							if (message.source === debug) {
-								debug.postMessage(
-									'connect',
-									document.domain || '*'
-								);
-							}
-							break;
-						case 'connected':
-							break;
-						case 'disconnect':
-							if (message.source === debug) {
-								debug = null;
-							}
-					}
-				};
-				window.onunload = function () {
-					if (debug && debug.postMessage) {
-						debug.postMessage('disconnect', document.domain || '*');
-					}
-				};
-				if (!debug || !debug.postMessage) {
-					debug = window.open('debugger.html', 'debug');
-				} else {
-					debug.postMessage('connect', document.domain || '*');
-				}
-			}
+                gba.logLevel = gba.LOG_ERROR;
 
-			document.addEventListener(
-				'webkitfullscreenchange',
-				function () {
-					let canvas = document.getElementById('screen');
-					if (document.webkitIsFullScreen) {
-						canvas.setAttribute(
-							'height',
-							document.body.offsetHeight
-						);
-						canvas.setAttribute(
-							'width',
-							(document.body.offsetHeight / 2) * 3
-						);
-						canvas.setAttribute('style', 'margin: 0');
-					} else {
-						canvas.setAttribute('height', 320);
-						canvas.setAttribute('width', 480);
-						canvas.removeAttribute('style');
-					}
-				},
-				false
-			);
+                gba.setBios(biosBin);
+            }
+        };
 
-			const fullScreen = () => {
-				document.getElementById('screen').requestFullscreen();
-			};
-		</script>
-	</head>
-	<body>
-		<canvas id="screen" width="480" height="320"></canvas>
-		<section id="gameinfo">
-			<p>The Game Boy Advance's buttons are mapped as follows:</p>
-			<table id="mapping">
-				<tr>
-					<td>Up</td>
-					<td>Up</td>
-				</tr>
-				<tr>
-					<td>Down</td>
-					<td>Down</td>
-				</tr>
-				<tr>
-					<td>Left</td>
-					<td>Left</td>
-				</tr>
-				<tr>
-					<td>Right</td>
-					<td>Right</td>
-				</tr>
-				<tr>
-					<td>A</td>
-					<td>Z</td>
-				</tr>
-				<tr>
-					<td>B</td>
-					<td>X</td>
-				</tr>
-				<tr>
-					<td>L</td>
-					<td>A</td>
-				</tr>
-				<tr>
-					<td>R</td>
-					<td>S</td>
-				</tr>
-				<tr>
-					<td>Start</td>
-					<td>Enter</td>
-				</tr>
-				<tr>
-					<td>Select</td>
-					<td>\</td>
-				</tr>
-			</table>
-		</section>
-		<section id="controls">
-			<div id="preload">
-				<button
-					class="bigbutton"
-					id="select"
-					onclick="document.getElementById('loader').click()"
-				>
-					SELECT
-				</button>
-				<input
-					id="loader"
-					type="file"
-					accept=".gba"
-					onchange="run(this.files[0]);"
-				/>
-				<button onclick="document.getElementById('saveloader').click()">
-					Upload Savegame
-				</button>
-				<input
-					id="saveloader"
-					type="file"
-					onchange="uploadSavedataPending(this.files[0]);"
-				/>
-			</div>
-			<div id="ingame" class="hidden">
-				<button id="pause" class="bigbutton" onclick="togglePause()">
-					PAUSE
-				</button>
-				<button class="bigbutton" onclick="reset()">RESET</button>
-				<button onclick="gba.downloadSavedata()">
-					Download Savegame
-				</button>
-				<button onclick="screenshot()">Screenshot</button>
-				<button onclick="fullScreen()">Full screen</button>
-				<label id="pixelated">
-					<input
-						type="checkbox"
-						onchange="setPixelated(this.checked)"
-					/>
-					<p>Pixelated</p>
-				</label>
-				<div id="sound">
-					<input
-						type="checkbox"
-						onchange="gba.audio.masterEnable = this.checked; if (gba.audio.context.state !== 'running') {gba.audio.context.resume();}"
-					/>
-					<p>Sound</p>
-					<input
-						type="range"
-						min="0"
-						max="1"
-						value="1"
-						step="any"
-						onchange="setVolume(this.value)"
-						oninput="setVolume(this.value)"
-					/>
-				</div>
-				<p id="openDebug" onclick="enableDebug()">Debugger</p>
-			</div>
-		</section>
-		<section id="instructions">
-			<p>
-				For legal reasons, GBA.js is presented without any included
-				games. Please click Select below to choose a Game Boy Advance
-				game image from your hard drive that you'd like to play. The
-				games must be uncompressed, so unzip them as needed.
-			</p>
-			<p>
-				Please note that this is a beta and there might be compatibility
-				problems. More information and a link to a compatibility table
-				can be found on the sidebar. If you're feeling daring, please
-				submit problem reports to the GitHub page.
-			</p>
-		</section>
-		<footer style="float: left">
-			© 2012 – 2013 <a href="http://endrift.com/">Endrift</a>
-		</footer>
-	</body>
+        // Hack code for ios9 safari web audio issue
+        function resume() {
+            gba.audio.context.resume();
+            setTimeout(function () {
+                if (gba.audio.context.state === "running") {
+                    document.body.removeEventListener('touchend', resume, false);
+                    document.body.removeEventListener('keydown', resume, false);
+                }
+            }, 0);
+        }
+        document.body.addEventListener('touchend', resume, false);
+        document.body.addEventListener('keydown', resume, false);
+
+        function run() {
+            if (selected_rom_name === "") return updateStatus("NON SELECTED", 3000);
+
+            updateStatus("LOADING...");
+
+            var xhr = new XMLHttpRequest();
+            xhr.responseType = 'blob';
+
+            xhr.onload = function () {
+                if (this.status === 404) return;
+
+                gba.loadRomFromFile(this.response, function (result) {
+                    if (result) {
+                        for (var i = 0; i < runCommands.length; ++i) {
+                            runCommands[i]();
+                        }
+                        runCommands = [];
+
+                        gba.runStable();
+
+                        //resume();
+
+                        updateStatus("RUNNING");
+                    } else {
+                        setTimeout(function () {
+                            reset();
+                        }, 3000);
+
+                        updateStatus("FAILED");
+                    }
+                });
+            };
+
+            xhr.open("GET", ip + "roms/" + selected_rom_name);
+            xhr.send();
+        }
+
+        function reset() {
+            gba.pause();
+            gba.reset();
+
+            var context = gba.targetCanvas.getContext('2d');
+            context.clearRect(0, 0, 480, 320);
+            gba.video.drawCallback();
+
+            updateStatus("READY");
+        }
+
+        function save() {
+            if (selected_rom_name === "") return updateStatus("NON SELECTED", 3000);
+
+            // save data
+            //var data = gba.downloadSavedata();
+            // save stat
+            try {
+                console.log('1', Serializer);
+                gba.pause();
+                var data = Serializer.serialize(gba.freeze());
+                if (data !== null) {
+                    var xhr = new XMLHttpRequest();
+                    xhr.open("POST", ip + "save");
+
+                    xhr.setRequestHeader('Content-type', 'application/octet-stream');
+                    xhr.setRequestHeader('$rom_name', selected_rom_name);
+
+                    xhr.onload = function (oEvent) {
+                        updateStatus("SAVED", 3000);
+                        gba.runStable();
+                    };
+
+                    xhr.send(data);
+                } else {
+                    updateStatus("FAIL SAVE", 3000);
+                }
+            } catch (e) {
+                console.log(e);
+            }
+        }
+
+        function load() {
+            if (selected_rom_name === "") return updateStatus("NON SELECTED", 3000);
+
+            var xhr = new XMLHttpRequest();
+            xhr.responseType = 'blob';
+
+            xhr.onload = function () {
+                if (this.status === 404) return;
+
+                updateStatus("LOADED", 3000);
+                var data = this.response;
+
+                // save data
+                // runCommands.push(function () {
+                //     gba.loadSavedataFromFile(loaded_data);
+                // });
+                // save stat
+                Serializer.deserialize(data, function (out) {
+                    gba.pause();
+                    gba.defrost(out);
+                    gba.runStable();
+                });
+            };
+
+            xhr.onerror = function () {
+                updateStatus("FAIL LOAD", 3000);
+            }
+
+            xhr.open("GET", ip + "roms/save/" + selected_rom_name + '.sav');
+            xhr.send(null);
+        }
+
+        function updateStatus(text, time = 0) {
+            var status = document.getElementById('status');
+            if (time == 0) {
+                status.textContent = text;
+            } else {
+                var prevStatus = status.textContent;
+                status.textContent = text;
+                setTimeout(function () {
+                    status.textContent = prevStatus;
+                }, time);
+            }
+        }
+
+    </script>
+</body>
+
 </html>

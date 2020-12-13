@@ -300,18 +300,7 @@ class GameBoyAdvance {
 			this.WARN("No save data available");
 			return null;
 		}
-		if (window.URL) {
-			var url = window.URL.createObjectURL(
-				new Blob([sram.buffer], { type: "application/octet-stream" })
-			);
-			window.open(url);
-		} else {
-			var data = this.encodeBase64(sram.view);
-			window.open(
-				"data:application/octet-stream;base64," + data,
-				this.rom.code + ".sav"
-			);
-		}
+		return new Blob([sram.buffer], { type: "application/octet-stream" });
 	}
 	storeSavedata() {
 		var sram = this.mmu.save;
