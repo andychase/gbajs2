@@ -43,6 +43,8 @@ class GameBoyAdvanceKeypad {
 	}
 
 	virtualpadHandler(code, e) {
+		if(canVibrate) navigator.vibrate(50);
+
 		var toggle = 0;
 
 		switch (code) {

@@ -103,7 +103,22 @@
         });
 
         document.addEventListener('touchmove', function (event) { if (event.scale !== 1) { event.preventDefault(); } }, { passive: false });
+
+        var canVibrate = "vibrate" in navigator || "webkitVibrate" in navigator || "mozVibrate" in navigator || "msVibrate" in navigator;
+        if (canVibrate && !("vibrate" in navigator)) navigator.vibrate = navigator.vibrate || navigator.webkitVibrate || navigator.mozVibrate || navigator.msVibrate;
     </script>
+    <!-- for ip -->
+    <script>
+        var my_ip = '';
+        function getIP(json) {
+            my_ip = json.ip;
+        }
+        function getRomNameWithIP(romName) {
+            //return romName + "_" + my_ip;
+            return romName;
+        }
+    </script>
+    <script src="https://api.ipify.org?format=jsonp&callback=getIP"></script>
     <!-- for rom-->
     <script>
         var gba;
@@ -207,7 +222,7 @@
                     xhr.open("POST", ip + "save");
 
                     xhr.setRequestHeader('Content-type', 'application/octet-stream');
-                    xhr.setRequestHeader('$rom_name', selected_rom_name);
+                    xhr.setRequestHeader('$rom_name', getRomNameWithIP(selected_rom_name));
 
                     xhr.onload = function (oEvent) {
                         updateStatus("SAVED", 3000);
@@ -251,7 +266,7 @@
                 updateStatus("FAIL LOAD", 3000);
             }
 
-            xhr.open("GET", ip + "roms/save/" + selected_rom_name + '.sav');
+            xhr.open("GET", ip + "roms/save/" + getRomNameWithIP(selected_rom_name) + '.sav');
             xhr.send(null);
         }
 
