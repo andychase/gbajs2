@@ -121,6 +121,7 @@
     <script src="https://api.ipify.org?format=jsonp&callback=getIP"></script>
     <!-- for rom-->
     <script>
+        var g_bMobile = true;
         var gba;
         var runCommands = [];
         var selected_rom_name = "";
@@ -209,9 +210,6 @@
 
         function save() {
             if (selected_rom_name === "") return updateStatus("NON SELECTED", 3000);
-
-            // save data
-            //var data = gba.downloadSavedata();
             // save stat
             try {
                 console.log('1', Serializer);
@@ -250,10 +248,6 @@
                 updateStatus("LOADED", 3000);
                 var data = this.response;
 
-                // save data
-                // runCommands.push(function () {
-                //     gba.loadSavedataFromFile(loaded_data);
-                // });
                 // save stat
                 Serializer.deserialize(data, function (out) {
                     gba.pause();

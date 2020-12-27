@@ -300,7 +300,19 @@ class GameBoyAdvance {
 			this.WARN("No save data available");
 			return null;
 		}
-		return new Blob([sram.buffer], { type: "application/octet-stream" });
+		if (window.URL) {
+			var url = window.URL.createObjectURL(
+				new Blob([sram.buffer], { type: "application/octet-stream" })
+			);
+			window.open(url);
+		} else {
+			var data = this.encodeBase64(sram.view);
+			window.open(
+				"data:application/octet-stream;base64," + data,
+				this.rom.code + ".sav"
+			);
+		}
+
 	}
 	storeSavedata() {
 		var sram = this.mmu.save;
@@ -344,7 +356,7 @@ class GameBoyAdvance {
 		this.irq.defrost(frost.irq);
 		this.io.defrost(frost.io);
 	}
-	log(level, message) {}
+	log(level, message) { }
 	setLogger(logger) {
 		this.log = logger;
 	}

@@ -43,7 +43,7 @@ class GameBoyAdvanceKeypad {
 	}
 
 	virtualpadHandler(code, e) {
-		if(canVibrate) navigator.vibrate(50);
+		if (canVibrate) navigator.vibrate(50);
 
 		var toggle = 0;
 
@@ -213,19 +213,21 @@ class GameBoyAdvanceKeypad {
 		}
 	}
 	registerHandlers() {
-		var childNodes = document.getElementById('virtual-pad').childNodes;
-		for (var i = 0; i < childNodes.length; i++) {
-			var childNode = childNodes[i];
-			if (childNode.nodeName === "BUTTON") {
-				var code = childNode.id;
-				childNode.addEventListener(
-					'touchstart',
-					this.virtualpadHandler.bind(this, code)
-				);
-				childNode.addEventListener(
-					'touchend',
-					this.virtualpadHandler.bind(this, code)
-				);
+		if (g_bMobile) {
+			var childNodes = document.getElementById('virtual-pad').childNodes;
+			for (var i = 0; i < childNodes.length; i++) {
+				var childNode = childNodes[i];
+				if (childNode.nodeName === "BUTTON") {
+					var code = childNode.id;
+					childNode.addEventListener(
+						'touchstart',
+						this.virtualpadHandler.bind(this, code)
+					);
+					childNode.addEventListener(
+						'touchend',
+						this.virtualpadHandler.bind(this, code)
+					);
+				}
 			}
 		}
 		window.addEventListener(
