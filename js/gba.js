@@ -312,6 +312,7 @@ class GameBoyAdvance {
 				this.rom.code + ".sav"
 			);
 		}
+
 	}
 	storeSavedata() {
 		var sram = this.mmu.save;
@@ -355,7 +356,7 @@ class GameBoyAdvance {
 		this.irq.defrost(frost.irq);
 		this.io.defrost(frost.io);
 	}
-	log(level, message) {}
+	log(level, message) { }
 	setLogger(logger) {
 		this.log = logger;
 	}
