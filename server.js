@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const router = express.Router();
 const bodyParser = require('body-parser');
-const port = 3000;
+const port = 8080;
 
 var key = fs.readFileSync(__dirname + '\\certs\\server.key');
 var cert = fs.readFileSync(__dirname + '\\certs\\server.crt');
@@ -22,7 +22,7 @@ app.use(bodyParser.raw({ limit: "50mb", extended: true }));
 app.use('/', router);
 
 router.get('/', function (req, res) {
-    res.sendFile(path.join(__dirname + '/index.html')); // mobile browser
+    res.sendFile(path.join(__dirname + '/mobile.html')); // mobile browser
 });
 
 router.get('/rom_list', function (req, res) {
