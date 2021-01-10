@@ -1,3 +1,21 @@
+gbajs2-mobile -- mobile porting version
+======
+
+This be forked from gbajs2 that remake to play in mobile device ( safari ) and access from outside.
+======
+
+## Preparations
+* Install npm and command `npm i` to prepare server environment.
+* Generate certs by `openssl req -nodes -new -x509 -keyout server.key -out server.cert` and move that files to `cert/`.
+* Prepare some rom file to `roms/`.
+* Write `private ip address` in `index.html` file.
+
+## Feature List
+* Available in Mobile Broswer
+* Save & Load stat
+* Server with DB
+* Test workspace ( mobile safari, mobile chrome )
+
 gbajs2 -- Community Fork
 ======
 
@@ -23,6 +41,7 @@ Original work by Endrift. Repo: (Archived / No longer maintained) https://github
 
 Copyright © 2012 – 2013, Jeffrey Pfau
 Copyright © 2020, Andrew Chase
+Copyright © 2020, keicoon15
 
 All rights reserved.
 
