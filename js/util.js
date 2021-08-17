@@ -42,13 +42,15 @@ class Pointer {
 	}
 }
 
-class Serializer {
-	TAG_INT = 1;
-	TAG_STRING = 2;
-	TAG_STRUCT = 3;
-	TAG_BLOB = 4;
-	TAG_BOOLEAN = 5;
-	TYPE = "application/octet-stream";
+class C_Serializer {
+	constructor() {
+		this.TAG_INT = 1;
+		this.TAG_STRING = 2;
+		this.TAG_STRUCT = 3;
+		this.TAG_BLOB = 4;
+		this.TAG_BOOLEAN = 5;
+		this.TYPE = "application/octet-stream";
+	}
 
 	pack(value) {
 		var object = new DataView(new ArrayBuffer(4));
@@ -75,7 +77,7 @@ class Serializer {
 	serialize(stream) {
 		var parts = [];
 		var size = 4;
-		for (i in stream) {
+		for (var i in stream) {
 			if (stream.hasOwnProperty(i)) {
 				var tag;
 				var head = Serializer.prefix(i);
@@ -289,3 +291,4 @@ class Serializer {
 		reader.readAsDataURL(blob);
 	}
 }
+var Serializer = new C_Serializer();

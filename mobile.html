@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=0', shrink-to-fit=no">
+    <meta name="HandheldFriendly" content="true" />
+    <link rel="stylesheet" href="resources/main-mobile.css" />
+    <script type='text/javascript' src="js/util.js"></script>
+    <script type='text/javascript' src="js/core.js"></script>
+    <script type='text/javascript' src="js/arm.js"></script>
+    <script type='text/javascript' src="js/thumb.js"></script>
+    <script type='text/javascript' src="js/mmu.js"></script>
+    <script type='text/javascript' src="js/io.js"></script>
+    <script type='text/javascript' src="js/audio.js"></script>
+    <script type='text/javascript' src="js/video.js"></script>
+    <script type='text/javascript' src="js/video/proxy.js"></script>
+    <script type='text/javascript' src="js/video/software.js"></script>
+    <script type='text/javascript' src="js/irq.js"></script>
+    <script type='text/javascript' src="js/keypad.js"></script>
+    <script type='text/javascript' src="js/sio.js"></script>
+    <script type='text/javascript' src="js/savedata.js"></script>
+    <script type='text/javascript' src="js/gpio.js"></script>
+    <script type='text/javascript' src="js/gba.js"></script>
+    <script type='text/javascript' src="resources/xhr.js"></script>
+    <script type='text/javascript' src="resources/biosbin.js"></script>
+</head>
+
+<body class="noselect">
+    <label id="status">READY</label>
+    <br>
+    <label>Sevar a rom:</label>
+    <select name="roms" id="rom-select">
+        <option value="">--Please choose an option--</option>
+    </select>
+
+    <button class="bigbutton" id="select" onclick="run();">
+        SELECT
+    </button>
+
+    <button class="bigbutton" id="select" onclick="save();">
+        SAVE
+    </button>
+
+    <button class="bigbutton" id="select" onclick="load();">
+        LOAD
+    </button>
+    <br>
+    <canvas id="screen" width="480" height="320" style='left:0px; top:0px;'></canvas>
+
+    <br>
+    <div id="virtual-pad">
+        <button style="height: 5%; width: 20%; position: absolute; left: 0%;" class="bigbutton" id="L">L</button>
+        <button style="height: 5%; width: 20%; position: absolute; right: 0%;" class="bigbutton" id="R">R</button>
+        <button style="height: 10%; width: 13%; position: absolute; left: 12%; bottom: 26%;" class="bigbutton"
+            id="UP">↑</button>
+        <button style="height: 10%; width: 13%; position: absolute; left: 24%; bottom: 16%;" class="bigbutton"
+            id="RIGHT">→</button>
+        <button style="height: 10%; width: 13%; position: absolute; left: 12%; bottom: 6%;" class="bigbutton"
+            id="DOWN">↓</button>
+        <button style="height: 10%; width: 13%; position: absolute; left: 0%;  bottom: 16%;" class="bigbutton"
+            id="LEFT">←</button>
+
+        <button style="height: 12%; width: 20%; position: absolute; right: 0%; bottom: 22%;" class="bigbutton"
+            id="A">A</button>
+        <button style="height: 12%; width: 20%; position: absolute; right: 20%; bottom: 10%;" class="bigbutton"
+            id="B">B</button>
+
+        <button style="height: 5%; width: 20%; position: absolute; left: 30%; bottom: 0%;" class="bigbutton"
+            id="START">START</button>
+        <button style="height: 5%; width: 20%; position: absolute; left: 60%; bottom: 0%;" class="bigbutton"
+            id="SELECT">SELECT</button>
+    </div>
+    <!-- for body-->
+    <script>
+        // TODO: Write private ip address.
+        var ip = 'https://192.168.219.100:3000/';
+
+        var selectElement = document.getElementById('rom-select');
+        // Get rom list from server
+        var xhr = new XMLHttpRequest();
+        xhr.responseType = 'text';
+
+        xhr.onload = function () {
+            if (this.status === 404) return;
+
+            var rom_list = xhr.responseText.split(',');
+            rom_list.forEach(function (rom_name) {
+                var new_option = document.createElement('option');
+                new_option.value = new_option.innerHTML = rom_name;
+                selectElement.appendChild(new_option);
+            })
+        };
+
+        xhr.open("GET", ip + "rom_list");
+        xhr.send();
+
+        selectElement.addEventListener("change", function () {
+            if (selectElement.value !== "") {
+                selected_rom_name = selectElement.value;
+            }
+        });
+
+        document.addEventListener('touchmove', function (event) { if (event.scale !== 1) { event.preventDefault(); } }, { passive: false });
+
+        var canVibrate = "vibrate" in navigator || "webkitVibrate" in navigator || "mozVibrate" in navigator || "msVibrate" in navigator;
+        if (canVibrate && !("vibrate" in navigator)) navigator.vibrate = navigator.vibrate || navigator.webkitVibrate || navigator.mozVibrate || navigator.msVibrate;
+    </script>
+    <!-- for ip -->
+    <script>
+        var my_ip = '';
+        function getIP(json) {
+            my_ip = json.ip;
+        }
+        function getRomNameWithIP(romName) {
+            //return romName + "_" + my_ip;
+            return romName;
+        }
+    </script>
+    <script src="https://api.ipify.org?format=jsonp&callback=getIP"></script>
+    <!-- for rom-->
+    <script>
+        var g_bMobile = true;
+        var gba;
+        var runCommands = [];
+        var selected_rom_name = "";
+
+        try {
+            gba = new GameBoyAdvance();
+            gba.keypad.eatInput = true;
+        } catch (exception) {
+            gba = null;
+        }
+
+        window.onload = function () {
+            if (gba) {
+                var canvas = document.getElementById('screen');
+                canvas.width = window.innerWidth;
+                canvas.height = canvas.width * 0.6666;
+
+                gba.setCanvas(canvas);
+
+                gba.logLevel = gba.LOG_ERROR;
+
+                gba.setBios(biosBin);
+            }
+        };
+
+        // Hack code for ios9 safari web audio issue
+        function resume() {
+            gba.audio.context.resume();
+            setTimeout(function () {
+                if (gba.audio.context.state === "running") {
+                    document.body.removeEventListener('touchend', resume, false);
+                    document.body.removeEventListener('keydown', resume, false);
+                }
+            }, 0);
+        }
+        document.body.addEventListener('touchend', resume, false);
+        document.body.addEventListener('keydown', resume, false);
+
+        function run() {
+            if (selected_rom_name === "") return updateStatus("NON SELECTED", 3000);
+
+            updateStatus("LOADING...");
+
+            var xhr = new XMLHttpRequest();
+            xhr.responseType = 'blob';
+
+            xhr.onload = function () {
+                if (this.status === 404) return;
+
+                gba.loadRomFromFile(this.response, function (result) {
+                    if (result) {
+                        for (var i = 0; i < runCommands.length; ++i) {
+                            runCommands[i]();
+                        }
+                        runCommands = [];
+
+                        gba.runStable();
+
+                        //resume();
+
+                        updateStatus("RUNNING");
+                    } else {
+                        setTimeout(function () {
+                            reset();
+                        }, 3000);
+
+                        updateStatus("FAILED");
+                    }
+                });
+            };
+
+            xhr.open("GET", ip + "roms/" + selected_rom_name);
+            xhr.send();
+        }
+
+        function reset() {
+            gba.pause();
+            gba.reset();
+
+            var context = gba.targetCanvas.getContext('2d');
+            context.clearRect(0, 0, 480, 320);
+            gba.video.drawCallback();
+
+            updateStatus("READY");
+        }
+
+        function save() {
+            if (selected_rom_name === "") return updateStatus("NON SELECTED", 3000);
+            // save stat
+            try {
+                console.log('1', Serializer);
+                gba.pause();
+                var data = Serializer.serialize(gba.freeze());
+                if (data !== null) {
+                    var xhr = new XMLHttpRequest();
+                    xhr.open("POST", ip + "save");
+
+                    xhr.setRequestHeader('Content-type', 'application/octet-stream');
+                    xhr.setRequestHeader('$rom_name', getRomNameWithIP(selected_rom_name));
+
+                    xhr.onload = function (oEvent) {
+                        updateStatus("SAVED", 3000);
+                        gba.runStable();
+                    };
+
+                    xhr.send(data);
+                } else {
+                    updateStatus("FAIL SAVE", 3000);
+                }
+            } catch (e) {
+                console.log(e);
+            }
+        }
+
+        function load() {
+            if (selected_rom_name === "") return updateStatus("NON SELECTED", 3000);
+
+            var xhr = new XMLHttpRequest();
+            xhr.responseType = 'blob';
+
+            xhr.onload = function () {
+                if (this.status === 404) return;
+
+                updateStatus("LOADED", 3000);
+                var data = this.response;
+
+                // save stat
+                Serializer.deserialize(data, function (out) {
+                    gba.pause();
+                    gba.defrost(out);
+                    gba.runStable();
+                });
+            };
+
+            xhr.onerror = function () {
+                updateStatus("FAIL LOAD", 3000);
+            }
+
+            xhr.open("GET", ip + "roms/save/" + getRomNameWithIP(selected_rom_name) + '.sav');
+            xhr.send(null);
+        }
+
+        function updateStatus(text, time = 0) {
+            var status = document.getElementById('status');
+            if (time == 0) {
+                status.textContent = text;
+            } else {
+                var prevStatus = status.textContent;
+                status.textContent = text;
+                setTimeout(function () {
+                    status.textContent = prevStatus;
+                }, time);
+            }
+        }
+
+    </script>
+</body>
+
+</html>
