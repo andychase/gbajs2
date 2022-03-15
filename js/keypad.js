@@ -39,15 +39,15 @@ class GameBoyAdvanceKeypad {
 
 		this.gamepads = [];
 
-		this.remappingKeyId = "";
+		this.remappingKeyId = '';
 	}
 	keyboardHandler(e) {
 		var toggle = 0;
 
 		// Check for a remapping
-		if (this.remappingKeyId != "") {
+		if (this.remappingKeyId != '') {
 			this.remapKeycode(this.remappingKeyId, e.keyCode);
-			this.remappingKeyId = "";
+			this.remappingKeyId = '';
 			e.preventDefault();
 			return; // Could do an else and wrap the rest of the function in it, but this is cleaner
 		}
@@ -88,7 +88,7 @@ class GameBoyAdvanceKeypad {
 		}
 
 		toggle = 1 << toggle;
-		if (e.type == "keydown") {
+		if (e.type == 'keydown') {
 			this.currentDown &= ~toggle;
 		} else {
 			this.currentDown |= toggle;
@@ -165,40 +165,40 @@ class GameBoyAdvanceKeypad {
 	}
 	registerHandlers() {
 		window.addEventListener(
-			"keydown",
+			'keydown',
 			this.keyboardHandler.bind(this),
 			true
 		);
-		window.addEventListener("keyup", this.keyboardHandler.bind(this), true);
+		window.addEventListener('keyup', this.keyboardHandler.bind(this), true);
 
 		window.addEventListener(
-			"gamepadconnected",
+			'gamepadconnected',
 			this.gamepadConnectHandler.bind(this),
 			true
 		);
 		window.addEventListener(
-			"mozgamepadconnected",
+			'mozgamepadconnected',
 			this.gamepadConnectHandler.bind(this),
 			true
 		);
 		window.addEventListener(
-			"webkitgamepadconnected",
+			'webkitgamepadconnected',
 			this.gamepadConnectHandler.bind(this),
 			true
 		);
 
 		window.addEventListener(
-			"gamepaddisconnected",
+			'gamepaddisconnected',
 			this.gamepadDisconnectHandler.bind(this),
 			true
 		);
 		window.addEventListener(
-			"mozgamepaddisconnected",
+			'mozgamepaddisconnected',
 			this.gamepadDisconnectHandler.bind(this),
 			true
 		);
 		window.addEventListener(
-			"webkitgamepaddisconnected",
+			'webkitgamepaddisconnected',
 			this.gamepadDisconnectHandler.bind(this),
 			true
 		);
@@ -206,7 +206,18 @@ class GameBoyAdvanceKeypad {
 	// keyId is ["A", "B", "SELECT", "START", "RIGHT", "LEFT", "UP", "DOWN", "R", "L"]
 	initKeycodeRemap(keyId) {
 		// Ensure valid keyId
-		var validKeyIds = ["A", "B", "SELECT", "START", "RIGHT", "LEFT", "UP", "DOWN", "R", "L"];
+		var validKeyIds = [
+			'A',
+			'B',
+			'SELECT',
+			'START',
+			'RIGHT',
+			'LEFT',
+			'UP',
+			'DOWN',
+			'R',
+			'L'
+		];
 		if (validKeyIds.indexOf(keyId) != -1) {
 			/* If remappingKeyId holds a value, the keydown event above will
 			wait for the next keypress to assign the keycode */
@@ -216,36 +227,73 @@ class GameBoyAdvanceKeypad {
 	// keyId is ["A", "B", "SELECT", "START", "RIGHT", "LEFT", "UP", "DOWN", "R", "L"]
 	remapKeycode(keyId, keycode) {
 		switch (keyId) {
-			case "A":
+			case 'A':
 				this.KEYCODE_A = keycode;
 				break;
-			case "B":
+			case 'B':
 				this.KEYCODE_B = keycode;
 				break;
-			case "SELECT":
+			case 'SELECT':
 				this.KEYCODE_SELECT = keycode;
 				break;
-			case "START":
+			case 'START':
 				this.KEYCODE_START = keycode;
 				break;
-			case "RIGHT":
+			case 'RIGHT':
 				this.KEYCODE_RIGHT = keycode;
 				break;
-			case "LEFT":
+			case 'LEFT':
 				this.KEYCODE_LEFT = keycode;
 				break;
-			case "UP":
+			case 'UP':
 				this.KEYCODE_UP = keycode;
 				break;
-			case "DOWN":
+			case 'DOWN':
 				this.KEYCODE_DOWN = keycode;
 				break;
-			case "R":
+			case 'R':
 				this.KEYCODE_R = keycode;
 				break;
-			case "L":
+			case 'L':
 				this.KEYCODE_L = keycode;
 				break;
 		}
+	}
+	//gets keycode for specified key id
+	getKeyCodeValue(keyId) {
+		var res = -1;
+		switch (keyId) {
+			case 'A':
+				res = this.KEYCODE_A;
+				break;
+			case 'B':
+				res = this.KEYCODE_B;
+				break;
+			case 'SELECT':
+				res = this.KEYCODE_SELECT;
+				break;
+			case 'START':
+				res = this.KEYCODE_START;
+				break;
+			case 'RIGHT':
+				res = this.KEYCODE_RIGHT;
+				break;
+			case 'LEFT':
+				res = this.KEYCODE_LEFT;
+				break;
+			case 'UP':
+				res = this.KEYCODE_UP;
+				break;
+			case 'DOWN':
+				res = this.KEYCODE_DOWN;
+				break;
+			case 'R':
+				res = this.KEYCODE_R;
+				break;
+			case 'L':
+				res = this.KEYCODE_L;
+				break;
+		}
+		return res;
 	}
 }

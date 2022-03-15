@@ -11,17 +11,19 @@ class MemoryAligned16 {
 	loadU8(offset) {
 		var index = offset >> 1;
 		if (offset & 1) {
-			return (this.buffer[index] & 0xFF00) >>> 8;
-		}
-		else {
-			return this.buffer[index] & 0x00FF;
+			return (this.buffer[index] & 0xff00) >>> 8;
+		} else {
+			return this.buffer[index] & 0x00ff;
 		}
 	}
 	loadU16(offset) {
 		return this.buffer[offset >> 1];
 	}
 	load32(offset) {
-		return this.buffer[(offset >> 1) & ~1] | (this.buffer[(offset >> 1) | 1] << 16);
+		return (
+			this.buffer[(offset >> 1) & ~1] |
+			(this.buffer[(offset >> 1) | 1] << 16)
+		);
 	}
 	store8(offset, value) {
 		var index = offset >> 1;
@@ -32,21 +34,21 @@ class MemoryAligned16 {
 	}
 	store32(offset, value) {
 		var index = offset >> 1;
-		this.store16(offset, this.buffer[index] = value & 0xFFFF);
-		this.store16(offset + 2, this.buffer[index + 1] = value >>> 16);
+		this.store16(offset, (this.buffer[index] = value & 0xffff));
+		this.store16(offset + 2, (this.buffer[index + 1] = value >>> 16));
 	}
 	insert(start, data) {
 		this.buffer.set(data, start);
 	}
-	invalidatePage(address) { }
-};
+	invalidatePage(address) {}
+}
 
 class GameBoyAdvanceVRAM extends MemoryAligned16 {
 	constructor(size) {
 		super(size);
 		this.vram = this.buffer;
 	}
-};
+}
 
 class GameBoyAdvanceOAM extends MemoryAligned16 {
 	constructor(size) {
@@ -67,12 +69,12 @@ class GameBoyAdvanceOAM extends MemoryAligned16 {
 		}
 	}
 	overwrite(memory) {
-		for (var i = 0; i < (this.buffer.byteLength >> 1); ++i) {
+		for (var i = 0; i < this.buffer.byteLength >> 1; ++i) {
 			this.store16(i << 1, memory[i]);
 		}
 	}
 	store16(offset, value) {
-		var index = (offset & 0x3F8) >> 3;
+		var index = (offset & 0x3f8) >> 3;
 		var obj = this.objs[index];
 		var scalerot = this.scalerot[index >> 2];
 		var layer = obj.priority;
@@ -81,7 +83,7 @@ class GameBoyAdvanceOAM extends MemoryAligned16 {
 		switch (offset & 0x00000006) {
 			case 0:
 				// Attribute 0
-				obj.y = value & 0x00FF;
+				obj.y = value & 0x00ff;
 				var wasScalerot = obj.scalerot;
 				obj.scalerot = value & 0x0100;
 				if (obj.scalerot) {
@@ -90,8 +92,7 @@ class GameBoyAdvanceOAM extends MemoryAligned16 {
 					obj.disable = 0;
 					obj.hflip = 0;
 					obj.vflip = 0;
-				}
-				else {
+				} else {
 					obj.doublesize = false;
 					obj.disable = value & 0x0200;
 					if (wasScalerot) {
@@ -99,37 +100,36 @@ class GameBoyAdvanceOAM extends MemoryAligned16 {
 						obj.vflip = obj.scalerotParam & 0x0010;
 					}
 				}
-				obj.mode = (value & 0x0C00) >> 6; // This lines up with the stencil format
+				obj.mode = (value & 0x0c00) >> 6; // This lines up with the stencil format
 				obj.mosaic = value & 0x1000;
 				obj.multipalette = value & 0x2000;
-				obj.shape = (value & 0xC000) >> 14;
+				obj.shape = (value & 0xc000) >> 14;
 
 				obj.recalcSize();
 				break;
 			case 2:
 				// Attribute 1
-				obj.x = value & 0x01FF;
+				obj.x = value & 0x01ff;
 				if (obj.scalerot) {
-					obj.scalerotParam = (value & 0x3E00) >> 9;
+					obj.scalerotParam = (value & 0x3e00) >> 9;
 					obj.scalerotOam = this.scalerot[obj.scalerotParam];
 					obj.hflip = 0;
 					obj.vflip = 0;
 					obj.drawScanline = obj.drawScanlineAffine;
-				}
-				else {
+				} else {
 					obj.hflip = value & 0x1000;
 					obj.vflip = value & 0x2000;
 					obj.drawScanline = obj.drawScanlineNormal;
 				}
-				obj.size = (value & 0xC000) >> 14;
+				obj.size = (value & 0xc000) >> 14;
 
 				obj.recalcSize();
 				break;
 			case 4:
 				// Attribute 2
-				obj.tileBase = value & 0x03FF;
-				obj.priority = (value & 0x0C00) >> 10;
-				obj.palette = (value & 0xF000) >> 8; // This is shifted up 4 to make pushPixel faster
+				obj.tileBase = value & 0x03ff;
+				obj.priority = (value & 0x0c00) >> 10;
+				obj.palette = (value & 0xf000) >> 8; // This is shifted up 4 to make pushPixel faster
 				break;
 			case 6:
 				// Scaling/rotation parameter
@@ -153,11 +153,7 @@ class GameBoyAdvanceOAM extends MemoryAligned16 {
 		MemoryAligned16.prototype.store16.call(this, offset, value);
 	}
 }
-;
-
 GameBoyAdvanceOAM.prototype = Object.create(MemoryAligned16.prototype);
-
-
 
 class GameBoyAdvancePalette {
 	constructor() {
@@ -179,10 +175,10 @@ class GameBoyAdvancePalette {
 		}
 	}
 	loadU8(offset) {
-		return (this.loadU16(offset) >> (8 * (offset & 1))) & 0xFF;
+		return (this.loadU16(offset) >> (8 * (offset & 1))) & 0xff;
 	}
 	loadU16(offset) {
-		return this.colors[(offset & 0x200) >> 9][(offset & 0x1FF) >> 1];
+		return this.colors[(offset & 0x200) >> 9][(offset & 0x1ff) >> 1];
 	}
 	load16(offset) {
 		return (this.loadU16(offset) << 16) >> 16;
@@ -192,36 +188,36 @@ class GameBoyAdvancePalette {
 	}
 	store16(offset, value) {
 		var type = (offset & 0x200) >> 9;
-		var index = (offset & 0x1FF) >> 1;
+		var index = (offset & 0x1ff) >> 1;
 		this.colors[type][index] = value;
 		this.adjustedColors[type][index] = this.adjustColor(value);
 	}
 	store32(offset, value) {
-		this.store16(offset, value & 0xFFFF);
+		this.store16(offset, value & 0xffff);
 		this.store16(offset + 2, value >> 16);
 	}
-	invalidatePage(address) { }
+	invalidatePage(address) {}
 	convert16To32(value, input) {
-		var r = (value & 0x001F) << 3;
-		var g = (value & 0x03E0) >> 2;
-		var b = (value & 0x7C00) >> 7;
+		var r = (value & 0x001f) << 3;
+		var g = (value & 0x03e0) >> 2;
+		var b = (value & 0x7c00) >> 7;
 
 		input[0] = r;
 		input[1] = g;
 		input[2] = b;
 	}
 	mix(aWeight, aColor, bWeight, bColor) {
-		var ar = (aColor & 0x001F);
-		var ag = (aColor & 0x03E0) >> 5;
-		var ab = (aColor & 0x7C00) >> 10;
+		var ar = aColor & 0x001f;
+		var ag = (aColor & 0x03e0) >> 5;
+		var ab = (aColor & 0x7c00) >> 10;
 
-		var br = (bColor & 0x001F);
-		var bg = (bColor & 0x03E0) >> 5;
-		var bb = (bColor & 0x7C00) >> 10;
+		var br = bColor & 0x001f;
+		var bg = (bColor & 0x03e0) >> 5;
+		var bb = (bColor & 0x7c00) >> 10;
 
-		var r = Math.min(aWeight * ar + bWeight * br, 0x1F);
-		var g = Math.min(aWeight * ag + bWeight * bg, 0x1F);
-		var b = Math.min(aWeight * ab + bWeight * bb, 0x1F);
+		var r = Math.min(aWeight * ar + bWeight * br, 0x1f);
+		var g = Math.min(aWeight * ag + bWeight * bg, 0x1f);
+		var b = Math.min(aWeight * ab + bWeight * bb, 0x1f);
 
 		return r | (g << 5) | (b << 10);
 	}
@@ -256,38 +252,32 @@ class GameBoyAdvancePalette {
 	resetPaletteLayers(layers) {
 		if (layers & 0x01) {
 			this.passthroughColors[0] = this.adjustedColors[0];
-		}
-		else {
+		} else {
 			this.passthroughColors[0] = this.colors[0];
 		}
 		if (layers & 0x02) {
 			this.passthroughColors[1] = this.adjustedColors[0];
-		}
-		else {
+		} else {
 			this.passthroughColors[1] = this.colors[0];
 		}
 		if (layers & 0x04) {
 			this.passthroughColors[2] = this.adjustedColors[0];
-		}
-		else {
+		} else {
 			this.passthroughColors[2] = this.colors[0];
 		}
 		if (layers & 0x08) {
 			this.passthroughColors[3] = this.adjustedColors[0];
-		}
-		else {
+		} else {
 			this.passthroughColors[3] = this.colors[0];
 		}
 		if (layers & 0x10) {
 			this.passthroughColors[4] = this.adjustedColors[1];
-		}
-		else {
+		} else {
 			this.passthroughColors[4] = this.colors[1];
 		}
 		if (layers & 0x20) {
 			this.passthroughColors[5] = this.adjustedColors[0];
-		}
-		else {
+		} else {
 			this.passthroughColors[5] = this.colors[0];
 		}
 	}
@@ -309,24 +299,24 @@ class GameBoyAdvancePalette {
 		return this.passthroughColors[layer][index];
 	}
 	adjustColorDark(color) {
-		var r = (color & 0x001F);
-		var g = (color & 0x03E0) >> 5;
-		var b = (color & 0x7C00) >> 10;
+		var r = color & 0x001f;
+		var g = (color & 0x03e0) >> 5;
+		var b = (color & 0x7c00) >> 10;
 
-		r = r - (r * this.blendY);
-		g = g - (g * this.blendY);
-		b = b - (b * this.blendY);
+		r = r - r * this.blendY;
+		g = g - g * this.blendY;
+		b = b - b * this.blendY;
 
 		return r | (g << 5) | (b << 10);
 	}
 	adjustColorBright(color) {
-		var r = (color & 0x001F);
-		var g = (color & 0x03E0) >> 5;
-		var b = (color & 0x7C00) >> 10;
+		var r = color & 0x001f;
+		var g = (color & 0x03e0) >> 5;
+		var b = (color & 0x7c00) >> 10;
 
-		r = r + ((31 - r) * this.blendY);
-		g = g + ((31 - g) * this.blendY);
-		b = b + ((31 - b) * this.blendY);
+		r = r + (31 - r) * this.blendY;
+		g = g + (31 - g) * this.blendY;
+		b = b + (31 - b) * this.blendY;
 
 		return r | (g << 5) | (b << 10);
 	}
@@ -338,7 +328,8 @@ class GameBoyAdvancePalette {
 	}
 }
 
-GameBoyAdvancePalette.prototype.adjustColor = GameBoyAdvancePalette.prototype.adjustColorBright;
+GameBoyAdvancePalette.prototype.adjustColor =
+	GameBoyAdvancePalette.prototype.adjustColorBright;
 
 class GameBoyAdvanceOBJ {
 	constructor(oam, index) {
@@ -371,7 +362,8 @@ class GameBoyAdvanceOBJ {
 		var x;
 		var underflow;
 		var offset;
-		var mask = this.mode | video.target2[video.LAYER_OBJ] | (this.priority << 1);
+		var mask =
+			this.mode | video.target2[video.LAYER_OBJ] | (this.priority << 1);
 		if (this.mode == 0x10) {
 			mask |= video.TARGET1_MASK;
 		}
@@ -384,16 +376,14 @@ class GameBoyAdvanceOBJ {
 			if (this.x < start) {
 				underflow = start - this.x;
 				offset = start;
-			}
-			else {
+			} else {
 				underflow = 0;
 				offset = this.x;
 			}
 			if (end < this.cachedWidth + this.x) {
 				totalWidth = end - this.x;
 			}
-		}
-		else {
+		} else {
 			underflow = start + 512 - this.x;
 			offset = start;
 			if (end < this.cachedWidth - underflow) {
@@ -405,8 +395,7 @@ class GameBoyAdvanceOBJ {
 		var localY;
 		if (!this.vflip) {
 			localY = y - yOff;
-		}
-		else {
+		} else {
 			localY = this.cachedHeight - y + yOff - 1;
 		}
 		var localYLo = localY & 0x7;
@@ -416,44 +405,69 @@ class GameBoyAdvanceOBJ {
 		var paletteShift = this.multipalette ? 1 : 0;
 
 		if (video.objCharacterMapping) {
-			tileOffset = ((localY & 0x01F8) * this.cachedWidth) >> 6;
-		}
-		else {
-			tileOffset = (localY & 0x01F8) << (2 - paletteShift);
+			tileOffset = ((localY & 0x01f8) * this.cachedWidth) >> 6;
+		} else {
+			tileOffset = (localY & 0x01f8) << (2 - paletteShift);
 		}
 
 		if (this.mosaic) {
-			mosaicX = video.objMosaicX - 1 - (video.objMosaicX + offset - 1) % video.objMosaicX;
+			mosaicX =
+				video.objMosaicX -
+				1 -
+				((video.objMosaicX + offset - 1) % video.objMosaicX);
 			offset += mosaicX;
 			underflow += mosaicX;
 		}
 		if (!this.hflip) {
 			localX = underflow;
-		}
-		else {
+		} else {
 			localX = this.cachedWidth - underflow - 1;
 		}
 
-		var tileRow = video.accessTile(this.TILE_OFFSET + (x & 0x4) * paletteShift, this.tileBase + (tileOffset << paletteShift) + ((localX & 0x01F8) >> (3 - paletteShift)), localYLo << paletteShift);
+		var tileRow = video.accessTile(
+			this.TILE_OFFSET + (x & 0x4) * paletteShift,
+			this.tileBase +
+				(tileOffset << paletteShift) +
+				((localX & 0x01f8) >> (3 - paletteShift)),
+			localYLo << paletteShift
+		);
 		for (x = underflow; x < totalWidth; ++x) {
 			mosaicX = this.mosaic ? offset % video.objMosaicX : 0;
 			if (!this.hflip) {
 				localX = x - mosaicX;
-			}
-			else {
+			} else {
 				localX = this.cachedWidth - (x - mosaicX) - 1;
 			}
 			if (!paletteShift) {
 				if (!(x & 0x7) || (this.mosaic && !mosaicX)) {
-					tileRow = video.accessTile(this.TILE_OFFSET, this.tileBase + tileOffset + (localX >> 3), localYLo);
+					tileRow = video.accessTile(
+						this.TILE_OFFSET,
+						this.tileBase + tileOffset + (localX >> 3),
+						localYLo
+					);
 				}
-			}
-			else {
+			} else {
 				if (!(x & 0x3) || (this.mosaic && !mosaicX)) {
-					tileRow = video.accessTile(this.TILE_OFFSET + (localX & 0x4), this.tileBase + (tileOffset << 1) + ((localX & 0x01F8) >> 2), localYLo << 1);
+					tileRow = video.accessTile(
+						this.TILE_OFFSET + (localX & 0x4),
+						this.tileBase +
+							(tileOffset << 1) +
+							((localX & 0x01f8) >> 2),
+						localYLo << 1
+					);
 				}
 			}
-			this.pushPixel(video.LAYER_OBJ, this, video, tileRow, localX & 0x7, offset, backing, mask, false);
+			this.pushPixel(
+				video.LAYER_OBJ,
+				this,
+				video,
+				tileRow,
+				localX & 0x7,
+				offset,
+				backing,
+				mask,
+				false
+			);
 			offset++;
 		}
 	}
@@ -462,7 +476,8 @@ class GameBoyAdvanceOBJ {
 		var x;
 		var underflow;
 		var offset;
-		var mask = this.mode | video.target2[video.LAYER_OBJ] | (this.priority << 1);
+		var mask =
+			this.mode | video.target2[video.LAYER_OBJ] | (this.priority << 1);
 		if (this.mode == 0x10) {
 			mask |= video.TARGET1_MASK;
 		}
@@ -487,16 +502,14 @@ class GameBoyAdvanceOBJ {
 			if (this.x < start) {
 				underflow = start - this.x;
 				offset = start;
-			}
-			else {
+			} else {
 				underflow = 0;
 				offset = this.x;
 			}
 			if (end < drawWidth + this.x) {
 				drawWidth = end - this.x;
 			}
-		}
-		else {
+		} else {
 			underflow = start + 512 - this.x;
 			offset = start;
 			if (end < drawWidth - underflow) {
@@ -505,26 +518,56 @@ class GameBoyAdvanceOBJ {
 		}
 
 		for (x = underflow; x < drawWidth; ++x) {
-			localX = this.scalerotOam.a * (x - (totalWidth >> 1)) + this.scalerotOam.b * (yDiff - (totalHeight >> 1)) + (this.cachedWidth >> 1);
-			localY = this.scalerotOam.c * (x - (totalWidth >> 1)) + this.scalerotOam.d * (yDiff - (totalHeight >> 1)) + (this.cachedHeight >> 1);
+			localX =
+				this.scalerotOam.a * (x - (totalWidth >> 1)) +
+				this.scalerotOam.b * (yDiff - (totalHeight >> 1)) +
+				(this.cachedWidth >> 1);
+			localY =
+				this.scalerotOam.c * (x - (totalWidth >> 1)) +
+				this.scalerotOam.d * (yDiff - (totalHeight >> 1)) +
+				(this.cachedHeight >> 1);
 			if (this.mosaic) {
-				localX -= (x % video.objMosaicX) * this.scalerotOam.a + (y % video.objMosaicY) * this.scalerotOam.b;
-				localY -= (x % video.objMosaicX) * this.scalerotOam.c + (y % video.objMosaicY) * this.scalerotOam.d;
+				localX -=
+					(x % video.objMosaicX) * this.scalerotOam.a +
+					(y % video.objMosaicY) * this.scalerotOam.b;
+				localY -=
+					(x % video.objMosaicX) * this.scalerotOam.c +
+					(y % video.objMosaicY) * this.scalerotOam.d;
 			}
 
-			if (localX < 0 || localX >= this.cachedWidth || localY < 0 || localY >= this.cachedHeight) {
+			if (
+				localX < 0 ||
+				localX >= this.cachedWidth ||
+				localY < 0 ||
+				localY >= this.cachedHeight
+			) {
 				offset++;
 				continue;
 			}
 
 			if (video.objCharacterMapping) {
-				tileOffset = ((localY & 0x01F8) * this.cachedWidth) >> 6;
+				tileOffset = ((localY & 0x01f8) * this.cachedWidth) >> 6;
+			} else {
+				tileOffset = (localY & 0x01f8) << (2 - paletteShift);
 			}
-			else {
-				tileOffset = (localY & 0x01F8) << (2 - paletteShift);
-			}
-			var tileRow = video.accessTile(this.TILE_OFFSET + (localX & 0x4) * paletteShift, this.tileBase + (tileOffset << paletteShift) + ((localX & 0x01F8) >> (3 - paletteShift)), (localY & 0x7) << paletteShift);
-			this.pushPixel(video.LAYER_OBJ, this, video, tileRow, localX & 0x7, offset, backing, mask, false);
+			var tileRow = video.accessTile(
+				this.TILE_OFFSET + (localX & 0x4) * paletteShift,
+				this.tileBase +
+					(tileOffset << paletteShift) +
+					((localX & 0x01f8) >> (3 - paletteShift)),
+				(localY & 0x7) << paletteShift
+			);
+			this.pushPixel(
+				video.LAYER_OBJ,
+				this,
+				video,
+				tileRow,
+				localX & 0x7,
+				offset,
+				backing,
+				mask,
+				false
+			);
 			offset++;
 		}
 	}
@@ -608,29 +651,29 @@ class GameBoyAdvanceOBJLayer {
 			if ((obj.mode & this.video.OBJWIN_MASK) != this.objwin) {
 				continue;
 			}
-			if (!(obj.mode & this.video.OBJWIN_MASK) && this.priority != obj.priority) {
+			if (
+				!(obj.mode & this.video.OBJWIN_MASK) &&
+				this.priority != obj.priority
+			) {
 				continue;
 			}
 			if (obj.y < this.video.VERTICAL_PIXELS) {
 				wrappedY = obj.y;
-			}
-			else {
+			} else {
 				wrappedY = obj.y - 256;
 			}
 			var totalHeight;
 			if (!obj.scalerot) {
 				totalHeight = obj.cachedHeight;
-			}
-			else {
+			} else {
 				totalHeight = obj.cachedHeight << obj.doublesize;
 			}
 			if (!obj.mosaic) {
 				mosaicY = y;
+			} else {
+				mosaicY = y - (y % this.video.objMosaicY);
 			}
-			else {
-				mosaicY = y - y % this.video.objMosaicY;
-			}
-			if (wrappedY <= y && (wrappedY + totalHeight) > y) {
+			if (wrappedY <= y && wrappedY + totalHeight > y) {
 				obj.drawScanline(backing, mosaicY, wrappedY, start, end);
 			}
 		}
@@ -639,10 +682,6 @@ class GameBoyAdvanceOBJLayer {
 		return a.index - b.index;
 	}
 }
-;
-
-
-
 class GameBoyAdvanceSoftwareRenderer {
 	constructor() {
 		this.LAYER_BG0 = 0;
@@ -674,11 +713,18 @@ class GameBoyAdvanceSoftwareRenderer {
 				// TODO: interactions with blend modes and OBJWIN
 				for (var x = start; x < end; ++x) {
 					if (!(backing.stencil[x] & video.WRITTEN_MASK)) {
-						backing.color[x] = video.palette.accessColor(this.index, 0);
+						backing.color[x] = video.palette.accessColor(
+							this.index,
+							0
+						);
 						backing.stencil[x] = video.WRITTEN_MASK;
-					}
-					else if (backing.stencil[x] & video.TARGET1_MASK) {
-						backing.color[x] = video.palette.mix(video.blendB, video.palette.accessColor(this.index, 0), video.blendA, backing.color[x]);
+					} else if (backing.stencil[x] & video.TARGET1_MASK) {
+						backing.color[x] = video.palette.mix(
+							video.blendB,
+							video.palette.accessColor(this.index, 0),
+							video.blendA,
+							backing.color[x]
+						);
 						backing.stencil[x] = video.WRITTEN_MASK;
 					}
 				}
@@ -735,7 +781,7 @@ class GameBoyAdvanceSoftwareRenderer {
 				enabled: [false, false, false, false, false, true],
 				special: 0
 			});
-		};
+		}
 
 		// BLDCNT
 		this.target1 = new Array(5);
@@ -852,19 +898,21 @@ class GameBoyAdvanceSoftwareRenderer {
 			this.oam.video = this;
 		}
 	}
-	freeze() {
-	}
-	defrost(frost) {
-	}
+	freeze() {}
+	defrost(frost) {}
 	setBacking(backing) {
 		this.pixelData = backing;
 
 		// Clear backing first
-		for (var offset = 0; offset < this.HORIZONTAL_PIXELS * this.VERTICAL_PIXELS * 4;) {
-			this.pixelData.data[offset++] = 0xFF;
-			this.pixelData.data[offset++] = 0xFF;
-			this.pixelData.data[offset++] = 0xFF;
-			this.pixelData.data[offset++] = 0xFF;
+		for (
+			var offset = 0;
+			offset < this.HORIZONTAL_PIXELS * this.VERTICAL_PIXELS * 4;
+
+		) {
+			this.pixelData.data[offset++] = 0xff;
+			this.pixelData.data[offset++] = 0xff;
+			this.pixelData.data[offset++] = 0xff;
+			this.pixelData.data[offset++] = 0xff;
 		}
 	}
 	writeDisplayControl(value) {
@@ -901,23 +949,23 @@ class GameBoyAdvanceSoftwareRenderer {
 	writeBackgroundControl(bg, value) {
 		var bgData = this.bg[bg];
 		bgData.priority = value & 0x0003;
-		bgData.charBase = (value & 0x000C) << 12;
+		bgData.charBase = (value & 0x000c) << 12;
 		bgData.mosaic = value & 0x0040;
 		bgData.multipalette &= ~0x0080;
 		if (bg < 2 || this.backgroundMode == 0) {
 			bgData.multipalette |= value & 0x0080;
 		}
-		bgData.screenBase = (value & 0x1F00) << 3;
+		bgData.screenBase = (value & 0x1f00) << 3;
 		bgData.overflow = value & 0x2000;
-		bgData.size = (value & 0xC000) >> 14;
+		bgData.size = (value & 0xc000) >> 14;
 
 		this.drawLayers.sort(this.layerComparator);
 	}
 	writeBackgroundHOffset(bg, value) {
-		this.bg[bg].x = value & 0x1FF;
+		this.bg[bg].x = value & 0x1ff;
 	}
 	writeBackgroundVOffset(bg, value) {
-		this.bg[bg].y = value & 0x1FF;
+		this.bg[bg].y = value & 0x1ff;
 	}
 	writeBackgroundRefX(bg, value) {
 		this.bg[bg].refx = (value << 4) / 0x1000;
@@ -940,29 +988,29 @@ class GameBoyAdvanceSoftwareRenderer {
 		this.bg[bg].dmy = (value << 16) / 0x1000000;
 	}
 	writeWin0H(value) {
-		this.win0Left = (value & 0xFF00) >> 8;
-		this.win0Right = Math.min(this.HORIZONTAL_PIXELS, value & 0x00FF);
+		this.win0Left = (value & 0xff00) >> 8;
+		this.win0Right = Math.min(this.HORIZONTAL_PIXELS, value & 0x00ff);
 		if (this.win0Left > this.win0Right) {
 			this.win0Right = this.HORIZONTAL_PIXELS;
 		}
 	}
 	writeWin1H(value) {
-		this.win1Left = (value & 0xFF00) >> 8;
-		this.win1Right = Math.min(this.HORIZONTAL_PIXELS, value & 0x00FF);
+		this.win1Left = (value & 0xff00) >> 8;
+		this.win1Right = Math.min(this.HORIZONTAL_PIXELS, value & 0x00ff);
 		if (this.win1Left > this.win1Right) {
 			this.win1Right = this.HORIZONTAL_PIXELS;
 		}
 	}
 	writeWin0V(value) {
-		this.win0Top = (value & 0xFF00) >> 8;
-		this.win0Bottom = Math.min(this.VERTICAL_PIXELS, value & 0x00FF);
+		this.win0Top = (value & 0xff00) >> 8;
+		this.win0Bottom = Math.min(this.VERTICAL_PIXELS, value & 0x00ff);
 		if (this.win0Top > this.win0Bottom) {
 			this.win0Bottom = this.VERTICAL_PIXELS;
 		}
 	}
 	writeWin1V(value) {
-		this.win1Top = (value & 0xFF00) >> 8;
-		this.win1Bottom = Math.min(this.VERTICAL_PIXELS, value & 0x00FF);
+		this.win1Top = (value & 0xff00) >> 8;
+		this.win1Bottom = Math.min(this.VERTICAL_PIXELS, value & 0x00ff);
 		if (this.win1Top > this.win1Bottom) {
 			this.win1Bottom = this.VERTICAL_PIXELS;
 		}
@@ -997,7 +1045,7 @@ class GameBoyAdvanceSoftwareRenderer {
 		this.target2[3] = !!(value & 0x0800) * this.TARGET2_MASK;
 		this.target2[4] = !!(value & 0x1000) * this.TARGET2_MASK;
 		this.target2[5] = !!(value & 0x2000) * this.TARGET2_MASK;
-		this.blendMode = (value & 0x00C0) >> 6;
+		this.blendMode = (value & 0x00c0) >> 6;
 
 		switch (this.blendMode) {
 			case 1:
@@ -1009,11 +1057,11 @@ class GameBoyAdvanceSoftwareRenderer {
 				break;
 			case 2:
 				// Brighter
-				this.palette.makeBrightPalettes(value & 0x3F);
+				this.palette.makeBrightPalettes(value & 0x3f);
 				break;
 			case 3:
 				// Darker
-				this.palette.makeDarkPalettes(value & 0x3F);
+				this.palette.makeDarkPalettes(value & 0x3f);
 				break;
 		}
 	}
@@ -1035,30 +1083,29 @@ class GameBoyAdvanceSoftwareRenderer {
 					this.palette.makeSpecialPalette(layer);
 					break;
 			}
-		}
-		else {
+		} else {
 			this.palette.makeNormalPalette(layer);
 		}
 	}
 	writeBlendAlpha(value) {
-		this.blendA = (value & 0x001F) / 16;
+		this.blendA = (value & 0x001f) / 16;
 		if (this.blendA > 1) {
 			this.blendA = 1;
 		}
-		this.blendB = ((value & 0x1F00) >> 8) / 16;
+		this.blendB = ((value & 0x1f00) >> 8) / 16;
 		if (this.blendB > 1) {
 			this.blendB = 1;
 		}
 	}
 	writeBlendY(value) {
 		this.blendY = value;
-		this.palette.setBlendY(value >= 16 ? 1 : (value / 16));
+		this.palette.setBlendY(value >= 16 ? 1 : value / 16);
 	}
 	writeMosaic(value) {
-		this.bgMosaicX = (value & 0xF) + 1;
-		this.bgMosaicY = ((value >> 4) & 0xF) + 1;
-		this.objMosaicX = ((value >> 8) & 0xF) + 1;
-		this.objMosaicY = ((value >> 12) & 0xF) + 1;
+		this.bgMosaicX = (value & 0xf) + 1;
+		this.bgMosaicY = ((value >> 4) & 0xf) + 1;
+		this.objMosaicX = ((value >> 8) & 0xf) + 1;
+		this.objMosaicY = ((value >> 12) & 0xf) + 1;
 	}
 	resetLayers() {
 		if (this.backgroundMode > 1) {
@@ -1068,12 +1115,11 @@ class GameBoyAdvanceSoftwareRenderer {
 		if (this.bg[2].enabled) {
 			this.bg[2].drawScanline = this.bgModes[this.backgroundMode];
 		}
-		if ((this.backgroundMode == 0 || this.backgroundMode == 2)) {
+		if (this.backgroundMode == 0 || this.backgroundMode == 2) {
 			if (this.bg[3].enabled) {
 				this.bg[3].drawScanline = this.bgModes[this.backgroundMode];
 			}
-		}
-		else {
+		} else {
 			this.bg[3].enabled = false;
 		}
 		this.drawLayers.sort(this.layerComparator);
@@ -1083,8 +1129,7 @@ class GameBoyAdvanceSoftwareRenderer {
 		if (!diff) {
 			if (a.bg && !b.bg) {
 				return -1;
-			}
-			else if (!a.bg && b.bg) {
+			} else if (!a.bg && b.bg) {
 				return 1;
 			}
 
@@ -1093,17 +1138,17 @@ class GameBoyAdvanceSoftwareRenderer {
 		return diff;
 	}
 	accessMapMode0(base, size, x, yBase, out) {
-		var offset = base + ((x >> 2) & 0x3E) + yBase;
+		var offset = base + ((x >> 2) & 0x3e) + yBase;
 
 		if (size & 1) {
 			offset += (x & 0x100) << 3;
 		}
 
 		var mem = this.vram.loadU16(offset);
-		out.tile = mem & 0x03FF;
+		out.tile = mem & 0x03ff;
 		out.hflip = mem & 0x0400;
 		out.vflip = mem & 0x0800;
-		out.palette = (mem & 0xF000) >> 8; // This is shifted up 4 to make pushPixel faster
+		out.palette = (mem & 0xf000) >> 8; // This is shifted up 4 to make pushPixel faster
 	}
 	accessMapMode1(base, size, x, yBase, out) {
 		var offset = base + (x >> 3) + yBase;
@@ -1120,16 +1165,14 @@ class GameBoyAdvanceSoftwareRenderer {
 		var index;
 		if (!raw) {
 			if (this.multipalette) {
-				index = (row >> (x << 3)) & 0xFF;
-			}
-			else {
-				index = (row >> (x << 2)) & 0xF;
+				index = (row >> (x << 3)) & 0xff;
+			} else {
+				index = (row >> (x << 2)) & 0xf;
 			}
 			// Index 0 is transparent
 			if (!index) {
 				return;
-			}
-			else if (!this.multipalette) {
+			} else if (!this.multipalette) {
 				index |= map.palette;
 			}
 		}
@@ -1140,28 +1183,33 @@ class GameBoyAdvanceSoftwareRenderer {
 		if (video.objwinActive) {
 			if (oldStencil & video.OBJWIN_MASK) {
 				if (video.windows[3].enabled[layer]) {
-					video.setBlendEnabled(layer, video.windows[3].special && video.target1[layer], blend);
+					video.setBlendEnabled(
+						layer,
+						video.windows[3].special && video.target1[layer],
+						blend
+					);
 					if (video.windows[3].special && video.alphaEnabled) {
 						mask |= video.target1[layer];
 					}
 					stencil |= video.OBJWIN_MASK;
-				}
-				else {
+				} else {
 					return;
 				}
-			}
-			else if (video.windows[2].enabled[layer]) {
-				video.setBlendEnabled(layer, video.windows[2].special && video.target1[layer], blend);
+			} else if (video.windows[2].enabled[layer]) {
+				video.setBlendEnabled(
+					layer,
+					video.windows[2].special && video.target1[layer],
+					blend
+				);
 				if (video.windows[2].special && video.alphaEnabled) {
 					mask |= video.target1[layer];
 				}
-			}
-			else {
+			} else {
 				return;
 			}
 		}
 
-		if ((mask & video.TARGET1_MASK) && (oldStencil & video.TARGET2_MASK)) {
+		if (mask & video.TARGET1_MASK && oldStencil & video.TARGET2_MASK) {
 			video.setBlendEnabled(layer, true, 1);
 		}
 
@@ -1170,35 +1218,48 @@ class GameBoyAdvanceSoftwareRenderer {
 		if (mask & video.TARGET1_MASK) {
 			video.setBlendEnabled(layer, !!blend, blend);
 		}
-		var highPriority = (mask & video.PRIORITY_MASK) < (oldStencil & video.PRIORITY_MASK);
+		var highPriority =
+			(mask & video.PRIORITY_MASK) < (oldStencil & video.PRIORITY_MASK);
 		// Backgrounds can draw over each other, too.
-		if ((mask & video.PRIORITY_MASK) == (oldStencil & video.PRIORITY_MASK)) {
+		if (
+			(mask & video.PRIORITY_MASK) ==
+			(oldStencil & video.PRIORITY_MASK)
+		) {
 			highPriority = mask & video.BACKGROUND_MASK;
 		}
 
 		if (!(oldStencil & video.WRITTEN_MASK)) {
 			// Nothing here yet, just continue
 			stencil |= mask;
-		}
-		else if (highPriority) {
+		} else if (highPriority) {
 			// We are higher priority
 			if (mask & video.TARGET1_MASK && oldStencil & video.TARGET2_MASK) {
-				pixel = video.palette.mix(video.blendA, pixel, video.blendB, backing.color[offset]);
+				pixel = video.palette.mix(
+					video.blendA,
+					pixel,
+					video.blendB,
+					backing.color[offset]
+				);
 			}
 			// We just drew over something, so it doesn't make sense for us to be a TARGET1 anymore...
 			stencil |= mask & ~video.TARGET1_MASK;
-		}
-		else if ((mask & video.PRIORITY_MASK) > (oldStencil & video.PRIORITY_MASK)) {
+		} else if (
+			(mask & video.PRIORITY_MASK) >
+			(oldStencil & video.PRIORITY_MASK)
+		) {
 			// We're below another layer, but might be the blend target for it
 			stencil = oldStencil & ~(video.TARGET1_MASK | video.TARGET2_MASK);
 			if (mask & video.TARGET2_MASK && oldStencil & video.TARGET1_MASK) {
-				pixel = video.palette.mix(video.blendB, pixel, video.blendA, backing.color[offset]);
-			}
-			else {
+				pixel = video.palette.mix(
+					video.blendB,
+					pixel,
+					video.blendA,
+					backing.color[offset]
+				);
+			} else {
 				return;
 			}
-		}
-		else {
+		} else {
 			return;
 		}
 
@@ -1215,7 +1276,7 @@ class GameBoyAdvanceSoftwareRenderer {
 	}
 	drawScanlineBlank(backing) {
 		for (var x = 0; x < this.HORIZONTAL_PIXELS; ++x) {
-			backing.color[x] = 0xFFFF;
+			backing.color[x] = 0xffff;
 			backing.stencil[x] = 0;
 		}
 	}
@@ -1245,29 +1306,38 @@ class GameBoyAdvanceSoftwareRenderer {
 		var index = bg.index;
 		var map = video.sharedMap;
 		var paletteShift = bg.multipalette ? 1 : 0;
-		var mask = video.target2[index] | (bg.priority << 1) | video.BACKGROUND_MASK;
+		var mask =
+			video.target2[index] | (bg.priority << 1) | video.BACKGROUND_MASK;
 		if (video.blendMode == 1 && video.alphaEnabled) {
 			mask |= video.target1[index];
 		}
 
-		var yBase = (localY << 3) & 0x7C0;
+		var yBase = (localY << 3) & 0x7c0;
 		if (size == 2) {
 			yBase += (localY << 3) & 0x800;
-		}
-		else if (size == 3) {
+		} else if (size == 3) {
 			yBase += (localY << 4) & 0x1000;
 		}
 
 		var xMask;
 		if (size & 1) {
-			xMask = 0x1FF;
-		}
-		else {
-			xMask = 0xFF;
+			xMask = 0x1ff;
+		} else {
+			xMask = 0xff;
 		}
 
-		video.accessMapMode0(screenBase, size, (start + xOff) & xMask, yBase, map);
-		var tileRow = video.accessTile(charBase, map.tile << paletteShift, (!map.vflip ? localYLo : 7 - localYLo) << paletteShift);
+		video.accessMapMode0(
+			screenBase,
+			size,
+			(start + xOff) & xMask,
+			yBase,
+			map
+		);
+		var tileRow = video.accessTile(
+			charBase,
+			map.tile << paletteShift,
+			(!map.vflip ? localYLo : 7 - localYLo) << paletteShift
+		);
 		for (x = start; x < end; ++x) {
 			localX = (x + xOff) & xMask;
 			mosaicX = this.mosaic ? offset % video.bgMosaicX : 0;
@@ -1276,20 +1346,27 @@ class GameBoyAdvanceSoftwareRenderer {
 			if (!paletteShift) {
 				if (!localXLo || (this.mosaic && !mosaicX)) {
 					video.accessMapMode0(screenBase, size, localX, yBase, map);
-					tileRow = video.accessTile(charBase, map.tile, !map.vflip ? localYLo : 7 - localYLo);
+					tileRow = video.accessTile(
+						charBase,
+						map.tile,
+						!map.vflip ? localYLo : 7 - localYLo
+					);
 					if (!tileRow && !localXLo) {
 						x += 7;
 						offset += 8;
 						continue;
 					}
 				}
-			}
-			else {
+			} else {
 				if (!localXLo || (this.mosaic && !mosaicX)) {
 					video.accessMapMode0(screenBase, size, localX, yBase, map);
 				}
 				if (!(localXLo & 0x3) || (this.mosaic && !mosaicX)) {
-					tileRow = video.accessTile(charBase + (!!(localX & 0x4) == !map.hflip ? 4 : 0), map.tile << 1, (!map.vflip ? localYLo : 7 - localYLo) << 1);
+					tileRow = video.accessTile(
+						charBase + (!!(localX & 0x4) == !map.hflip ? 4 : 0),
+						map.tile << 1,
+						(!map.vflip ? localYLo : 7 - localYLo) << 1
+					);
 					if (!tileRow && !(localXLo & 0x3)) {
 						x += 3;
 						offset += 4;
@@ -1300,7 +1377,17 @@ class GameBoyAdvanceSoftwareRenderer {
 			if (map.hflip) {
 				localXLo = 7 - localXLo;
 			}
-			bg.pushPixel(index, map, video, tileRow, localXLo, offset, backing, mask, false);
+			bg.pushPixel(
+				index,
+				map,
+				video,
+				tileRow,
+				localXLo,
+				offset,
+				backing,
+				mask,
+				false
+			);
 			offset++;
 		}
 	}
@@ -1318,7 +1405,8 @@ class GameBoyAdvanceSoftwareRenderer {
 		var index = bg.index;
 		var map = video.sharedMap;
 		var color;
-		var mask = video.target2[index] | (bg.priority << 1) | video.BACKGROUND_MASK;
+		var mask =
+			video.target2[index] | (bg.priority << 1) | video.BACKGROUND_MASK;
 		if (video.blendMode == 1 && video.alphaEnabled) {
 			mask |= video.target1[index];
 		}
@@ -1329,8 +1417,12 @@ class GameBoyAdvanceSoftwareRenderer {
 			localX = bg.dx * x + bg.sx;
 			localY = bg.dy * x + bg.sy;
 			if (this.mosaic) {
-				localX -= (x % video.bgMosaicX) * bg.dx + (y % video.bgMosaicY) * bg.dmx;
-				localY -= (x % video.bgMosaicX) * bg.dy + (y % video.bgMosaicY) * bg.dmy;
+				localX -=
+					(x % video.bgMosaicX) * bg.dx +
+					(y % video.bgMosaicY) * bg.dmx;
+				localY -=
+					(x % video.bgMosaicX) * bg.dy +
+					(y % video.bgMosaicY) * bg.dmy;
 			}
 			if (bg.overflow) {
 				localX &= sizeAdjusted - 1;
@@ -1341,15 +1433,34 @@ class GameBoyAdvanceSoftwareRenderer {
 				if (localY < 0) {
 					localY += sizeAdjusted;
 				}
-			}
-			else if (localX < 0 || localY < 0 || localX >= sizeAdjusted || localY >= sizeAdjusted) {
+			} else if (
+				localX < 0 ||
+				localY < 0 ||
+				localX >= sizeAdjusted ||
+				localY >= sizeAdjusted
+			) {
 				offset++;
 				continue;
 			}
-			yBase = ((localY << 1) & 0x7F0) << size;
+			yBase = ((localY << 1) & 0x7f0) << size;
 			video.accessMapMode1(screenBase, size, localX, yBase, map);
-			color = this.vram.loadU8(charBase + (map.tile << 6) + ((localY & 0x7) << 3) + (localX & 0x7));
-			bg.pushPixel(index, map, video, color, 0, offset, backing, mask, false);
+			color = this.vram.loadU8(
+				charBase +
+					(map.tile << 6) +
+					((localY & 0x7) << 3) +
+					(localX & 0x7)
+			);
+			bg.pushPixel(
+				index,
+				map,
+				video,
+				color,
+				0,
+				offset,
+				backing,
+				mask,
+				false
+			);
 			offset++;
 		}
 	}
@@ -1363,7 +1474,8 @@ class GameBoyAdvanceSoftwareRenderer {
 		var index = bg.index;
 		var map = video.sharedMap;
 		var color;
-		var mask = video.target2[index] | (bg.priority << 1) | video.BACKGROUND_MASK;
+		var mask =
+			video.target2[index] | (bg.priority << 1) | video.BACKGROUND_MASK;
 		if (video.blendMode == 1 && video.alphaEnabled) {
 			mask |= video.target1[index];
 		}
@@ -1374,15 +1486,36 @@ class GameBoyAdvanceSoftwareRenderer {
 			localX = bg.dx * x + bg.sx;
 			localY = bg.dy * x + bg.sy;
 			if (this.mosaic) {
-				localX -= (x % video.bgMosaicX) * bg.dx + (y % video.bgMosaicY) * bg.dmx;
-				localY -= (x % video.bgMosaicX) * bg.dy + (y % video.bgMosaicY) * bg.dmy;
+				localX -=
+					(x % video.bgMosaicX) * bg.dx +
+					(y % video.bgMosaicY) * bg.dmx;
+				localY -=
+					(x % video.bgMosaicX) * bg.dy +
+					(y % video.bgMosaicY) * bg.dmy;
 			}
-			if (localX < 0 || localY < 0 || localX >= video.HORIZONTAL_PIXELS || localY >= video.VERTICAL_PIXELS) {
+			if (
+				localX < 0 ||
+				localY < 0 ||
+				localX >= video.HORIZONTAL_PIXELS ||
+				localY >= video.VERTICAL_PIXELS
+			) {
 				offset++;
 				continue;
 			}
-			color = this.vram.loadU16(((localY * video.HORIZONTAL_PIXELS) + localX) << 1);
-			bg.pushPixel(index, map, video, color, 0, offset, backing, mask, true);
+			color = this.vram.loadU16(
+				(localY * video.HORIZONTAL_PIXELS + localX) << 1
+			);
+			bg.pushPixel(
+				index,
+				map,
+				video,
+				color,
+				0,
+				offset,
+				backing,
+				mask,
+				true
+			);
 			offset++;
 		}
 	}
@@ -1395,13 +1528,14 @@ class GameBoyAdvanceSoftwareRenderer {
 		var localY;
 		var charBase = 0;
 		if (video.displayFrameSelect) {
-			charBase += 0xA000;
+			charBase += 0xa000;
 		}
 		var size = bg.size;
 		var index = bg.index;
 		var map = video.sharedMap;
 		var color;
-		var mask = video.target2[index] | (bg.priority << 1) | video.BACKGROUND_MASK;
+		var mask =
+			video.target2[index] | (bg.priority << 1) | video.BACKGROUND_MASK;
 		if (video.blendMode == 1 && video.alphaEnabled) {
 			mask |= video.target1[index];
 		}
@@ -1410,18 +1544,39 @@ class GameBoyAdvanceSoftwareRenderer {
 
 		for (x = start; x < end; ++x) {
 			localX = bg.dx * x + bg.sx;
-			localY = 0 | bg.dy * x + bg.sy;
+			localY = 0 | (bg.dy * x + bg.sy);
 			if (this.mosaic) {
-				localX -= (x % video.bgMosaicX) * bg.dx + (y % video.bgMosaicY) * bg.dmx;
-				localY -= (x % video.bgMosaicX) * bg.dy + (y % video.bgMosaicY) * bg.dmy;
+				localX -=
+					(x % video.bgMosaicX) * bg.dx +
+					(y % video.bgMosaicY) * bg.dmx;
+				localY -=
+					(x % video.bgMosaicX) * bg.dy +
+					(y % video.bgMosaicY) * bg.dmy;
 			}
-			yBase = (localY << 2) & 0x7E0;
-			if (localX < 0 || localY < 0 || localX >= video.HORIZONTAL_PIXELS || localY >= video.VERTICAL_PIXELS) {
+			yBase = (localY << 2) & 0x7e0;
+			if (
+				localX < 0 ||
+				localY < 0 ||
+				localX >= video.HORIZONTAL_PIXELS ||
+				localY >= video.VERTICAL_PIXELS
+			) {
 				offset++;
 				continue;
 			}
-			color = this.vram.loadU8(charBase + (localY * video.HORIZONTAL_PIXELS) + localX);
-			bg.pushPixel(index, map, video, color, 0, offset, backing, mask, false);
+			color = this.vram.loadU8(
+				charBase + localY * video.HORIZONTAL_PIXELS + localX
+			);
+			bg.pushPixel(
+				index,
+				map,
+				video,
+				color,
+				0,
+				offset,
+				backing,
+				mask,
+				false
+			);
 			offset++;
 		}
 	}
@@ -1434,12 +1589,13 @@ class GameBoyAdvanceSoftwareRenderer {
 		var localY;
 		var charBase = 0;
 		if (video.displayFrameSelect) {
-			charBase += 0xA000;
+			charBase += 0xa000;
 		}
 		var index = bg.index;
 		var map = video.sharedMap;
 		var color;
-		var mask = video.target2[index] | (bg.priority << 1) | video.BACKGROUND_MASK;
+		var mask =
+			video.target2[index] | (bg.priority << 1) | video.BACKGROUND_MASK;
 		if (video.blendMode == 1 && video.alphaEnabled) {
 			mask |= video.target1[index];
 		}
@@ -1450,15 +1606,31 @@ class GameBoyAdvanceSoftwareRenderer {
 			localX = bg.dx * x + bg.sx;
 			localY = bg.dy * x + bg.sy;
 			if (this.mosaic) {
-				localX -= (x % video.bgMosaicX) * bg.dx + (y % video.bgMosaicY) * bg.dmx;
-				localY -= (x % video.bgMosaicX) * bg.dy + (y % video.bgMosaicY) * bg.dmy;
+				localX -=
+					(x % video.bgMosaicX) * bg.dx +
+					(y % video.bgMosaicY) * bg.dmx;
+				localY -=
+					(x % video.bgMosaicX) * bg.dy +
+					(y % video.bgMosaicY) * bg.dmy;
 			}
 			if (localX < 0 || localY < 0 || localX >= 160 || localY >= 128) {
 				offset++;
 				continue;
 			}
-			color = this.vram.loadU16(charBase + ((localY * 160) + localX) << 1);
-			bg.pushPixel(index, map, video, color, 0, offset, backing, mask, true);
+			color = this.vram.loadU16(
+				(charBase + (localY * 160 + localX)) << 1
+			);
+			bg.pushPixel(
+				index,
+				map,
+				video,
+				color,
+				0,
+				offset,
+				backing,
+				mask,
+				true
+			);
 			offset++;
 		}
 	}
@@ -1483,18 +1655,31 @@ class GameBoyAdvanceSoftwareRenderer {
 			}
 			this.objwinActive = false;
 			if (!(this.win0 || this.win1 || this.objwin)) {
-				this.setBlendEnabled(layer.index, this.target1[layer.index], this.blendMode);
+				this.setBlendEnabled(
+					layer.index,
+					this.target1[layer.index],
+					this.blendMode
+				);
 				layer.drawScanline(backing, layer, 0, this.HORIZONTAL_PIXELS);
-			}
-			else {
+			} else {
 				firstStart = 0;
 				firstEnd = this.HORIZONTAL_PIXELS;
 				lastStart = 0;
 				lastEnd = this.HORIZONTAL_PIXELS;
 				if (this.win0 && y >= this.win0Top && y < this.win0Bottom) {
 					if (this.windows[0].enabled[layer.index]) {
-						this.setBlendEnabled(layer.index, this.windows[0].special && this.target1[layer.index], this.blendMode);
-						layer.drawScanline(backing, layer, this.win0Left, this.win0Right);
+						this.setBlendEnabled(
+							layer.index,
+							this.windows[0].special &&
+								this.target1[layer.index],
+							this.blendMode
+						);
+						layer.drawScanline(
+							backing,
+							layer,
+							this.win0Left,
+							this.win0Right
+						);
 					}
 					firstStart = Math.max(firstStart, this.win0Left);
 					firstEnd = Math.min(firstEnd, this.win0Left);
@@ -1503,14 +1688,37 @@ class GameBoyAdvanceSoftwareRenderer {
 				}
 				if (this.win1 && y >= this.win1Top && y < this.win1Bottom) {
 					if (this.windows[1].enabled[layer.index]) {
-						this.setBlendEnabled(layer.index, this.windows[1].special && this.target1[layer.index], this.blendMode);
-						if (!this.windows[0].enabled[layer.index] && (this.win1Left < firstStart || this.win1Right < lastStart)) {
+						this.setBlendEnabled(
+							layer.index,
+							this.windows[1].special &&
+								this.target1[layer.index],
+							this.blendMode
+						);
+						if (
+							!this.windows[0].enabled[layer.index] &&
+							(this.win1Left < firstStart ||
+								this.win1Right < lastStart)
+						) {
 							// We've been cut in two by window 0!
-							layer.drawScanline(backing, layer, this.win1Left, firstStart);
-							layer.drawScanline(backing, layer, lastEnd, this.win1Right);
-						}
-						else {
-							layer.drawScanline(backing, layer, this.win1Left, this.win1Right);
+							layer.drawScanline(
+								backing,
+								layer,
+								this.win1Left,
+								firstStart
+							);
+							layer.drawScanline(
+								backing,
+								layer,
+								lastEnd,
+								this.win1Right
+							);
+						} else {
+							layer.drawScanline(
+								backing,
+								layer,
+								this.win1Left,
+								this.win1Right
+							);
 						}
 					}
 					firstStart = Math.max(firstStart, this.win1Left);
@@ -1519,27 +1727,53 @@ class GameBoyAdvanceSoftwareRenderer {
 					lastEnd = Math.min(lastEnd, this.win1Right);
 				}
 				// Do last two
-				if (this.windows[2].enabled[layer.index] || (this.objwin && this.windows[3].enabled[layer.index])) {
+				if (
+					this.windows[2].enabled[layer.index] ||
+					(this.objwin && this.windows[3].enabled[layer.index])
+				) {
 					// WINOUT/OBJWIN
 					this.objwinActive = this.objwin;
-					this.setBlendEnabled(layer.index, this.windows[2].special && this.target1[layer.index], this.blendMode); // Window 3 handled in pushPixel
+					this.setBlendEnabled(
+						layer.index,
+						this.windows[2].special && this.target1[layer.index],
+						this.blendMode
+					); // Window 3 handled in pushPixel
 					if (firstEnd > lastStart) {
-						layer.drawScanline(backing, layer, 0, this.HORIZONTAL_PIXELS);
-					}
-					else {
+						layer.drawScanline(
+							backing,
+							layer,
+							0,
+							this.HORIZONTAL_PIXELS
+						);
+					} else {
 						if (firstEnd) {
 							layer.drawScanline(backing, layer, 0, firstEnd);
 						}
 						if (lastStart < this.HORIZONTAL_PIXELS) {
-							layer.drawScanline(backing, layer, lastStart, this.HORIZONTAL_PIXELS);
+							layer.drawScanline(
+								backing,
+								layer,
+								lastStart,
+								this.HORIZONTAL_PIXELS
+							);
 						}
 						if (lastEnd < firstStart) {
-							layer.drawScanline(backing, layer, lastEnd, firstStart);
+							layer.drawScanline(
+								backing,
+								layer,
+								lastEnd,
+								firstStart
+							);
 						}
 					}
 				}
 
-				this.setBlendEnabled(this.LAYER_BACKDROP, this.target1[this.LAYER_BACKDROP] && this.windows[2].special, this.blendMode);
+				this.setBlendEnabled(
+					this.LAYER_BACKDROP,
+					this.target1[this.LAYER_BACKDROP] &&
+						this.windows[2].special,
+					this.blendMode
+				);
 			}
 			if (layer.bg) {
 				layer.sx += layer.dmx;
@@ -1558,11 +1792,15 @@ class GameBoyAdvanceSoftwareRenderer {
 			if (backing.stencil[x] & this.WRITTEN_MASK) {
 				color = backing.color[x];
 				if (isTarget2 && backing.stencil[x] & this.TARGET1_MASK) {
-					color = this.palette.mix(this.blendA, color, this.blendB, bd);
+					color = this.palette.mix(
+						this.blendA,
+						color,
+						this.blendB,
+						bd
+					);
 				}
 				this.palette.convert16To32(color, this.sharedColor);
-			}
-			else {
+			} else {
 				this.palette.convert16To32(bd, this.sharedColor);
 			}
 			this.pixelData.data[xx++] = this.sharedColor[0];

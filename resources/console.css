@@ -1,8 +1,8 @@
 body {
 	margin: 0;
 	font-family: 'Lucida Sans Typewriter', 'Monaco', 'Andale Mono', monospace;
-	background-color: #2A2F32;
-	color: #DADDE1;
+	background-color: #2a2f32;
+	color: #dadde1;
 	font-size: 13px;
 }
 
@@ -13,7 +13,7 @@ h3 {
 	padding: 0 6px 0 4px;
 	position: relative;
 	display: inline-block;
-	background-color: #2A2F32;
+	background-color: #2a2f32;
 }
 
 #screen {
@@ -43,11 +43,17 @@ section {
 	text-align: center;
 }
 
-ul, ol, #registers, #savestates {
+ul,
+ol,
+#registers,
+#savestates {
 	padding: 10px;
 }
 
-#devtools, #registers, #savestates, #display {
+#devtools,
+#registers,
+#savestates,
+#display {
 	-webkit-box-orient: vertical;
 	-moz-box-orient: vertical;
 }
@@ -65,7 +71,7 @@ ul, ol, #registers, #savestates {
 	-moz-box-flex: 1;
 	min-width: 300px;
 	display: block;
-	border-right: 1px solid #DADDE1;
+	border-right: 1px solid #dadde1;
 }
 
 #debugViewer {
@@ -85,7 +91,7 @@ ul, ol, #registers, #savestates {
 	-webkit-box-flex: 1;
 	-moz-box-flex: 1;
 	max-height: 100%;
-	border-left: 1px solid #DADDE1;
+	border-left: 1px solid #dadde1;
 }
 
 #savestates ol > li {
@@ -119,8 +125,9 @@ ul, ol, #registers, #savestates {
 	width: 80px;
 }
 
-#registers ol, #savestates ol {
-	border: 1px solid #DADDE1;
+#registers ol,
+#savestates ol {
+	border: 1px solid #dadde1;
 	padding: 8px;
 }
 
@@ -136,13 +143,13 @@ ul, ol, #registers, #savestates {
 #breakpoints {
 	-webkit-box-flex: 1;
 	-moz-box-flex: 1;
-	border-top: 1px solid #DADDE1;
+	border-top: 1px solid #dadde1;
 	-webkit-box-orient: vertical;
 }
 
 #breakpointControls {
 	padding: 2px 4px;
-	border-bottom: 1px solid #DADDE1;
+	border-bottom: 1px solid #dadde1;
 }
 
 #memory {
@@ -151,12 +158,12 @@ ul, ol, #registers, #savestates {
 }
 
 #consoleControls {
-	border-bottom: 1px solid #DADDE1;
+	border-bottom: 1px solid #dadde1;
 }
 
 #console li:before {
-	content: "-";
-	color: #5C616F;
+	content: '-';
+	color: #5c616f;
 	padding-right: 1em;
 }
 
@@ -175,11 +182,11 @@ ul, ol, #registers, #savestates {
 }
 
 #memoryControls {
-	border-bottom: 1px solid #DADDE1;
+	border-bottom: 1px solid #dadde1;
 	padding: 2px;
 	position: fixed;
 	top: 0;
-	background-color: #2A2F32;
+	background-color: #2a2f32;
 	width: 100%;
 }
 
@@ -230,7 +237,7 @@ ul, ol, #registers, #savestates {
 }
 
 .disabled {
-	color: #5C616F;
+	color: #5c616f;
 }
 
 #saveState {

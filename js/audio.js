@@ -29,7 +29,7 @@ class GameBoyAdvanceAudio {
 		}
 
 		this.masterEnable = true;
-		this.masterVolume = 1.0;
+		this.masterVolume = 0.1;
 
 		this.SOUND_MAX = 0x400;
 		this.FIFO_MAX = 0x200;
@@ -196,8 +196,12 @@ class GameBoyAdvanceAudio {
 				if (cycles >= this.channel3Next) {
 					if (this.channel3Write) {
 						var sample = this.waveData[this.channel3Pointer >> 1];
-					this.channel3Sample = (((sample >> ((this.channel3Pointer & 1) << 2)) & 0xF) - 0x8) / 8;
-					this.channel3Pointer = (this.channel3Pointer + 1);
+						this.channel3Sample =
+							(((sample >> ((this.channel3Pointer & 1) << 2)) &
+								0xf) -
+								0x8) /
+							8;
+						this.channel3Pointer = this.channel3Pointer + 1;
 						if (
 							this.channel3Dimension &&
 							this.channel3Pointer >= 64
@@ -306,7 +310,7 @@ class GameBoyAdvanceAudio {
 				this.soundRatio = 0.25;
 				break;
 			case 1:
-		this.soundRatio = 0.50;
+				this.soundRatio = 0.5;
 				break;
 			case 2:
 				this.soundRatio = 1;
@@ -356,8 +360,9 @@ class GameBoyAdvanceAudio {
 	writeSquareChannelSweep(channelId, value) {
 		var channel = this.squareChannels[channelId];
 		channel.sweepSteps = value & 0x07;
-	channel.sweepIncrement = (value & 0x08) ? -1 : 1;
-	channel.sweepInterval = ((value >> 4) & 0x7) * this.cpuFrequency / 128;
+		channel.sweepIncrement = value & 0x08 ? -1 : 1;
+		channel.sweepInterval =
+			(((value >> 4) & 0x7) * this.cpuFrequency) / 128;
 		channel.doSweep = !!channel.sweepInterval;
 		channel.nextSweep = this.cpu.cycles + channel.sweepInterval;
 		this.resetSquareChannel(channel);
@@ -639,7 +644,7 @@ class GameBoyAdvanceAudio {
 				break;
 			default:
 				this.core.WARN(
-					"Tried to schedule FIFO DMA for non-FIFO destination"
+					'Tried to schedule FIFO DMA for non-FIFO destination'
 				);
 				break;
 		}

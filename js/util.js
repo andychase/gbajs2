@@ -1,14 +1,14 @@
 function hex(number, leading, usePrefix) {
-	if (typeof usePrefix === "undefined") {
+	if (typeof usePrefix === 'undefined') {
 		usePrefix = true;
 	}
-	if (typeof leading === "undefined") {
+	if (typeof leading === 'undefined') {
 		leading = 8;
 	}
 	var string = (number >>> 0).toString(16).toUpperCase();
 	leading -= string.length;
 	if (leading < 0) return string;
-	return (usePrefix ? "0x" : "") + new Array(leading + 1).join("0") + string;
+	return (usePrefix ? '0x' : '') + new Array(leading + 1).join('0') + string;
 }
 
 class Pointer {
@@ -38,7 +38,7 @@ class Pointer {
 		for (var i = 0; i < length; ++i) {
 			bytes.push(String.fromCharCode(view.getUint8(this.advance(1))));
 		}
-		return bytes.join("");
+		return bytes.join('');
 	}
 }
 
@@ -48,7 +48,7 @@ class Serializer {
 	TAG_STRUCT = 3;
 	TAG_BLOB = 4;
 	TAG_BOOLEAN = 5;
-	TYPE = "application/octet-stream";
+	TYPE = 'application/octet-stream';
 
 	pack(value) {
 		var object = new DataView(new ArrayBuffer(4));
@@ -81,15 +81,15 @@ class Serializer {
 				var head = Serializer.prefix(i);
 				var body;
 				switch (typeof stream[i]) {
-					case "number":
+					case 'number':
 						tag = Serializer.TAG_INT;
 						body = Serializer.pack(stream[i]);
 						break;
-					case "string":
+					case 'string':
 						tag = Serializer.TAG_STRING;
 						body = Serializer.prefix(stream[i]);
 						break;
-					case "object":
+					case 'object':
 						if (stream[i].type == Serializer.TYPE) {
 							tag = Serializer.TAG_BLOB;
 							body = stream[i];
@@ -98,7 +98,7 @@ class Serializer {
 							body = Serializer.serialize(stream[i]);
 						}
 						break;
-					case "boolean":
+					case 'boolean':
 						tag = Serializer.TAG_BOOLEAN;
 						body = Serializer.pack8(stream[i]);
 						break;
@@ -164,17 +164,17 @@ class Serializer {
 			object[head] = body;
 		}
 		if (pointer.mark() > remaining) {
-			throw "Size of serialized data exceeded";
+			throw 'Size of serialized data exceeded';
 		}
 		pointer.pop();
 		return object;
 	}
 
 	serializePNG(blob, base, callback) {
-		var canvas = document.createElement("canvas");
-		var context = canvas.getContext("2d");
+		var canvas = document.createElement('canvas');
+		var context = canvas.getContext('2d');
 		var pixels = base
-			.getContext("2d")
+			.getContext('2d')
 			.getImageData(0, 0, base.width, base.height);
 		var transparent = 0;
 		for (var y = 0; y < base.height; ++y) {
@@ -193,8 +193,8 @@ class Serializer {
 		);
 		var edges = bytesInCanvas * multiplier * multiplier - blob.size;
 		var padding = Math.ceil(edges / (base.width * multiplier));
-		canvas.setAttribute("width", base.width * multiplier);
-		canvas.setAttribute("height", base.height * multiplier + padding);
+		canvas.setAttribute('width', base.width * multiplier);
+		canvas.setAttribute('height', base.height * multiplier + padding);
 
 		var reader = new FileReader();
 		reader.onload = function (data) {
@@ -234,7 +234,7 @@ class Serializer {
 				}
 			}
 			context.putImageData(newPixels, 0, 0);
-			callback(canvas.toDataURL("image/png"));
+			callback(canvas.toDataURL('image/png'));
 		};
 		reader.readAsArrayBuffer(blob);
 		return canvas;
@@ -243,12 +243,12 @@ class Serializer {
 	deserializePNG(blob, callback) {
 		var reader = new FileReader();
 		reader.onload = function (data) {
-			var image = document.createElement("img");
-			image.setAttribute("src", data.target.result);
-			var canvas = document.createElement("canvas");
-			canvas.setAttribute("height", image.height);
-			canvas.setAttribute("width", image.width);
-			var context = canvas.getContext("2d");
+			var image = document.createElement('img');
+			image.setAttribute('src', data.target.result);
+			var canvas = document.createElement('canvas');
+			canvas.setAttribute('height', image.height);
+			canvas.setAttribute('width', image.width);
+			var context = canvas.getContext('2d');
 			context.drawImage(image, 0, 0);
 			var pixels = context.getImageData(
 				0,

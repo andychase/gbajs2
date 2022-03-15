@@ -1,8 +1,34 @@
+<!DOCTYPE html>
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-		<title>gbajs2</title>
+		<meta name="viewport" content="width=device-width" />
+		<title>gbajs3</title>
+
+		<script src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
+		<script src="http://code.jquery.com/ui/1.8.21/jquery-ui.min.js"></script>
+		<link
+			rel="stylesheet"
+			type="text/css"
+			href="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.21/themes/base/jquery-ui.css"
+		/>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>
+
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
+		<link
+			href="https://cdn.jsdelivr.net/npm/boxicons@2.0.5/css/boxicons.min.css"
+			rel="stylesheet"
+		/>
+		<link
+			rel="stylesheet"
+			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.1.0/css/font-awesome.min.css"
+		/>
+
 		<link rel="stylesheet" href="resources/main.css" />
+		<link
+			rel="stylesheet"
+			href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+		/>
 		<script src="js/util.js"></script>
 		<script src="js/core.js"></script>
 		<script src="js/arm.js"></script>
@@ -21,416 +47,519 @@
 		<script src="js/gba.js"></script>
 		<script src="resources/xhr.js"></script>
 		<script src="resources/biosbin.js"></script>
-
-		<script>
-			let gba;
-			let runCommands = [];
-			let debug = null;
-
-			try {
-				gba = new GameBoyAdvance();
-				gba.keypad.eatInput = true;
-				gba.setLogger(function (level, error) {
-					console.log(error);
-					gba.pause();
-					let screen = document.getElementById('screen');
-					if (screen.getAttribute('class') === 'dead') {
-						console.log(
-							'We appear to have crashed multiple times without reseting.'
-						);
-						return;
-					}
-					let crash = document.createElement('img');
-					crash.setAttribute('id', 'crash');
-					crash.setAttribute('src', 'resources/crash.png');
-					screen.parentElement.insertBefore(crash, screen);
-					screen.setAttribute('class', 'dead');
-				});
-			} catch (exception) {
-				gba = null;
-			}
-
-			window.onload = function () {
-				if (gba && FileReader) {
-					let canvas = document.getElementById('screen');
-					gba.setCanvas(canvas);
-
-					gba.logLevel = gba.LOG_ERROR;
-
-					gba.setBios(biosBin);
-
-					if (!gba.audio.context) {
-						// Remove the sound box if sound isn't available
-						let soundbox = document.getElementById('sound');
-						soundbox.parentElement.removeChild(soundbox);
-					}
-
-					if (
-						window.navigator.appName ===
-						'Microsoft Internet Explorer'
-					) {
-						// Remove the pixelated option if it doesn't work
-						let pixelatedBox = document.getElementById('pixelated');
-						pixelatedBox.parentElement.removeChild(pixelatedBox);
-					}
-				} else {
-					let dead = document.getElementById('controls');
-					dead.parentElement.removeChild(dead);
-				}
-			};
-
-			function fadeOut(id, nextId, kill) {
-				let e = document.getElementById(id);
-				let e2 = document.getElementById(nextId);
-				if (!e) {
-					return;
-				}
-				let removeSelf = function () {
-					if (kill) {
-						e.parentElement.removeChild(e);
-					} else {
-						e.setAttribute('class', 'dead');
-						e.removeEventListener(
-							'webkitTransitionEnd',
-							removeSelf
-						);
-						e.removeEventListener('oTransitionEnd', removeSelf);
-						e.removeEventListener('transitionend', removeSelf);
-					}
-					if (e2) {
-						e2.setAttribute('class', 'hidden');
-						setTimeout(function () {
-							e2.removeAttribute('class');
-						}, 0);
-					}
-				};
-
-				e.addEventListener('webkitTransitionEnd', removeSelf, false);
-				e.addEventListener('oTransitionEnd', removeSelf, false);
-				e.addEventListener('transitionend', removeSelf, false);
-				e.setAttribute('class', 'hidden');
-			}
-
-			function run(file) {
-				let dead = document.getElementById('loader');
-				dead.value = '';
-				let load = document.getElementById('select');
-				load.textContent = 'Loading...';
-				load.removeAttribute('onclick');
-				let pause = document.getElementById('pause');
-				pause.textContent = 'PAUSE';
-				gba.loadRomFromFile(file, function (result) {
-					if (result) {
-						for (let i = 0; i < runCommands.length; ++i) {
-							runCommands[i]();
-						}
-						runCommands = [];
-						fadeOut('preload', 'ingame');
-						fadeOut('instructions', null, true);
-						gba.runStable();
-					} else {
-						load.textContent = 'FAILED';
-						setTimeout(function () {
-							load.textContent = 'SELECT';
-							load.onclick = function () {
-								document.getElementById('loader').click();
-							};
-						}, 3000);
-					}
-				});
-			}
-
-			function reset() {
-				gba.pause();
-				gba.reset();
-				let load = document.getElementById('select');
-				load.textContent = 'SELECT';
-				let crash = document.getElementById('crash');
-				if (crash) {
-					let context = gba.targetCanvas.getContext('2d');
-					context.clearRect(0, 0, 480, 320);
-					gba.video.drawCallback();
-					crash.parentElement.removeChild(crash);
-					let canvas = document.getElementById('screen');
-					canvas.removeAttribute('class');
-				} else {
-					lcdFade(
-						gba.context,
-						gba.targetCanvas.getContext('2d'),
-						gba.video.drawCallback
-					);
-				}
-				load.onclick = function () {
-					document.getElementById('loader').click();
-				};
-				fadeOut('ingame', 'preload');
-			}
-
-			function uploadSavedataPending(file) {
-				runCommands.push(function () {
-					gba.loadSavedataFromFile(file);
-				});
-			}
-
-			function togglePause() {
-				let e = document.getElementById('pause');
-				if (gba.paused) {
-					if (debug && debug.gbaCon) {
-						debug.gbaCon.run();
-					} else {
-						gba.runStable();
-					}
-					e.textContent = 'PAUSE';
-				} else {
-					if (debug && debug.gbaCon) {
-						debug.gbaCon.pause();
-					} else {
-						gba.pause();
-					}
-					e.textContent = 'UNPAUSE';
-				}
-			}
-
-			function screenshot() {
-				let canvas = gba.indirectCanvas;
-				let data = canvas.toDataURL('image/png');
-				let image = new Image();
-        image.src = data;
-        let w = window.open("");
-        w.document.write(image.outerHTML);
-			}
-
-			function lcdFade(context, target, callback) {
-				let i = 0;
-				let drawInterval = setInterval(function () {
-					i++;
-					let pixelData = context.getImageData(0, 0, 240, 160);
-					for (let y = 0; y < 160; ++y) {
-						for (let x = 0; x < 240; ++x) {
-							let xDiff = Math.abs(x - 120);
-							let yDiff = Math.abs(y - 80) * 0.8;
-							let xFactor = (120 - i - xDiff) / 120;
-							let yFactor =
-								(80 -
-									i -
-									(y & 1) * 10 -
-									yDiff +
-									Math.pow(xDiff, 1 / 2)) /
-								80;
-							pixelData.data[(x + y * 240) * 4 + 3] *=
-								Math.pow(xFactor, 1 / 3) *
-								Math.pow(yFactor, 1 / 2);
-						}
-					}
-					context.putImageData(pixelData, 0, 0);
-					target.clearRect(0, 0, 480, 320);
-					if (i > 40) {
-						clearInterval(drawInterval);
-					} else {
-						callback();
-					}
-				}, 50);
-			}
-
-			function setVolume(value) {
-				gba.audio.masterVolume = Math.pow(2, value) - 1;
-			}
-
-			function setPixelated(pixelated) {
-				let screen = document.getElementById('screen');
-				let context = screen.getContext('2d');
-				context.imageSmoothingEnabled = !pixelated;
-			}
-
-			function enableDebug() {
-				window.onmessage = function (message) {
-					if (
-						message.origin != document.domain &&
-						(message.origin != 'file://' || document.domain)
-					) {
-						console.log('Failed XSS');
-						return;
-					}
-					switch (message.data) {
-						case 'connect':
-							if (message.source === debug) {
-								debug.postMessage(
-									'connect',
-									document.domain || '*'
-								);
-							}
-							break;
-						case 'connected':
-							break;
-						case 'disconnect':
-							if (message.source === debug) {
-								debug = null;
-							}
-					}
-				};
-				window.onunload = function () {
-					if (debug && debug.postMessage) {
-						debug.postMessage('disconnect', document.domain || '*');
-					}
-				};
-				if (!debug || !debug.postMessage) {
-					debug = window.open('debugger.html', 'debug');
-				} else {
-					debug.postMessage('connect', document.domain || '*');
-				}
-			}
-
-			document.addEventListener(
-				'webkitfullscreenchange',
-				function () {
-					let canvas = document.getElementById('screen');
-					if (document.webkitIsFullScreen) {
-						canvas.setAttribute(
-							'height',
-							document.body.offsetHeight
-						);
-						canvas.setAttribute(
-							'width',
-							(document.body.offsetHeight / 2) * 3
-						);
-						canvas.setAttribute('style', 'margin: 0');
-					} else {
-						canvas.setAttribute('height', 320);
-						canvas.setAttribute('width', 480);
-						canvas.removeAttribute('style');
-					}
-				},
-				false
-			);
-
-			const fullScreen = () => {
-				document.getElementById('screen').requestFullscreen();
-			};
-		</script>
 	</head>
 	<body>
-		<canvas id="screen" width="480" height="320"></canvas>
-		<section id="gameinfo">
-			<p>The Game Boy Advance's buttons are mapped as follows:</p>
-			<table id="mapping">
-				<tr>
-					<td>Up</td>
-					<td>Up</td>
-				</tr>
-				<tr>
-					<td>Down</td>
-					<td>Down</td>
-				</tr>
-				<tr>
-					<td>Left</td>
-					<td>Left</td>
-				</tr>
-				<tr>
-					<td>Right</td>
-					<td>Right</td>
-				</tr>
-				<tr>
-					<td>A</td>
-					<td>Z</td>
-				</tr>
-				<tr>
-					<td>B</td>
-					<td>X</td>
-				</tr>
-				<tr>
-					<td>L</td>
-					<td>A</td>
-				</tr>
-				<tr>
-					<td>R</td>
-					<td>S</td>
-				</tr>
-				<tr>
-					<td>Start</td>
-					<td>Enter</td>
-				</tr>
-				<tr>
-					<td>Select</td>
-					<td>\</td>
-				</tr>
-			</table>
-		</section>
-		<section id="controls">
-			<div id="preload">
-				<button
-					class="bigbutton"
-					id="select"
-					onclick="document.getElementById('loader').click()"
+		<!-- gba canvas "screen" -->
+		<div id="screenwrapper">
+			<canvas id="screen" width="480" height="320"></canvas>
+		</div>
+		<div id="actioncontrolpanel" class="text-center" style="display: none">
+			<button
+				type="button"
+				id="button_play"
+				class="btn dockbar-button"
+				onclick="buttonPlayPress()"
+			>
+				<i class="fa fa-pause"></i>
+			</button>
+			<button
+				type="button"
+				id="button_ffw"
+				class="btn dockbar-button"
+				onclick="buttonFastforwardPress()"
+			>
+				<i class="fa fa-fast-forward"></i>
+			</button>
+			<button
+				type="button"
+				id="button_undo"
+				class="btn dockbar-button"
+				onclick="reset()"
+			>
+				<i class="fa fa-undo"></i>
+			</button>
+			<div
+				class="form-check form-switch btn dockbar-button"
+				id="pixelated_check"
+			>
+				<input
+					class="form-check-input"
+					type="checkbox"
+					id="flexSwitchCheckChecked"
+					onchange="setPixelated(this.checked)"
+					checked
+				/>
+				<label
+					id="pixelated_check_lbl"
+					class="form-check-label"
+					for="flexSwitchCheckChecked"
+					>Pixelated</label
 				>
-					SELECT
-				</button>
+			</div>
+			<div
+				class="form-check form-switch btn dockbar-button"
+				id="sound_check"
+			>
 				<input
-					id="loader"
-					type="file"
-					accept=".gba"
-					onchange="run(this.files[0]);"
+					type="checkbox"
+					onchange="gba.audio.masterEnable = this.checked; if (gba.audio.context.state !== 'running') {gba.audio.context.resume();}"
 				/>
-				<button onclick="document.getElementById('saveloader').click()">
-					Upload Savegame
-				</button>
+				<label
+					id="sound_check_lbl"
+					class="form-check-label"
+					for="flexSwitchCheckChecked"
+					>Sound</label
+				>
 				<input
-					id="saveloader"
-					type="file"
-					onchange="uploadSavedataPending(this.files[0]);"
+					id="volume_slider"
+					type="range"
+					min="0"
+					max="1"
+					value="0.1"
+					step="any"
+					onchange="setVolume(this.value)"
+					oninput="setVolume(this.value)"
 				/>
 			</div>
-			<div id="ingame" class="hidden">
-				<button id="pause" class="bigbutton" onclick="togglePause()">
-					PAUSE
-				</button>
-				<button class="bigbutton" onclick="reset()">RESET</button>
-				<button onclick="gba.downloadSavedata()">
-					Download Savegame
-				</button>
-				<button onclick="screenshot()">Screenshot</button>
-				<button onclick="fullScreen()">Full screen</button>
-				<label id="pixelated">
-					<input
-						type="checkbox"
-						onchange="setPixelated(this.checked)"
-					/>
-					<p>Pixelated</p>
-				</label>
-				<div id="sound">
-					<input
-						type="checkbox"
-						onchange="gba.audio.masterEnable = this.checked; if (gba.audio.context.state !== 'running') {gba.audio.context.resume();}"
-					/>
-					<p>Sound</p>
-					<input
-						type="range"
-						min="0"
-						max="1"
-						value="1"
-						step="any"
-						onchange="setVolume(this.value)"
-						oninput="setVolume(this.value)"
-					/>
+			<button
+				type="button"
+				id="button_rotate"
+				class="btn dockbar-button"
+				onclick="orientActionControlPanel()"
+			>
+				<label>Rotate</label>
+			</button>
+		</div>
+
+		<!-- sidebar-nav internal items -->
+		<div
+			class="modal fade"
+			id="gettingStartedModal"
+			tabindex="-1"
+			aria-labelledby="gettingStartedModalLabel"
+			aria-hidden="true"
+		>
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="gettingStartedModalLabel">
+							About
+						</h5>
+						<button
+							type="button"
+							class="btn-close"
+							data-bs-dismiss="modal"
+							aria-label="Close"
+						></button>
+					</div>
+					<div class="modal-body">
+						<p>
+							This is a reskin of gbajs, original code courtesy of
+							endrift and andychase
+						</p>
+						<p>Getting Started:</p>
+						<ul>
+							<li>
+								First, upload a sav file if you have one
+								available
+							</li>
+							<li>
+								Then, load a rom of your choice using the
+								pre-game actions menu
+							</li>
+							<li>Enjoy, your game will boot!</li>
+						</ul>
+					</div>
+					<div class="modal-footer">
+						<button
+							type="button"
+							class="btn btn-secondary"
+							data-bs-dismiss="modal"
+						>
+							Close
+						</button>
+					</div>
 				</div>
-				<p id="openDebug" onclick="enableDebug()">Debugger</p>
 			</div>
-		</section>
-		<section id="instructions">
-			<p>
-				For legal reasons, GBA.js is presented without any included
-				games. Please click Select below to choose a Game Boy Advance
-				game image from your hard drive that you'd like to play. The
-				games must be uncompressed, so unzip them as needed.
-			</p>
-			<p>
-				Please note that this is a beta and there might be compatibility
-				problems. More information and a link to a compatibility table
-				can be found on the sidebar. If you're feeling daring, please
-				submit problem reports to the GitHub page.
-			</p>
-		</section>
-		<footer style="float: left">
-			© 2012 – 2013 <a href="http://endrift.com/">Endrift</a>
-		</footer>
+		</div>
+
+		<div
+			class="modal fade"
+			id="controlsModal"
+			tabindex="-1"
+			aria-labelledby="controlsModal"
+			aria-hidden="true"
+		>
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="controlsModalLabel">
+							Game Boy Advance Button mapping
+						</h5>
+						<button
+							type="button"
+							class="btn-close"
+							data-bs-dismiss="modal"
+							aria-label="Close"
+						></button>
+					</div>
+					<div class="modal-body">
+						<table id="controlsTable" class="table">
+							<tr>
+								<th scope="col">GBA</th>
+								<th scope="col">Edit Key Bindings</th>
+							</tr>
+							<tr>
+								<td class="descrip">Up</td>
+								<td
+									contenteditable
+									class="keybind"
+									onkeyup="fillUserKeyBinding(event,this);"
+								>
+									Up
+								</td>
+							</tr>
+							<tr>
+								<td class="descrip">Down</td>
+								<td
+									contenteditable
+									class="keybind"
+									onkeyup="fillUserKeyBinding(event,this);"
+								>
+									Down
+								</td>
+							</tr>
+							<tr>
+								<td class="descrip">Left</td>
+								<td
+									contenteditable
+									class="keybind"
+									onkeyup="fillUserKeyBinding(event,this);"
+								>
+									Left
+								</td>
+							</tr>
+							<tr>
+								<td class="descrip">Right</td>
+								<td
+									contenteditable
+									class="keybind"
+									onkeyup="fillUserKeyBinding(event,this);"
+								>
+									Right
+								</td>
+							</tr>
+							<tr>
+								<td class="descrip">A</td>
+								<td
+									contenteditable
+									class="keybind"
+									onkeyup="fillUserKeyBinding(event,this);"
+								>
+									Z
+								</td>
+							</tr>
+							<tr>
+								<td class="descrip">B</td>
+								<td
+									contenteditable
+									class="keybind"
+									onkeyup="fillUserKeyBinding(event,this);"
+								>
+									X
+								</td>
+							</tr>
+							<tr>
+								<td class="descrip">L</td>
+								<td
+									contenteditable
+									class="keybind"
+									onkeyup="fillUserKeyBinding(event,this);"
+								>
+									A
+								</td>
+							</tr>
+							<tr>
+								<td class="descrip">R</td>
+								<td
+									contenteditable
+									class="keybind"
+									onkeyup="fillUserKeyBinding(event,this);"
+								>
+									S
+								</td>
+							</tr>
+							<tr>
+								<td class="descrip">Start</td>
+								<td
+									contenteditable
+									class="keybind"
+									onkeyup="fillUserKeyBinding(event,this);"
+								>
+									Enter
+								</td>
+							</tr>
+							<tr>
+								<td class="descrip">Select</td>
+								<td
+									contenteditable
+									class="keybind"
+									onkeyup="fillUserKeyBinding(event,this);"
+								>
+									\
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div class="modal-footer">
+						<button
+							type="button"
+							class="btn btn-secondary"
+							data-bs-dismiss="modal"
+						>
+							Close
+						</button>
+						<button
+							type="button"
+							class="btn btn-primary"
+							onclick="remapUserKeyBindings()"
+						>
+							Save changes
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div
+			class="modal fade"
+			id="legalModal"
+			tabindex="-1"
+			aria-labelledby="legalModalLabel"
+			aria-hidden="true"
+		>
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="legalModalLabel">Legal</h5>
+						<button
+							type="button"
+							class="btn-close"
+							data-bs-dismiss="modal"
+							aria-label="Close"
+						></button>
+					</div>
+					<div class="modal-body">
+						<p>
+							For legal reasons, GBA.js is presented without any
+							included games. Please click Select below to choose
+							a Game Boy Advance game image from your hard drive
+							that you'd like to play. The games must be
+							uncompressed, so unzip them as needed.
+						</p>
+						<p>
+							Please note that this is a beta and there might be
+							compatibility problems. More information and a link
+							to a compatibility table can be found on the
+							sidebar. If you're feeling daring, please submit
+							problem reports to the GitHub page.
+						</p>
+					</div>
+					<div class="modal-footer">
+						<button
+							type="button"
+							class="btn btn-secondary"
+							data-bs-dismiss="modal"
+						>
+							Close
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- sidebar-nav -->
+		<div
+			class="side-navbar d-flex justify-content-between flex-wrap flex-column active-nav"
+			id="sidebar"
+		>
+			<ul class="nav flex-column text-white w-100">
+				<a href="#" class="nav-link h3 text-white my-2"> Menu </a>
+				<li
+					href="#gettingStartedModal"
+					class="nav-link"
+					data-bs-toggle="modal"
+					data-bs-target="#gettingStartedModal"
+				>
+					<i class="bx bx-info-circle"></i>
+					<span class="mx-2">About</span>
+				</li>
+				<li
+					href="#"
+					id="pregameactionsmenu"
+					class="nav-link"
+					data-bs-toggle="collapse"
+					data-bs-target="#collapseTwo"
+					aria-expanded="true"
+					aria-controls="collapseTwo"
+				>
+					<i class="bx bx-folder-plus"></i>
+					<span class="mx-2">Pre Game Actions</span>
+				</li>
+				<div
+					id="collapseTwo"
+					class="accordion-collapse collapse collapsed show"
+					aria-labelledby="headingTwo"
+					data-bs-parent="#pregameactionsmenu"
+				>
+					<ul>
+						<li
+							href="#"
+							class="nav-link"
+							onclick="document.getElementById('saveloader').click()"
+						>
+							<i class="bx bx-cloud-upload"></i>
+							<span class="mx-2">Load Save (manual)</span>
+							<input
+								id="saveloader"
+								type="file"
+								onchange="uploadSavedataPending(this.files[0]);"
+							/>
+						</li>
+						<li
+							href="#"
+							class="nav-link"
+							onclick="document.getElementById('loader').click()"
+						>
+							<i class="bx bx-upload"></i>
+							<span class="mx-2" id="select">Select Rom</span>
+							<input
+								id="loader"
+								type="file"
+								accept=".gba"
+								onchange="run(this.files[0]);"
+							/>
+						</li>
+					</ul>
+				</div>
+				<li
+					href="#"
+					id="ingameactionsmenu"
+					class="nav-link disabled"
+					data-bs-toggle="collapse"
+					data-bs-target="#collapseOne"
+					aria-expanded="true"
+					aria-controls="collapseOne"
+				>
+					<i class="bx bx-game"></i>
+					<span class="mx-2">In Game Actions</span>
+				</li>
+				<div
+					id="collapseOne"
+					class="accordion-collapse collapse collapsed"
+					aria-labelledby="headingOne"
+					data-bs-parent="#ingameactionsmenu"
+				>
+					<ul>
+						<li href="#" class="nav-link" onclick="screenshot()">
+							<i class="bx bx-screenshot"></i>
+							<span class="mx-2">Screenshot</span>
+						</li>
+						<li href="#" class="nav-link" onclick="fullScreen()">
+							<i class="bx bx-fullscreen"></i>
+							<span class="mx-2">Full Screen</span>
+						</li>
+						<li
+							href="#"
+							class="nav-link"
+							onclick="gba.downloadSavedata()"
+						>
+							<i class="bx bx-cloud-download"></i>
+							<span class="mx-2">Download Save</span>
+						</li>
+						<li
+							href="#"
+							id="virtualcontrolsmenu"
+							class="nav-link"
+							onclick="enableVirtualControls()"
+						>
+							<i class="bx bx-joystick-button"></i>
+							<span class="mx-2">Virtual Controls</span>
+						</li>
+					</ul>
+				</div>
+				<li
+					id="controlsmenu"
+					href="#controlsModal"
+					class="nav-link"
+					data-bs-toggle="modal"
+					data-bs-target="#controlsModal"
+				>
+					<i class="bx bxs-joystick"></i>
+					<span class="mx-2">Controls</span>
+				</li>
+				<li href="#" class="nav-link">
+					<i class="bx bx-user-check"></i>
+					<span class="mx-2">Profile</span>
+				</li>
+				<li
+					href="#legalModal"
+					class="nav-link"
+					data-bs-toggle="modal"
+					data-bs-target="#legalModal"
+				>
+					<i class="bx bxs-check-shield"></i>
+					<span class="mx-2">Legal</span>
+				</li>
+				<li href="#" class="nav-link" onclick="enableDebug()">
+					<i class="bx bxs-bug"></i>
+					<span class="mx-2">Debugger</span>
+				</li>
+				<li href="#" class="nav-link">
+					<i class="bx bx-conversation"></i>
+					<a
+						href="https://github.com/thenick775/gbajs2"
+						target="_blank"
+						style="color: #0d6efd !important; text-decoration: none"
+						><span class="mx-2">Contact</span></a
+					>
+				</li>
+			</ul>
+		</div>
+
+		<!-- Main Nav Menu Wrapper -->
+		<div class="p-1 nav-container active-cont">
+			<!-- Top Nav -->
+			<nav class="navbar top-navbar navbar-light px-5" id="menunav">
+				<a class="btn border-0" id="menu-btn"
+					><i class="bx bx-menu"></i
+				></a>
+			</nav>
+		</div>
+		<!-- end sidebar -->
+
+		<div class="set dark" id="dpadholder" style="display: none">
+			<nav class="d-pad">
+				<a class="up" data-keyid="UP"></a>
+				<a class="right" data-keyid="RIGHT"></a>
+				<a class="down" data-keyid="DOWN"></a>
+				<a class="left" data-keyid="LEFT"></a>
+			</nav>
+			<div id="dpadhandle"></div>
+		</div>
+
+		<div id="dpadabbuttonholder" style="display: none">
+			<div id="dpadabutton" data-keyid="A"><p class="h3">A</p></div>
+			<div id="dpadbbutton" data-keyid="B"><p class="h3">B</p></div>
+			<div id="abbuttonhandle"></div>
+		</div>
+
+		<div id="dpadstartselectbuttonholder" style="display: none">
+			<div id="dpadstartbutton" data-keyid="START"></div>
+			<div id="dpadselectbutton" data-keyid="SELECT"></div>
+		</div>
+
+		<!-- main driving javascript -->
+		<script src="resources/init-main.js"></script>
 	</body>
 </html>

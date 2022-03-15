@@ -348,7 +348,7 @@ class ARMCore {
 			case this.MODE_UNDEFINED:
 				return this.BANK_UNDEFINED;
 			default:
-				throw "Invalid user mode passed to selectBank";
+				throw 'Invalid user mode passed to selectBank';
 		}
 	}
 	switchExecMode(newMode) {
@@ -453,7 +453,7 @@ class ARMCore {
 	}
 	badOp(instruction) {
 		var func = function () {
-			throw "Illegal instruction: 0x" + instruction.toString(16);
+			throw 'Illegal instruction: 0x' + instruction.toString(16);
 		};
 		func.writesPC = true;
 		func.fixedJump = false;
@@ -652,20 +652,22 @@ class ARMCore {
 				var shiftType = instruction & 0x00000060;
 				var rm = instruction & 0x0000000f;
 				var shiftOp = function () {
-					throw "BUG: invalid barrel shifter";
+					throw 'BUG: invalid barrel shifter';
 				};
 				if (instruction & 0x02000000) {
 					var immediate = instruction & 0x000000ff;
 					var rotate = (instruction & 0x00000f00) >> 7;
 					if (!rotate) {
-						shiftOp = this.armCompiler.constructAddressingMode1Immediate(
-							immediate
-						);
+						shiftOp =
+							this.armCompiler.constructAddressingMode1Immediate(
+								immediate
+							);
 					} else {
-						shiftOp = this.armCompiler.constructAddressingMode1ImmediateRotate(
-							immediate,
-							rotate
-						);
+						shiftOp =
+							this.armCompiler.constructAddressingMode1ImmediateRotate(
+								immediate,
+								rotate
+							);
 					}
 				} else if (instruction & 0x00000010) {
 					var rs = (instruction & 0x00000f00) >> 8;
@@ -673,31 +675,35 @@ class ARMCore {
 					switch (shiftType) {
 						case 0x00000000:
 							// LSL
-							shiftOp = this.armCompiler.constructAddressingMode1LSL(
-								rs,
-								rm
-							);
+							shiftOp =
+								this.armCompiler.constructAddressingMode1LSL(
+									rs,
+									rm
+								);
 							break;
 						case 0x00000020:
 							// LSR
-							shiftOp = this.armCompiler.constructAddressingMode1LSR(
-								rs,
-								rm
-							);
+							shiftOp =
+								this.armCompiler.constructAddressingMode1LSR(
+									rs,
+									rm
+								);
 							break;
 						case 0x00000040:
 							// ASR
-							shiftOp = this.armCompiler.constructAddressingMode1ASR(
-								rs,
-								rm
-							);
+							shiftOp =
+								this.armCompiler.constructAddressingMode1ASR(
+									rs,
+									rm
+								);
 							break;
 						case 0x00000060:
 							// ROR
-							shiftOp = this.armCompiler.constructAddressingMode1ROR(
-								rs,
-								rm
-							);
+							shiftOp =
+								this.armCompiler.constructAddressingMode1ROR(
+									rs,
+									rm
+								);
 							break;
 					}
 				} else {
@@ -1120,17 +1126,19 @@ class ARMCore {
 						var address;
 						if (i) {
 							var immediate = loOffset | hiOffset;
-							address = this.armCompiler.constructAddressingMode23Immediate(
-								instruction,
-								immediate,
-								condOp
-							);
+							address =
+								this.armCompiler.constructAddressingMode23Immediate(
+									instruction,
+									immediate,
+									condOp
+								);
 						} else {
-							address = this.armCompiler.constructAddressingMode23Register(
-								instruction,
-								rm,
-								condOp
-							);
+							address =
+								this.armCompiler.constructAddressingMode23Register(
+									instruction,
+									rm,
+									condOp
+								);
 						}
 						address.writesPC = !!w && rn == this.PC;
 
@@ -1185,7 +1193,7 @@ class ARMCore {
 
 					var address = function () {
 						throw (
-							"Unimplemented memory access: 0x" +
+							'Unimplemented memory access: 0x' +
 							instruction.toString(16)
 						);
 					};
@@ -1205,26 +1213,29 @@ class ARMCore {
 								shiftImmediate,
 								rm
 							);
-							address = this.armCompiler.constructAddressingMode2RegisterShifted(
-								instruction,
-								shiftOp,
-								condOp
-							);
+							address =
+								this.armCompiler.constructAddressingMode2RegisterShifted(
+									instruction,
+									shiftOp,
+									condOp
+								);
 						} else {
-							address = this.armCompiler.constructAddressingMode23Register(
-								instruction,
-								rm,
-								condOp
-							);
+							address =
+								this.armCompiler.constructAddressingMode23Register(
+									instruction,
+									rm,
+									condOp
+								);
 						}
 					} else {
 						// Immediate
 						var offset = instruction & 0x00000fff;
-						address = this.armCompiler.constructAddressingMode23Immediate(
-							instruction,
-							offset,
-							condOp
-						);
+						address =
+							this.armCompiler.constructAddressingMode23Immediate(
+								instruction,
+								offset,
+								condOp
+							);
 					}
 					if (load) {
 						if (b) {
@@ -1306,12 +1317,13 @@ class ARMCore {
 						}
 					}
 					if (w) {
-						address = this.armCompiler.constructAddressingMode4Writeback(
-							immediate,
-							offset,
-							rn,
-							overlap
-						);
+						address =
+							this.armCompiler.constructAddressingMode4Writeback(
+								immediate,
+								offset,
+								rn,
+								overlap
+							);
 					} else {
 						address = this.armCompiler.constructAddressingMode4(
 							immediate,
@@ -1381,7 +1393,7 @@ class ARMCore {
 					}
 					break;
 				default:
-					throw "Bad opcode: 0x" + instruction.toString(16);
+					throw 'Bad opcode: 0x' + instruction.toString(16);
 			}
 		}
 
@@ -1804,11 +1816,11 @@ class ARMCore {
 					break;
 				default:
 					this.WARN(
-						"Undefined instruction: 0x" + instruction.toString(16)
+						'Undefined instruction: 0x' + instruction.toString(16)
 					);
 			}
 		} else {
-			throw "Bad opcode: 0x" + instruction.toString(16);
+			throw 'Bad opcode: 0x' + instruction.toString(16);
 		}
 
 		op.execMode = this.MODE_THUMB;

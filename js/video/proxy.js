@@ -6,11 +6,12 @@ class MemoryProxy {
 		this.mask = (1 << blockSize) - 1;
 		this.size = size;
 		if (blockSize) {
-			for (var i = 0; i < (size >> blockSize); ++i) {
-				this.blocks.push(new MemoryView(new ArrayBuffer(1 << blockSize)));
+			for (var i = 0; i < size >> blockSize; ++i) {
+				this.blocks.push(
+					new MemoryView(new ArrayBuffer(1 << blockSize))
+				);
 			}
-		}
-		else {
+		} else {
 			this.blockSize = 31;
 			this.mask = -1;
 			this.blocks[0] = new MemoryView(new ArrayBuffer(size));
@@ -20,17 +21,24 @@ class MemoryProxy {
 		if (this.blocks.length > 1) {
 			var combined = new Uint8Array(this.size);
 			for (var i = 0; i < this.blocks.length; ++i) {
-				combined.set(new Uint8Array(this.blocks[i].buffer), i << this.blockSize);
+				combined.set(
+					new Uint8Array(this.blocks[i].buffer),
+					i << this.blockSize
+				);
 			}
 			return combined.buffer;
-		}
-		else {
+		} else {
 			return this.blocks[0].buffer;
 		}
 	}
 	replace(buffer) {
 		for (var i = 0; i < this.blocks.length; ++i) {
-			this.blocks[i] = new MemoryView(buffer.slice(i << this.blockSize, (i << this.blockSize) + this.blocks[i].buffer.byteLength));
+			this.blocks[i] = new MemoryView(
+				buffer.slice(
+					i << this.blockSize,
+					(i << this.blockSize) + this.blocks[i].buffer.byteLength
+				)
+			);
 		}
 	}
 	load8(offset) {
@@ -43,7 +51,9 @@ class MemoryProxy {
 		return this.blocks[offset >> this.blockSize].loadU8(offset & this.mask);
 	}
 	loadU16(offset) {
-		return this.blocks[offset >> this.blockSize].loadU16(offset & this.mask);
+		return this.blocks[offset >> this.blockSize].loadU16(
+			offset & this.mask
+		);
 	}
 	load32(offset) {
 		return this.blocks[offset >> this.blockSize].load32(offset & this.mask);
@@ -54,24 +64,33 @@ class MemoryProxy {
 		}
 		this.owner.memoryDirtied(this, offset >> this.blockSize);
 		this.blocks[offset >> this.blockSize].store8(offset & this.mask, value);
-		this.blocks[offset >> this.blockSize].store8((offset & this.mask) ^ 1, value);
+		this.blocks[offset >> this.blockSize].store8(
+			(offset & this.mask) ^ 1,
+			value
+		);
 	}
 	store16(offset, value) {
 		if (offset >= this.size) {
 			return;
 		}
 		this.owner.memoryDirtied(this, offset >> this.blockSize);
-		return this.blocks[offset >> this.blockSize].store16(offset & this.mask, value);
+		return this.blocks[offset >> this.blockSize].store16(
+			offset & this.mask,
+			value
+		);
 	}
 	store32(offset, value) {
 		if (offset >= this.size) {
 			return;
 		}
 		this.owner.memoryDirtied(this, offset >> this.blockSize);
-		return this.blocks[offset >> this.blockSize].store32(offset & this.mask, value);
+		return this.blocks[offset >> this.blockSize].store32(
+			offset & this.mask,
+			value
+		);
 	}
-	invalidatePage(address) { }
-};
+	invalidatePage(address) {}
+}
 
 class GameBoyAdvanceRenderProxy {
 	constructor() {
@@ -116,13 +135,17 @@ class GameBoyAdvanceRenderProxy {
 		this.dirty = null;
 		this.scanlineQueue = [];
 
-		this.worker.postMessage({ type: 'clear', SIZE_VRAM: mmu.SIZE_VRAM, SIZE_OAM: mmu.SIZE_OAM });
+		this.worker.postMessage({
+			type: 'clear',
+			SIZE_VRAM: mmu.SIZE_VRAM,
+			SIZE_OAM: mmu.SIZE_OAM
+		});
 	}
 	freeze(encodeBase64) {
 		return {
-			'palette': Serializer.prefix(this.palette.combine()),
-			'vram': Serializer.prefix(this.vram.combine()),
-			'oam': Serializer.prefix(this.oam.combine())
+			palette: Serializer.prefix(this.palette.combine()),
+			vram: Serializer.prefix(this.vram.combine()),
+			oam: Serializer.prefix(this.oam.combine())
 		};
 	}
 	defrost(frost, decodeBase64) {
@@ -253,7 +276,8 @@ class GameBoyAdvanceRenderProxy {
 			if (this.dirty) {
 				if (this.dirty.memory) {
 					if (this.dirty.memory.palette) {
-						this.dirty.memory.palette = this.dirty.memory.palette.slice(0);
+						this.dirty.memory.palette =
+							this.dirty.memory.palette.slice(0);
 					}
 					if (this.dirty.memory.oam) {
 						this.dirty.memory.oam = this.dirty.memory.oam.slice(0);
@@ -261,7 +285,8 @@ class GameBoyAdvanceRenderProxy {
 					if (this.dirty.memory.vram) {
 						for (var i = 0; i < 12; ++i) {
 							if (this.dirty.memory.vram[i]) {
-								this.dirty.memory.vram[i] = this.dirty.memory.vram[i].slice(0);
+								this.dirty.memory.vram[i] =
+									this.dirty.memory.vram[i].slice(0);
 							}
 						}
 					}
@@ -283,11 +308,15 @@ class GameBoyAdvanceRenderProxy {
 	finishDraw(caller) {
 		this.caller = caller;
 		if (!this.skipFrame) {
-			this.worker.postMessage({ type: 'finish', scanlines: this.scanlineQueue, frame: this.currentFrame });
+			this.worker.postMessage({
+				type: 'finish',
+				scanlines: this.scanlineQueue,
+				frame: this.currentFrame
+			});
 			this.scanlineQueue = [];
 			if (this.delay > 2) {
 				this.skipFrame = true;
 			}
 		}
 	}
-};
+}

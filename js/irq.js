@@ -347,9 +347,8 @@ class GameBoyAdvanceInterruptHandler {
 		switch (opcode) {
 			case 0x00:
 				// SoftReset
-				var mem = this.core.mmu.memory[
-					this.core.mmu.REGION_WORKING_IRAM
-				];
+				var mem =
+					this.core.mmu.memory[this.core.mmu.REGION_WORKING_IRAM];
 				var flag = mem.loadU8(0x7ffa);
 				for (var i = 0x7e00; i < 0x8000; i += 4) {
 					mem.store32(i, 0);
@@ -368,9 +367,8 @@ class GameBoyAdvanceInterruptHandler {
 				// RegisterRamReset
 				var regions = this.cpu.gprs[0];
 				if (regions & 0x01) {
-					this.core.mmu.memory[
-						this.core.mmu.REGION_WORKING_RAM
-					] = new MemoryBlock(this.core.mmu.SIZE_WORKING_RAM, 9);
+					this.core.mmu.memory[this.core.mmu.REGION_WORKING_RAM] =
+						new MemoryBlock(this.core.mmu.SIZE_WORKING_RAM, 9);
 				}
 				if (regions & 0x02) {
 					for (
@@ -387,7 +385,7 @@ class GameBoyAdvanceInterruptHandler {
 					this.video.renderPath.clearSubsets(this.core.mmu, regions);
 				}
 				if (regions & 0xe0) {
-					this.core.STUB("Unimplemented RegisterRamReset");
+					this.core.STUB('Unimplemented RegisterRamReset');
 				}
 				break;
 			case 0x02:
@@ -609,11 +607,18 @@ class GameBoyAdvanceInterruptHandler {
 			case 0x1f:
 				// MidiKey2Freq
 				var key = this.cpu.mmu.load32(this.cpu.gprs[0] + 4);
-				this.cpu.gprs[0] = key / Math.pow(2, (180 - this.cpu.gprs[1] - this.cpu.gprs[2] / 256) / 12) >>> 0;
+				this.cpu.gprs[0] =
+					(key /
+						Math.pow(
+							2,
+							(180 - this.cpu.gprs[1] - this.cpu.gprs[2] / 256) /
+								12
+						)) >>>
+					0;
 				break;
 			default:
 				throw (
-					"Unimplemented software interrupt: 0x" + opcode.toString(16)
+					'Unimplemented software interrupt: 0x' + opcode.toString(16)
 				);
 		}
 	}
@@ -628,11 +633,11 @@ class GameBoyAdvanceInterruptHandler {
 		this.enabledIRQs = value;
 
 		if (this.enabledIRQs & this.MASK_SIO) {
-			this.core.STUB("Serial I/O interrupts not implemented");
+			this.core.STUB('Serial I/O interrupts not implemented');
 		}
 
 		if (this.enabledIRQs & this.MASK_KEYPAD) {
-			this.core.STUB("Keypad interrupts not implemented");
+			this.core.STUB('Keypad interrupts not implemented');
 		}
 
 		if (this.enable && this.enabledIRQs & this.interruptFlags) {
@@ -720,7 +725,7 @@ class GameBoyAdvanceInterruptHandler {
 
 		this.core.ASSERT(
 			nextEvent >= this.cpu.cycles,
-			"Next event is before present"
+			'Next event is before present'
 		);
 		this.nextEvent = nextEvent;
 	}
@@ -802,7 +807,7 @@ class GameBoyAdvanceInterruptHandler {
 		currentDma.nextIRQ = 0;
 
 		if (currentDma.drq) {
-			this.core.WARN("DRQ not implemented");
+			this.core.WARN('DRQ not implemented');
 		}
 
 		if (!wasEnabled && currentDma.enable) {
@@ -884,10 +889,10 @@ class GameBoyAdvanceInterruptHandler {
 	}
 	halt() {
 		if (!this.enable) {
-			throw "Requested HALT when interrupts were disabled!";
+			throw 'Requested HALT when interrupts were disabled!';
 		}
 		if (!this.waitForIRQ()) {
-			throw "Waiting on interrupt forever.";
+			throw 'Waiting on interrupt forever.';
 		}
 	}
 	lz77(source, dest, unitsize) {
@@ -959,7 +964,7 @@ class GameBoyAdvanceInterruptHandler {
 		var remaining = header >> 8;
 		var bits = header & 0xf;
 		if (32 % bits) {
-			throw "Unimplemented unaligned Huffman";
+			throw 'Unimplemented unaligned Huffman';
 		}
 		var padding = (4 - remaining) & 0x3;
 		remaining &= 0xfffffffc;
@@ -987,7 +992,7 @@ class GameBoyAdvanceInterruptHandler {
 				bitsRemaining > 0;
 				--bitsRemaining, bitstream <<= 1
 			) {
-				if (typeof node === "number") {
+				if (typeof node === 'number') {
 					// Lazily construct tree
 					var next = ((offset - 1) | 1) + ((node & 0x3f) << 1) + 2;
 					node = {

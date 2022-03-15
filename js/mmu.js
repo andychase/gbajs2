@@ -4,7 +4,7 @@ class MemoryView {
 		this.buffer = memory;
 		this.view = new DataView(
 			this.buffer,
-			typeof offset === "number" ? offset : 0
+			typeof offset === 'number' ? offset : 0
 		);
 		this.mask = memory.byteLength - 1;
 		this.resetMask();
@@ -48,7 +48,7 @@ class MemoryView {
 		this.buffer = memory;
 		this.view = new DataView(
 			this.buffer,
-			typeof offset === "number" ? offset : 0
+			typeof offset === 'number' ? offset : 0
 		);
 		if (this.icache) {
 			this.icache = new Array(this.icache.length);
@@ -255,21 +255,7 @@ class GameBoyAdvanceMMU {
 		this.WAITSTATES_32 = [0, 0, 5, 0, 0, 1, 0, 1, 7, 7, 9, 9, 13, 13, 8];
 		this.WAITSTATES_SEQ = [0, 0, 2, 0, 0, 0, 0, 0, 2, 2, 4, 4, 8, 8, 4];
 		this.WAITSTATES_SEQ_32 = [
-			0,
-			0,
-			5,
-			0,
-			0,
-			1,
-			0,
-			1,
-			5,
-			5,
-			9,
-			9,
-			17,
-			17,
-			8
+			0, 0, 5, 0, 0, 1, 0, 1, 5, 5, 9, 9, 17, 17, 8
 		];
 		this.NULLWAIT = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
@@ -303,10 +289,10 @@ class GameBoyAdvanceMMU {
 			this.badMemory,
 			new MemoryBlock(this.SIZE_WORKING_RAM, 9),
 			new MemoryBlock(this.SIZE_WORKING_IRAM, 7),
-		null, // This is owned by GameBoyAdvanceIO
-		null, // This is owned by GameBoyAdvancePalette
-		null, // This is owned by GameBoyAdvanceVRAM
-		null, // This is owned by GameBoyAdvanceOAM
+			null, // This is owned by GameBoyAdvanceIO
+			null, // This is owned by GameBoyAdvancePalette
+			null, // This is owned by GameBoyAdvanceVRAM
+			null, // This is owned by GameBoyAdvanceOAM
 			this.badMemory,
 			this.badMemory,
 			this.badMemory,
@@ -380,7 +366,7 @@ class GameBoyAdvanceMMU {
 		}
 
 		if (process) {
-			var name = "";
+			var name = '';
 			for (var i = 0; i < 12; ++i) {
 				var c = lo.loadU8(i + 0xa0);
 				if (!c) {
@@ -390,7 +376,7 @@ class GameBoyAdvanceMMU {
 			}
 			cart.title = name;
 
-			var code = "";
+			var code = '';
 			for (var i = 0; i < 4; ++i) {
 				var c = lo.loadU8(i + 0xac);
 				if (!c) {
@@ -400,7 +386,7 @@ class GameBoyAdvanceMMU {
 			}
 			cart.code = code;
 
-			var maker = "";
+			var maker = '';
 			for (var i = 0; i < 2; ++i) {
 				var c = lo.loadU8(i + 0xb0);
 				if (!c) {
@@ -411,44 +397,44 @@ class GameBoyAdvanceMMU {
 			cart.maker = maker;
 
 			// Find savedata type
-			var state = "";
+			var state = '';
 			var next;
 			var terminal = false;
 			for (var i = 0xe4; i < rom.byteLength && !terminal; ++i) {
 				next = String.fromCharCode(lo.loadU8(i));
 				state += next;
 				switch (state) {
-					case "F":
-					case "FL":
-					case "FLA":
-					case "FLAS":
-					case "FLASH":
-					case "FLASH_":
-					case "FLASH5":
-					case "FLASH51":
-					case "FLASH512":
-					case "FLASH512_":
-					case "FLASH1":
-					case "FLASH1M":
-					case "FLASH1M_":
-					case "S":
-					case "SR":
-					case "SRA":
-					case "SRAM":
-					case "SRAM_":
-					case "E":
-					case "EE":
-					case "EEP":
-					case "EEPR":
-					case "EEPRO":
-					case "EEPROM":
-					case "EEPROM_":
+					case 'F':
+					case 'FL':
+					case 'FLA':
+					case 'FLAS':
+					case 'FLASH':
+					case 'FLASH_':
+					case 'FLASH5':
+					case 'FLASH51':
+					case 'FLASH512':
+					case 'FLASH512_':
+					case 'FLASH1':
+					case 'FLASH1M':
+					case 'FLASH1M_':
+					case 'S':
+					case 'SR':
+					case 'SRA':
+					case 'SRAM':
+					case 'SRAM_':
+					case 'E':
+					case 'EE':
+					case 'EEP':
+					case 'EEPR':
+					case 'EEPRO':
+					case 'EEPROM':
+					case 'EEPROM_':
 						break;
-					case "FLASH_V":
-					case "FLASH512_V":
-					case "FLASH1M_V":
-					case "SRAM_V":
-					case "EEPROM_V":
+					case 'FLASH_V':
+					case 'FLASH512_V':
+					case 'FLASH1M_V':
+					case 'SRAM_V':
+					case 'EEPROM_V':
 						terminal = true;
 						break;
 					default:
@@ -459,34 +445,29 @@ class GameBoyAdvanceMMU {
 			if (terminal) {
 				cart.saveType = state;
 				switch (state) {
-					case "FLASH_V":
-					case "FLASH512_V":
-						this.save = this.memory[
-							this.REGION_CART_SRAM
-						] = new FlashSavedata(this.SIZE_CART_FLASH512);
+					case 'FLASH_V':
+					case 'FLASH512_V':
+						this.save = this.memory[this.REGION_CART_SRAM] =
+							new FlashSavedata(this.SIZE_CART_FLASH512);
 						break;
-					case "FLASH1M_V":
-						this.save = this.memory[
-							this.REGION_CART_SRAM
-						] = new FlashSavedata(this.SIZE_CART_FLASH1M);
+					case 'FLASH1M_V':
+						this.save = this.memory[this.REGION_CART_SRAM] =
+							new FlashSavedata(this.SIZE_CART_FLASH1M);
 						break;
-					case "SRAM_V":
-						this.save = this.memory[
-							this.REGION_CART_SRAM
-						] = new SRAMSavedata(this.SIZE_CART_SRAM);
+					case 'SRAM_V':
+						this.save = this.memory[this.REGION_CART_SRAM] =
+							new SRAMSavedata(this.SIZE_CART_SRAM);
 						break;
-					case "EEPROM_V":
-						this.save = this.memory[
-							this.REGION_CART2 + 1
-						] = new EEPROMSavedata(this.SIZE_CART_EEPROM, this);
+					case 'EEPROM_V':
+						this.save = this.memory[this.REGION_CART2 + 1] =
+							new EEPROMSavedata(this.SIZE_CART_EEPROM, this);
 						break;
 				}
 			}
 			if (!this.save) {
 				// Assume we have SRAM
-				this.save = this.memory[
-					this.REGION_CART_SRAM
-				] = new SRAMSavedata(this.SIZE_CART_SRAM);
+				this.save = this.memory[this.REGION_CART_SRAM] =
+					new SRAMSavedata(this.SIZE_CART_SRAM);
 			}
 		}
 
@@ -607,7 +588,7 @@ class GameBoyAdvanceMMU {
 			case this.DMA_TIMING_CUSTOM:
 				switch (number) {
 					case 0:
-						this.core.WARN("Discarding invalid DMA0 scheduling");
+						this.core.WARN('Discarding invalid DMA0 scheduling');
 						break;
 					case 1:
 					case 2:
@@ -746,7 +727,7 @@ class GameBoyAdvanceMMU {
 				}
 			}
 		} else {
-			this.core.WARN("Invalid DMA");
+			this.core.WARN('Invalid DMA');
 		}
 
 		if (info.doIrq) {
@@ -849,57 +830,39 @@ class GameBoyAdvanceMMU {
 		] = 2 * this.waitstatesSeq[this.REGION_CART2] + 1;
 
 		if (prefetch) {
-			this.waitstatesPrefetch[
-				this.REGION_CART0
-			] = this.waitstatesPrefetch[this.REGION_CART0 + 1] = 0;
-			this.waitstatesPrefetch[
-				this.REGION_CART1
-			] = this.waitstatesPrefetch[this.REGION_CART1 + 1] = 0;
-			this.waitstatesPrefetch[
-				this.REGION_CART2
-			] = this.waitstatesPrefetch[this.REGION_CART2 + 1] = 0;
+			this.waitstatesPrefetch[this.REGION_CART0] =
+				this.waitstatesPrefetch[this.REGION_CART0 + 1] = 0;
+			this.waitstatesPrefetch[this.REGION_CART1] =
+				this.waitstatesPrefetch[this.REGION_CART1 + 1] = 0;
+			this.waitstatesPrefetch[this.REGION_CART2] =
+				this.waitstatesPrefetch[this.REGION_CART2 + 1] = 0;
 
-			this.waitstatesPrefetch32[
-				this.REGION_CART0
-			] = this.waitstatesPrefetch32[this.REGION_CART0 + 1] = 0;
-			this.waitstatesPrefetch32[
-				this.REGION_CART1
-			] = this.waitstatesPrefetch32[this.REGION_CART1 + 1] = 0;
-			this.waitstatesPrefetch32[
-				this.REGION_CART2
-			] = this.waitstatesPrefetch32[this.REGION_CART2 + 1] = 0;
+			this.waitstatesPrefetch32[this.REGION_CART0] =
+				this.waitstatesPrefetch32[this.REGION_CART0 + 1] = 0;
+			this.waitstatesPrefetch32[this.REGION_CART1] =
+				this.waitstatesPrefetch32[this.REGION_CART1 + 1] = 0;
+			this.waitstatesPrefetch32[this.REGION_CART2] =
+				this.waitstatesPrefetch32[this.REGION_CART2 + 1] = 0;
 		} else {
-			this.waitstatesPrefetch[
-				this.REGION_CART0
-			] = this.waitstatesPrefetch[
-				this.REGION_CART0 + 1
-			] = this.waitstatesSeq[this.REGION_CART0];
-			this.waitstatesPrefetch[
-				this.REGION_CART1
-			] = this.waitstatesPrefetch[
-				this.REGION_CART1 + 1
-			] = this.waitstatesSeq[this.REGION_CART1];
-			this.waitstatesPrefetch[
-				this.REGION_CART2
-			] = this.waitstatesPrefetch[
-				this.REGION_CART2 + 1
-			] = this.waitstatesSeq[this.REGION_CART2];
+			this.waitstatesPrefetch[this.REGION_CART0] =
+				this.waitstatesPrefetch[this.REGION_CART0 + 1] =
+					this.waitstatesSeq[this.REGION_CART0];
+			this.waitstatesPrefetch[this.REGION_CART1] =
+				this.waitstatesPrefetch[this.REGION_CART1 + 1] =
+					this.waitstatesSeq[this.REGION_CART1];
+			this.waitstatesPrefetch[this.REGION_CART2] =
+				this.waitstatesPrefetch[this.REGION_CART2 + 1] =
+					this.waitstatesSeq[this.REGION_CART2];
 
-			this.waitstatesPrefetch32[
-				this.REGION_CART0
-			] = this.waitstatesPrefetch32[
-				this.REGION_CART0 + 1
-			] = this.waitstatesSeq32[this.REGION_CART0];
-			this.waitstatesPrefetch32[
-				this.REGION_CART1
-			] = this.waitstatesPrefetch32[
-				this.REGION_CART1 + 1
-			] = this.waitstatesSeq32[this.REGION_CART1];
-			this.waitstatesPrefetch32[
-				this.REGION_CART2
-			] = this.waitstatesPrefetch32[
-				this.REGION_CART2 + 1
-			] = this.waitstatesSeq32[this.REGION_CART2];
+			this.waitstatesPrefetch32[this.REGION_CART0] =
+				this.waitstatesPrefetch32[this.REGION_CART0 + 1] =
+					this.waitstatesSeq32[this.REGION_CART0];
+			this.waitstatesPrefetch32[this.REGION_CART1] =
+				this.waitstatesPrefetch32[this.REGION_CART1 + 1] =
+					this.waitstatesSeq32[this.REGION_CART1];
+			this.waitstatesPrefetch32[this.REGION_CART2] =
+				this.waitstatesPrefetch32[this.REGION_CART2 + 1] =
+					this.waitstatesSeq32[this.REGION_CART2];
 		}
 	}
 	saveNeedsFlush() {

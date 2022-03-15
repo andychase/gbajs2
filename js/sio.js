@@ -34,22 +34,22 @@ class GameBoyAdvanceSIO {
 		}
 		this.mode = mode;
 
-		this.core.INFO("Setting SIO mode to " + hex(mode, 1));
+		this.core.INFO('Setting SIO mode to ' + hex(mode, 1));
 	}
 	writeRCNT(value) {
 		if (this.mode != this.SIO_GPIO) {
 			return;
 		}
 
-		this.core.STUB("General purpose serial not supported");
+		this.core.STUB('General purpose serial not supported');
 	}
 	writeSIOCNT(value) {
 		switch (this.mode) {
 			case this.SIO_NORMAL_8:
-				this.core.STUB("8-bit transfer unsupported");
+				this.core.STUB('8-bit transfer unsupported');
 				break;
 			case this.SIO_NORMAL_32:
-				this.core.STUB("32-bit transfer unsupported");
+				this.core.STUB('32-bit transfer unsupported');
 				break;
 			case this.SIO_MULTI:
 				this.multiplayer.baud = value & 0x0003;
@@ -66,13 +66,13 @@ class GameBoyAdvanceSIO {
 				this.irq = value & 0x4000;
 				break;
 			case this.SIO_UART:
-				this.core.STUB("UART unsupported");
+				this.core.STUB('UART unsupported');
 				break;
 			case this.SIO_GPIO:
 				// This register isn't used in general-purpose mode
 				break;
 			case this.SIO_JOYBUS:
-				this.core.STUB("JOY BUS unsupported");
+				this.core.STUB('JOY BUS unsupported');
 				break;
 		}
 	}
@@ -80,10 +80,10 @@ class GameBoyAdvanceSIO {
 		var value = (this.mode << 12) & 0xffff;
 		switch (this.mode) {
 			case this.SIO_NORMAL_8:
-				this.core.STUB("8-bit transfer unsupported");
+				this.core.STUB('8-bit transfer unsupported');
 				break;
 			case this.SIO_NORMAL_32:
-				this.core.STUB("32-bit transfer unsupported");
+				this.core.STUB('32-bit transfer unsupported');
 				break;
 			case this.SIO_MULTI:
 				value |= this.multiplayer.baud;
@@ -95,13 +95,13 @@ class GameBoyAdvanceSIO {
 				value |= !!this.multiplayer.irq << 14;
 				break;
 			case this.SIO_UART:
-				this.core.STUB("UART unsupported");
+				this.core.STUB('UART unsupported');
 				break;
 			case this.SIO_GPIO:
 				// This register isn't used in general-purpose mode
 				break;
 			case this.SIO_JOYBUS:
-				this.core.STUB("JOY BUS unsupported");
+				this.core.STUB('JOY BUS unsupported');
 				break;
 		}
 		return value;
@@ -109,16 +109,16 @@ class GameBoyAdvanceSIO {
 	read(slot) {
 		switch (this.mode) {
 			case this.SIO_NORMAL_32:
-				this.core.STUB("32-bit transfer unsupported");
+				this.core.STUB('32-bit transfer unsupported');
 				break;
 			case this.SIO_MULTI:
 				return this.multiplayer.states[slot];
 			case this.SIO_UART:
-				this.core.STUB("UART unsupported");
+				this.core.STUB('UART unsupported');
 				break;
 			default:
 				this.core.WARN(
-					"Reading from transfer register in unsupported mode"
+					'Reading from transfer register in unsupported mode'
 				);
 				break;
 		}

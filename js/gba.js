@@ -6,7 +6,7 @@ class GameBoyAdvance {
 		this.LOG_INFO = 8;
 		this.LOG_DEBUG = 16;
 
-		this.SYS_ID = "com.endrift.gbajs";
+		this.SYS_ID = 'com.endrift.gbajs';
 
 		this.logLevel = this.LOG_ERROR | this.LOG_WARN;
 
@@ -77,12 +77,12 @@ class GameBoyAdvance {
 	setCanvas(canvas) {
 		if (canvas.offsetWidth != 240 || canvas.offsetHeight != 160) {
 			var self = this;
-			this.indirectCanvas = document.createElement("canvas");
-			this.indirectCanvas.setAttribute("height", "160");
-			this.indirectCanvas.setAttribute("width", "240");
+			this.indirectCanvas = document.createElement('canvas');
+			this.indirectCanvas.setAttribute('height', '160');
+			this.indirectCanvas.setAttribute('width', '240');
 			this.targetCanvas = canvas;
 			this.setCanvasDirect(this.indirectCanvas);
-			var targetContext = canvas.getContext("2d");
+			var targetContext = canvas.getContext('2d');
 			this.video.drawCallback = function () {
 				targetContext.drawImage(
 					self.indirectCanvas,
@@ -98,7 +98,7 @@ class GameBoyAdvance {
 		}
 	}
 	setCanvasDirect(canvas) {
-		this.context = canvas.getContext("2d");
+		this.context = canvas.getContext('2d');
 		this.video.setBacking(this.context);
 	}
 	setBios(bios, real) {
@@ -211,7 +211,7 @@ class GameBoyAdvance {
 				} catch (exception) {
 					self.ERROR(exception);
 					if (exception.stack) {
-						self.logStackTrace(exception.stack.split("\n"));
+						self.logStackTrace(exception.stack.split('\n'));
 					}
 					throw exception;
 				}
@@ -228,7 +228,7 @@ class GameBoyAdvance {
 				} catch (exception) {
 					self.ERROR(exception);
 					if (exception.stack) {
-						self.logStackTrace(exception.stack.split("\n"));
+						self.logStackTrace(exception.stack.split('\n'));
 					}
 					throw exception;
 				}
@@ -252,9 +252,9 @@ class GameBoyAdvance {
 	}
 	decodeBase64(string) {
 		var length = (string.length * 3) / 4;
-		if (string[string.length - 2] == "=") {
+		if (string[string.length - 2] == '=') {
 			length -= 2;
-		} else if (string[string.length - 1] == "=") {
+		} else if (string[string.length - 1] == '=') {
 			length -= 1;
 		}
 		var buffer = new ArrayBuffer(length);
@@ -286,30 +286,30 @@ class GameBoyAdvance {
 			wordstring.push(String.fromCharCode(b));
 			while (wordstring.length >= 3) {
 				triplet = wordstring.splice(0, 3);
-				data.push(btoa(triplet.join("")));
+				data.push(btoa(triplet.join('')));
 			}
 		}
 		if (wordstring.length) {
-			data.push(btoa(wordstring.join("")));
+			data.push(btoa(wordstring.join('')));
 		}
-		return data.join("");
+		return data.join('');
 	}
 	downloadSavedata() {
 		var sram = this.mmu.save;
 		if (!sram) {
-			this.WARN("No save data available");
+			this.WARN('No save data available');
 			return null;
 		}
 		if (window.URL) {
 			var url = window.URL.createObjectURL(
-				new Blob([sram.buffer], { type: "application/octet-stream" })
+				new Blob([sram.buffer], { type: 'application/octet-stream' })
 			);
 			window.open(url);
 		} else {
 			var data = this.encodeBase64(sram.view);
 			window.open(
-				"data:application/octet-stream;base64," + data,
-				this.rom.code + ".sav"
+				'data:application/octet-stream;base64,' + data,
+				this.rom.code + '.sav'
 			);
 		}
 	}
@@ -317,23 +317,23 @@ class GameBoyAdvance {
 		var sram = this.mmu.save;
 		try {
 			var storage = window.localStorage;
-			storage[this.SYS_ID + "." + this.mmu.cart.code] = this.encodeBase64(
+			storage[this.SYS_ID + '.' + this.mmu.cart.code] = this.encodeBase64(
 				sram.view
 			);
 		} catch (e) {
-			this.WARN("Could not store savedata! " + e);
+			this.WARN('Could not store savedata! ' + e);
 		}
 	}
 	retrieveSavedata() {
 		try {
 			var storage = window.localStorage;
-			var data = storage[this.SYS_ID + "." + this.mmu.cart.code];
+			var data = storage[this.SYS_ID + '.' + this.mmu.cart.code];
 			if (data) {
 				this.decodeSavedata(data);
 				return true;
 			}
 		} catch (e) {
-			this.WARN("Could not retrieve savedata! " + e);
+			this.WARN('Could not retrieve savedata! ' + e);
 		}
 		return false;
 	}
@@ -361,12 +361,12 @@ class GameBoyAdvance {
 	}
 	logStackTrace(stack) {
 		var overflow = stack.length - 32;
-		this.ERROR("Stack trace follows:");
+		this.ERROR('Stack trace follows:');
 		if (overflow > 0) {
-			this.log(-1, "> (Too many frames)");
+			this.log(-1, '> (Too many frames)');
 		}
 		for (var i = Math.max(overflow, 0); i < stack.length; ++i) {
-			this.log(-1, "> " + stack[i]);
+			this.log(-1, '> ' + stack[i]);
 		}
 	}
 	ERROR(error) {
@@ -395,11 +395,11 @@ class GameBoyAdvance {
 		}
 	}
 	ASSERT_UNREACHED(err) {
-		throw new Error("Should be unreached: " + err);
+		throw new Error('Should be unreached: ' + err);
 	}
 	ASSERT(test, err) {
 		if (!test) {
-			throw new Error("Assertion failed: " + err);
+			throw new Error('Assertion failed: ' + err);
 		}
 	}
 }
