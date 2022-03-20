@@ -3,6 +3,7 @@
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 		<meta name="viewport" content="width=device-width" />
+		<meta name="description" content="GBAJS3, Nicholas VanCise" />
 		<title>gbajs3</title>
 
 		<script src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
@@ -47,6 +48,7 @@
 		<script src="js/gba.js"></script>
 		<script src="resources/xhr.js"></script>
 		<script src="resources/biosbin.js"></script>
+		<script src="resources/gba_api.js"></script>
 	</head>
 	<body>
 		<!-- gba canvas "screen" -->
@@ -102,12 +104,13 @@
 			>
 				<input
 					type="checkbox"
+					id="soundSwitchCheckChecked"
 					onchange="gba.audio.masterEnable = this.checked; if (gba.audio.context.state !== 'running') {gba.audio.context.resume();}"
 				/>
 				<label
 					id="sound_check_lbl"
 					class="form-check-label"
-					for="flexSwitchCheckChecked"
+					for="soundSwitchCheckChecked"
 					>Sound</label
 				>
 				<input
@@ -331,6 +334,60 @@
 			</div>
 		</div>
 
+		<div id="loginModal" class="modal fade">
+			<div class="modal-dialog modal-login">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h4 class="modal-title">Login</h4>
+						<button
+							type="button"
+							class="close"
+							data-bs-dismiss="modal"
+							id="loginCloseIcon"
+							aria-hidden="true"
+						>
+							&times;
+						</button>
+					</div>
+					<div class="modal-body">
+						<form id="loginForm">
+							<div class="form-group">
+								<i class="fa fa-user"></i>
+								<input
+									autofocus
+									type="text"
+									class="form-control"
+									placeholder="Username"
+									required="required"
+									id="login-username"
+								/>
+							</div>
+							<div class="form-group">
+								<i class="fa fa-lock"></i>
+								<input
+									type="password"
+									class="form-control"
+									placeholder="Password"
+									required="required"
+									id="login-password"
+								/>
+							</div>
+							<div class="form-group">
+								<input
+									id="loginbutton"
+									type="submit"
+									class="btn btn-primary btn-block btn-lg"
+									value="Login"
+									target="#"
+									data-bs-dismiss="modal"
+								/>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+
 		<div
 			class="modal fade"
 			id="legalModal"
@@ -372,6 +429,102 @@
 							data-bs-dismiss="modal"
 						>
 							Close
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div
+			class="modal fade"
+			id="uploadRomToServerModal"
+			tabindex="-1"
+			aria-labelledby="uploadRomToServerModalLabel"
+			aria-hidden="true"
+		>
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5
+							class="modal-title"
+							id="uploadRomToServerModalLabel"
+						>
+							Legal
+						</h5>
+						<button
+							type="button"
+							class="btn-close"
+							data-bs-dismiss="modal"
+							aria-label="Close"
+						></button>
+					</div>
+					<div class="modal-body">
+						<p>Do you want to save this rom to the server?</p>
+					</div>
+					<div class="modal-footer">
+						<button
+							type="button"
+							class="btn btn-primary"
+							onclick="uploadRomToServer();run($('#loader')[0].files[0]);"
+							data-bs-dismiss="modal"
+						>
+							Yes
+						</button>
+						<button
+							type="button"
+							class="btn btn-secondary"
+							data-bs-dismiss="modal"
+							onclick="run($('#loader')[0].files[0]);"
+						>
+							No
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div
+			class="modal fade"
+			id="uploadSaveToServerModal"
+			tabindex="-1"
+			aria-labelledby="uploadSaveToServerModalLabel"
+			aria-hidden="true"
+		>
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5
+							class="modal-title"
+							id="uploadSaveToServerModalLabel"
+						>
+							Legal
+						</h5>
+						<button
+							type="button"
+							class="btn-close"
+							data-bs-dismiss="modal"
+							aria-label="Close"
+						></button>
+					</div>
+					<div class="modal-body">
+						<p>Do you want to send your save file to the server?</p>
+					</div>
+					<div class="modal-footer">
+						<button
+							type="button"
+							class="btn btn-primary"
+							onclick="uploadSaveToServer();uploadSavedataPending($('#saveloader')[0].files[0]);"
+							data-bs-dismiss="modal"
+						>
+							Yes
+						</button>
+						<button
+							type="button"
+							class="btn btn-secondary"
+							data-bs-dismiss="modal"
+							onclick="uploadSavedataPending($('#loader')[0].files[0]);"
+						>
+							No
 						</button>
 					</div>
 				</div>
@@ -423,7 +576,7 @@
 							<input
 								id="saveloader"
 								type="file"
-								onchange="uploadSavedataPending(this.files[0]);"
+								onchange="uploadSavedataPendingCredentialsWrapper(this.files[0])"
 							/>
 						</li>
 						<li
@@ -437,7 +590,7 @@
 								id="loader"
 								type="file"
 								accept=".gba"
-								onchange="run(this.files[0]);"
+								onchange="runCredentialsWrapper(this.files[0]);"
 							/>
 						</li>
 					</ul>
@@ -498,7 +651,13 @@
 					<i class="bx bxs-joystick"></i>
 					<span class="mx-2">Controls</span>
 				</li>
-				<li href="#" class="nav-link">
+				<li
+					href="#"
+					class="nav-link"
+					data-bs-toggle="modal"
+					data-bs-target="#loginModal"
+					id="profileModalButton"
+				>
 					<i class="bx bx-user-check"></i>
 					<span class="mx-2">Profile</span>
 				</li>

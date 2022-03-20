@@ -1,3 +1,9 @@
 .DS_Store
 /**/local_roms/**
 /**/local_saves/**
+/**/users.db
+/**/swag
+/**/.env
+/**/certs/**
+/**/*.log
+/**/authapi

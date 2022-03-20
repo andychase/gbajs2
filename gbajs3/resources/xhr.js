@@ -10,7 +10,6 @@ function loadRom(url, callback) {
 }
 
 //loads a rom from a user defined path
-//based on rom parameter of query string
 function loadLocalFile(url, callback) {
 	var xhr = new XMLHttpRequest();
 	xhr.open('GET', url);

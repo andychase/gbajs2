@@ -1,0 +1,366 @@
+basePath: '{{.BasePath}}'
+host: '{{.Host}}'
+info:
+  contact:
+    email: nvancise@unlv.nevada.edu
+    name: Nicholas VanCise
+    url: https://nicholas-vancise.dev
+  description: This server is designed to provide jwt token support/local file handling
+    to my gbajs implementation
+  license:
+    name: Copyright (c) 2022 Nicholas VanCise
+  title: Gba File/JWT Auth Server
+  version: "1.0"
+paths:
+  /:
+    get:
+      description: Displays welcome message.
+      parameters:
+      - description: Authorization
+        in: header
+        name: authToken
+        required: true
+        type: string
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: Hello World! This is a GBA file/auth server, written in Golang.
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "405":
+          description: Method Not Allowed
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+        "501":
+          description: Not Implemented
+          schema:
+            type: string
+      summary: Hello world landing page
+  /api-v1/accounts/login:
+    post:
+      consumes:
+      - application/json
+      description: User login from credentials, issues refresh token cookie, and access
+        token
+      parameters:
+      - description: User credentials
+        in: body
+        name: Data
+        required: true
+        schema:
+          $ref: '#/definitions/string'
+          type: object
+      responses:
+        "200":
+          description: Access token
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "405":
+          description: Method Not Allowed
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: User Login
+      tags:
+      - auth
+  /api-v1/accounts/logout:
+    post:
+      description: User logout
+      parameters:
+      - description: Bearer <token>
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "405":
+          description: Method Not Allowed
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: User Logout
+      tags:
+      - auth
+  /api-v1/tokens/refresh:
+    post:
+      description: Uses stored refresh token + database lookup to issue new auth token
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Access token
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "405":
+          description: Method Not Allowed
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Uses stored refresh token cookie to issue new auth token
+      tags:
+      - auth
+  /api/rom/download:
+    get:
+      description: Download rom from server
+      parameters:
+      - description: Authorization
+        in: header
+        name: authToken
+        required: true
+        type: string
+      - description: Rom to download
+        in: query
+        name: rom
+        required: true
+        type: string
+      produces:
+      - application/x-gba-rom
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "405":
+          description: Method Not Allowed
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+        "501":
+          description: Not Implemented
+          schema:
+            type: string
+      summary: Download rom from server
+      tags:
+      - gba
+  /api/rom/list:
+    get:
+      description: Lists all roms uploaded to server
+      parameters:
+      - description: Authorization
+        in: header
+        name: authToken
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "405":
+          description: Method Not Allowed
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+        "501":
+          description: Not Implemented
+          schema:
+            type: string
+      summary: Lists all rom files uploaded to server
+      tags:
+      - gba
+  /api/rom/upload:
+    post:
+      description: Upload rom to server
+      parameters:
+      - description: Authorization
+        in: header
+        name: authToken
+        required: true
+        type: string
+      - description: Rom to Upload
+        in: formData
+        name: rom
+        required: true
+        type: file
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "405":
+          description: Method Not Allowed
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+        "501":
+          description: Not Implemented
+          schema:
+            type: string
+      summary: Upload rom to server
+      tags:
+      - gba
+  /api/save/download:
+    get:
+      description: Download save from server
+      parameters:
+      - description: Authorization
+        in: header
+        name: authToken
+        required: true
+        type: string
+      - description: Save to download
+        in: query
+        name: save
+        required: true
+        type: string
+      produces:
+      - application/x-spss-sav
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "405":
+          description: Method Not Allowed
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+        "501":
+          description: Not Implemented
+          schema:
+            type: string
+      summary: Download save from server
+      tags:
+      - gba
+  /api/save/list:
+    get:
+      description: Lists all saves uploaded to server
+      parameters:
+      - description: Authorization
+        in: header
+        name: authToken
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "405":
+          description: Method Not Allowed
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+        "501":
+          description: Not Implemented
+          schema:
+            type: string
+      summary: Lists all save files uploaded to server
+      tags:
+      - gba
+  /api/save/upload:
+    post:
+      description: Upload save to server
+      parameters:
+      - description: Authorization
+        in: header
+        name: authToken
+        required: true
+        type: string
+      - description: Save to Upload
+        in: formData
+        name: save
+        required: true
+        type: file
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "405":
+          description: Method Not Allowed
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+        "501":
+          description: Not Implemented
+          schema:
+            type: string
+      summary: Upload save to server
+      tags:
+      - gba
+swagger: "2.0"

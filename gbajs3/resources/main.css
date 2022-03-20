@@ -245,9 +245,17 @@ p {
 	margin-top: 0px;
 }
 
+#loginbutton {
+	margin-top: 5px !important;
+}
+
 .modal-body p,
 h5,
 .modal-body ul {
+	color: black;
+}
+
+h4 {
 	color: black;
 }
 

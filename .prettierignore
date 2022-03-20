@@ -1,2 +1,7 @@
 /**/*.md
 /**/.prettierrc
+/**/Dockerfile
+/**/docker-compose.yaml
+/**/docker-compose.yml
+/**/nginx.conf
+/**/auth/**/*

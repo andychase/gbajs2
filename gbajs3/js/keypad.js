@@ -22,6 +22,7 @@ class GameBoyAdvanceKeypad {
 		this.GAMEPAD_L = 4;
 		this.GAMEPAD_R = 5;
 		this.GAMEPAD_THRESHOLD = 0.2;
+		this.keymodalactive = false;
 
 		this.A = 0;
 		this.B = 1;
@@ -42,6 +43,10 @@ class GameBoyAdvanceKeypad {
 		this.remappingKeyId = '';
 	}
 	keyboardHandler(e) {
+		if (this.keymodalactive) {
+			return;
+		}
+
 		var toggle = 0;
 
 		// Check for a remapping

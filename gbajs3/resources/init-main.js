@@ -16,6 +16,9 @@ var params = new Proxy(new URLSearchParams(window.location.search), {
 });
 const query_select_rom = params.rom;
 const query_select_save = params.save;
+var accesstoken = null;
+//attempt to initially refresh an access token from a present httponly cookie
+refreshAccessToken();
 
 window.mobileCheck = function () {
 	let check = false;
@@ -66,6 +69,7 @@ menu_btn.addEventListener('click', () => {
 	container.classList.toggle('active-cont');
 });
 
+//check for mobile
 if (window.mobileCheck()) {
 	window.oncontextmenu = function () {
 		return false;
@@ -75,6 +79,22 @@ if (window.mobileCheck()) {
 	disableVirtualControlsMenuNode();
 	isMobile = true;
 }
+
+//login handlers
+$('#profileModalButton').click(function () {
+	gba.keypad.keymodalactive = true;
+});
+
+$('#loginModal').on('hide.bs.modal', function () {
+	console.log('Fired at start of hide event!');
+	gba.keypad.keymodalactive = false;
+});
+
+$('#loginForm').on('submit', function (e) {
+	console.log('in submit login form');
+	e.preventDefault();
+	login();
+});
 
 try {
 	gba = new GameBoyAdvance();
@@ -95,7 +115,12 @@ try {
 		screen.parentElement.insertBefore(crash, screen);
 		screen.setAttribute('class', 'dead');
 	});
+} catch (exception) {
+	gba = null;
+	console.log('exception loading gba:' + exception);
+}
 
+function initialParamRomandSave() {
 	if (query_select_rom != null && query_select_rom != '') {
 		if (query_select_save != null && query_select_save != '') {
 			loadAndRunLocalRom(query_select_rom, query_select_save);
@@ -103,9 +128,6 @@ try {
 			loadAndRunLocalRom(query_select_rom, '');
 		}
 	}
-} catch (exception) {
-	gba = null;
-	console.log('exception loading gba:' + exception);
 }
 
 //make canvas wrapper/canvas draggable and resizable
@@ -201,9 +223,9 @@ window.onload = function () {
 
 function loadAndRunLocalRom(romloc, saveloc) {
 	if (saveloc != null && saveloc != '') {
-		loadLocalFile('local_saves/' + saveloc, uploadSavedataPending);
+		loadSaveFromServer();
 	}
-	loadLocalFile('local_roms/' + romloc, run);
+	loadRomFromServer();
 }
 
 function run(file) {
@@ -244,6 +266,14 @@ function run(file) {
 	});
 }
 
+function runCredentialsWrapper(file) {
+	if (accesstoken != '') {
+		$('#uploadRomToServerModal').modal('show');
+	} else {
+		run(file);
+	}
+}
+
 function reset() {
 	gba.pause();
 	gba.reset();
@@ -278,6 +308,16 @@ function uploadSavedataPending(file) {
 	runCommands.push(function () {
 		gba.loadSavedataFromFile(file);
 	});
+}
+
+function uploadSavedataPendingCredentialsWrapper(file) {
+	if (accesstoken != '') {
+		$('#uploadSaveToServerModal').modal('show');
+	} else {
+		runCommands.push(function () {
+			gba.loadSavedataFromFile(file);
+		});
+	}
 }
 
 function togglePause() {

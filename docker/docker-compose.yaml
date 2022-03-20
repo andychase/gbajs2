@@ -1,0 +1,35 @@
+version: '2.1'
+services:
+    webserver:
+        image: nginx
+        logging:
+            options:
+                max-size: '50m'
+                max-file: '5'
+            driver: json-file
+        build:
+            context: ..
+            dockerfile: ./docker/server/nginx/Dockerfile
+        ports:
+            - "8000:80"
+
+    auth-server:
+        image: auth-server
+        logging:
+            options:
+                max-size: '50m'
+                max-file: '5'
+            driver: json-file
+        build:
+            context: .
+            dockerfile: ./server/auth/Dockerfile
+        ports:
+            - "443:443"
+        environment:
+            - ROM_PATH=${ROM_PATH}
+            - SAVE_PATH=${SAVE_PATH}
+            - CLIENT_HOST=${CLIENT_HOST}
+        volumes:
+            - ./server/auth/users.db:/app/users.db
+            - ./server/auth/local_roms:/app/local_roms
+            - ./server/auth/local_saves:/app/local_saves
