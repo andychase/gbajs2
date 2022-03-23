@@ -1,6 +1,15 @@
+const serverloc = 'https://127.0.0.1';
+
+function checkAccessTok() {
+	if (accesstoken !== null && accesstoken !== '') {
+		return true;
+	}
+	return false;
+}
+
 function login() {
 	$.ajax({
-		url: 'https://127.0.0.1/api/account/login',
+		url: serverloc+'/api/account/login',
 		type: 'POST',
 		contentType: 'application/json',
 		data: JSON.stringify({
@@ -16,23 +25,32 @@ function login() {
 				accesstoken = result.slice(1, -2); //strip quotes/line feed
 			} else {
 				console.log('login has failed');
+				accesstoken = '';
 			}
 			$('#login-username').val('');
 			$('#login-password').val('');
+			enableLogoutRomSaveServermenuNodes();
 		}
 	});
 }
 
 function logout() {
+	if (!checkAccessTok()) {
+		return;
+	}
 	$.ajax({
-		url: 'https://127.0.0.1/api/account/logout',
+		url: serverloc+'/api/account/logout',
 		type: 'POST',
 		headers: {
 			Authorization: 'Bearer ' + accesstoken
 		},
-		success: function (result) {
-			if (result.status == 200) {
+		xhrFields: {
+			withCredentials: true
+		},
+		success: function (result, teststatus, resp) {
+			if (resp.status == 200) {
 				console.log('logout successful');
+				disableLogoutRomSaveServermenuNodes();
 			} else {
 				console.log('logout has failed');
 			}
@@ -41,10 +59,13 @@ function logout() {
 }
 
 function loadRomFromServer() {
+	if (!checkAccessTok()) {
+		return;
+	}
 	var xhr = new XMLHttpRequest();
 	xhr.open(
 		'GET',
-		'https://127.0.0.1/api/rom/download?rom=' + query_select_rom
+		serverloc+'/api/rom/download?rom=' + query_select_rom
 	);
 	xhr.setRequestHeader('Authorization', 'Bearer ' + accesstoken);
 	xhr.responseType = 'blob';
@@ -62,10 +83,13 @@ function loadRomFromServer() {
 }
 
 function loadSaveFromServer() {
+	if (!checkAccessTok()) {
+		return;
+	}
 	var xhr = new XMLHttpRequest();
 	xhr.open(
 		'GET',
-		'https://127.0.0.1/api/save/download?save=' + query_select_save
+		serverloc+'/api/save/download?save=' + query_select_save
 	);
 	xhr.setRequestHeader('Authorization', 'Bearer ' + accesstoken);
 	xhr.responseType = 'blob';
@@ -83,13 +107,16 @@ function loadSaveFromServer() {
 }
 
 function uploadRomToServer() {
+	if (!checkAccessTok()) {
+		return;
+	}
 	var files = $('#loader')[0].files;
 	if (files.length > 0) {
 		var fd = new FormData();
 		fd.append('rom', files[0]);
 
 		$.ajax({
-			url: 'https://127.0.0.1/api/rom/upload',
+			url: serverloc+'/api/rom/upload',
 			type: 'post',
 			data: fd,
 			headers: {
@@ -110,13 +137,16 @@ function uploadRomToServer() {
 }
 
 function uploadSaveToServer() {
+	if (!checkAccessTok()) {
+		return;
+	}
 	var files = $('#saveloader')[0].files;
 	if (files.length > 0) {
 		var fd = new FormData();
 		fd.append('rom', files[0]);
 
 		$.ajax({
-			url: 'https://127.0.0.1/api/save/upload',
+			url: serverloc+'/api/save/upload',
 			type: 'post',
 			data: fd,
 			headers: {
@@ -138,7 +168,7 @@ function uploadSaveToServer() {
 
 function refreshAccessToken() {
 	$.ajax({
-		url: 'https://127.0.0.1/api/tokens/refresh',
+		url: serverloc+'/api/tokens/refresh',
 		type: 'POST',
 		xhrFields: {
 			withCredentials: true
@@ -146,9 +176,82 @@ function refreshAccessToken() {
 		success: function (result, teststatus, resp) {
 			if (resp.status == 200) {
 				accesstoken = result.slice(1, -2);
-				initialParamRomandSave();
+				if (initialLoad) {
+					initialParamRomandSave();
+					initialLoad = false;
+				}
+				enableLogoutRomSaveServermenuNodes();
 			} else {
 				console.log('refresh token has failed');
+				accesstoken = '';
+			}
+		}
+	});
+}
+
+function loadRomList() {
+	if (!checkAccessTok()) {
+		return;
+	}
+	$.ajax({
+		url: serverloc+'/api/rom/list',
+		type: 'GET',
+		headers: {
+			Authorization: 'Bearer ' + accesstoken
+		},
+		success: function (result, teststatus, resp) {
+			if (resp.status == 200) {
+				//attach to open modal
+				$('#romlist > button').remove();
+				$(result).each(function (index, romname) {
+					console.log('appending list rom:' + romname);
+					$(
+						'<button type="button" class="list-group-item list-group-item-action" data-bs-dismiss="modal">' +
+							romname +
+							'</button>'
+					)
+						.click(function () {
+							query_select_rom = $(this).text();
+							loadRomFromServer();
+						})
+						.appendTo('#romlist');
+				});
+			} else {
+				console.log('list server roms has failed');
+			}
+		}
+	});
+}
+
+function loadSaveList() {
+	if (!checkAccessTok()) {
+		return;
+	}
+	$.ajax({
+		url: serverloc+'/api/save/list',
+		type: 'GET',
+		headers: {
+			Authorization: 'Bearer ' + accesstoken
+		},
+		success: function (result, teststatus, resp) {
+			if (resp.status == 200) {
+				//attach to open modal
+				$('#savelist > button').remove();
+				$(result).each(function (index, savename) {
+					console.log('appending list save:' + savename);
+					$(
+						'<button type="button" class="list-group-item list-group-item-action" data-bs-dismiss="modal">' +
+							savename +
+							'</button>'
+					)
+						.click(function () {
+							query_select_save = $(this).text();
+							loadSaveFromServer();
+						})
+						.appendTo('#savelist');
+				});
+			} else {
+				console.log('list server roms has failed');
 			}
 		}
 	});

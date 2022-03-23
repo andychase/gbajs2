@@ -1,0 +1,1 @@
+cat /var/log/fail2ban.log | grep Ban | wc -l

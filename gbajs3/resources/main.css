@@ -14,6 +14,16 @@ button {
 	font-family: 'Calibri', 'Verdana', sans-serif;
 }
 
+/*testing*/
+.up,
+.down,
+.left,
+.right {
+	touch-action: none;
+}
+
+/*end testing*/
+
 #screen {
 	background-color: #65696d;
 	image-rendering: -webkit-optimize-contrast;
@@ -77,11 +87,18 @@ button {
 #dpadabbuttonholder {
 	position: absolute;
 	top: 31%;
-	left: 3%;
+	left: 4%;
 	width: fit-content;
 	height: fit-content;
 	-ms-touch-action: none; /* IE10 */
 	touch-action: none; /* IE11 */
+	-webkit-user-select: none; /*for ios hover zoom bubble*/
+}
+
+#dpadstartselectbuttonholder {
+	position: absolute;
+	top: 48%;
+	left: 1%;
 	-webkit-user-select: none; /*for ios hover zoom bubble*/
 }
 
@@ -136,6 +153,90 @@ button {
 	border-color: rgba(255, 255, 255, 0.9);
 }
 
+#dpadstartbutton,
+#dpadselectbutton {
+	background-color: #111;
+	border: none;
+	color: #fff;
+	padding: 5px 20px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	margin: 4px 5px;
+	cursor: pointer;
+	border-radius: 16px;
+	width: 84px;
+	border-style: solid;
+	border-color: rgba(255, 255, 255, 0.9);
+}
+
+#dpadstartbutton:active,
+#dpadstartbutton:active::after,
+#dpadstartbutton:active::before,
+#dpadselectbutton:active,
+#dpadselectbutton:active::after,
+#dpadselectbutton:active::before {
+	border-color: #61e22d;
+	color: #61e22d;
+	transition: 0.25s;
+}
+
+#startselectbuttonhandle {
+	position: absolute;
+	width: 30px;
+	height: 30px;
+	background-color: red;
+	top: -3px;
+	left: 96px;
+	transform: translate(-50%, -50%);
+	border-radius: 100px;
+	cursor: pointer;
+}
+
+#dpadlrbuttonholder {
+	position: absolute;
+	top: 57%;
+	left: 1%;
+	-webkit-user-select: none; /*for ios hover zoom bubble*/
+}
+
+#dpadlbutton,
+#dpadrbutton {
+	width: 72px;
+	height: 33px;
+	background-color: #111;
+	border-radius: 8px;
+	text-align: center;
+	cursor: pointer;
+	margin: 4px 11px;
+	margin-top: 0px;
+	display: inline-block;
+	border-style: solid;
+}
+
+#dpadlbutton:active,
+#dpadlbutton:active::after,
+#dpadlbutton:active::before,
+#dpadrbutton:active,
+#dpadrbutton:active::after,
+#dpadrbutton:active::before {
+	border-color: #61e22d;
+	color: #61e22d;
+	transition: 0.25s;
+}
+
+#lrbuttonhandle {
+	position: absolute;
+	width: 30px;
+	height: 30px;
+	background-color: red;
+	top: -3px;
+	left: 96px;
+	transform: translate(-50%, -50%);
+	border-radius: 100px;
+	cursor: pointer;
+}
+
 @media only screen and (max-width: 1000px) {
 	#screenwrapper {
 		top: 0px;
@@ -152,6 +253,16 @@ button {
 	#dpadabbuttonholder {
 		top: 110vw;
 		left: 62%;
+	}
+
+	#dpadstartselectbuttonholder {
+		top: 160vw;
+		left: 3%;
+	}
+
+	#dpadlrbuttonholder {
+		top: 152vw;
+		left: 70%;
 	}
 }
 

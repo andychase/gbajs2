@@ -11,10 +11,15 @@ services:
             context: ..
             dockerfile: ./docker/server/nginx/Dockerfile
         ports:
-            - "8000:80"
+            - "443:443"
+        depends_on:
+            - gba-auth-server
+        cap_add:
+            - NET_ADMIN
+            - NET_RAW
 
-    auth-server:
-        image: auth-server
+    gba-auth-server:
+        image: gba-auth-server
         logging:
             options:
                 max-size: '50m'
@@ -23,8 +28,6 @@ services:
         build:
             context: .
             dockerfile: ./server/auth/Dockerfile
-        ports:
-            - "443:443"
         environment:
             - ROM_PATH=${ROM_PATH}
             - SAVE_PATH=${SAVE_PATH}

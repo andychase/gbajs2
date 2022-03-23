@@ -10,12 +10,14 @@ var actioncontrolorient = false; //false-> horizontal, true-> vertical
 var virtualControlsEnabled = false;
 var isRunning = false;
 var autoPaused = false;
+var initialLoad = true;
+var previousDataKeyIdTouchMoved = '';
 //get query params for automatically selecting a rom
 var params = new Proxy(new URLSearchParams(window.location.search), {
 	get: (searchParams, prop) => searchParams.get(prop)
 });
-const query_select_rom = params.rom;
-const query_select_save = params.save;
+var query_select_rom = params.rom;
+var query_select_save = params.save;
 var accesstoken = null;
 //attempt to initially refresh an access token from a present httponly cookie
 refreshAccessToken();
@@ -39,7 +41,7 @@ window.mobileCheck = function () {
 //pause canvas animation if windows is not focused, restart if so
 $(window).focus(function () {
 	if (isRunning && autoPaused) {
-		buttonPlayPress();
+		buttonPlayPress(false);
 		gba.runStable();
 		autoPaused = false;
 	}
@@ -47,7 +49,7 @@ $(window).focus(function () {
 
 $(window).blur(function () {
 	if (isRunning && !gba.paused && !autoPaused) {
-		buttonPlayPress();
+		buttonPlayPress(false);
 		gba.pause();
 		autoPaused = true;
 	}
@@ -63,6 +65,8 @@ var dpad_left = document.querySelector('#dpadholder > nav > a.left');
 var dpad_down = document.querySelector('#dpadholder > nav > a.down');
 var dpad_a_button = document.querySelector('#dpadabutton');
 var dpad_b_button = document.querySelector('#dpadbbutton');
+var dpad_start_button = document.querySelector('#dpadstartbutton');
+var dpad_select_button = document.querySelector('#dpadselectbutton');
 
 menu_btn.addEventListener('click', () => {
 	sidebar.classList.toggle('active-nav');
@@ -79,22 +83,6 @@ if (window.mobileCheck()) {
 	disableVirtualControlsMenuNode();
 	isMobile = true;
 }
-
-//login handlers
-$('#profileModalButton').click(function () {
-	gba.keypad.keymodalactive = true;
-});
-
-$('#loginModal').on('hide.bs.modal', function () {
-	console.log('Fired at start of hide event!');
-	gba.keypad.keymodalactive = false;
-});
-
-$('#loginForm').on('submit', function (e) {
-	console.log('in submit login form');
-	e.preventDefault();
-	login();
-});
 
 try {
 	gba = new GameBoyAdvance();
@@ -120,6 +108,29 @@ try {
 	console.log('exception loading gba:' + exception);
 }
 
+//login handlers
+$('#loginModalButton').click(function () {
+	gba.keypad.keymodalactive = true;
+});
+
+$('#loginModal').on('hide.bs.modal', function () {
+	gba.keypad.keymodalactive = false;
+});
+
+$('#loginForm').on('submit', function (e) {
+	e.preventDefault();
+	login();
+});
+
+//rom/save list handlers
+$('#listRomModal').on('show.bs.modal', function () {
+	loadRomList();
+});
+
+$('#listSaveModal').on('show.bs.modal', function () {
+	loadSaveList();
+});
+
 function initialParamRomandSave() {
 	if (query_select_rom != null && query_select_rom != '') {
 		if (query_select_save != null && query_select_save != '') {
@@ -144,47 +155,13 @@ $('#dpadholder').draggable({
 $('#dpadabbuttonholder').draggable({
 	handle: '#abbuttonhandle'
 });
+$('#dpadstartselectbuttonholder').draggable({
+	handle: '#startselectbuttonhandle'
+});
+$('#dpadlrbuttonholder').draggable({
+	handle: '#lrbuttonhandle'
+});
 setPixelated(true);
-
-//set dpad/button event listeners
-function setDpadEvents(elems) {
-	elems.forEach(function (elem, index) {
-		var keyId = $(elem).attr('data-keyid');
-		var keycode = gba.keypad.getKeyCodeValue(keyId.toUpperCase());
-
-		elem.addEventListener('mousedown', () => {
-			isKeyDown = true;
-			simulateKeyDown(keycode);
-		});
-
-		elem.addEventListener('mouseup', () => {
-			isKeyDown = false;
-			simulateKeyUp(keycode);
-		});
-
-		elem.addEventListener('mouseenter', () => {
-			if (isKeyDown) {
-				simulateKeyDown(keycode);
-			}
-		});
-
-		elem.addEventListener('mouseleave', () => {
-			if (isKeyDown) {
-				simulateKeyUp(keycode);
-			}
-		});
-
-		elem.addEventListener('touchstart', () => {
-			isKeyDown = true;
-			simulateKeyDown(keycode);
-		});
-
-		elem.addEventListener('touchend', () => {
-			isKeyDown = false;
-			simulateKeyDown(keycode);
-		});
-	});
-}
 
 setDpadEvents([
 	dpad_right,
@@ -192,7 +169,9 @@ setDpadEvents([
 	dpad_up,
 	dpad_down,
 	dpad_a_button,
-	dpad_b_button
+	dpad_b_button,
+	dpad_start_button,
+	dpad_select_button
 ]);
 
 //main function defs
@@ -233,7 +212,7 @@ function run(file) {
 	dead.value = '';
 	let load = document.getElementById('select');
 	load.text = 'Loading Rom...';
-	load.removeAttribute('onclick');
+	$('#collapseOne').collapse('show');
 	gba.loadRomFromFile(file, function (result) {
 		if (result) {
 			for (let i = 0; i < runCommands.length; ++i) {
@@ -258,16 +237,13 @@ function run(file) {
 			load.textContent = 'FAILED';
 			setTimeout(function () {
 				load.textContent = 'Select Rom';
-				load.onclick = function () {
-					document.getElementById('loader').click();
-				};
 			}, 3000);
 		}
 	});
 }
 
 function runCredentialsWrapper(file) {
-	if (accesstoken != '') {
+	if (checkAccessTok()) {
 		$('#uploadRomToServerModal').modal('show');
 	} else {
 		run(file);
@@ -295,12 +271,13 @@ function reset() {
 			gba.video.drawCallback
 		);
 	}
-	load.onclick = function () {
-		document.getElementById('loader').click();
-	};
 	$('#actioncontrolpanel').fadeOut();
+	statepause = 'stop';
+	buttonPlayPress(true);
 	disableRunMenuNode();
 	enablePreMenuNode();
+	disableDpad();
+	disableDpadButtons();
 	$('#collapseTwo').collapse('show');
 }
 
@@ -311,7 +288,7 @@ function uploadSavedataPending(file) {
 }
 
 function uploadSavedataPendingCredentialsWrapper(file) {
-	if (accesstoken != '') {
+	if (checkAccessTok()) {
 		$('#uploadSaveToServerModal').modal('show');
 	} else {
 		runCommands.push(function () {
@@ -485,11 +462,31 @@ function disableDpad() {
 function enableDpadButtons() {
 	$('#dpadabbuttonholder').fadeIn();
 	$('#dpadstartselectbuttonholder').fadeIn();
+	$('#dpadlrbuttonholder').fadeIn();
 }
 
 function disableDpadButtons() {
-	$('#dpadabbuttonholder').fadeOut(); //why is this not working correctly?
+	$('#dpadabbuttonholder').fadeOut();
 	$('#dpadstartselectbuttonholder').fadeOut();
+	$('#dpadlrbuttonholder').fadeOut();
+}
+
+function enableLogoutRomSaveServermenuNodes() {
+	$('#serverlogout').removeClass('disabled');
+	$('#serverlogout').addClass('enabled');
+	$('#loadserverrom').removeClass('disabled');
+	$('#loadserverrom').addClass('enabled');
+	$('#loadserversave').removeClass('disabled');
+	$('#loadserversave').addClass('enabled');
+}
+
+function disableLogoutRomSaveServermenuNodes() {
+	$('#serverlogout').removeClass('enabled');
+	$('#serverlogout').addClass('disabled');
+	$('#loadserverrom').removeClass('enabled');
+	$('#loadserverrom').addClass('disabled');
+	$('#loadserversave').removeClass('enabled');
+	$('#loadserversave').addClass('disabled');
 }
 
 function enableVirtualControls() {
@@ -503,6 +500,10 @@ function enableVirtualControls() {
 		virtualControlsEnabled = true;
 	}
 }
+
+function displayServerSaveList() {}
+
+function displayServerRomList() {}
 
 document.addEventListener(
 	'webkitfullscreenchange',
@@ -530,11 +531,43 @@ const fullScreen = () => {
 	elem.requestFullscreen();
 };
 
-function buttonPlayPress() {
+//set dpad/button event listeners
+function setDpadEvents(elems) {
+	elems.forEach(function (elem, index) {
+		var keyId = $(elem).attr('data-keyid');
+		var keycode = gba.keypad.getKeyCodeValue(keyId.toUpperCase());
+
+		elem.addEventListener('pointerdown', (e) => {
+			isKeyDown = true;
+			simulateKeyDown(keycode);
+			elem.releasePointerCapture(e.pointerId); // <- Important!
+		});
+
+		elem.addEventListener('pointerup', () => {
+			isKeyDown = false;
+			simulateKeyUp(keycode);
+		});
+
+		elem.addEventListener('pointerenter', (e) => {
+			if (isKeyDown) {
+				simulateKeyDown(keycode);
+			}
+		});
+
+		elem.addEventListener('pointerleave', (e) => {
+			if (isKeyDown) {
+				simulateKeyUp(keycode);
+			}
+		});
+	});
+}
+
+function buttonPlayPress(isReset) {
 	if (statepause == 'stop') {
 		statepause = 'play';
-		var button = $('#button_play').attr('btn-success', true);
-		button.select('i').attr('class', 'fa fa-pause');
+		//var button = $('#button_play').attr('btn-success', true);
+		//button.select('i').attr('class', 'fa fa-pause');
+		$('#button_play i').attr('class', 'fa fa-pause');
 	} else if (statepause == 'play' || statepause == 'resume') {
 		statepause = 'pause';
 		$('#button_play i').attr('class', 'fa fa-play');
@@ -542,7 +575,9 @@ function buttonPlayPress() {
 		statepause = 'resume';
 		$('#button_play i').attr('class', 'fa fa-pause');
 	}
-	togglePause();
+	if (!isReset) {
+		togglePause();
+	}
 }
 
 function buttonFastforwardPress() {

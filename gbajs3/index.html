@@ -6,8 +6,8 @@
 		<meta name="description" content="GBAJS3, Nicholas VanCise" />
 		<title>gbajs3</title>
 
-		<script src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
-		<script src="http://code.jquery.com/ui/1.8.21/jquery-ui.min.js"></script>
+		<script src="https://code.jquery.com/jquery-1.7.2.min.js"></script>
+		<script src="https://code.jquery.com/ui/1.8.21/jquery-ui.min.js"></script>
 		<link
 			rel="stylesheet"
 			type="text/css"
@@ -48,7 +48,7 @@
 		<script src="js/gba.js"></script>
 		<script src="resources/xhr.js"></script>
 		<script src="resources/biosbin.js"></script>
-		<script src="resources/gba_api.js"></script>
+		<script src="resources/gba-api.js"></script>
 	</head>
 	<body>
 		<!-- gba canvas "screen" -->
@@ -60,7 +60,7 @@
 				type="button"
 				id="button_play"
 				class="btn dockbar-button"
-				onclick="buttonPlayPress()"
+				onclick="buttonPlayPress(false)"
 			>
 				<i class="fa fa-pause"></i>
 			</button>
@@ -531,6 +531,78 @@
 			</div>
 		</div>
 
+		<div
+			class="modal fade"
+			id="listRomModal"
+			tabindex="-1"
+			aria-labelledby="listRomModalLabel"
+			aria-hidden="true"
+		>
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="listRomModalLabel">
+							Legal
+						</h5>
+						<button
+							type="button"
+							class="btn-close"
+							data-bs-dismiss="modal"
+							aria-label="Close"
+						></button>
+					</div>
+					<div class="modal-body">
+						<div class="list-group" id="romlist"></div>
+					</div>
+					<div class="modal-footer">
+						<button
+							type="button"
+							class="btn btn-secondary"
+							data-bs-dismiss="modal"
+						>
+							Close
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div
+			class="modal fade"
+			id="listSaveModal"
+			tabindex="-1"
+			aria-labelledby="listSaveModalLabel"
+			aria-hidden="true"
+		>
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="listSaveModalLabel">
+							Legal
+						</h5>
+						<button
+							type="button"
+							class="btn-close"
+							data-bs-dismiss="modal"
+							aria-label="Close"
+						></button>
+					</div>
+					<div class="modal-body">
+						<div class="list-group" id="savelist"></div>
+					</div>
+					<div class="modal-footer">
+						<button
+							type="button"
+							class="btn btn-secondary"
+							data-bs-dismiss="modal"
+						>
+							Close
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
 		<!-- sidebar-nav -->
 		<div
 			class="side-navbar d-flex justify-content-between flex-wrap flex-column active-nav"
@@ -654,13 +726,66 @@
 				<li
 					href="#"
 					class="nav-link"
-					data-bs-toggle="modal"
-					data-bs-target="#loginModal"
 					id="profileModalButton"
+					data-bs-toggle="collapse"
+					data-bs-target="#collapseThree"
+					aria-expanded="true"
+					aria-controls="collapseThree"
 				>
 					<i class="bx bx-user-check"></i>
 					<span class="mx-2">Profile</span>
 				</li>
+				<div
+					id="collapseThree"
+					class="accordion-collapse collapse collapsed"
+					aria-labelledby="headingThree"
+					data-bs-parent="#profilemenu"
+				>
+					<ul>
+						<li
+							href="#"
+							class="nav-link"
+							onclick=""
+							data-bs-toggle="modal"
+							data-bs-target="#loginModal"
+							id="loginModalButton"
+						>
+							<i class="bx bx-log-in-circle"></i>
+							<span class="mx-2">Login</span>
+						</li>
+						<li
+							id="serverlogout"
+							href="#"
+							class="nav-link disabled"
+							onclick="logout()"
+						>
+							<i class="bx bx-log-out-circle"></i>
+							<span class="mx-2">Logout</span>
+						</li>
+						<li
+							id="loadserversave"
+							href="#"
+							class="nav-link disabled"
+							data-bs-toggle="modal"
+							data-bs-target="#listSaveModal"
+							onclick=""
+						>
+							<i class="bx bx-cloud-download"></i>
+							<span class="mx-2">Load Save (Server)</span>
+						</li>
+						<li
+							id="loadserverrom"
+							href="#"
+							class="nav-link disabled"
+							data-bs-toggle="modal"
+							data-bs-target="#listRomModal"
+							onclick=""
+						>
+							<i class="bx bx-cloud-download"></i>
+							<span class="mx-2">Load Rom (Server)</span>
+						</li>
+					</ul>
+				</div>
 				<li
 					href="#legalModal"
 					class="nav-link"
@@ -711,11 +836,22 @@
 			<div id="dpadabutton" data-keyid="A"><p class="h3">A</p></div>
 			<div id="dpadbbutton" data-keyid="B"><p class="h3">B</p></div>
 			<div id="abbuttonhandle"></div>
+			<div
+				id="buttondummysizer"
+				style="pointer-events: none; width: 5px; height: 5px"
+			></div>
 		</div>
 
 		<div id="dpadstartselectbuttonholder" style="display: none">
-			<div id="dpadstartbutton" data-keyid="START"></div>
-			<div id="dpadselectbutton" data-keyid="SELECT"></div>
+			<div id="dpadstartbutton" data-keyid="START">Start</div>
+			<div id="dpadselectbutton" data-keyid="SELECT">Select</div>
+			<div id="startselectbuttonhandle"></div>
+		</div>
+
+		<div id="dpadlrbuttonholder" style="display: none">
+			<div id="dpadlbutton" data-keyid="L">L</div>
+			<div id="dpadlbutton" data-keyid="R">R</div>
+			<div id="lrbuttonhandle"></div>
 		</div>
 
 		<!-- main driving javascript -->
