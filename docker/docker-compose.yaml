@@ -12,6 +12,7 @@ services:
             dockerfile: ./docker/server/nginx/Dockerfile
         ports:
             - "443:443"
+            - "80:80"
         depends_on:
             - gba-auth-server
         cap_add:

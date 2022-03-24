@@ -19,6 +19,7 @@ var params = new Proxy(new URLSearchParams(window.location.search), {
 var query_select_rom = params.rom;
 var query_select_save = params.save;
 var accesstoken = null;
+var current_loaded_save_filename = '';
 //attempt to initially refresh an access token from a present httponly cookie
 refreshAccessToken();
 
@@ -213,6 +214,7 @@ function run(file) {
 	let load = document.getElementById('select');
 	load.text = 'Loading Rom...';
 	$('#collapseOne').collapse('show');
+	$('#collapseThree').collapse('hide');
 	gba.loadRomFromFile(file, function (result) {
 		if (result) {
 			for (let i = 0; i < runCommands.length; ++i) {
@@ -244,6 +246,7 @@ function run(file) {
 
 function runCredentialsWrapper(file) {
 	if (checkAccessTok()) {
+		console.log('in check access tok block, showing modal');
 		$('#uploadRomToServerModal').modal('show');
 	} else {
 		run(file);
@@ -282,6 +285,9 @@ function reset() {
 }
 
 function uploadSavedataPending(file) {
+	if (file.name) {
+		current_loaded_save_filename = file.name;
+	}
 	runCommands.push(function () {
 		gba.loadSavedataFromFile(file);
 	});
@@ -478,6 +484,8 @@ function enableLogoutRomSaveServermenuNodes() {
 	$('#loadserverrom').addClass('enabled');
 	$('#loadserversave').removeClass('disabled');
 	$('#loadserversave').addClass('enabled');
+	$('#sendsavetoserver').removeClass('disabled');
+	$('#sendsavetoserver').addClass('enabled');
 }
 
 function disableLogoutRomSaveServermenuNodes() {
@@ -487,6 +495,8 @@ function disableLogoutRomSaveServermenuNodes() {
 	$('#loadserverrom').addClass('disabled');
 	$('#loadserversave').removeClass('enabled');
 	$('#loadserversave').addClass('disabled');
+	$('#sendsavetoserver').removeClass('enabled');
+	$('#sendsavetoserver').addClass('disabled');
 }
 
 function enableVirtualControls() {
@@ -649,4 +659,17 @@ function remapUserKeyBindings() {
 			}
 		}
 	});
+}
+
+function sendCurrentSaveToServer() {
+	var sram = gba.mmu.save;
+	if (!sram) {
+		alert('No save data available to send');
+		return;
+	}
+	var blob = new Blob([sram.buffer], { type: 'data:application/x-spss-sav' });
+	var file = new File([blob], current_loaded_save_filename);
+	var container = new DataTransfer();
+	container.items.add(file);
+	$('#saveloader')[0].files = container.files;
 }

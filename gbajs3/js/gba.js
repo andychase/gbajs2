@@ -294,7 +294,7 @@ class GameBoyAdvance {
 		}
 		return data.join('');
 	}
-	downloadSavedata() {
+	downloadSavedata(fname) {
 		var sram = this.mmu.save;
 		if (!sram) {
 			this.WARN('No save data available');
@@ -304,7 +304,17 @@ class GameBoyAdvance {
 			var url = window.URL.createObjectURL(
 				new Blob([sram.buffer], { type: 'application/octet-stream' })
 			);
-			window.open(url);
+
+			var a = $("<a style='display: none;'/>");
+			var url = window.URL.createObjectURL(
+				new Blob([sram.buffer], { type: 'data:application/x-spss-sav' })
+			);
+			a.attr('href', url);
+			a.attr('download', fname);
+			$('body').append(a);
+			a[0].click();
+			window.URL.revokeObjectURL(url);
+			a.remove();
 		} else {
 			var data = this.encodeBase64(sram.view);
 			window.open(

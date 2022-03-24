@@ -9,7 +9,7 @@ function checkAccessTok() {
 
 function login() {
 	$.ajax({
-		url: serverloc+'/api/account/login',
+		url: serverloc + '/api/account/login',
 		type: 'POST',
 		contentType: 'application/json',
 		data: JSON.stringify({
@@ -39,7 +39,7 @@ function logout() {
 		return;
 	}
 	$.ajax({
-		url: serverloc+'/api/account/logout',
+		url: serverloc + '/api/account/logout',
 		type: 'POST',
 		headers: {
 			Authorization: 'Bearer ' + accesstoken
@@ -63,10 +63,7 @@ function loadRomFromServer() {
 		return;
 	}
 	var xhr = new XMLHttpRequest();
-	xhr.open(
-		'GET',
-		serverloc+'/api/rom/download?rom=' + query_select_rom
-	);
+	xhr.open('GET', serverloc + '/api/rom/download?rom=' + query_select_rom);
 	xhr.setRequestHeader('Authorization', 'Bearer ' + accesstoken);
 	xhr.responseType = 'blob';
 
@@ -87,15 +84,13 @@ function loadSaveFromServer() {
 		return;
 	}
 	var xhr = new XMLHttpRequest();
-	xhr.open(
-		'GET',
-		serverloc+'/api/save/download?save=' + query_select_save
-	);
+	xhr.open('GET', serverloc + '/api/save/download?save=' + query_select_save);
 	xhr.setRequestHeader('Authorization', 'Bearer ' + accesstoken);
 	xhr.responseType = 'blob';
 
 	xhr.onload = function () {
 		if (xhr.status == 200) {
+			current_loaded_save_filename = query_select_save;
 			uploadSavedataPending(xhr.response);
 		} else {
 			console.log(
@@ -116,7 +111,7 @@ function uploadRomToServer() {
 		fd.append('rom', files[0]);
 
 		$.ajax({
-			url: serverloc+'/api/rom/upload',
+			url: serverloc + '/api/rom/upload',
 			type: 'post',
 			data: fd,
 			headers: {
@@ -126,6 +121,7 @@ function uploadRomToServer() {
 			processData: false,
 			success: function (result, teststatus, resp) {
 				if (resp.status == 200) {
+					alert('upload rom has succeeded');
 					console.log('upload rom has succeeded');
 				} else {
 					alert('upload rom has failed');
@@ -143,10 +139,10 @@ function uploadSaveToServer() {
 	var files = $('#saveloader')[0].files;
 	if (files.length > 0) {
 		var fd = new FormData();
-		fd.append('rom', files[0]);
+		fd.append('save', files[0]);
 
 		$.ajax({
-			url: serverloc+'/api/save/upload',
+			url: serverloc + '/api/save/upload',
 			type: 'post',
 			data: fd,
 			headers: {
@@ -156,6 +152,7 @@ function uploadSaveToServer() {
 			processData: false,
 			success: function (result, teststatus, resp) {
 				if (resp.status == 200) {
+					alert('upload save has succeeded');
 					console.log('upload save has succeeded');
 				} else {
 					alert('upload save has failed');
@@ -168,7 +165,7 @@ function uploadSaveToServer() {
 
 function refreshAccessToken() {
 	$.ajax({
-		url: serverloc+'/api/tokens/refresh',
+		url: serverloc + '/api/tokens/refresh',
 		type: 'POST',
 		xhrFields: {
 			withCredentials: true
@@ -194,7 +191,7 @@ function loadRomList() {
 		return;
 	}
 	$.ajax({
-		url: serverloc+'/api/rom/list',
+		url: serverloc + '/api/rom/list',
 		type: 'GET',
 		headers: {
 			Authorization: 'Bearer ' + accesstoken
@@ -204,7 +201,6 @@ function loadRomList() {
 				//attach to open modal
 				$('#romlist > button').remove();
 				$(result).each(function (index, romname) {
-					console.log('appending list rom:' + romname);
 					$(
 						'<button type="button" class="list-group-item list-group-item-action" data-bs-dismiss="modal">' +
 							romname +
@@ -228,7 +224,7 @@ function loadSaveList() {
 		return;
 	}
 	$.ajax({
-		url: serverloc+'/api/save/list',
+		url: serverloc + '/api/save/list',
 		type: 'GET',
 		headers: {
 			Authorization: 'Bearer ' + accesstoken
@@ -238,7 +234,6 @@ function loadSaveList() {
 				//attach to open modal
 				$('#savelist > button').remove();
 				$(result).each(function (index, savename) {
-					console.log('appending list save:' + savename);
 					$(
 						'<button type="button" class="list-group-item list-group-item-action" data-bs-dismiss="modal">' +
 							savename +
