@@ -1,7 +1,7 @@
 gbajs3 -- My Personal Fork
 ======
 
-This project is a re-skin of gbajs2 fork by andychase, with some additions.  
+This project is a re-skin of the gbajs2 fork by andychase, with some additions.  
 
 This project was driven specifically by my want to play older gba rom hacks outside of desktop applications without side loading or building through xcode.
 
