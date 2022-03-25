@@ -46,6 +46,7 @@ CLIENT_HOST=https://<your-client-location>
 ├── certificate.crt
 └── privateKey.key
 ```
+* Golang api expects a sqlite file consisting of username/password pairs generated with bcrypt.GenerateFromPassword, as well as two uuid fields for token id's
 * Simply run `docker-compose up --build` and your services will build and start
 
 # -- (Original README below) --
