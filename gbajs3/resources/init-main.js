@@ -674,10 +674,10 @@ function sendCurrentSaveToServer() {
 	container.items.add(file);
 	$('#saveloader')[0].files = container.files;
 
-	let chromeAgent = navigator.userAgent.indexOf("Chrome") > -1;
-	let safariAgent = navigator.userAgent.indexOf("Safari") > -1;
+	let chromeAgent = navigator.userAgent.indexOf('Chrome') > -1;
+	let safariAgent = navigator.userAgent.indexOf('Safari') > -1;
 
-	if((chromeAgent) && (safariAgent)){
+	if (chromeAgent && safariAgent) {
 		uploadSaveToServer();
 	}
 }

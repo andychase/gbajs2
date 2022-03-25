@@ -39,6 +39,7 @@ ROM_PATH=./<local-server-rom-path>/
 SAVE_PATH=./<local-server-save-path>/
 CLIENT_HOST=https://<your-client-location>
 ```
+* Remember to change gba-api.js to point to your servers domain
 * Simply run `docker-compose up --build` and your services will build and start
 
 -- (Original README below) --
