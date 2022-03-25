@@ -40,6 +40,12 @@ SAVE_PATH=./<local-server-save-path>/
 CLIENT_HOST=https://<your-client-location>
 ```
 * Remember to change gba-api.js to point to your servers domain
+* Local builds on this branch expect certificates to be located in ./docker/server/auth/certs with the following structure/names:
+```
+./docker/server/auth/certs
+├── certificate.crt
+└── privateKey.key
+```
 * Simply run `docker-compose up --build` and your services will build and start
 
 # -- (Original README below) --
