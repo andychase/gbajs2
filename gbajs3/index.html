@@ -517,7 +517,7 @@
 						<button
 							type="button"
 							class="btn btn-primary"
-							onclick="uploadSaveToServer();uploadSavedataPending($('#saveloader')[0].files[0]);"
+							onclick="uploadSaveToServer();if(!isRunning){uploadSavedataPending($('#saveloader')[0].files[0]);}"
 							data-bs-dismiss="modal"
 						>
 							Yes
@@ -526,7 +526,7 @@
 							type="button"
 							class="btn btn-secondary"
 							data-bs-dismiss="modal"
-							onclick="uploadSavedataPending($('#loader')[0].files[0]);"
+							onclick="if(!isRunning){uploadSavedataPending($('#loader')[0].files[0]);}"
 						>
 							No
 						</button>
@@ -794,7 +794,7 @@
 							class="nav-link disabled"
 							onclick="sendCurrentSaveToServer()"
 						>
-							<i class="bx bx-cloud-download"></i>
+							<i class="bx bx-cloud-upload"></i>
 							<span class="mx-2">Send Save to Server</span>
 						</li>
 					</ul>

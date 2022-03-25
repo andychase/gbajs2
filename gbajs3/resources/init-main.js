@@ -235,6 +235,7 @@ function run(file) {
 			disablePreMenuNode();
 			gba.runStable();
 			isRunning = true;
+			initialLoad = false;
 		} else {
 			load.textContent = 'FAILED';
 			setTimeout(function () {
@@ -672,4 +673,11 @@ function sendCurrentSaveToServer() {
 	var container = new DataTransfer();
 	container.items.add(file);
 	$('#saveloader')[0].files = container.files;
+
+	let chromeAgent = navigator.userAgent.indexOf("Chrome") > -1;
+	let safariAgent = navigator.userAgent.indexOf("Safari") > -1;
+
+	if((chromeAgent) && (safariAgent)){
+		uploadSaveToServer();
+	}
 }

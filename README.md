@@ -1,7 +1,15 @@
 gbajs3 -- My Personal Fork
 ======
 
-I re-skinned and made some additions to the gbajs2 fork by andychase. This was done mainly because I wanted a fast way to obtain gba functionality on iOS, without side loading or building through xcode. A server side rendering approach is planned in the near future.
+This project is a re-skin of gbajs2 fork by andychase, with some additions.  
+
+This project was driven specifically by my want to play older gba rom hacks outside of desktop applications without side loading or building through xcode.
+
+A server side rendering approach is planned in the near future.
+
+Use it online! <https://gba.nicholas-vancise.dev>
+
+Do not attempt to log into the server unless you are the server owner, your IP may be banned.
 
 ## New Feature List
 * Fast Forward
@@ -10,11 +18,19 @@ I re-skinned and made some additions to the gbajs2 fork by andychase. This was d
 * Movable desktop canvas and controls
 * Mobile UI support
 
+## To Do
+* Mobile landscape css
+* Cheat entry/injection implementation
+
 ## Sample Screenshots/Gifs
 
 * Example Desktop
 
+![](./readme-graphics/gbajs3-desktop.png)
+
 * Example Mobile
+
+![](./readme-graphics/gbajs3-mobile.png)
 
 ## Docker
 * Requires an env file of the format:
@@ -30,11 +46,11 @@ CLIENT_HOST=https://<your-client-location>
 gbajs2 is a Game Boy Advance emulator written in Javascript from scratch using HTML5 technologies like Canvas and Web Audio. 
 It is freely licensed and works in any modern browser without plugins.
 
-Use it online! <https://andychase.me/gbajs2>
+Use it online!
 
-See the [issues page](https://github.com/andychase/gbajs2/issues) for feature suggestions and ways you can help contribute!
+See the issues page for feature suggestions and ways you can help contribute!
 
-Mailing list for general discussion or if you want to just be kept in the loop: https://groups.google.com/forum/#!forum/gbajs2
+Mailing list for general discussion or if you want to just be kept in the loop: ...
 
 ## Feature List
 

@@ -1,4 +1,7 @@
+//api variables
 const serverloc = 'https://127.0.0.1';
+var tok_timerid = null;
+
 
 function checkAccessTok() {
 	if (accesstoken !== null && accesstoken !== '') {
@@ -23,6 +26,12 @@ function login() {
 			if (resp.status == 200) {
 				console.log('login successful');
 				accesstoken = result.slice(1, -2); //strip quotes/line feed
+				if(tok_timerid){
+					clearInterval(tok_timerid);
+				}
+				tok_timerid = setInterval(function() {
+				    refreshAccessToken();
+				}, 240 * 1000);
 			} else {
 				console.log('login has failed');
 				accesstoken = '';
@@ -51,8 +60,12 @@ function logout() {
 			if (resp.status == 200) {
 				console.log('logout successful');
 				disableLogoutRomSaveServermenuNodes();
+				accesstoken = '';
 			} else {
 				console.log('logout has failed');
+			}
+			if(tok_timerid){
+				clearInterval(tok_timerid);
 			}
 		}
 	});
@@ -173,6 +186,12 @@ function refreshAccessToken() {
 		success: function (result, teststatus, resp) {
 			if (resp.status == 200) {
 				accesstoken = result.slice(1, -2);
+				if(tok_timerid){
+					clearInterval(tok_timerid);
+				}
+				tok_timerid = setInterval(function() {
+				    refreshAccessToken();
+				}, 240 * 1000);
 				if (initialLoad) {
 					initialParamRomandSave();
 					initialLoad = false;
