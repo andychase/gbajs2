@@ -26,11 +26,11 @@ Do not attempt to log into the server unless you are the server owner, your IP m
 
 * Example Desktop
 
-![](./readme-graphics/gbajs3-desktop.png)
+<img src="./readme-graphics/gbajs3-desktop.png">
 
 * Example Mobile
 
-![](./readme-graphics/gbajs3-mobile.jpg)
+<img src="./readme-graphics/gbajs3-mobile.jpeg" width="400px">
 
 ## Docker
 * Requires an env file of the format:
@@ -42,7 +42,7 @@ CLIENT_HOST=https://<your-client-location>
 * Remember to change gba-api.js to point to your servers domain
 * Simply run `docker-compose up --build` and your services will build and start
 
--- (Original README below) --
+# -- (Original README below) --
 
 gbajs2 is a Game Boy Advance emulator written in Javascript from scratch using HTML5 technologies like Canvas and Web Audio. 
 It is freely licensed and works in any modern browser without plugins.
