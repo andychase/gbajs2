@@ -30,7 +30,7 @@ Do not attempt to log into the server unless you are the server owner, your IP m
 
 * Example Mobile
 
-![](./readme-graphics/gbajs3-mobile.png)
+![](./readme-graphics/gbajs3-mobile.jpg)
 
 ## Docker
 * Requires an env file of the format:
