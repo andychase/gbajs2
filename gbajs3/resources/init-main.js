@@ -286,7 +286,7 @@ function reset() {
 }
 
 function uploadSavedataPending(file) {
-	if (file.name) {
+	if (file && file.name) {
 		current_loaded_save_filename = file.name;
 	}
 	runCommands.push(function () {
@@ -300,6 +300,7 @@ function uploadSavedataPendingCredentialsWrapper(file) {
 	} else {
 		runCommands.push(function () {
 			gba.loadSavedataFromFile(file);
+			$('#saveloader').val('');
 		});
 	}
 }
@@ -672,12 +673,5 @@ function sendCurrentSaveToServer() {
 	var file = new File([blob], current_loaded_save_filename);
 	var container = new DataTransfer();
 	container.items.add(file);
-	$('#saveloader')[0].files = container.files;
-
-	let chromeAgent = navigator.userAgent.indexOf('Chrome') > -1;
-	let safariAgent = navigator.userAgent.indexOf('Safari') > -1;
-
-	if (chromeAgent && safariAgent) {
-		uploadSaveToServer();
-	}
+	$('#saveloader')[0].files = container.files; //onchange event should be triggered here
 }

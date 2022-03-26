@@ -517,7 +517,7 @@
 						<button
 							type="button"
 							class="btn btn-primary"
-							onclick="uploadSaveToServer();if(!isRunning){uploadSavedataPending($('#saveloader')[0].files[0]);}"
+							onclick="uploadSaveToServer();if(!isRunning){uploadSavedataPending($('#saveloader')[0].files[0]);}$('#saveloader').val('');"
 							data-bs-dismiss="modal"
 						>
 							Yes
@@ -526,7 +526,7 @@
 							type="button"
 							class="btn btn-secondary"
 							data-bs-dismiss="modal"
-							onclick="if(!isRunning){uploadSavedataPending($('#loader')[0].files[0]);}"
+							onclick="if(!isRunning){uploadSavedataPending($('#loader')[0].files[0]);}$('#saveloader').val('');"
 						>
 							No
 						</button>

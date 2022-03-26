@@ -109,8 +109,7 @@ func uploadRom(w http.ResponseWriter, r *http.Request) {
 
 	if _, err := os.Stat(romPath + handler.Filename); err == nil {
 		// path/to/whatever exists
-		// path/to/whatever exists
-		f, err := os.OpenFile(savePath+handler.Filename, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
+		f, err := os.OpenFile(romPath+handler.Filename, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
