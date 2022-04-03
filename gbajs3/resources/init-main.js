@@ -66,6 +66,8 @@ var dpad_left = document.querySelector('#dpadholder > nav > a.left');
 var dpad_down = document.querySelector('#dpadholder > nav > a.down');
 var dpad_a_button = document.querySelector('#dpadabutton');
 var dpad_b_button = document.querySelector('#dpadbbutton');
+var dpad_l_button = document.querySelector('#dpadlbutton');
+var dpad_r_button = document.querySelector('#dpadrbutton');
 var dpad_start_button = document.querySelector('#dpadstartbutton');
 var dpad_select_button = document.querySelector('#dpadselectbutton');
 
@@ -171,6 +173,8 @@ setDpadEvents([
 	dpad_down,
 	dpad_a_button,
 	dpad_b_button,
+	dpad_l_button,
+	dpad_r_button,
 	dpad_start_button,
 	dpad_select_button
 ]);
@@ -490,6 +494,13 @@ function enableLogoutRomSaveServermenuNodes() {
 	$('#sendsavetoserver').addClass('enabled');
 }
 
+function offlineEnableRomSaveServermenuNodes() {
+	$('#loadserverrom').removeClass('disabled');
+	$('#loadserverrom').addClass('enabled');
+	$('#loadserversave').removeClass('disabled');
+	$('#loadserversave').addClass('enabled');
+}
+
 function disableLogoutRomSaveServermenuNodes() {
 	$('#serverlogout').removeClass('enabled');
 	$('#serverlogout').addClass('disabled');
@@ -512,10 +523,6 @@ function enableVirtualControls() {
 		virtualControlsEnabled = true;
 	}
 }
-
-function displayServerSaveList() {}
-
-function displayServerRomList() {}
 
 document.addEventListener(
 	'webkitfullscreenchange',

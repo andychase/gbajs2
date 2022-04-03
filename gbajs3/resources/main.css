@@ -1,3 +1,8 @@
+html {
+	height: 100%;
+	width: 100%;
+}
+
 body {
 	text-align: center;
 	margin: 0;
@@ -5,8 +10,8 @@ body {
 	font-family: 'Calibri', 'Verdana', sans-serif;
 	overflow: auto;
 	font-size: 15px;
-	height: 100%;
-	width: 100%;
+	min-height: 100%;
+	min-width: 100%;
 	background-color: #212529 !important;
 }
 
@@ -14,15 +19,12 @@ button {
 	font-family: 'Calibri', 'Verdana', sans-serif;
 }
 
-/*testing*/
 .up,
 .down,
 .left,
 .right {
 	touch-action: none;
 }
-
-/*end testing*/
 
 #screen {
 	background-color: #65696d;
@@ -237,7 +239,8 @@ button {
 	cursor: pointer;
 }
 
-@media only screen and (max-width: 1000px) {
+/*mobile portrait*/
+@media only screen and (max-width: 1000px) and (orientation: portrait) {
 	#screenwrapper {
 		top: 0px;
 		left: 0px;
@@ -263,6 +266,39 @@ button {
 	#dpadlrbuttonholder {
 		top: 152vw;
 		left: 70%;
+	}
+}
+
+/*mobile landscape*/
+@media only screen and (max-height: 1000px) and (max-width: 1000px) and (orientation: landscape) {
+	#screenwrapper {
+		top: 0px;
+		left: 0px;
+		right: 0px;
+		width: 150vh;
+		height: 100vh;
+		margin: auto;
+	}
+
+	#dpadholder {
+		top: 47vh;
+		left: 1%;
+	}
+
+	#dpadabbuttonholder {
+		top: 59vh;
+		left: auto;
+		right: 16%;
+	}
+
+	#dpadstartselectbuttonholder {
+		top: 30vh;
+		left: 85.5%;
+	}
+
+	#dpadlrbuttonholder {
+		top: 10vh;
+		left: 85.5%;
 	}
 }
 
@@ -419,6 +455,11 @@ ul#links li:not(:first-child)::before {
 	background-color: #100901;
 	transition: 0.5s;
 	z-index: 15;
+	overflow-y: auto;
+}
+
+.side-navbar::-webkit-scrollbar {
+	display: none;
 }
 
 .top-navbar {
@@ -461,6 +502,18 @@ ul#links li:not(:first-child)::before {
 .nav-container input {
 	border-radius: 2rem;
 	padding: 2px 20px;
+}
+
+/*hidden label for screen readers*/
+.aria-invisible {
+	border: 0;
+	clip: rect(0 0 0 0);
+	height: 1px;
+	margin: -1px;
+	overflow: hidden;
+	padding: 0;
+	position: absolute;
+	width: 1px;
 }
 
 /*dpad and dpad component css, auto converted from less.css*/

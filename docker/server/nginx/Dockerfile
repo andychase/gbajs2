@@ -1,6 +1,13 @@
+#first stage - minifier
+FROM ubuntu:latest as minifier
+RUN apt-get update && apt-get install minify
+COPY ./gbajs3 /var/www/
+RUN minify -r -o /var/www/ --match="(\.js|\.css)" /var/www/
+
+#second stage, server
 FROM nginx:stable-alpine
 COPY ./docker/server/nginx/nginx.conf /etc/nginx/conf.d/default.conf
-COPY ./gbajs3 /var/www
+COPY --from=minifier /var/www /var/www
 
 RUN apk add rsyslog fail2ban
 

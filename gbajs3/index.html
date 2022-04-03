@@ -1,25 +1,40 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 	<head>
+		<link rel="manifest" href="resources/manifest/manifest.webmanifest" />
+		<link
+			rel="apple-touch-icon"
+			href="resources/manifest/icon-192x192.png"
+		/>
+		<meta name="theme-color" content="#212529" />
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 		<meta name="viewport" content="width=device-width" />
 		<meta name="description" content="GBAJS3, Nicholas VanCise" />
 		<title>gbajs3</title>
 
-		<script src="https://code.jquery.com/jquery-1.7.2.min.js"></script>
-		<script src="https://code.jquery.com/ui/1.8.21/jquery-ui.min.js"></script>
+		<script
+			src="https://code.jquery.com/jquery-3.6.0.min.js"
+			defer
+		></script>
+		<script
+			src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js"
+			defer
+		></script>
 		<link
 			rel="stylesheet"
 			type="text/css"
 			href="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.21/themes/base/jquery-ui.css"
 		/>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>
+		<script
+			src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"
+			defer
+		></script>
 
-		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
-		<link
-			href="https://cdn.jsdelivr.net/npm/boxicons@2.0.5/css/boxicons.min.css"
-			rel="stylesheet"
-		/>
+		<script
+			src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"
+			defer
+		></script>
+		<link rel="stylesheet" href="resources/boxicons-2.0.5-mod.css" />
 		<link
 			rel="stylesheet"
 			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.1.0/css/font-awesome.min.css"
@@ -30,25 +45,25 @@
 			rel="stylesheet"
 			href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
 		/>
-		<script src="js/util.js"></script>
-		<script src="js/core.js"></script>
-		<script src="js/arm.js"></script>
-		<script src="js/thumb.js"></script>
-		<script src="js/mmu.js"></script>
-		<script src="js/io.js"></script>
-		<script src="js/audio.js"></script>
-		<script src="js/video.js"></script>
-		<script src="js/video/proxy.js"></script>
-		<script src="js/video/software.js"></script>
-		<script src="js/irq.js"></script>
-		<script src="js/keypad.js"></script>
-		<script src="js/sio.js"></script>
-		<script src="js/savedata.js"></script>
-		<script src="js/gpio.js"></script>
-		<script src="js/gba.js"></script>
-		<script src="resources/xhr.js"></script>
-		<script src="resources/biosbin.js"></script>
-		<script src="resources/gba-api.js"></script>
+		<script src="js/util.js" defer></script>
+		<script src="js/core.js" defer></script>
+		<script src="js/arm.js" defer></script>
+		<script src="js/thumb.js" defer></script>
+		<script src="js/mmu.js" defer></script>
+		<script src="js/io.js" defer></script>
+		<script src="js/audio.js" defer></script>
+		<script src="js/video.js" defer></script>
+		<script src="js/video/proxy.js" defer></script>
+		<script src="js/video/software.js" defer></script>
+		<script src="js/irq.js" defer></script>
+		<script src="js/keypad.js" defer></script>
+		<script src="js/sio.js" defer></script>
+		<script src="js/savedata.js" defer></script>
+		<script src="js/gpio.js" defer></script>
+		<script src="js/gba.js" defer></script>
+		<script src="resources/xhr.js" defer></script>
+		<script src="resources/biosbin.js" defer></script>
+		<script src="resources/gba-api.js" defer></script>
 	</head>
 	<body>
 		<!-- gba canvas "screen" -->
@@ -654,6 +669,9 @@
 								type="file"
 								onchange="uploadSavedataPendingCredentialsWrapper(this.files[0])"
 							/>
+							<label class="aria-invisible" for="saveloader"
+								>Load Save (manual)</label
+							>
 						</li>
 						<li
 							href="#"
@@ -668,6 +686,9 @@
 								accept=".gba"
 								onchange="runCredentialsWrapper(this.files[0]);"
 							/>
+							<label class="aria-invisible" for="loader"
+								>Select Rom</label
+							>
 						</li>
 					</ul>
 				</div>
@@ -828,7 +849,7 @@
 		<div class="p-1 nav-container active-cont">
 			<!-- Top Nav -->
 			<nav class="navbar top-navbar navbar-light px-5" id="menunav">
-				<a class="btn border-0" id="menu-btn"
+				<a class="btn border-0" id="menu-btn" href="#"
 					><i class="bx bx-menu"></i
 				></a>
 			</nav>
@@ -837,10 +858,10 @@
 
 		<div class="set dark" id="dpadholder" style="display: none">
 			<nav class="d-pad">
-				<a class="up" data-keyid="UP"></a>
-				<a class="right" data-keyid="RIGHT"></a>
-				<a class="down" data-keyid="DOWN"></a>
-				<a class="left" data-keyid="LEFT"></a>
+				<a class="up" href="#" data-keyid="UP"></a>
+				<a class="right" href="#" data-keyid="RIGHT"></a>
+				<a class="down" href="#" data-keyid="DOWN"></a>
+				<a class="left" href="#" data-keyid="LEFT"></a>
 			</nav>
 			<div id="dpadhandle"></div>
 		</div>
@@ -863,11 +884,23 @@
 
 		<div id="dpadlrbuttonholder" style="display: none">
 			<div id="dpadlbutton" data-keyid="L">L</div>
-			<div id="dpadlbutton" data-keyid="R">R</div>
+			<div id="dpadrbutton" data-keyid="R">R</div>
 			<div id="lrbuttonhandle"></div>
 		</div>
 
 		<!-- main driving javascript -->
-		<script src="resources/init-main.js"></script>
+		<script src="resources/init-main.js" defer></script>
+
+		<script>
+			if ('serviceWorker' in navigator) {
+				navigator.serviceWorker
+					.register('/service-worker.js', {
+						scope: '/'
+					})
+					.then(function () {
+						console.log('Service Worker Registered');
+					});
+			}
+		</script>
 	</body>
 </html>

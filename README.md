@@ -17,9 +17,9 @@ Do not attempt to log into the server unless you are the server owner, your IP m
 * Virtual Controls (Desktop/Mobile)
 * Movable desktop canvas and controls
 * Mobile UI support
+* Offline PWA Support
 
 ## To Do
-* Mobile landscape css
 * Cheat entry/injection implementation
 
 ## Sample Screenshots/Gifs
@@ -46,7 +46,19 @@ CLIENT_HOST=https://<your-client-location>
 ├── certificate.crt
 └── privateKey.key
 ```
+* Testing certificates can be created with:
+```
+openssl req -x509 -sha256 -nodes -days 365 -newkey rsa:2048 -keyout privateKey.key -out certificate.crt
+```
 * Golang api expects a sqlite file consisting of username/password pairs generated with bcrypt.GenerateFromPassword, as well as two uuid fields for token id's
+```
+type User struct {
+  Username  string
+  PassHash  []byte
+  TokenSlug uuid.UUID
+  TokenID   uuid.UUID
+}
+```
 * Simply run `docker-compose up --build` and your services will build and start
 
 # -- (Original README below) --
@@ -73,6 +85,7 @@ Original work by Endrift. Repo: (Archived / No longer maintained) https://github
 
 Copyright © 2012 – 2013, Jeffrey Pfau
 Copyright © 2020, Andrew Chase
+Copyright © 2022, Nicholas VanCise
 
 All rights reserved.
 

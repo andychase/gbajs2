@@ -38,6 +38,20 @@ function login() {
 			$('#login-username').val('');
 			$('#login-password').val('');
 			enableLogoutRomSaveServermenuNodes();
+		},
+		error: function (XMLHttpRequest, textStatus, errorThrown) {
+			if (XMLHttpRequest.readyState == 0) {
+				// Network error (i.e. connection refused, access denied due to CORS, etc.)
+				if (!navigator.onLine) {
+					console.log('login request has failed..no connect..');
+					//we should be able to get these from cache provided its populated
+					offlineEnableRomSaveServermenuNodes();
+					accesstoken = 'offline_first_dummy';
+				}
+			} else {
+				// something weird is happening
+				console.log('login request has failed');
+			}
 		}
 	});
 }
@@ -66,6 +80,10 @@ function logout() {
 			if (tok_timerid) {
 				clearInterval(tok_timerid);
 			}
+		},
+		error: function (XMLHttpRequest, textStatus, errorThrown) {
+			console.log('unable to reach server, logout failed');
+			alert('unable to reach server, logout failed');
 		}
 	});
 }
@@ -139,6 +157,10 @@ function uploadRomToServer() {
 					alert('upload rom has failed');
 					console.log('upload rom has failed');
 				}
+			},
+			error: function (XMLHttpRequest, textStatus, errorThrown) {
+				console.log('unable to reach server, upload rom failed');
+				alert('unable to reach server, upload rom failed');
 			}
 		});
 	}
@@ -199,6 +221,24 @@ function refreshAccessToken() {
 			} else {
 				console.log('refresh token has failed');
 				accesstoken = '';
+			}
+		},
+		error: function (XMLHttpRequest, textStatus, errorThrown) {
+			if (XMLHttpRequest.readyState == 0) {
+				// Network error (i.e. connection refused, access denied due to CORS, etc.)
+				if (!navigator.onLine) {
+					console.log('refresh request has failed..no connect..');
+					//we should be able to get these from cache provided its populated
+					if (initialLoad) {
+						initialParamRomandSave();
+						initialLoad = false;
+					}
+					offlineEnableRomSaveServermenuNodes();
+					accesstoken = 'offline_first_dummy';
+				}
+			} else {
+				// something weird is happening
+				console.log('refersh request has failed');
 			}
 		}
 	});
