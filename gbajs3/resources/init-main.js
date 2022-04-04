@@ -284,8 +284,10 @@ function reset() {
 	buttonPlayPress(true);
 	disableRunMenuNode();
 	enablePreMenuNode();
-	disableDpad();
-	disableDpadButtons();
+	if (!window.mobileCheck()) {
+		disableDpad();
+		disableDpadButtons();
+	}
 	$('#collapseTwo').collapse('show');
 }
 
