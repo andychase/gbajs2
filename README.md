@@ -84,7 +84,9 @@ Mailing list for general discussion or if you want to just be kept in the loop: 
 Original work by Endrift. Repo: (Archived / No longer maintained) https://github.com/endrift/gbajs
 
 Copyright © 2012 – 2013, Jeffrey Pfau
+
 Copyright © 2020, Andrew Chase
+
 Copyright © 2022, Nicholas VanCise
 
 All rights reserved.
