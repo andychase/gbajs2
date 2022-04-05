@@ -574,6 +574,8 @@ ul#links li:not(:first-child)::before {
 	color: #fff;
 	background: #ddd;
 	text-align: center;
+	-webkit-user-drag: none !important;
+	-webkit-touch-callout: none !important;
 }
 .d-pad a:hover {
 	background: #eee;
