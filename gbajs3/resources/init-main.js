@@ -229,7 +229,7 @@ function run(file) {
 			var newtop =
 				parseInt($('#screenwrapper').css('top'), 10) +
 				parseInt($('#screenwrapper').css('height'), 10) +
-				5 +
+				(window.mobileCheck() ? 0 : 5) +
 				'px';
 			$('#actioncontrolpanel').css({
 				top: newtop,
