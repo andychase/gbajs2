@@ -158,7 +158,7 @@ function initialParamRomandSave() {
 $('#screenwrapper')
 	.draggable()
 	.resizable({
-		handles: 'se,e,w',
+		handles: 'se,e',
 		aspectRatio: 3 / 2
 	});
 $('#actioncontrolpanel').draggable();
@@ -191,7 +191,6 @@ setDpadEvents([
 
 $(window).on('orientationchange', function (event) {
 	const orient = window.orientation;
-	console.log('This device is in ' + orient + ' mode!');
 
 	if (orient == '0') {
 		islandscape = false;
@@ -207,32 +206,19 @@ $(window).on('orientationchange', function (event) {
 		$("#dpadabbuttonholder div:not('#abbuttonhandle')").removeClass(
 			'clearbutton'
 		);
-		$('#sidebar').removeClass('right-expand-cust'); //maybe need remove style instead
+		$('#sidebar').removeAttr('style'); //maybe need remove style instead
 		$('#menunav').removeAttr('style');
 		$('#menu-btn').removeAttr('style');
 		$('.nav-container').removeAttr('style');
-		console.log(
-			'screenwrapper height:' + $('#screenwrapper').css('height')
-		);
-		console.log(
-			'screenwrapper height attr:' + $('#screenwrapper').height()
-		);
-		console.log(
-			getComputedStyle(document.getElementById('screenwrapper')).height
-		);
 		$('#screenwrapper').removeAttr('style');
 		actioncontrolorient = true;
 		orientActionControlPanel();
 		setTimeout(() => {
-			console.log('Delayed for 1 second.');
 			var newtop =
 				parseInt($('#screenwrapper').css('top'), 10) +
 				parseInt($('#screenwrapper').css('height'), 10) +
 				(window.mobileCheck() ? 0 : 5) +
 				'px';
-			console.log(
-				'screenwrapper height 2:' + $('#screenwrapper').css('height')
-			);
 			$('#actioncontrolpanel').css({
 				top: newtop,
 				left: $('#screenwrapper').css('left')
@@ -266,7 +252,6 @@ $(window).on('orientationchange', function (event) {
 			margin: 'inherit'
 		});
 	}
-	console.log('screenwrapper height 3:' + $('#screenwrapper').css('height'));
 });
 
 //main function defs
@@ -656,7 +641,7 @@ function setDpadEvents(elems) {
 			elem.releasePointerCapture(e.pointerId); // <- Important!
 		});
 
-		elem.addEventListener('pointerup', () => {
+		elem.addEventListener('pointerup', (e) => {
 			isKeyDown = false;
 			simulateKeyUp(keycode);
 		});
