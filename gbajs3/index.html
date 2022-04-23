@@ -113,6 +113,14 @@
 					>Pixelated</label
 				>
 			</div>
+			<button
+				type="button"
+				id="button_rotate"
+				class="btn dockbar-button"
+				onclick="orientActionControlPanel()"
+			>
+				<label>Rotate</label>
+			</button>
 			<div
 				class="form-check form-switch btn dockbar-button"
 				id="sound_check"
@@ -139,14 +147,6 @@
 					oninput="setVolume(this.value)"
 				/>
 			</div>
-			<button
-				type="button"
-				id="button_rotate"
-				class="btn dockbar-button"
-				onclick="orientActionControlPanel()"
-			>
-				<label>Rotate</label>
-			</button>
 		</div>
 
 		<!-- sidebar-nav internal items -->
@@ -857,7 +857,7 @@
 		<!-- end sidebar -->
 
 		<div class="set dark" id="dpadholder" style="display: none">
-			<nav class="d-pad">
+			<nav class="o-pad">
 				<a class="up" href="#" data-keyid="UP"></a>
 				<a class="right" href="#" data-keyid="RIGHT"></a>
 				<a class="down" href="#" data-keyid="DOWN"></a>

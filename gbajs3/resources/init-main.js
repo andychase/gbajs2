@@ -20,6 +20,7 @@ var query_select_rom = params.rom;
 var query_select_save = params.save;
 var accesstoken = null;
 var current_loaded_save_filename = '';
+var islandscape = false;
 //attempt to initially refresh an access token from a present httponly cookie
 refreshAccessToken();
 
@@ -72,8 +73,17 @@ var dpad_start_button = document.querySelector('#dpadstartbutton');
 var dpad_select_button = document.querySelector('#dpadselectbutton');
 
 menu_btn.addEventListener('click', () => {
-	sidebar.classList.toggle('active-nav');
-	container.classList.toggle('active-cont');
+	if (islandscape) {
+		sidebar.classList.remove('active-nav');
+		container.classList.remove('active-cont');
+		sidebar.classList.toggle('active-nav-landscape');
+		container.classList.toggle('active-cont-landscape');
+	} else {
+		sidebar.classList.remove('active-nav-landscape');
+		container.classList.remove('active-cont-landscape');
+		sidebar.classList.toggle('active-nav');
+		container.classList.toggle('active-cont');
+	}
 });
 
 //check for mobile
@@ -179,6 +189,86 @@ setDpadEvents([
 	dpad_select_button
 ]);
 
+$(window).on('orientationchange', function (event) {
+	const orient = window.orientation;
+	console.log('This device is in ' + orient + ' mode!');
+
+	if (orient == '0') {
+		islandscape = false;
+		console.log('changing orientation to portrait');
+		$('#dpadholder').removeClass('clear');
+		$('#dpadholder').addClass('dark');
+		$("#dpadlrbuttonholder div:not('#lrbuttonhandle')").removeClass(
+			'clearbutton'
+		);
+		$(
+			"#dpadstartselectbuttonholder div:not('#startselectbuttonhandle')"
+		).removeClass('clearbutton');
+		$("#dpadabbuttonholder div:not('#abbuttonhandle')").removeClass(
+			'clearbutton'
+		);
+		$('#sidebar').removeClass('right-expand-cust'); //maybe need remove style instead
+		$('#menunav').removeAttr('style');
+		$('#menu-btn').removeAttr('style');
+		$('.nav-container').removeAttr('style');
+		console.log(
+			'screenwrapper height:' + $('#screenwrapper').css('height')
+		);
+		console.log(
+			'screenwrapper height attr:' + $('#screenwrapper').height()
+		);
+		console.log(
+			getComputedStyle(document.getElementById('screenwrapper')).height
+		);
+		$('#screenwrapper').removeAttr('style');
+		actioncontrolorient = true;
+		orientActionControlPanel();
+		setTimeout(() => {
+			console.log('Delayed for 1 second.');
+			var newtop =
+				parseInt($('#screenwrapper').css('top'), 10) +
+				parseInt($('#screenwrapper').css('height'), 10) +
+				(window.mobileCheck() ? 0 : 5) +
+				'px';
+			console.log(
+				'screenwrapper height 2:' + $('#screenwrapper').css('height')
+			);
+			$('#actioncontrolpanel').css({
+				top: newtop,
+				left: $('#screenwrapper').css('left')
+			});
+		}, '50');
+	} else {
+		islandscape = true;
+		console.log('changing orientation to landscape');
+		$('#dpadholder').removeClass('dark');
+		$('#dpadholder').addClass('clear');
+		$("#dpadlrbuttonholder div:not('#lrbuttonhandle')").addClass(
+			'clearbutton'
+		);
+		$(
+			"#dpadstartselectbuttonholder div:not('#startselectbuttonhandle')"
+		).addClass('clearbutton');
+		$("#dpadabbuttonholder div:not('#abbuttonhandle')").addClass(
+			'clearbutton'
+		);
+		$('#sidebar').css('right', '-350px');
+		$('#menunav').css('bottom', '25px');
+		$('#menu-btn').css({ 'margin-left': 'auto', 'margin-right': '-62px' });
+		$('.nav-container').css('margin-left', 'calc(100% - 6rem)');
+		actioncontrolorient = false;
+		orientActionControlPanel();
+		$('#screenwrapper').css({
+			left:
+				parseInt($('#actioncontrolpanel').css('left'), 10) +
+				parseInt($('#actioncontrolpanel').css('width'), 10) +
+				'px',
+			margin: 'inherit'
+		});
+	}
+	console.log('screenwrapper height 3:' + $('#screenwrapper').css('height'));
+});
+
 //main function defs
 window.onload = function () {
 	if (gba && FileReader) {
@@ -226,15 +316,17 @@ function run(file) {
 			}
 			runCommands = [];
 			$('#actioncontrolpanel').fadeIn();
-			var newtop =
-				parseInt($('#screenwrapper').css('top'), 10) +
-				parseInt($('#screenwrapper').css('height'), 10) +
-				(window.mobileCheck() ? 0 : 5) +
-				'px';
-			$('#actioncontrolpanel').css({
-				top: newtop,
-				left: $('#screenwrapper').css('left')
-			});
+			if (!islandscape) {
+				var newtop =
+					parseInt($('#screenwrapper').css('top'), 10) +
+					parseInt($('#screenwrapper').css('height'), 10) +
+					(window.mobileCheck() ? 0 : 5) +
+					'px';
+				$('#actioncontrolpanel').css({
+					top: newtop,
+					left: $('#screenwrapper').css('left')
+				});
+			}
 			enableRunMenuNode();
 			disablePreMenuNode();
 			gba.runStable();
@@ -639,9 +731,16 @@ function simulateKeyUp(keyCode) {
 function orientActionControlPanel() {
 	if (!actioncontrolorient) {
 		$('#actioncontrolpanel').css('width', '175px');
+		$('#button_rotate label').text('Rot.');
+		$('#pixelated_check_lbl').text('Pix.');
+		if (islandscape) {
+			$('#actioncontrolpanel').css({ top: '0px', left: '0px' });
+		}
 		actioncontrolorient = true;
 	} else {
 		$('#actioncontrolpanel').css('width', 'fit-content');
+		$('#button_rotate label').text('Rotate');
+		$('#pixelated_check_lbl').text('Pixelate');
 		actioncontrolorient = false;
 	}
 }

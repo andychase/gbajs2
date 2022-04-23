@@ -110,6 +110,5 @@ func main() {
 	userdb.AutoMigrate(&User{})
 
 	log.Println("handling requests initiated")
-	//serveRequests(":8080") //, "./auth_ssl/server.crt", "./auth_ssl/server.key") //start server
 	serveRequests(":443", "./certs/certificate.crt", "./certs/privateKey.key", clientHost) //start server
 }

@@ -30,7 +30,9 @@ Do not attempt to log into the server unless you are the server owner, your IP m
 
 * Example Mobile
 
-<img src="./readme-graphics/gbajs3-mobile.jpeg" width="400px">
+<img src="./readme-graphics/gbajs3-mobile-portrait.png" width="400px">
+
+<img src="./readme-graphics/gbajs3-mobile-landscape.png">
 
 ## Docker
 * Requires an env file of the format:
