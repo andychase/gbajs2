@@ -42,6 +42,9 @@ window.mobileCheck = function () {
 
 //pause canvas animation if windows is not focused, restart if so
 $(window).focus(function () {
+	if (debug) {
+		return;
+	}
 	if (isRunning && autoPaused) {
 		buttonPlayPress(false);
 		gba.runStable();
@@ -50,6 +53,9 @@ $(window).focus(function () {
 });
 
 $(window).blur(function () {
+	if (debug) {
+		return;
+	}
 	if (isRunning && !gba.paused && !autoPaused) {
 		buttonPlayPress(false);
 		gba.pause();
@@ -481,10 +487,12 @@ function setFastForward(which) {
 }
 
 function enableDebug() {
+	window.gba = gba;
+	const debugloc = location.protocol + '//' + location.host;
 	window.onmessage = function (message) {
 		if (
-			message.origin != document.domain &&
-			(message.origin != 'file://' || document.domain)
+			message.origin != debugloc &&
+			(message.origin != 'file://' || debugloc)
 		) {
 			console.log('Failed XSS');
 			return;
@@ -492,7 +500,7 @@ function enableDebug() {
 		switch (message.data) {
 			case 'connect':
 				if (message.source === debug) {
-					debug.postMessage('connect', document.domain || '*');
+					debug.postMessage('connect', debugloc || '*');
 				}
 				break;
 			case 'connected':
@@ -505,13 +513,13 @@ function enableDebug() {
 	};
 	window.onunload = function () {
 		if (debug && debug.postMessage) {
-			debug.postMessage('disconnect', document.domain || '*');
+			debug.postMessage('disconnect', debugloc || '*');
 		}
 	};
 	if (!debug || !debug.postMessage) {
 		debug = window.open('debugger.html', 'debug');
 	} else {
-		debug.postMessage('connect', document.domain || '*');
+		debug.postMessage('connect', debugloc || '*');
 	}
 }
 

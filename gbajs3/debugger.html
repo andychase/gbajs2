@@ -1,15 +1,16 @@
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-		<title>gbajs2 Debugger</title>
+		<title>gbajs3 Debugger</title>
 		<script src="js/util.js"></script>
 		<script src="resources/console.js"></script>
 		<link href="resources/console.css" rel="stylesheet" />
 		<script>
 			window.onmessage = function (message) {
+				const debugloc = location.protocol + '//' + location.host;
 				if (
-					message.origin != document.domain &&
-					(message.origin != 'file://' || document.domain)
+					message.origin != debugloc &&
+					(message.origin != 'file://' || debugloc)
 				) {
 					console.log('Failed XSS');
 					return;
@@ -17,8 +18,10 @@
 				switch (message.data) {
 					case 'connect':
 						master = message.source;
+						console.log('initializing, master source:');
+						console.log(master);
 						initialize(master.gba);
-						master.postMessage('connected', document.domain || '*');
+						master.postMessage('connected', debugloc || '*');
 						break;
 					case 'disconnect':
 						master = null;
@@ -37,6 +40,8 @@
 
 			var gbaCon;
 			function initialize(gba) {
+				console.log('initializing gba:');
+				console.log(gba);
 				window.gba = gba;
 				gba.logLevel = gba.LOG_ERROR | gba.LOG_WARN | gba.LOG_DEBUG;
 				gbaCon = new Console(gba);
@@ -68,21 +73,17 @@
 			}
 
 			window.onload = function () {
+				const debugloc = location.protocol + '//' + location.host;
 				if (window.opener) {
-					window.opener.postMessage(
-						'connect',
-						document.domain || '*'
-					);
+					window.opener.postMessage('connect', debugloc || '*');
 				}
 			};
 
 			window.onunload = function () {
+				const debugloc = location.protocol + '//' + location.host;
 				gba.doStep = gba.waitFrame;
 				if (window.master) {
-					window.master.postMessage(
-						'disconnect',
-						document.domain || '*'
-					);
+					window.master.postMessage('disconnect', debugloc || '*');
 				}
 			};
 		</script>
