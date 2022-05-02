@@ -33,6 +33,7 @@ function login() {
 				}, 240 * 1000);
 			} else {
 				console.log('login has failed');
+				alert('login has failed');
 				accesstoken = '';
 			}
 			$('#login-username').val('');
@@ -47,11 +48,17 @@ function login() {
 					//we should be able to get these from cache provided its populated
 					offlineEnableRomSaveServermenuNodes();
 					accesstoken = 'offline_first_dummy';
+				} else {
+					console.log('login has failed');
+					alert('login has failed');
 				}
 			} else {
 				// something weird is happening
 				console.log('login request has failed');
+				alert('login request has failed');
 			}
+			$('#login-username').val('');
+			$('#login-password').val('');
 		}
 	});
 }
@@ -76,6 +83,7 @@ function logout() {
 				accesstoken = '';
 			} else {
 				console.log('logout has failed');
+				alert('logout has failed');
 			}
 			if (tok_timerid) {
 				clearInterval(tok_timerid);
@@ -99,11 +107,12 @@ function loadRomFromServer() {
 
 	xhr.onload = function () {
 		if (xhr.status == 200) {
-			run(xhr.response);
+			run(xhr.response, true);
 		} else {
 			console.log(
 				'Your fetch has failed, please check with your server owner'
 			);
+			alert('Your fetch has failed, please check with your server owner');
 		}
 	};
 	xhr.send();
@@ -126,6 +135,7 @@ function loadSaveFromServer() {
 			console.log(
 				'Your fetch has failed, please check with your server owner'
 			);
+			alert('Your fetch has failed, please check with your server owner');
 		}
 	};
 	xhr.send();
@@ -192,6 +202,10 @@ function uploadSaveToServer() {
 					alert('upload save has failed');
 					console.log('upload save has failed');
 				}
+			},
+			error: function (XMLHttpRequest, textStatus, errorThrown) {
+				console.log('unable to reach server, upload save failed');
+				alert('unable to reach server, upload save failed');
 			}
 		});
 	}
@@ -272,7 +286,12 @@ function loadRomList() {
 				});
 			} else {
 				console.log('list server roms has failed');
+				alert('list server roms has failed');
 			}
+		},
+		error: function (XMLHttpRequest, textStatus, errorThrown) {
+			console.log('unable to reach server, rom list failed');
+			alert('unable to reach server, rom list failed');
 		}
 	});
 }
@@ -304,8 +323,13 @@ function loadSaveList() {
 						.appendTo('#savelist');
 				});
 			} else {
-				console.log('list server roms has failed');
+				console.log('list server saves has failed');
+				alert('list server saves has failed');
 			}
+		},
+		error: function (XMLHttpRequest, textStatus, errorThrown) {
+			console.log('unable to reach server, save list failed');
+			alert('unable to reach server, save list failed');
 		}
 	});
 }

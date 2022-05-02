@@ -550,6 +550,9 @@ ul#links li:not(:first-child)::before {
 	border-style: solid;
 	border-width: thin;
 	overflow: hidden;
+	transform: translateZ(
+		0
+	); /*fix bug in safari, prevent button panels showing when dragged*/
 }
 .o-pad:after {
 	content: '';

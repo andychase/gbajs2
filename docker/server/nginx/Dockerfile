@@ -2,7 +2,7 @@
 FROM ubuntu:latest as minifier
 RUN apt-get update && apt-get install minify
 COPY ./gbajs3 /var/www/
-RUN minify -r -o /var/www/ --match="(\.js|\.css)" /var/www/
+RUN cd /var/www/ && minify -r --match="(\.js|\.css)" -o . .
 
 #second stage, server
 FROM nginx:stable-alpine

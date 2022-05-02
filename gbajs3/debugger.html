@@ -18,8 +18,6 @@
 				switch (message.data) {
 					case 'connect':
 						master = message.source;
-						console.log('initializing, master source:');
-						console.log(master);
 						initialize(master.gba);
 						master.postMessage('connected', debugloc || '*');
 						break;
@@ -40,8 +38,6 @@
 
 			var gbaCon;
 			function initialize(gba) {
-				console.log('initializing gba:');
-				console.log(gba);
 				window.gba = gba;
 				gba.logLevel = gba.LOG_ERROR | gba.LOG_WARN | gba.LOG_DEBUG;
 				gbaCon = new Console(gba);

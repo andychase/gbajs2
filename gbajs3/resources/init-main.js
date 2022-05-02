@@ -11,7 +11,6 @@ var virtualControlsEnabled = false;
 var isRunning = false;
 var autoPaused = false;
 var initialLoad = true;
-var previousDataKeyIdTouchMoved = '';
 //get query params for automatically selecting a rom
 var params = new Proxy(new URLSearchParams(window.location.search), {
 	get: (searchParams, prop) => searchParams.get(prop)
@@ -293,13 +292,15 @@ function loadAndRunLocalRom(romloc, saveloc) {
 	loadRomFromServer();
 }
 
-function run(file) {
+function run(file, fromServer = false) {
 	let dead = document.getElementById('loader');
 	dead.value = '';
 	let load = document.getElementById('select');
 	load.text = 'Loading Rom...';
-	$('#collapseOne').collapse('show');
-	$('#collapseThree').collapse('hide');
+	if (!fromServer) {
+		$('#collapseOne').collapse('show');
+		$('#collapseThree').collapse('hide');
+	}
 	gba.loadRomFromFile(file, function (result) {
 		if (result) {
 			for (let i = 0; i < runCommands.length; ++i) {
