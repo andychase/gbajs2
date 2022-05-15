@@ -18,7 +18,7 @@ Do not attempt to log into the server unless you are the server owner, your IP m
 * Movable desktop canvas and controls
 * Mobile UI support
 * Offline PWA Support
-* Functional Surface-level debugger
+* Functional Surface-level ASM debugger
 
 ## To Do
 * Debugger enhancements

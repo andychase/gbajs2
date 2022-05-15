@@ -222,7 +222,7 @@ $(window).on('orientationchange', function (event) {
 			var newtop =
 				parseInt($('#screenwrapper').css('top'), 10) +
 				parseInt($('#screenwrapper').css('height'), 10) +
-				(window.mobileCheck() ? 0 : 5) +
+				(isMobile ? 0 : 5) +
 				'px';
 			$('#actioncontrolpanel').css({
 				top: newtop,
@@ -312,7 +312,7 @@ function run(file, fromServer = false) {
 				var newtop =
 					parseInt($('#screenwrapper').css('top'), 10) +
 					parseInt($('#screenwrapper').css('height'), 10) +
-					(window.mobileCheck() ? 0 : 5) +
+					(isMobile ? 0 : 5) +
 					'px';
 				$('#actioncontrolpanel').css({
 					top: newtop,
@@ -368,7 +368,7 @@ function reset() {
 	buttonPlayPress(true);
 	disableRunMenuNode();
 	enablePreMenuNode();
-	if (!window.mobileCheck()) {
+	if (!isMobile) {
 		disableDpad();
 		disableDpadButtons();
 	}
@@ -776,4 +776,10 @@ function sendCurrentSaveToServer() {
 	var container = new DataTransfer();
 	container.items.add(file);
 	$('#saveloader')[0].files = container.files; //onchange event should be triggered here
+
+	if (!isMobile) {
+		console.log('browser firing onchange event manually');
+		var ev = new Event('change');
+		document.getElementById('saveloader').dispatchEvent(ev);
+	}
 }
