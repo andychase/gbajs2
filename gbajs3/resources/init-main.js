@@ -19,6 +19,7 @@ var query_select_rom = params.rom;
 var query_select_save = params.save;
 var accesstoken = null;
 var current_loaded_save_filename = '';
+var current_loaded_rom_filename = '';
 var islandscape = false;
 //attempt to initially refresh an access token from a present httponly cookie
 refreshAccessToken();
@@ -324,6 +325,9 @@ function run(file, fromServer = false) {
 			gba.runStable();
 			isRunning = true;
 			initialLoad = false;
+			if (file && file.name) {
+				current_loaded_rom_filename = file.name;
+			}
 		} else {
 			load.textContent = 'FAILED';
 			setTimeout(function () {
@@ -335,7 +339,6 @@ function run(file, fromServer = false) {
 
 function runCredentialsWrapper(file) {
 	if (checkAccessTok()) {
-		console.log('in check access tok block, showing modal');
 		$('#uploadRomToServerModal').modal('show');
 	} else {
 		run(file);
@@ -381,6 +384,7 @@ function uploadSavedataPending(file) {
 	}
 	runCommands.push(function () {
 		gba.loadSavedataFromFile(file);
+		$('#saveloader').val('');
 	});
 }
 
@@ -388,10 +392,7 @@ function uploadSavedataPendingCredentialsWrapper(file) {
 	if (checkAccessTok()) {
 		$('#uploadSaveToServerModal').modal('show');
 	} else {
-		runCommands.push(function () {
-			gba.loadSavedataFromFile(file);
-			$('#saveloader').val('');
-		});
+		uploadSavedataPending(file);
 	}
 }
 
@@ -571,7 +572,7 @@ function disableDpadButtons() {
 	$('#dpadlrbuttonholder').fadeOut();
 }
 
-function enableLogoutRomSaveServermenuNodes() {
+function enableLogoutRomSaveQuickServermenuNodes() {
 	$('#serverlogout').removeClass('disabled');
 	$('#serverlogout').addClass('enabled');
 	$('#loadserverrom').removeClass('disabled');
@@ -580,6 +581,8 @@ function enableLogoutRomSaveServermenuNodes() {
 	$('#loadserversave').addClass('enabled');
 	$('#sendsavetoserver').removeClass('disabled');
 	$('#sendsavetoserver').addClass('enabled');
+	$('#quickreloadserver').removeClass('disabled');
+	$('#quickreloadserver').addClass('enabled');
 }
 
 function offlineEnableRomSaveServermenuNodes() {
@@ -587,6 +590,8 @@ function offlineEnableRomSaveServermenuNodes() {
 	$('#loadserverrom').addClass('enabled');
 	$('#loadserversave').removeClass('disabled');
 	$('#loadserversave').addClass('enabled');
+	$('#quickreloadserver').removeClass('disabled');
+	$('#quickreloadserver').addClass('enabled');
 }
 
 function disableLogoutRomSaveServermenuNodes() {
@@ -598,6 +603,8 @@ function disableLogoutRomSaveServermenuNodes() {
 	$('#loadserversave').addClass('disabled');
 	$('#sendsavetoserver').removeClass('enabled');
 	$('#sendsavetoserver').addClass('disabled');
+	$('#quickreloadserver').removeClass('enabled');
+	$('#quickreloadserver').addClass('disabled');
 }
 
 function enableVirtualControls() {
@@ -782,4 +789,34 @@ function sendCurrentSaveToServer() {
 		var ev = new Event('change');
 		document.getElementById('saveloader').dispatchEvent(ev);
 	}
+}
+
+function quickReloadCredentialsWrapper(file) {
+	if (checkAccessTok()) {
+		$('#quickReloadServerModal').modal('show');
+	} else {
+		alert('Please log in to use this feature');
+	}
+}
+
+function quickReloadServer() {
+	if (
+		current_loaded_save_filename === '' ||
+		current_loaded_rom_filename === ''
+	) {
+		alert('No current server save/rom filenames');
+		return;
+	}
+	//reset gba if active
+	if (isRunning) {
+		reset();
+	}
+
+	//reload current in use save
+	query_select_save = current_loaded_save_filename;
+	loadSaveFromServer();
+
+	//reload current in use rom
+	query_select_rom = current_loaded_rom_filename;
+	loadRomFromServer();
 }

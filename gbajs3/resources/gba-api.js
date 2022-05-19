@@ -38,7 +38,7 @@ function login() {
 			}
 			$('#login-username').val('');
 			$('#login-password').val('');
-			enableLogoutRomSaveServermenuNodes();
+			enableLogoutRomSaveQuickServermenuNodes();
 		},
 		error: function (XMLHttpRequest, textStatus, errorThrown) {
 			if (XMLHttpRequest.readyState == 0) {
@@ -107,6 +107,7 @@ function loadRomFromServer() {
 
 	xhr.onload = function () {
 		if (xhr.status == 200) {
+			current_loaded_rom_filename = query_select_rom;
 			run(xhr.response, true);
 		} else {
 			console.log(
@@ -231,7 +232,7 @@ function refreshAccessToken() {
 					initialParamRomandSave();
 					initialLoad = false;
 				}
-				enableLogoutRomSaveServermenuNodes();
+				enableLogoutRomSaveQuickServermenuNodes();
 			} else {
 				console.log('refresh token has failed');
 				accesstoken = '';

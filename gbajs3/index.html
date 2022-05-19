@@ -478,7 +478,7 @@
 						></button>
 					</div>
 					<div class="modal-body">
-						<p>Do you want to save this rom to the server?</p>
+						<p>Do you want to send your rom file to the server?</p>
 					</div>
 					<div class="modal-footer">
 						<button
@@ -543,6 +543,56 @@
 							class="btn btn-secondary"
 							data-bs-dismiss="modal"
 							onclick="if(!isRunning){uploadSavedataPending($('#loader')[0].files[0]);}$('#saveloader').val('');"
+						>
+							No
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div
+			class="modal fade"
+			id="quickReloadServerModal"
+			tabindex="-1"
+			aria-labelledby="quickReloadServerModalLabel"
+			aria-hidden="true"
+		>
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5
+							class="modal-title"
+							id="quickReloadServerModalLabel"
+						>
+							Profile
+						</h5>
+						<button
+							type="button"
+							class="btn-close"
+							data-bs-dismiss="modal"
+							aria-label="Close"
+						></button>
+					</div>
+					<div class="modal-body">
+						<p>
+							Are you sure you want to quick reload the last
+							save/rom?
+						</p>
+					</div>
+					<div class="modal-footer">
+						<button
+							type="button"
+							class="btn btn-primary"
+							onclick="quickReloadServer();"
+							data-bs-dismiss="modal"
+						>
+							Yes
+						</button>
+						<button
+							type="button"
+							class="btn btn-secondary"
+							data-bs-dismiss="modal"
 						>
 							No
 						</button>
@@ -787,6 +837,15 @@
 						>
 							<i class="bx bx-log-out-circle"></i>
 							<span class="mx-2">Logout</span>
+						</li>
+						<li
+							id="quickreloadserver"
+							href="#"
+							class="nav-link disabled"
+							onclick="quickReloadCredentialsWrapper();"
+						>
+							<i class="bx bx-redo"></i>
+							<span class="mx-2">Quick Reload (Serv.)</span>
 						</li>
 						<li
 							id="loadserversave"
