@@ -90,6 +90,13 @@ menu_btn.addEventListener('click', () => {
 		sidebar.classList.toggle('active-nav');
 		container.classList.toggle('active-cont');
 	}
+	$('#sidenavcleardismiss').toggle('active');
+});
+
+$('#sidenavcleardismiss').click(function (e) {
+	e.preventDefault();
+	var ev = new Event('click');
+	menu_btn.dispatchEvent(ev);
 });
 
 //check for mobile
