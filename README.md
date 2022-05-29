@@ -54,7 +54,7 @@ CLIENT_HOST=https://<your-client-location>
 ```
 openssl req -x509 -sha256 -nodes -days 365 -newkey rsa:2048 -keyout privateKey.key -out certificate.crt
 ```
-* Golang api expects a sqlite file consisting of username/password pairs generated with bcrypt.GenerateFromPassword, as well as two uuid fields for token id's
+* Golang api expects a sqlite file within the docker/server/auth directory consisting of username/password pairs generated with bcrypt.GenerateFromPassword, as well as two uuid fields for token id's
 ```
 type User struct {
   Username  string
@@ -62,6 +62,10 @@ type User struct {
   TokenSlug uuid.UUID
   TokenID   uuid.UUID
 }
+```
+* There is a helper script in docker/helper/users_db_helper.go that can be used to generate your initial database file
+```
+go run users_db_helper.go
 ```
 * Simply run `docker-compose up --build` and your services will build and start
 
