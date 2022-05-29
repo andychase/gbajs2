@@ -78,27 +78,6 @@ var dpad_r_button = document.querySelector('#dpadrbutton');
 var dpad_start_button = document.querySelector('#dpadstartbutton');
 var dpad_select_button = document.querySelector('#dpadselectbutton');
 
-menu_btn.addEventListener('click', () => {
-	if (islandscape) {
-		sidebar.classList.remove('active-nav');
-		container.classList.remove('active-cont');
-		sidebar.classList.toggle('active-nav-landscape');
-		container.classList.toggle('active-cont-landscape');
-	} else {
-		sidebar.classList.remove('active-nav-landscape');
-		container.classList.remove('active-cont-landscape');
-		sidebar.classList.toggle('active-nav');
-		container.classList.toggle('active-cont');
-	}
-	$('#sidenavcleardismiss').toggle('active');
-});
-
-$('#sidenavcleardismiss').click(function (e) {
-	e.preventDefault();
-	var ev = new Event('click');
-	menu_btn.dispatchEvent(ev);
-});
-
 //check for mobile
 if (window.mobileCheck()) {
 	window.oncontextmenu = function () {
@@ -107,6 +86,7 @@ if (window.mobileCheck()) {
 	enableDpad();
 	enableDpadButtons();
 	disableVirtualControlsMenuNode();
+	$('#sidenavcleardismiss').toggle('active');
 	isMobile = true;
 }
 
@@ -265,6 +245,30 @@ $(window).on('orientationchange', function (event) {
 			margin: 'inherit'
 		});
 	}
+});
+
+//easy sidebar menu close on mobile
+menu_btn.addEventListener('click', () => {
+	if (islandscape) {
+		sidebar.classList.remove('active-nav');
+		container.classList.remove('active-cont');
+		sidebar.classList.toggle('active-nav-landscape');
+		container.classList.toggle('active-cont-landscape');
+	} else {
+		sidebar.classList.remove('active-nav-landscape');
+		container.classList.remove('active-cont-landscape');
+		sidebar.classList.toggle('active-nav');
+		container.classList.toggle('active-cont');
+	}
+	if (isMobile) {
+		$('#sidenavcleardismiss').toggle('active');
+	}
+});
+
+$('#sidenavcleardismiss').click(function (e) {
+	e.preventDefault();
+	var ev = new Event('click');
+	menu_btn.dispatchEvent(ev);
 });
 
 //main function defs

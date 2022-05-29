@@ -471,8 +471,8 @@ ul#links li:not(:first-child)::before {
 
 .side-navbar-clear-dismiss {
 	position: absolute;
-	width: 100%;
-	height: 100%;
+	width: 99%;
+	height: 99%;
 	background: none;
 	z-index: 10;
 }
