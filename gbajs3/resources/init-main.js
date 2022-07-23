@@ -795,11 +795,11 @@ function sendCurrentSaveToServer() {
 	container.items.add(file);
 	$('#saveloader')[0].files = container.files; //onchange event should be triggered here
 
-	if (!isMobile) {
+	//if (!isMobile) { //temporarily turning off check, issues with latest safari
 		console.log('browser firing onchange event manually');
 		var ev = new Event('change');
 		document.getElementById('saveloader').dispatchEvent(ev);
-	}
+	//}
 }
 
 function quickReloadCredentialsWrapper(file) {
