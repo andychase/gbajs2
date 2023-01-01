@@ -59,7 +59,7 @@ type User struct {
   TokenID   uuid.UUID
 }
 ```
-* There is a helper script in ./docker/helper/users_db_helper.go that can be used to generate your initial database file
+* There is a helper script in ./docker/helper/users_db_helper.go that can be used to generate your initial database file. This will output a file of the name users.db.
 ```
 go run users_db_helper.go
 ```
