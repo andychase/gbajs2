@@ -349,6 +349,84 @@
 			</div>
 		</div>
 
+		<div
+			class="modal fade"
+			id="extraControlsModal"
+			tabindex="-1"
+			aria-labelledby="extraControlsModal"
+			aria-hidden="true"
+		>
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="extraControlsModalLabel">
+							Extra Logged-in Controls
+						</h5>
+						<button
+							type="button"
+							class="btn-close"
+							data-bs-dismiss="modal"
+							aria-label="Close"
+						></button>
+					</div>
+					<div class="modal-body">
+						<table id="extraControlsTable" class="table">
+							<tr>
+								<th scope="col">Feature</th>
+								<th scope="col">Enable</th>
+							</tr>
+							<tr>
+								<td class="descrip">
+									Quick Reload (Virtual Control)
+								</td>
+								<td>
+									<div class="form-check">
+										<input
+											class="form-check-input"
+											type="checkbox"
+											value=""
+											id="flexCheckQuickReloadVC"
+										/>
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<td class="descrip">
+									Send Save to Server (Virtual Control)
+								</td>
+								<td>
+									<div class="form-check">
+										<input
+											class="form-check-input"
+											type="checkbox"
+											value=""
+											id="flexCheckSendSaveToServerVC"
+										/>
+									</div>
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div class="modal-footer">
+						<button
+							type="button"
+							class="btn btn-secondary"
+							data-bs-dismiss="modal"
+						>
+							Close
+						</button>
+						<button
+							type="button"
+							class="btn btn-primary"
+							onclick="saveExtraControlsConf()"
+						>
+							Save configuration
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
 		<div id="loginModal" class="modal fade">
 			<div class="modal-dialog modal-login">
 				<div class="modal-content">
@@ -714,14 +792,14 @@
 							onclick="document.getElementById('saveloader').click()"
 						>
 							<i class="bx bx-cloud-upload"></i>
-							<span class="mx-2">Load Save (manual)</span>
+							<span class="mx-2">Upload Save</span>
 							<input
 								id="saveloader"
 								type="file"
 								onchange="uploadSavedataPendingCredentialsWrapper(this.files[0])"
 							/>
 							<label class="aria-invisible" for="saveloader"
-								>Load Save (manual)</label
+								>Upload Save</label
 							>
 						</li>
 						<li
@@ -730,7 +808,7 @@
 							onclick="document.getElementById('loader').click()"
 						>
 							<i class="bx bx-upload"></i>
-							<span class="mx-2" id="select">Select Rom</span>
+							<span class="mx-2" id="select">Upload Rom</span>
 							<input
 								id="loader"
 								type="file"
@@ -738,7 +816,7 @@
 								onchange="runCredentialsWrapper(this.files[0]);"
 							/>
 							<label class="aria-invisible" for="loader"
-								>Select Rom</label
+								>Upload Rom</label
 							>
 						</li>
 					</ul>
@@ -878,6 +956,17 @@
 							<i class="bx bx-cloud-upload"></i>
 							<span class="mx-2">Send Save to Server</span>
 						</li>
+						<li
+							id="extracontrols"
+							href="#"
+							class="nav-link disabled"
+							data-bs-toggle="modal"
+							data-bs-target="#extraControlsModal"
+							onclick=""
+						>
+							<i class="bx bxs-joystick"></i>
+							<span class="mx-2">Extra Controls</span>
+						</li>
 					</ul>
 				</div>
 				<li
@@ -951,6 +1040,23 @@
 			<div id="dpadlbutton" data-keyid="L">L</div>
 			<div id="dpadrbutton" data-keyid="R">R</div>
 			<div id="lrbuttonhandle"></div>
+		</div>
+
+		<div id="quickreloadvc" style="display: none">
+			<div id="quickreloadvcbutton" onclick="quickReloadServer()">
+				<i class="fa fa-refresh fa-flip-horizontal"></i>
+			</div>
+			<div id="quickreloadvcbuttonhandle"></div>
+		</div>
+
+		<div id="sendsavetoservervc" style="display: none">
+			<div
+				id="sendsavetoservervcbutton"
+				onclick="sendCurrentSaveToServer()"
+			>
+				<i class="fa fa-cloud-upload"></i>
+			</div>
+			<div id="sendsavetoservervcbuttonhandle"></div>
 		</div>
 
 		<!-- main driving javascript -->

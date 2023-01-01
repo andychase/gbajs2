@@ -4,7 +4,7 @@
 
 // @contact.name Nicholas VanCise
 // @contact.url https://nicholas-vancise.dev
-// @contact.email nvancise@unlv.nevada.edu
+// @contact.email nvancisedev@gmail.com
 // @license.name Copyright (c) 2022 Nicholas VanCise
 
 package main
@@ -18,7 +18,7 @@ import (
 	"github.com/rs/cors"
 	"github.com/satori/go.uuid"
 	"github.com/swaggo/http-swagger"
-	"gorm.io/driver/sqlite"
+	"github.com/glebarez/sqlite"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 	"log"
@@ -27,11 +27,16 @@ import (
 	"time"
 )
 
+const (
+	romPath = "./local_roms/"
+	savePath = "./local_saves/"
+	certLoc = "./certs/fullchain.pem"
+	keyLoc = "./certs/privkey.pem"
+)
+
 var (
 	userdb        *gorm.DB
 	AccessSignKey []byte
-	romPath       string
-	savePath      string
 )
 
 func serveRequests(port string, certloc string, keyloc string, client_host string) {
@@ -61,7 +66,7 @@ func serveRequests(port string, certloc string, keyloc string, client_host strin
 	/*myRouter.PathPrefix("/documentation/").Handler(httpSwagger.Handler( //if we ever have a stable api deployment, this can be used to make it searchable
 		httpSwagger.URL("http://localhost:8081/documentation/doc.json"), //The url pointing to API definition"
 	))*/
-	router.PathPrefix("/documentation/").Handler(httpSwagger.WrapHandler) //here is where I have added the swagger endpoint
+	router.PathPrefix("/api/documentation/").Handler(httpSwagger.WrapHandler) //here is where I have added the swagger endpoint
 
 	log.Fatal(http.ListenAndServeTLS(port, certloc, keyloc, c.Handler(router))) //the port and address for api set here, provided from the properties file
 }
@@ -74,8 +79,6 @@ func main() {
 		fmt.Println("failed to create initial access secret")
 		return
 	}
-	romPath = os.Getenv("ROM_PATH")
-	savePath = os.Getenv("SAVE_PATH")
 	clientHost := os.Getenv("CLIENT_HOST")
 
 	logfile := &lumberjack.Logger{ //handle rolling logs internally
@@ -110,5 +113,5 @@ func main() {
 	userdb.AutoMigrate(&User{})
 
 	log.Println("handling requests initiated")
-	serveRequests(":443", "./certs/certificate.crt", "./certs/privateKey.key", clientHost) //start server
+	serveRequests(":443", certLoc, keyLoc, clientHost) //start server
 }

@@ -1,5 +1,5 @@
 //api variables
-const serverloc = 'https://127.0.0.1';
+const serverloc = '<CLIENT_HOST>';
 var tok_timerid = null;
 
 function checkAccessTok() {
@@ -96,7 +96,7 @@ function logout() {
 	});
 }
 
-function loadRomFromServer() {
+function loadRomFromServer(query_select_rom) {
 	if (!checkAccessTok()) {
 		return;
 	}
@@ -107,7 +107,7 @@ function loadRomFromServer() {
 
 	xhr.onload = function () {
 		if (xhr.status == 200) {
-			current_loaded_rom_filename = query_select_rom;
+			localStorage.setItem('current-loaded-rom-filename', query_select_rom)
 			run(xhr.response, true);
 		} else {
 			console.log(
@@ -119,7 +119,7 @@ function loadRomFromServer() {
 	xhr.send();
 }
 
-function loadSaveFromServer() {
+function loadSaveFromServer(query_select_save) {
 	if (!checkAccessTok()) {
 		return;
 	}
@@ -130,7 +130,7 @@ function loadSaveFromServer() {
 
 	xhr.onload = function () {
 		if (xhr.status == 200) {
-			current_loaded_save_filename = query_select_save;
+			localStorage.setItem('current-loaded-save-filename', query_select_save);
 			uploadSavedataPending(xhr.response);
 		} else {
 			console.log(
@@ -280,8 +280,7 @@ function loadRomList() {
 							'</button>'
 					)
 						.click(function () {
-							query_select_rom = $(this).text();
-							loadRomFromServer();
+							loadRomFromServer($(this).text());
 						})
 						.appendTo('#romlist');
 				});
@@ -318,8 +317,7 @@ function loadSaveList() {
 							'</button>'
 					)
 						.click(function () {
-							query_select_save = $(this).text();
-							loadSaveFromServer();
+							loadSaveFromServer($(this).text());
 						})
 						.appendTo('#savelist');
 				});

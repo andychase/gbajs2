@@ -1,8 +1,15 @@
-basePath: '{{.BasePath}}'
-host: '{{.Host}}'
+definitions:
+  main.UserCredentials:
+    description: User Credentials
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    type: object
 info:
   contact:
-    email: nvancise@unlv.nevada.edu
+    email: nvancisedev@gmail.com
     name: Nicholas VanCise
     url: https://nicholas-vancise.dev
   description: This server is designed to provide jwt token support/local file handling
@@ -16,9 +23,9 @@ paths:
     get:
       description: Displays welcome message.
       parameters:
-      - description: Authorization
+      - description: Bearer Token
         in: header
-        name: authToken
+        name: Authorization
         required: true
         type: string
       produces:
@@ -45,7 +52,7 @@ paths:
           schema:
             type: string
       summary: Hello world landing page
-  /api-v1/accounts/login:
+  /api/account/login:
     post:
       consumes:
       - application/json
@@ -57,8 +64,7 @@ paths:
         name: Data
         required: true
         schema:
-          $ref: '#/definitions/string'
-          type: object
+          $ref: '#/definitions/main.UserCredentials'
       responses:
         "200":
           description: Access token
@@ -83,11 +89,11 @@ paths:
       summary: User Login
       tags:
       - auth
-  /api-v1/accounts/logout:
+  /api/account/logout:
     post:
       description: User logout
       parameters:
-      - description: Bearer <token>
+      - description: Bearer Token
         in: header
         name: Authorization
         required: true
@@ -112,41 +118,17 @@ paths:
       summary: User Logout
       tags:
       - auth
-  /api-v1/tokens/refresh:
-    post:
-      description: Uses stored refresh token + database lookup to issue new auth token
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Access token
-          schema:
-            type: string
-        "401":
-          description: Unauthorized
-          schema:
-            type: string
-        "405":
-          description: Method Not Allowed
-          schema:
-            type: string
-        "500":
-          description: Internal Server Error
-          schema:
-            type: string
-      summary: Uses stored refresh token cookie to issue new auth token
-      tags:
-      - auth
   /api/rom/download:
     get:
       description: Download rom from server
       parameters:
-      - description: Authorization
+      - description: Bearer Token
         in: header
-        name: authToken
+        name: Authorization
         required: true
         type: string
       - description: Rom to download
+        example: unbound.gba
         in: query
         name: rom
         required: true
@@ -181,9 +163,9 @@ paths:
     get:
       description: Lists all roms uploaded to server
       parameters:
-      - description: Authorization
+      - description: Bearer Token
         in: header
-        name: authToken
+        name: Authorization
         required: true
         type: string
       produces:
@@ -216,9 +198,9 @@ paths:
     post:
       description: Upload rom to server
       parameters:
-      - description: Authorization
+      - description: Bearer Token
         in: header
-        name: authToken
+        name: Authorization
         required: true
         type: string
       - description: Rom to Upload
@@ -254,12 +236,13 @@ paths:
     get:
       description: Download save from server
       parameters:
-      - description: Authorization
+      - description: Bearer Token
         in: header
-        name: authToken
+        name: Authorization
         required: true
         type: string
       - description: Save to download
+        example: unbound.sav
         in: query
         name: save
         required: true
@@ -294,9 +277,9 @@ paths:
     get:
       description: Lists all saves uploaded to server
       parameters:
-      - description: Authorization
+      - description: Bearer Token
         in: header
-        name: authToken
+        name: Authorization
         required: true
         type: string
       produces:
@@ -329,9 +312,9 @@ paths:
     post:
       description: Upload save to server
       parameters:
-      - description: Authorization
+      - description: Bearer Token
         in: header
-        name: authToken
+        name: Authorization
         required: true
         type: string
       - description: Save to Upload
@@ -363,4 +346,29 @@ paths:
       summary: Upload save to server
       tags:
       - gba
+  /api/tokens/refresh:
+    post:
+      description: Uses stored refresh token to issue new auth token
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Access token
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "405":
+          description: Method Not Allowed
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Uses stored refresh token cookie to issue new auth token
+      tags:
+      - auth
 swagger: "2.0"

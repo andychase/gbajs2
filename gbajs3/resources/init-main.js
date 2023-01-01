@@ -18,8 +18,6 @@ var params = new Proxy(new URLSearchParams(window.location.search), {
 var query_select_rom = params.rom;
 var query_select_save = params.save;
 var accesstoken = null;
-var current_loaded_save_filename = '';
-var current_loaded_rom_filename = '';
 var islandscape = false;
 //attempt to initially refresh an access token from a present httponly cookie
 refreshAccessToken();
@@ -83,8 +81,7 @@ if (window.mobileCheck()) {
 	window.oncontextmenu = function () {
 		return false;
 	};
-	enableDpad();
-	enableDpadButtons();
+	enableVirtualControls();
 	disableVirtualControlsMenuNode();
 	$('#sidenavcleardismiss').toggle('active');
 	isMobile = true;
@@ -137,6 +134,7 @@ $('#listSaveModal').on('show.bs.modal', function () {
 	loadSaveList();
 });
 
+// loads rom/save from query parameters
 function initialParamRomandSave() {
 	if (query_select_rom != null && query_select_rom != '') {
 		if (query_select_save != null && query_select_save != '') {
@@ -167,6 +165,12 @@ $('#dpadstartselectbuttonholder').draggable({
 $('#dpadlrbuttonholder').draggable({
 	handle: '#lrbuttonhandle'
 });
+$('#quickreloadvc').draggable({
+	handle: '#quickreloadvcbuttonhandle'
+});
+$('#sendsavetoservervc').draggable({
+	handle: '#sendsavetoservervcbuttonhandle'
+});
 setPixelated(true);
 
 setDpadEvents([
@@ -187,7 +191,6 @@ $(window).on('orientationchange', function (event) {
 
 	if (orient == '0') {
 		islandscape = false;
-		console.log('changing orientation to portrait');
 		$('#dpadholder').removeClass('clear');
 		$('#dpadholder').addClass('dark');
 		$("#dpadlrbuttonholder div:not('#lrbuttonhandle')").removeClass(
@@ -197,6 +200,12 @@ $(window).on('orientationchange', function (event) {
 			"#dpadstartselectbuttonholder div:not('#startselectbuttonhandle')"
 		).removeClass('clearbutton');
 		$("#dpadabbuttonholder div:not('#abbuttonhandle')").removeClass(
+			'clearbutton'
+		);
+		$(
+			"#sendsavetoservervc div:not('#sendsavetoservervcbuttonhandle')"
+		).removeClass('clearbutton');
+		$("#quickreloadvc div:not('#quickreloadvcbuttonhandle')").removeClass(
 			'clearbutton'
 		);
 		$('#sidebar').removeAttr('style'); //maybe need remove style instead
@@ -219,7 +228,6 @@ $(window).on('orientationchange', function (event) {
 		}, '50');
 	} else {
 		islandscape = true;
-		console.log('changing orientation to landscape');
 		$('#dpadholder').removeClass('dark');
 		$('#dpadholder').addClass('clear');
 		$("#dpadlrbuttonholder div:not('#lrbuttonhandle')").addClass(
@@ -229,6 +237,12 @@ $(window).on('orientationchange', function (event) {
 			"#dpadstartselectbuttonholder div:not('#startselectbuttonhandle')"
 		).addClass('clearbutton');
 		$("#dpadabbuttonholder div:not('#abbuttonhandle')").addClass(
+			'clearbutton'
+		);
+		$(
+			"#sendsavetoservervc div:not('#sendsavetoservervcbuttonhandle')"
+		).addClass('clearbutton');
+		$("#quickreloadvc div:not('#quickreloadvcbuttonhandle')").addClass(
 			'clearbutton'
 		);
 		$('#sidebar').css('right', '-350px');
@@ -299,9 +313,9 @@ window.onload = function () {
 
 function loadAndRunLocalRom(romloc, saveloc) {
 	if (saveloc != null && saveloc != '') {
-		loadSaveFromServer();
+		loadSaveFromServer(saveloc);
 	}
-	loadRomFromServer();
+	loadRomFromServer(romloc);
 }
 
 function run(file, fromServer = false) {
@@ -337,7 +351,7 @@ function run(file, fromServer = false) {
 			isRunning = true;
 			initialLoad = false;
 			if (file && file.name) {
-				current_loaded_rom_filename = file.name;
+				localStorage.setItem('current-loaded-rom-filename', file.name);
 			}
 		} else {
 			load.textContent = 'FAILED';
@@ -383,15 +397,14 @@ function reset() {
 	disableRunMenuNode();
 	enablePreMenuNode();
 	if (!isMobile) {
-		disableDpad();
-		disableDpadButtons();
+		enableVirtualControls();
 	}
 	$('#collapseTwo').collapse('show');
 }
 
 function uploadSavedataPending(file) {
 	if (file && file.name) {
-		current_loaded_save_filename = file.name;
+		localStorage.setItem('current-loaded-save-filename', file.name);
 	}
 	runCommands.push(function () {
 		gba.loadSavedataFromFile(file);
@@ -594,6 +607,8 @@ function enableLogoutRomSaveQuickServermenuNodes() {
 	$('#sendsavetoserver').addClass('enabled');
 	$('#quickreloadserver').removeClass('disabled');
 	$('#quickreloadserver').addClass('enabled');
+	$('#extracontrols').removeClass('disabled');
+	$('#extracontrols').addClass('enabled');
 }
 
 function offlineEnableRomSaveServermenuNodes() {
@@ -603,6 +618,8 @@ function offlineEnableRomSaveServermenuNodes() {
 	$('#loadserversave').addClass('enabled');
 	$('#quickreloadserver').removeClass('disabled');
 	$('#quickreloadserver').addClass('enabled');
+	$('#extracontrols').removeClass('disabled');
+	$('#extracontrols').addClass('enabled');
 }
 
 function disableLogoutRomSaveServermenuNodes() {
@@ -616,16 +633,20 @@ function disableLogoutRomSaveServermenuNodes() {
 	$('#sendsavetoserver').addClass('disabled');
 	$('#quickreloadserver').removeClass('enabled');
 	$('#quickreloadserver').addClass('disabled');
+	$('#extracontrols').removeClass('enabled');
+	$('#extracontrols').addClass('disabled');
 }
 
 function enableVirtualControls() {
 	if (virtualControlsEnabled) {
 		disableDpad();
 		disableDpadButtons();
+		hideExtraControls();
 		virtualControlsEnabled = false;
 	} else {
 		enableDpad();
 		enableDpadButtons();
+		processExtraControlsConf();
 		virtualControlsEnabled = true;
 	}
 }
@@ -790,15 +811,18 @@ function sendCurrentSaveToServer() {
 		return;
 	}
 	var blob = new Blob([sram.buffer], { type: 'data:application/x-spss-sav' });
+	const current_loaded_save_filename = localStorage.getItem(
+		'current-loaded-save-filename'
+	);
 	var file = new File([blob], current_loaded_save_filename);
 	var container = new DataTransfer();
 	container.items.add(file);
 	$('#saveloader')[0].files = container.files; //onchange event should be triggered here
 
 	//if (!isMobile) { //temporarily turning off check, issues with latest safari
-		console.log('browser firing onchange event manually');
-		var ev = new Event('change');
-		document.getElementById('saveloader').dispatchEvent(ev);
+	console.log('browser firing onchange event manually');
+	var ev = new Event('change');
+	document.getElementById('saveloader').dispatchEvent(ev);
 	//}
 }
 
@@ -811,9 +835,18 @@ function quickReloadCredentialsWrapper(file) {
 }
 
 function quickReloadServer() {
+	const current_loaded_save_filename = localStorage.getItem(
+		'current-loaded-save-filename'
+	);
+	const current_loaded_rom_filename = localStorage.getItem(
+		'current-loaded-rom-filename'
+	);
+
 	if (
 		current_loaded_save_filename === '' ||
-		current_loaded_rom_filename === ''
+		current_loaded_rom_filename === '' ||
+		current_loaded_save_filename === null ||
+		current_loaded_rom_filename === null
 	) {
 		alert('No current server save/rom filenames');
 		return;
@@ -825,9 +858,63 @@ function quickReloadServer() {
 
 	//reload current in use save
 	query_select_save = current_loaded_save_filename;
-	loadSaveFromServer();
+	loadSaveFromServer(query_select_save);
 
 	//reload current in use rom
 	query_select_rom = current_loaded_rom_filename;
-	loadRomFromServer();
+	loadRomFromServer(query_select_rom);
+}
+
+function saveExtraControlsConf() {
+	const extraControls = [
+		'flexCheckQuickReloadVC',
+		'flexCheckSendSaveToServerVC'
+	];
+
+	for (extraControl of extraControls) {
+		checkVal = $('#' + extraControl).is(':checked');
+		if (checkVal) {
+			localStorage.setItem(extraControl, JSON.stringify(checkVal));
+		} else {
+			localStorage.removeItem(extraControl);
+		}
+		if (virtualControlsEnabled) {
+			toggleExtraControl(extraControl, checkVal);
+		}
+	}
+}
+
+function processExtraControlsConf() {
+	const extraControls = [
+		'flexCheckQuickReloadVC',
+		'flexCheckSendSaveToServerVC'
+	];
+
+	for (extraControl of extraControls) {
+		savedControl = localStorage.getItem(extraControl);
+		if (savedControl) {
+			$('#' + extraControl).prop('checked', true);
+			toggleExtraControl(extraControl, true);
+		}
+	}
+}
+
+function hideExtraControls() {
+	const extraControls = [
+		'flexCheckQuickReloadVC',
+		'flexCheckSendSaveToServerVC'
+	];
+
+	for (extraControl of extraControls) {
+		toggleExtraControl(extraControl, false);
+	}
+}
+
+function toggleExtraControl(extraControl, toggle) {
+	extraControlSelector = extraControl.replace('flexCheck', '').toLowerCase();
+	if (toggle) {
+		$('#' + extraControlSelector).fadeIn();
+	} else {
+		$('#' + extraControlSelector).fadeOut();
+	}
 }

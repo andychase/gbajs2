@@ -1,13 +1,13 @@
-#first stage - builder
+# first stage - builder
 FROM golang:alpine as builder
 WORKDIR /app/
 RUN apk add --update gcc g++
 COPY ./server/auth /app/
 ENV GO111MODULE=on
 RUN go mod download
-RUN CGO_ENABLED=1 GOOS=linux go build -a -installsuffix cgo -ldflags "-w" -o authserver
+RUN CGO_ENABLED=0 GOOS=linux go build -a -ldflags '-w -s' -o authserver
 
-#second stage
+# second stage
 FROM alpine:latest
 WORKDIR /app/
 COPY --from=builder /app/authserver .

@@ -15,8 +15,8 @@ import (
 
 // @Summary Hello world landing page
 // @Description Displays welcome message.
-// @Produce  plain
-// @Param authToken header string true "Authorization"
+// @Produce plain
+// @Param Authorization header string true "Bearer Token"
 // @Success 200 {string} string "Hello World! This is a GBA file/auth server, written in Golang."
 // @Failure 401 {string} string
 // @Failure 405 {string} string
@@ -31,8 +31,8 @@ func helloWorld(w http.ResponseWriter, r *http.Request) { //intro message to sho
 // @Tags gba
 // @Description Download save from server
 // @Produce application/x-spss-sav
-// @Param authToken header string true "Authorization"
-// @Param save query string true "Save to download"
+// @Param Authorization header string true "Bearer Token"
+// @Param save query string true "Save to download" example(unbound.sav)
 // @Success 200 {string} string
 // @Failure 401 {string} string
 // @Failure 405 {string} string
@@ -50,6 +50,7 @@ func downloadSave(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
+	w.Header().Add("Content-Type", "application/x-spss-sav")
 	http.ServeContent(w, r, fname, time.Now(), bytes.NewReader(data))
 }
 
@@ -57,8 +58,8 @@ func downloadSave(w http.ResponseWriter, r *http.Request) {
 // @Tags gba
 // @Description Download rom from server
 // @Produce application/x-gba-rom
-// @Param authToken header string true "Authorization"
-// @Param rom query string true "Rom to download"
+// @Param Authorization header string true "Bearer Token"
+// @Param rom query string true "Rom to download" example(unbound.gba)
 // @Success 200 {string} string
 // @Failure 401 {string} string
 // @Failure 405 {string} string
@@ -76,13 +77,14 @@ func downloadRom(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
+	w.Header().Add("Content-Type", "application/x-gba-rom")
 	http.ServeContent(w, r, fname, time.Now(), bytes.NewReader(data))
 }
 
 // @Summary Upload rom to server
 // @Tags gba
 // @Description Upload rom to server
-// @Param authToken header string true "Authorization"
+// @Param Authorization header string true "Bearer Token"
 // @Param rom formData file true "Rom to Upload"
 // @Success 200 {string} string
 // @Failure 401 {string} string
@@ -135,7 +137,7 @@ func uploadRom(w http.ResponseWriter, r *http.Request) {
 // @Summary Upload save to server
 // @Tags gba
 // @Description Upload save to server
-// @Param authToken header string true "Authorization"
+// @Param Authorization header string true "Bearer Token"
 // @Param save formData file true "Save to Upload"
 // @Success 200 {string} string
 // @Failure 401 {string} string
@@ -183,7 +185,7 @@ func uploadSave(w http.ResponseWriter, r *http.Request) {
 // @Tags gba
 // @Description Lists all roms uploaded to server
 // @Produce json
-// @Param authToken header string true "Authorization"
+// @Param Authorization header string true "Bearer Token"
 // @Success 200 {string} string
 // @Failure 401 {string} string
 // @Failure 405 {string} string
@@ -216,7 +218,7 @@ func listAllRoms(w http.ResponseWriter, r *http.Request) {
 // @Tags gba
 // @Description Lists all saves uploaded to server
 // @Produce json
-// @Param authToken header string true "Authorization"
+// @Param Authorization header string true "Bearer Token"
 // @Success 200 {string} string
 // @Failure 401 {string} string
 // @Failure 405 {string} string

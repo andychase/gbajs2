@@ -241,6 +241,102 @@ button {
 	cursor: pointer;
 }
 
+#quickreloadvc {
+	position: absolute;
+	top: 68%;
+	left: 13%;
+	-webkit-user-select: none; /*for ios hover zoom bubble*/
+}
+
+#quickreloadvcbutton {
+	width: 40px;
+	height: 40px;
+	background-color: #111;
+	border-radius: 100px;
+	cursor: pointer;
+	margin-left: 6px;
+	margin-top: 9px;
+	position: absolute;
+	border-style: solid;
+}
+
+#quickreloadvcbutton > i {
+	font-size: 25px;
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	-webkit-transform: translate(-50%, -50%);
+	transform: translate(-50%, -50%);
+}
+
+#quickreloadvcbutton:active,
+#quickreloadvcbutton:active::after,
+#quickreloadvcbutton:active::before {
+	border-color: #61e22d;
+	color: #61e22d;
+	transition: 0.25s;
+}
+
+#quickreloadvcbuttonhandle {
+	position: absolute;
+	width: 30px;
+	height: 30px;
+	background-color: red;
+	top: -3px;
+	left: 7px;
+	transform: translate(-50%, -50%);
+	border-radius: 100px;
+	cursor: pointer;
+}
+
+#sendsavetoservervc {
+	position: absolute;
+	top: 68%;
+	left: 5%;
+	-webkit-user-select: none; /*for ios hover zoom bubble*/
+}
+
+#sendsavetoservervcbutton {
+	width: 40px;
+	height: 40px;
+	background-color: #111;
+	border-radius: 100px;
+	cursor: pointer;
+	margin-left: 6px;
+	margin-top: 9px;
+	position: absolute;
+	border-style: solid;
+}
+
+#sendsavetoservervcbutton > i {
+	font-size: 25px;
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	-webkit-transform: translate(-50%, -50%);
+	transform: translate(-50%, -50%);
+}
+
+#sendsavetoservervcbutton:active,
+#sendsavetoservervcbutton:active::after,
+#sendsavetoservervcbutton:active::before {
+	border-color: #61e22d;
+	color: #61e22d;
+	transition: 0.25s;
+}
+
+#sendsavetoservervcbuttonhandle {
+	position: absolute;
+	width: 30px;
+	height: 30px;
+	background-color: red;
+	top: -3px;
+	left: 7px;
+	transform: translate(-50%, -50%);
+	border-radius: 100px;
+	cursor: pointer;
+}
+
 .clearbutton {
 	background-color: transparent !important;
 }
@@ -272,6 +368,16 @@ button {
 	#dpadlrbuttonholder {
 		top: 152vw;
 		left: 70%;
+	}
+
+	#quickreloadvc {
+		top: 138vw;
+		left: 56%;
+	}
+
+	#sendsavetoservervc {
+		top: 148vw;
+		left: 49%;
 	}
 }
 
@@ -305,6 +411,16 @@ button {
 	#dpadlrbuttonholder {
 		top: 10vh;
 		left: 85.5%;
+	}
+
+	#quickreloadvc {
+		top: 6vh;
+		left: 80%;
+	}
+
+	#sendsavetoservervc {
+		top: 6vh;
+		left: 23%;
 	}
 }
 

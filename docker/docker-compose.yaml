@@ -10,6 +10,8 @@ services:
         build:
             context: ..
             dockerfile: ./docker/server/nginx/Dockerfile
+            args:
+                CLIENT_HOST: ${CLIENT_HOST}
         ports:
             - "443:443"
             - "80:80"
@@ -18,6 +20,9 @@ services:
         cap_add:
             - NET_ADMIN
             - NET_RAW
+        volumes:
+            - ${CERT_LOC}:/certs/fullchain.pem
+            - ${KEY_LOC}:/certs/privkey.pem
 
     gba-auth-server:
         image: gba-auth-server
@@ -30,10 +35,10 @@ services:
             context: .
             dockerfile: ./server/auth/Dockerfile
         environment:
-            - ROM_PATH=${ROM_PATH}
-            - SAVE_PATH=${SAVE_PATH}
             - CLIENT_HOST=${CLIENT_HOST}
         volumes:
             - ./server/auth/users.db:/app/users.db
-            - ./server/auth/local_roms:/app/local_roms
-            - ./server/auth/local_saves:/app/local_saves
+            - ${ROM_PATH}:/app/local_roms
+            - ${SAVE_PATH}:/app/local_saves
+            - ${CERT_LOC}:/app/certs/fullchain.pem
+            - ${KEY_LOC}:/app/certs/privkey.pem

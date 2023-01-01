@@ -7,6 +7,7 @@ import (
 //type for route list
 type Routes []Route
 
+// @Description User Credentials
 type UserCredentials struct {
 	Username string
 	Password string

@@ -6,15 +6,13 @@
         "contact": {
             "name": "Nicholas VanCise",
             "url": "https://nicholas-vancise.dev",
-            "email": "nvancise@unlv.nevada.edu"
+            "email": "nvancisedev@gmail.com"
         },
         "license": {
             "name": "Copyright (c) 2022 Nicholas VanCise"
         },
         "version": "1.0"
     },
-    "host": "{{.Host}}",
-    "basePath": "{{.BasePath}}",
     "paths": {
         "/": {
             "get": {
@@ -26,8 +24,8 @@
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Authorization",
-                        "name": "authToken",
+                        "description": "Bearer Token",
+                        "name": "Authorization",
                         "in": "header",
                         "required": true
                     }
@@ -66,7 +64,7 @@
                 }
             }
         },
-        "/api-v1/accounts/login": {
+        "/api/account/login": {
             "post": {
                 "description": "User login from credentials, issues refresh token cookie, and access token",
                 "consumes": [
@@ -83,8 +81,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "object",
-                            "$ref": "#/definitions/string"
+                            "$ref": "#/definitions/main.UserCredentials"
                         }
                     }
                 ],
@@ -122,7 +119,7 @@
                 }
             }
         },
-        "/api-v1/accounts/logout": {
+        "/api/account/logout": {
             "post": {
                 "description": "User logout",
                 "tags": [
@@ -132,7 +129,7 @@
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Bearer \u003ctoken\u003e",
+                        "description": "Bearer Token",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -141,44 +138,6 @@
                 "responses": {
                     "200": {
                         "description": "OK",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "405": {
-                        "description": "Method Not Allowed",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/api-v1/tokens/refresh": {
-            "post": {
-                "description": "Uses stored refresh token + database lookup to issue new auth token",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "auth"
-                ],
-                "summary": "Uses stored refresh token cookie to issue new auth token",
-                "responses": {
-                    "200": {
-                        "description": "Access token",
                         "schema": {
                             "type": "string"
                         }
@@ -217,13 +176,14 @@
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Authorization",
-                        "name": "authToken",
+                        "description": "Bearer Token",
+                        "name": "Authorization",
                         "in": "header",
                         "required": true
                     },
                     {
                         "type": "string",
+                        "example": "unbound.gba",
                         "description": "Rom to download",
                         "name": "rom",
                         "in": "query",
@@ -277,8 +237,8 @@
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Authorization",
-                        "name": "authToken",
+                        "description": "Bearer Token",
+                        "name": "Authorization",
                         "in": "header",
                         "required": true
                     }
@@ -327,8 +287,8 @@
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Authorization",
-                        "name": "authToken",
+                        "description": "Bearer Token",
+                        "name": "Authorization",
                         "in": "header",
                         "required": true
                     },
@@ -387,13 +347,14 @@
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Authorization",
-                        "name": "authToken",
+                        "description": "Bearer Token",
+                        "name": "Authorization",
                         "in": "header",
                         "required": true
                     },
                     {
                         "type": "string",
+                        "example": "unbound.sav",
                         "description": "Save to download",
                         "name": "save",
                         "in": "query",
@@ -447,8 +408,8 @@
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Authorization",
-                        "name": "authToken",
+                        "description": "Bearer Token",
+                        "name": "Authorization",
                         "in": "header",
                         "required": true
                     }
@@ -497,8 +458,8 @@
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Authorization",
-                        "name": "authToken",
+                        "description": "Bearer Token",
+                        "name": "Authorization",
                         "in": "header",
                         "required": true
                     },
@@ -541,6 +502,58 @@
                             "type": "string"
                         }
                     }
+                }
+            }
+        },
+        "/api/tokens/refresh": {
+            "post": {
+                "description": "Uses stored refresh token to issue new auth token",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Uses stored refresh token cookie to issue new auth token",
+                "responses": {
+                    "200": {
+                        "description": "Access token",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "405": {
+                        "description": "Method Not Allowed",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "main.UserCredentials": {
+            "description": "User Credentials",
+            "type": "object",
+            "properties": {
+                "password": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
                 }
             }
         }

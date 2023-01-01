@@ -42,14 +42,10 @@ Do not attempt to log into the server unless you are the server owner, your IP m
 ROM_PATH=./<local-server-rom-path>/
 SAVE_PATH=./<local-server-save-path>/
 CLIENT_HOST=https://<your-client-location>
+CERT_LOC=./<path to your certificate>
+KEY_LOC=./<path to your key>
 ```
-* Remember to change gba-api.js to point to your servers domain
-* Local builds on this branch expect certificates to be located in ./docker/server/auth/certs with the following structure/names:
-```
-./docker/server/auth/certs
-├── certificate.crt
-└── privateKey.key
-```
+* Run `cp .env.example .env` for local builds, then adjust values or add certs/required directories
 * Testing certificates can be created with:
 ```
 openssl req -x509 -sha256 -nodes -days 365 -newkey rsa:2048 -keyout privateKey.key -out certificate.crt
