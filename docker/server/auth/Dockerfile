@@ -11,5 +11,4 @@ RUN CGO_ENABLED=0 GOOS=linux go build -a -ldflags '-w -s' -o authserver
 FROM alpine:latest
 WORKDIR /app/
 COPY --from=builder /app/authserver .
-COPY --from=builder /app/certs ./certs
 CMD ["./authserver"]
