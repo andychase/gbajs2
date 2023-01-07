@@ -64,6 +64,7 @@ type User struct {
 go run users_db_helper.go
 ```
 * Simply run `docker-compose up --build` and your services will build and start
+* Golang api swagger UI can be found at `/api/documentation/`
 
 # -- (Original README below) --
 
