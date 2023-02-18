@@ -201,6 +201,34 @@ class GBAJsEmulator {
 		}
 	}
 
+	screenShot() {
+		var resizedCanvas = document.createElement('canvas');
+		$(resizedCanvas).addClass('pixelatedCanvas');
+		var resizedContext = resizedCanvas.getContext('2d');
+		resizedContext.mozImageSmoothingEnabled = false;
+		resizedContext.webkitImageSmoothingEnabled = false;
+		resizedContext.msImageSmoothingEnabled = false;
+		resizedContext.imageSmoothingEnabled = false;
+
+		resizedCanvas.height = $('#screenwrapper').height();
+		resizedCanvas.width = $('#screenwrapper').width();
+
+		var screen = document.getElementById('screen');
+		resizedContext.drawImage(
+			screen,
+			0,
+			0,
+			resizedCanvas.width,
+			resizedCanvas.height
+		);
+
+		let data = resizedCanvas.toDataURL();
+		let image = new Image();
+		image.src = data;
+		let w = window.open('');
+		w.document.write(image.outerHTML);
+	}
+
 	// optional methods
 	quitGame() {
 		this.reset(); //vancise hmmm

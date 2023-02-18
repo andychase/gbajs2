@@ -144,8 +144,43 @@ class mGBAEmulator {
 		this.module.setMainLoopTiming(mode, value);
 	}
 
-	screenShot(callback) {
-		this.module.screenShot(callback);
+	// we use a webgl canvas context for mgba, implying
+	// that we need to re-render and immediately after
+	// copy the canvas to avoid an empty buffer
+	_copyCanvas() {
+		var resizedCanvas = document.createElement('canvas');
+		$(resizedCanvas).addClass('pixelatedCanvas');
+		var resizedContext = resizedCanvas.getContext('2d');
+		resizedContext.mozImageSmoothingEnabled = false;
+		resizedContext.webkitImageSmoothingEnabled = false;
+		resizedContext.msImageSmoothingEnabled = false;
+		resizedContext.imageSmoothingEnabled = false;
+
+		resizedCanvas.height = $('#screenwrapper').height();
+		resizedCanvas.width = $('#screenwrapper').width();
+
+		var screen = document
+			.getElementById('screen')
+			.getContext('webgl').canvas;
+		resizedContext.drawImage(
+			screen,
+			0,
+			0,
+			resizedCanvas.width,
+			resizedCanvas.height
+		);
+
+		let data = resizedCanvas.toDataURL();
+		let image = new Image();
+		image.src = data;
+		let w = window.open('');
+		w.document.write(image.outerHTML);
+	}
+
+	// pass the function to copy the canvas to the c code, this
+	// will be called immediately after filling the canvas buffers
+	screenShot() {
+		this.module.screenShot(this._copyCanvas);
 	}
 
 	// optional methods

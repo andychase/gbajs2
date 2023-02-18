@@ -100,8 +100,8 @@ class GameBoyAdvanceEmulator {
 		this.emulator.setFastForward(mode, value);
 	}
 
-	ScreenShot(callback) {
-		this.emulator.screenShot(callback);
+	ScreenShot() {
+		this.emulator.screenShot();
 	}
 
 	// optional methods

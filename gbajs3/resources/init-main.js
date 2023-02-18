@@ -351,37 +351,6 @@ function togglePause() {
 	}
 }
 
-//left off here, find best way to keep most of this out of the emulators
-//still need to pass func to mgba, as we need to render and then capture the canvas buffers of our callback
-function screenshot() {
-	var resizedCanvas = document.createElement('canvas');
-	$(resizedCanvas).addClass('pixelatedCanvas');
-	var resizedContext = resizedCanvas.getContext('2d');
-	resizedContext.mozImageSmoothingEnabled = false;
-	resizedContext.webkitImageSmoothingEnabled = false;
-	resizedContext.msImageSmoothingEnabled = false;
-	resizedContext.imageSmoothingEnabled = false;
-
-	resizedCanvas.height = $('#screenwrapper').height();
-	resizedCanvas.width = $('#screenwrapper').width();
-
-	//var screen = document.getElementById('screen');
-	var screen = document.getElementById('screen').getContext('webgl').canvas;
-	resizedContext.drawImage(
-		screen,
-		0,
-		0,
-		resizedCanvas.width,
-		resizedCanvas.height
-	);
-
-	let data = resizedCanvas.toDataURL();
-	let image = new Image();
-	image.src = data;
-	let w = window.open('');
-	w.document.write(image.outerHTML);
-}
-
 function setVolume(value) {
 	value = Math.pow(2, value) - 1;
 	emulator.SetVolume(value);
