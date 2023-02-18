@@ -45,25 +45,29 @@
 			rel="stylesheet"
 			href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
 		/>
-		<script src="js/util.js" defer></script>
-		<script src="js/core.js" defer></script>
-		<script src="js/arm.js" defer></script>
-		<script src="js/thumb.js" defer></script>
-		<script src="js/mmu.js" defer></script>
-		<script src="js/io.js" defer></script>
-		<script src="js/audio.js" defer></script>
-		<script src="js/video.js" defer></script>
-		<script src="js/video/proxy.js" defer></script>
-		<script src="js/video/software.js" defer></script>
-		<script src="js/irq.js" defer></script>
-		<script src="js/keypad.js" defer></script>
-		<script src="js/sio.js" defer></script>
-		<script src="js/savedata.js" defer></script>
-		<script src="js/gpio.js" defer></script>
-		<script src="js/gba.js" defer></script>
-		<script src="resources/xhr.js" defer></script>
+		<script src="emulator/gbajs/js/util.js" defer></script>
+		<script src="emulator/gbajs/js/core.js" defer></script>
+		<script src="emulator/gbajs/js/arm.js" defer></script>
+		<script src="emulator/gbajs/js/thumb.js" defer></script>
+		<script src="emulator/gbajs/js/mmu.js" defer></script>
+		<script src="emulator/gbajs/js/io.js" defer></script>
+		<script src="emulator/gbajs/js/audio.js" defer></script>
+		<script src="emulator/gbajs/js/video.js" defer></script>
+		<script src="emulator/gbajs/js/video/proxy.js" defer></script>
+		<script src="emulator/gbajs/js/video/software.js" defer></script>
+		<script src="emulator/gbajs/js/irq.js" defer></script>
+		<script src="emulator/gbajs/js/keypad.js" defer></script>
+		<script src="emulator/gbajs/js/sio.js" defer></script>
+		<script src="emulator/gbajs/js/savedata.js" defer></script>
+		<script src="emulator/gbajs/js/gpio.js" defer></script>
+		<script src="emulator/gbajs/js/gba.js" defer></script>
+		<script src="emulator/mGBA/wasm/mgba.js" defer></script>
+		<script src="emulator/mGBA/mGBAEmulator.js" defer></script>
+		<script src="emulator/gbajs/GBAJsEmulator.js" defer></script>
+		<script src="emulator/emulator.js" defer></script>
 		<script src="resources/biosbin.js" defer></script>
 		<script src="resources/gba-api.js" defer></script>
+		<script src="resources/xhr.js" defer></script>
 	</head>
 	<body>
 		<!-- gba canvas "screen" -->
@@ -103,7 +107,7 @@
 					class="form-check-input"
 					type="checkbox"
 					id="flexSwitchCheckChecked"
-					onchange="setPixelated(this.checked)"
+					onchange="emulator.SetPixelated(this.checked)"
 					checked
 				/>
 				<label
@@ -128,7 +132,7 @@
 				<input
 					type="checkbox"
 					id="soundSwitchCheckChecked"
-					onchange="gba.audio.masterEnable = this.checked; if (gba.audio.context.state !== 'running') {gba.audio.context.resume();}"
+					onchange="setVolume(this.checked ? $('#volume_slider').val() : 0);"
 				/>
 				<label
 					id="sound_check_lbl"
@@ -143,8 +147,8 @@
 					max="1"
 					value="0.1"
 					step="any"
-					onchange="setVolume(this.value)"
-					oninput="setVolume(this.value)"
+					onchange="$('#soundSwitchCheckChecked').is(':checked') ? setVolume(this.value) : false"
+					oninput="$('#soundSwitchCheckChecked').is(':checked') ? setVolume(this.value) : false"
 				/>
 			</div>
 		</div>
@@ -427,6 +431,83 @@
 			</div>
 		</div>
 
+		<div
+			class="modal fade"
+			id="chooseCoreModal"
+			tabindex="-1"
+			aria-labelledby="chooseCoreModal"
+			aria-hidden="true"
+		>
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="chooseCoreModalLabel">
+							Choose Core
+						</h5>
+						<button
+							type="button"
+							class="btn-close"
+							data-bs-dismiss="modal"
+							aria-label="Close"
+						></button>
+					</div>
+					<div class="modal-body">
+						<table id="chooseCoreTable" class="table">
+							<tr>
+								<th scope="col">Core</th>
+								<th scope="col">Enable</th>
+							</tr>
+							<tr>
+								<td class="descrip">mGBA (default, wasm)</td>
+								<td>
+									<div class="form-check">
+										<input
+											class="form-check-input"
+											type="radio"
+											name="coreChoice"
+											value="mGBA"
+											id="flexCheckmGBACore"
+											checked
+										/>
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<td class="descrip">gbaJS (pure javascript)</td>
+								<td>
+									<div class="form-check">
+										<input
+											class="form-check-input"
+											type="radio"
+											name="coreChoice"
+											value="gbajs"
+											id="flexCheckgbaJSCore"
+										/>
+									</div>
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div class="modal-footer">
+						<button
+							type="button"
+							class="btn btn-secondary"
+							data-bs-dismiss="modal"
+						>
+							Close
+						</button>
+						<button
+							type="button"
+							class="btn btn-primary"
+							onclick="saveCoreChoiceConf()"
+						>
+							Save configuration
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
 		<div id="loginModal" class="modal fade">
 			<div class="modal-dialog modal-login">
 				<div class="modal-content">
@@ -611,7 +692,7 @@
 						<button
 							type="button"
 							class="btn btn-primary"
-							onclick="uploadSaveToServer();if(!isRunning){uploadSavedataPending($('#saveloader')[0].files[0]);}$('#saveloader').val('');"
+							onclick="uploadSaveToServer();if(!emulator.IsRunning()){uploadSavedataPending($('#saveloader')[0].files[0]);}$('#saveloader').val('');"
 							data-bs-dismiss="modal"
 						>
 							Yes
@@ -620,7 +701,7 @@
 							type="button"
 							class="btn btn-secondary"
 							data-bs-dismiss="modal"
-							onclick="if(!isRunning){uploadSavedataPending($('#loader')[0].files[0]);}$('#saveloader').val('');"
+							onclick="if(!emulator.IsRunning()){uploadSavedataPending($('#loader')[0].files[0]);}$('#saveloader').val('');"
 						>
 							No
 						</button>
@@ -662,7 +743,7 @@
 						<button
 							type="button"
 							class="btn btn-primary"
-							onclick="quickReloadServer();"
+							onclick="quickReload();"
 							data-bs-dismiss="modal"
 						>
 							Yes
@@ -789,6 +870,16 @@
 						<li
 							href="#"
 							class="nav-link"
+							data-bs-toggle="modal"
+							data-bs-target="#chooseCoreModal"
+							onclick=""
+						>
+							<i class="bx bxs-brain"></i>
+							<span class="mx-2">Choose Core</span>
+						</li>
+						<li
+							href="#"
+							class="nav-link"
 							onclick="document.getElementById('saveloader').click()"
 						>
 							<i class="bx bx-cloud-upload"></i>
@@ -851,7 +942,7 @@
 						<li
 							href="#"
 							class="nav-link"
-							onclick="gba.downloadSavedata(current_loaded_save_filename)"
+							onclick="emulator.DownloadSave(localStorage.getItem('current-loaded-save-filename'))"
 						>
 							<i class="bx bx-cloud-download"></i>
 							<span class="mx-2">Download Save</span>
@@ -985,7 +1076,7 @@
 				<li href="#" class="nav-link">
 					<i class="bx bx-conversation"></i>
 					<a
-						href="https://github.com/thenick775/gbajs2"
+						href="https://github.com/thenick775/gbajs3"
 						target="_blank"
 						style="color: #0d6efd !important; text-decoration: none"
 						><span class="mx-2">Contact</span></a
@@ -1043,7 +1134,7 @@
 		</div>
 
 		<div id="quickreloadvc" style="display: none">
-			<div id="quickreloadvcbutton" onclick="quickReloadServer()">
+			<div id="quickreloadvcbutton" onclick="quickReload()">
 				<i class="fa fa-refresh fa-flip-horizontal"></i>
 			</div>
 			<div id="quickreloadvcbuttonhandle"></div>
@@ -1061,6 +1152,23 @@
 
 		<!-- main driving javascript -->
 		<script src="resources/init-main.js" defer></script>
+		<script>
+			// Work-around chromium autoplay policy
+			// https://github.com/emscripten-core/emscripten/issues/6511
+			function resumeAudio(e) {
+				const audioPolyfillCallback = () => {
+					document
+						.getElementById('screen')
+						.removeEventListener('click', resumeAudio);
+					document.removeEventListener('keydown', resumeAudio);
+				};
+				emulator.AudioPolyfill(audioPolyfillCallback);
+			}
+			document
+				.getElementById('screen')
+				.addEventListener('click', resumeAudio);
+			document.addEventListener('keydown', resumeAudio);
+		</script>
 
 		<script>
 			if ('serviceWorker' in navigator) {

@@ -301,10 +301,6 @@ class GameBoyAdvance {
 			return null;
 		}
 		if (window.URL) {
-			var url = window.URL.createObjectURL(
-				new Blob([sram.buffer], { type: 'application/octet-stream' })
-			);
-
 			var a = $("<a style='display: none;'/>");
 			var url = window.URL.createObjectURL(
 				new Blob([sram.buffer], { type: 'data:application/x-spss-sav' })

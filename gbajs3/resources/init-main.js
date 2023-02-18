@@ -1,14 +1,10 @@
 //globals
-let gba;
-let runCommands = [];
-let debug = null;
 var statepause = 'play';
 var stateff = false;
 var isKeyDown = false;
 var isMobile = false;
 var actioncontrolorient = false; //false-> horizontal, true-> vertical
 var virtualControlsEnabled = false;
-var isRunning = false;
 var autoPaused = false;
 var initialLoad = true;
 //get query params for automatically selecting a rom
@@ -19,8 +15,15 @@ var query_select_rom = params.rom;
 var query_select_save = params.save;
 var accesstoken = null;
 var islandscape = false;
+var debugShortCircuit = false;
 //attempt to initially refresh an access token from a present httponly cookie
 refreshAccessToken();
+
+//instanciate emulator
+var emulator = processCoreChoiceConf();
+if (emulator.invalid) {
+	console.log('failed to create emulator:', emulator.errors);
+}
 
 window.mobileCheck = function () {
 	let check = false;
@@ -40,23 +43,21 @@ window.mobileCheck = function () {
 
 //pause canvas animation if windows is not focused, restart if so
 $(window).focus(function () {
-	if (debug) {
+	if (emulator.IsDebugActive() || debugShortCircuit) {
 		return;
 	}
-	if (isRunning && autoPaused) {
+	if (emulator.IsRunning() && autoPaused) {
 		buttonPlayPress(false);
-		gba.runStable();
 		autoPaused = false;
 	}
 });
 
 $(window).blur(function () {
-	if (debug) {
+	if (emulator.IsDebugActive() || debugShortCircuit) {
 		return;
 	}
-	if (isRunning && !gba.paused && !autoPaused) {
+	if (emulator.IsRunning() && !emulator.GetPaused() && !autoPaused) {
 		buttonPlayPress(false);
-		gba.pause();
 		autoPaused = true;
 	}
 });
@@ -87,37 +88,13 @@ if (window.mobileCheck()) {
 	isMobile = true;
 }
 
-try {
-	gba = new GameBoyAdvance();
-	gba.keypad.eatInput = true;
-	gba.setLogger(function (level, error) {
-		console.log(error);
-		gba.pause();
-		let screen = document.getElementById('screen');
-		if (screen.getAttribute('class') === 'dead') {
-			console.log(
-				'We appear to have crashed multiple times without reseting.'
-			);
-			return;
-		}
-		let crash = document.createElement('img');
-		crash.setAttribute('id', 'crash');
-		crash.setAttribute('src', 'resources/crash.png');
-		screen.parentElement.insertBefore(crash, screen);
-		screen.setAttribute('class', 'dead');
-	});
-} catch (exception) {
-	gba = null;
-	console.log('exception loading gba:' + exception);
-}
-
 //login handlers
 $('#loginModalButton').click(function () {
-	gba.keypad.keymodalactive = true;
+	emulator.DisableKeyboardInput();
 });
 
 $('#loginModal').on('hide.bs.modal', function () {
-	gba.keypad.keymodalactive = false;
+	emulator.EnableKeyboardInput();
 });
 
 $('#loginForm').on('submit', function (e) {
@@ -171,7 +148,7 @@ $('#quickreloadvc').draggable({
 $('#sendsavetoservervc').draggable({
 	handle: '#sendsavetoservervcbuttonhandle'
 });
-setPixelated(true);
+emulator.SetPixelated(true);
 
 setDpadEvents([
 	dpad_right,
@@ -285,32 +262,6 @@ $('#sidenavcleardismiss').click(function (e) {
 	menu_btn.dispatchEvent(ev);
 });
 
-//main function defs
-window.onload = function () {
-	if (gba && FileReader) {
-		let canvas = document.getElementById('screen');
-		gba.setCanvas(canvas);
-
-		gba.logLevel = gba.LOG_ERROR;
-
-		gba.setBios(biosBin);
-
-		if (!gba.audio.context) {
-			// Remove the sound box if sound isn't available
-			let soundbox = document.getElementById('sound');
-			soundbox.parentElement.removeChild(soundbox);
-		}
-
-		if (window.navigator.appName === 'Microsoft Internet Explorer') {
-			// Remove the pixelated option if it doesn't work
-			let pixelatedBox = document.getElementById('pixelated');
-			pixelatedBox.parentElement.removeChild(pixelatedBox);
-		}
-	} else {
-		console.log('GBA/FileReader do not exist, exiting (error encountered)');
-	}
-};
-
 function loadAndRunLocalRom(romloc, saveloc) {
 	if (saveloc != null && saveloc != '') {
 		loadSaveFromServer(saveloc);
@@ -319,20 +270,15 @@ function loadAndRunLocalRom(romloc, saveloc) {
 }
 
 function run(file, fromServer = false) {
-	let dead = document.getElementById('loader');
-	dead.value = '';
-	let load = document.getElementById('select');
-	load.text = 'Loading Rom...';
+	let loader = document.getElementById('loader');
+	loader.value = '';
 	if (!fromServer) {
 		$('#collapseOne').collapse('show');
 		$('#collapseThree').collapse('hide');
 	}
-	gba.loadRomFromFile(file, function (result) {
+
+	emulator.Run(file, function (result) {
 		if (result) {
-			for (let i = 0; i < runCommands.length; ++i) {
-				runCommands[i]();
-			}
-			runCommands = [];
 			$('#actioncontrolpanel').fadeIn();
 			if (!islandscape) {
 				var newtop =
@@ -347,17 +293,11 @@ function run(file, fromServer = false) {
 			}
 			enableRunMenuNode();
 			disablePreMenuNode();
-			gba.runStable();
-			isRunning = true;
+
 			initialLoad = false;
 			if (file && file.name) {
 				localStorage.setItem('current-loaded-rom-filename', file.name);
 			}
-		} else {
-			load.textContent = 'FAILED';
-			setTimeout(function () {
-				load.textContent = 'Select Rom';
-			}, 3000);
 		}
 	});
 }
@@ -371,26 +311,11 @@ function runCredentialsWrapper(file) {
 }
 
 function reset() {
-	gba.pause();
-	gba.reset();
-	isRunning = false;
-	let load = document.getElementById('select');
-	load.text = 'Select Rom';
-	let crash = document.getElementById('crash');
-	if (crash) {
-		let context = gba.targetCanvas.getContext('2d');
-		context.clearRect(0, 0, 480, 320);
-		gba.video.drawCallback();
-		crash.parentElement.removeChild(crash);
-		let canvas = document.getElementById('screen');
-		canvas.removeAttribute('class');
-	} else {
-		lcdFade(
-			gba.context,
-			gba.targetCanvas.getContext('2d'),
-			gba.video.drawCallback
-		);
+	let hasCrashed = emulator.Reset();
+	if (!hasCrashed) {
+		emulator.LCDFade();
 	}
+
 	$('#actioncontrolpanel').fadeOut();
 	statepause = 'stop';
 	buttonPlayPress(true);
@@ -406,10 +331,8 @@ function uploadSavedataPending(file) {
 	if (file && file.name) {
 		localStorage.setItem('current-loaded-save-filename', file.name);
 	}
-	runCommands.push(function () {
-		gba.loadSavedataFromFile(file);
-		$('#saveloader').val('');
-	});
+
+	emulator.LoadSave(file);
 }
 
 function uploadSavedataPendingCredentialsWrapper(file) {
@@ -421,25 +344,19 @@ function uploadSavedataPendingCredentialsWrapper(file) {
 }
 
 function togglePause() {
-	if (gba.paused) {
-		if (debug && debug.gbaCon) {
-			debug.gbaCon.run();
-		} else {
-			gba.runStable();
-		}
+	if (emulator.GetPaused()) {
+		emulator.Resume();
 	} else {
-		if (debug && debug.gbaCon) {
-			debug.gbaCon.pause();
-		} else {
-			gba.pause();
-		}
+		emulator.Pause();
 	}
 }
 
+//left off here, find best way to keep most of this out of the emulators
+//still need to pass func to mgba, as we need to render and then capture the canvas buffers of our callback
 function screenshot() {
 	var resizedCanvas = document.createElement('canvas');
+	$(resizedCanvas).addClass('pixelatedCanvas');
 	var resizedContext = resizedCanvas.getContext('2d');
-	resizedContext.imageSmoothingEnabled = true;
 	resizedContext.mozImageSmoothingEnabled = false;
 	resizedContext.webkitImageSmoothingEnabled = false;
 	resizedContext.msImageSmoothingEnabled = false;
@@ -448,9 +365,10 @@ function screenshot() {
 	resizedCanvas.height = $('#screenwrapper').height();
 	resizedCanvas.width = $('#screenwrapper').width();
 
-	var canvas = document.getElementById('screen');
+	//var screen = document.getElementById('screen');
+	var screen = document.getElementById('screen').getContext('webgl').canvas;
 	resizedContext.drawImage(
-		canvas,
+		screen,
 		0,
 		0,
 		resizedCanvas.width,
@@ -464,116 +382,42 @@ function screenshot() {
 	w.document.write(image.outerHTML);
 }
 
-function lcdFade(context, target, callback) {
-	let i = 0;
-	let drawInterval = setInterval(function () {
-		i++;
-		let pixelData = context.getImageData(0, 0, 240, 160);
-		for (let y = 0; y < 160; ++y) {
-			for (let x = 0; x < 240; ++x) {
-				let xDiff = Math.abs(x - 120);
-				let yDiff = Math.abs(y - 80) * 0.8;
-				let xFactor = (120 - i - xDiff) / 120;
-				let yFactor =
-					(80 - i - (y & 1) * 10 - yDiff + Math.pow(xDiff, 1 / 2)) /
-					80;
-				pixelData.data[(x + y * 240) * 4 + 3] *=
-					Math.pow(xFactor, 1 / 3) * Math.pow(yFactor, 1 / 2);
-			}
-		}
-		context.putImageData(pixelData, 0, 0);
-		target.clearRect(0, 0, 480, 320);
-		if (i > 40) {
-			clearInterval(drawInterval);
-		} else {
-			callback();
-		}
-	}, 50);
-}
-
 function setVolume(value) {
-	gba.audio.masterVolume = Math.pow(2, value) - 1;
-}
-
-function setPixelated(pixelated) {
-	let screen = document.getElementById('screen');
-	let context = screen.getContext('2d');
-	context.imageSmoothingEnabled = !pixelated;
+	value = Math.pow(2, value) - 1;
+	emulator.SetVolume(value);
 }
 
 function setFastForward(which) {
-	if (!gba.paused) {
-		gba.pause();
-		clearTimeout(gba.queue);
-		gba.throttle = which ? 0 : 16;
-		gba.runStable();
-	} else {
-		gba.throttle = which ? 0 : 16;
-	}
+	let value = which ? 0 : 16;
+	emulator.SetFastForward(0, value);
 }
 
 function enableDebug() {
-	window.gba = gba;
-	const debugloc = location.protocol + '//' + location.host;
-	window.onmessage = function (message) {
-		if (
-			message.origin != debugloc &&
-			(message.origin != 'file://' || debugloc)
-		) {
-			console.log('Failed XSS');
-			return;
-		}
-		switch (message.data) {
-			case 'connect':
-				if (message.source === debug) {
-					debug.postMessage('connect', debugloc || '*');
-				}
-				break;
-			case 'connected':
-				break;
-			case 'disconnect':
-				if (message.source === debug) {
-					debug = null;
-				}
-		}
-	};
-	window.onunload = function () {
-		if (debug && debug.postMessage) {
-			debug.postMessage('disconnect', debugloc || '*');
-		}
-	};
-	if (!debug || !debug.postMessage) {
-		debug = window.open('debugger.html', 'debug');
-	} else {
-		debug.postMessage('connect', debugloc || '*');
-	}
+	emulator.EnableDebug();
 }
 
 function enableRunMenuNode() {
-	$('#ingameactionsmenu').removeClass('disabled');
-	$('#ingameactionsmenu').addClass('enabled');
+	enableMenuNodesById(['ingameactionsmenu']);
 }
 
 function disableRunMenuNode() {
 	$('#collapseOne').collapse('hide');
-	$('#ingameactionsmenu').removeClass('enabled');
-	$('#ingameactionsmenu').addClass('disabled');
+
+	disableMenuNodesById(['ingameactionsmenu']);
 }
 
 function disablePreMenuNode() {
 	$('#collapseTwo').collapse('hide');
-	$('#pregameactionsmenu').removeClass('enabled');
-	$('#pregameactionsmenu').addClass('disabled');
+
+	disableMenuNodesById(['pregameactionsmenu']);
 }
 
 function enablePreMenuNode() {
-	$('#pregameactionsmenu').removeClass('disabled');
-	$('#pregameactionsmenu').addClass('enabled');
+	enableMenuNodesById(['pregameactionsmenu']);
 }
 
 function disableVirtualControlsMenuNode() {
-	$('virtualcontrolsmenu').removeClass('enabled');
-	$('virtualcontrolsmenu').addClass('disabled');
+	disableMenuNodesById(['virtualcontrolsmenu']);
 }
 
 function enableDpad() {
@@ -597,44 +441,48 @@ function disableDpadButtons() {
 }
 
 function enableLogoutRomSaveQuickServermenuNodes() {
-	$('#serverlogout').removeClass('disabled');
-	$('#serverlogout').addClass('enabled');
-	$('#loadserverrom').removeClass('disabled');
-	$('#loadserverrom').addClass('enabled');
-	$('#loadserversave').removeClass('disabled');
-	$('#loadserversave').addClass('enabled');
-	$('#sendsavetoserver').removeClass('disabled');
-	$('#sendsavetoserver').addClass('enabled');
-	$('#quickreloadserver').removeClass('disabled');
-	$('#quickreloadserver').addClass('enabled');
-	$('#extracontrols').removeClass('disabled');
-	$('#extracontrols').addClass('enabled');
+	enableMenuNodesById([
+		'serverlogout',
+		'loadserverrom',
+		'loadserversave',
+		'sendsavetoserver',
+		'quickreloadserver',
+		'extracontrols'
+	]);
 }
 
 function offlineEnableRomSaveServermenuNodes() {
-	$('#loadserverrom').removeClass('disabled');
-	$('#loadserverrom').addClass('enabled');
-	$('#loadserversave').removeClass('disabled');
-	$('#loadserversave').addClass('enabled');
-	$('#quickreloadserver').removeClass('disabled');
-	$('#quickreloadserver').addClass('enabled');
-	$('#extracontrols').removeClass('disabled');
-	$('#extracontrols').addClass('enabled');
+	enableMenuNodesById([
+		'loadserverrom',
+		'loadserversave',
+		'quickreloadserver',
+		'extracontrols'
+	]);
 }
 
 function disableLogoutRomSaveServermenuNodes() {
-	$('#serverlogout').removeClass('enabled');
-	$('#serverlogout').addClass('disabled');
-	$('#loadserverrom').removeClass('enabled');
-	$('#loadserverrom').addClass('disabled');
-	$('#loadserversave').removeClass('enabled');
-	$('#loadserversave').addClass('disabled');
-	$('#sendsavetoserver').removeClass('enabled');
-	$('#sendsavetoserver').addClass('disabled');
-	$('#quickreloadserver').removeClass('enabled');
-	$('#quickreloadserver').addClass('disabled');
-	$('#extracontrols').removeClass('enabled');
-	$('#extracontrols').addClass('disabled');
+	disableMenuNodesById([
+		'serverlogout',
+		'loadserverrom',
+		'loadserversave',
+		'sendsavetoserver',
+		'quickreloadserver',
+		'extracontrols'
+	]);
+}
+
+function enableMenuNodesById(nodes) {
+	nodes.forEach(function (elem) {
+		$('#' + elem).removeClass('disabled');
+		$('#' + elem).addClass('enabled');
+	});
+}
+
+function disableMenuNodesById(nodes) {
+	nodes.forEach(function (elem) {
+		$('#' + elem).removeClass('enabled');
+		$('#' + elem).addClass('disabled');
+	});
 }
 
 function enableVirtualControls() {
@@ -680,39 +528,37 @@ const fullScreen = () => {
 //set dpad/button event listeners
 function setDpadEvents(elems) {
 	elems.forEach(function (elem, index) {
-		var keyId = $(elem).attr('data-keyid');
-		var keycode = gba.keypad.getKeyCodeValue(keyId.toUpperCase());
+		var keyId = $(elem).attr('data-keyid').toLowerCase();
 
 		elem.addEventListener('pointerdown', (e) => {
 			isKeyDown = true;
-			simulateKeyDown(keycode);
+			emulator.SimulateKeyDown(keyId);
 			elem.releasePointerCapture(e.pointerId); // <- Important!
 		});
 
 		elem.addEventListener('pointerup', (e) => {
 			isKeyDown = false;
-			simulateKeyUp(keycode);
+			emulator.SimulateKeyUp(keyId);
 		});
 
 		elem.addEventListener('pointerenter', (e) => {
 			if (isKeyDown) {
-				simulateKeyDown(keycode);
+				emulator.SimulateKeyDown(keyId);
 			}
 		});
 
 		elem.addEventListener('pointerleave', (e) => {
 			if (isKeyDown) {
-				simulateKeyUp(keycode);
+				emulator.SimulateKeyUp(keyId);
 			}
 		});
 	});
 }
 
 function buttonPlayPress(isReset) {
+	//isreset here means is from automatic reset/resume
 	if (statepause == 'stop') {
 		statepause = 'play';
-		//var button = $('#button_play').attr('btn-success', true);
-		//button.select('i').attr('class', 'fa fa-pause');
 		$('#button_play i').attr('class', 'fa fa-pause');
 	} else if (statepause == 'play' || statepause == 'resume') {
 		statepause = 'pause';
@@ -735,30 +581,6 @@ function buttonFastforwardPress() {
 		button.attr('class', 'fa fa-fast-forward');
 	}
 	setFastForward(stateff);
-}
-
-function simulateKeyDown(keyCode) {
-	gba.keypad.keyboardHandler(
-		new KeyboardEvent('keydown', {
-			keyCode: keyCode,
-			which: keyCode,
-			shiftKey: false,
-			ctrlKey: false,
-			metaKey: false
-		})
-	);
-}
-
-function simulateKeyUp(keyCode) {
-	gba.keypad.keyboardHandler(
-		new KeyboardEvent('keyup', {
-			keyCode: keyCode,
-			which: keyCode,
-			shiftKey: false,
-			ctrlKey: false,
-			metaKey: false
-		})
-	);
 }
 
 function orientActionControlPanel() {
@@ -788,29 +610,33 @@ function remapUserKeyBindings() {
 		var descrip = $.trim($(this).find('.descrip').text()),
 			keybinding_code = $.trim(
 				$(this).find('.keybind').attr('data-keycode')
-			);
+			),
+			keybinding_name = $.trim($(this).find('.keybind').text());
 
 		if (
 			descrip != null &&
 			descrip != '' &&
 			keybinding_code != null &&
-			keybinding_code != ''
+			keybinding_code != '' &&
+			keybinding_name != null &&
+			keybinding_name != '' //vancise check this, might want to map things to space (allow)
 		) {
-			var tmp = parseFloat(keybinding_code);
-			if (!Number.isNaN(tmp)) {
-				gba.keypad.remapKeycode(descrip.toUpperCase(), tmp);
-			}
+			emulator.RemapKeyBinding(
+				descrip.toUpperCase(),
+				keybinding_code,
+				keybinding_name
+			);
 		}
 	});
 }
 
 function sendCurrentSaveToServer() {
-	var sram = gba.mmu.save;
-	if (!sram) {
+	var save = emulator.GetCurrentSave();
+	if (!save) {
 		alert('No save data available to send');
 		return;
 	}
-	var blob = new Blob([sram.buffer], { type: 'data:application/x-spss-sav' });
+	var blob = new Blob([save], { type: 'data:application/x-spss-sav' });
 	const current_loaded_save_filename = localStorage.getItem(
 		'current-loaded-save-filename'
 	);
@@ -834,6 +660,15 @@ function quickReloadCredentialsWrapper(file) {
 	}
 }
 
+function quickReload() {
+	var localReloadSuccessful = emulator.QuickReload(); // attempts local game+sav reload
+	if (!localReloadSuccessful) {
+		quickReloadServer();
+	} else {
+		$('#actioncontrolpanel').fadeIn();
+	}
+}
+
 function quickReloadServer() {
 	const current_loaded_save_filename = localStorage.getItem(
 		'current-loaded-save-filename'
@@ -851,9 +686,10 @@ function quickReloadServer() {
 		alert('No current server save/rom filenames');
 		return;
 	}
-	//reset gba if active
-	if (isRunning) {
-		reset();
+	//reset emulator if active
+	if (emulator.IsRunning()) {
+		emulator.Reset();
+		emulator.LCDFade();
 	}
 
 	//reload current in use save
@@ -917,4 +753,44 @@ function toggleExtraControl(extraControl, toggle) {
 	} else {
 		$('#' + extraControlSelector).fadeOut();
 	}
+}
+
+function saveCoreChoiceConf() {
+	const coreChoices = ['flexCheckmGBACore', 'flexCheckgbaJSCore'];
+
+	for (coreChoice of coreChoices) {
+		checkVal = $('#' + coreChoice).is(':checked');
+		if (checkVal) {
+			localStorage.setItem(coreChoice, JSON.stringify(checkVal));
+		} else {
+			localStorage.removeItem(coreChoice);
+		}
+	}
+
+	return true;
+}
+
+// reads configuration, returns appropriate emulator,
+// mgba being the default.
+// Supported Emulator Types: ['mGBA','gbajs']
+function processCoreChoiceConf() {
+	var emulator = null;
+	const coreChoices = ['flexCheckmGBACore', 'flexCheckgbaJSCore'];
+
+	for (coreChoice of coreChoices) {
+		savedChoice = localStorage.getItem(coreChoice);
+		if (savedChoice) {
+			$('#' + coreChoice).prop('checked', true);
+			//instanciate emulator
+			emulatorType = $('#' + coreChoice).val();
+			emulator = new GameBoyAdvanceEmulator(emulatorType);
+		}
+	}
+
+	if (emulator == null) {
+		//mgba default
+		emulator = new GameBoyAdvanceEmulator('mGBA');
+	}
+
+	return emulator;
 }

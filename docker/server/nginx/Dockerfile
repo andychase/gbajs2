@@ -7,7 +7,8 @@ COPY ./gbajs3 /var/www/
 ARG CLIENT_HOST
 RUN sed -i "s;<CLIENT_HOST>;${CLIENT_HOST};" /var/www/resources/gba-api.js
 
-RUN cd /var/www/ && minify -r --match="(\.js|\.css)" -o . .
+# minify all js/css files except emscripten generated mgba.js
+RUN cd /var/www/ && find . | egrep '(.*\.js|.*\.css)' | egrep -v 'mgba.js' | xargs -n 1 -I {} minify -o {} {}
 
 # second stage, server
 FROM nginx:stable-alpine

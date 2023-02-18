@@ -5,8 +5,6 @@ This project is a re-skin of the gbajs2 fork by andychase, with some additions.
 
 This project was driven specifically by my want to play older gba rom hacks outside of desktop applications without side loading or building through xcode.
 
-A server side rendering approach is planned in the near future.
-
 Use it online! <https://gba.nicholas-vancise.dev>
 
 Do not attempt to log into the server unless you are the server owner, your IP may be banned.
@@ -18,7 +16,10 @@ Do not attempt to log into the server unless you are the server owner, your IP m
 * Movable desktop canvas and controls
 * Mobile UI support
 * Offline PWA Support
-* Functional Surface-level ASM debugger
+* Functional Surface-level ASM debugger (gbajs only)
+* Interchangeable cores
+    * mGBA support (wasm based)
+    * gbajs support (pure javascript)
 
 ## To Do
 * Debugger enhancements
