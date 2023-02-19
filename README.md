@@ -13,6 +13,7 @@ Do not attempt to log into the server unless you are the server owner or an appr
 
 ## New Feature List
 * Golang server for logged-in user support
+* Nginx server for gbajs3 content
 * Fast Forward
 * Remappable Keyboard Bindings
 * Virtual Controls (Desktop/Mobile)
