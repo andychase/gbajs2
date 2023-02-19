@@ -21,6 +21,7 @@ Do not attempt to log into the server unless you are the server owner, your IP m
 * Functional Surface-level ASM debugger
 
 ## To Do
+* mGBA wasm support (enhanced compatibility and performance)
 * Debugger enhancements
 * Cheat entry/injection implementation
 
