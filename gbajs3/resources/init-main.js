@@ -279,6 +279,13 @@ function run(file, fromServer = false) {
 
 	emulator.Run(file, function (result) {
 		if (result) {
+			// set initial volume
+			setVolume(
+				$('#soundSwitchCheckChecked').is(':checked')
+					? $('#volume_slider').val()
+					: 0
+			);
+			// enable control panel and menu nodes
 			$('#actioncontrolpanel').fadeIn();
 			if (!islandscape) {
 				var newtop =

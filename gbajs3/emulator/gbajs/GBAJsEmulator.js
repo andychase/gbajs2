@@ -1,5 +1,6 @@
 class GBAJsEmulator {
 	constructor(canvas_id) {
+		this.canvasId = canvas_id;
 		this.gba = null;
 		this.runCommands = [];
 		this.debug = null;
@@ -94,7 +95,7 @@ class GBAJsEmulator {
 	}
 
 	setVolume(percent_value) {
-		this.gba.audio.masterVolume = Math.pow(2, percent_value) - 1;
+		this.gba.audio.masterVolume = percent_value;
 	}
 
 	getVolume() {
@@ -102,7 +103,7 @@ class GBAJsEmulator {
 	}
 
 	setPixelated(pixelated) {
-		let canvas = document.getElementById('screen');
+		let canvas = document.getElementById(this.canvasId);
 		let context = canvas.getContext('2d');
 		if (context) {
 			context.imageSmoothingEnabled = !pixelated;
@@ -122,7 +123,7 @@ class GBAJsEmulator {
 			context.clearRect(0, 0, 480, 320);
 			this.gba.video.drawCallback();
 			crash.parentElement.removeChild(crash);
-			let canvas = document.getElementById('screen');
+			let canvas = document.getElementById(this.canvasId);
 			canvas.removeAttribute('class');
 			hasCrashed = true;
 		}

@@ -208,11 +208,6 @@ class mGBAEmulator {
 			return;
 		if (this.module.SDL2.audioContext.state == 'suspended') {
 			this.module.SDL2.audioContext.resume();
-			if ($('#soundSwitchCheckChecked').is(':checked')) {
-				this.setVolume($('#volume_slider').val());
-			} else {
-				this.setVolume(0);
-			}
 		}
 		if (this.module.SDL2.audioContext.state == 'running' && callback) {
 			// run user provided callback, usually for removing gesture
