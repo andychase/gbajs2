@@ -3,7 +3,7 @@ gbajs3 -- My Personal Fork
 
 This project is a Game Boy Advance emulator that is freely licensed and works in any modern browser without plugins.
 
-It began as a re-skin of the [gbajs2](https://github.com/andychase/gbajs2) fork by andychase, but now supports both the [mGBA wasm](https://github.com/thenick775/mgba/tree/feature/wasm) core as well as gbajs (a pure javascript GBA core).
+It began as a re-skin of the [gbajs2](https://github.com/andychase/gbajs2) fork by andychase, but now supports both the [mGBA wasm](https://github.com/thenick775/mgba/tree/feature/wasm) core as well as gbajs, a pure javascript GBA core.
 
 This project was driven specifically by my need to play modern GBA rom hacks outside of desktop applications, without side loading or building through xcode.
 
