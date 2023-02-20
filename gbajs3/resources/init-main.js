@@ -616,7 +616,11 @@ function sendCurrentSaveToServer() {
 	const current_loaded_save_filename = localStorage.getItem(
 		'current-loaded-save-filename'
 	);
-	var file = new File([blob], current_loaded_save_filename);
+	const backup_initial_filename = localStorage.getItem(
+		'current-loaded-rom-filename'
+	).replace('.gba','.sav');
+
+	var file = new File([blob], current_loaded_save_filename || backup_initial_filename);
 	var container = new DataTransfer();
 	container.items.add(file);
 	$('#saveloader')[0].files = container.files; //onchange event should be triggered here
