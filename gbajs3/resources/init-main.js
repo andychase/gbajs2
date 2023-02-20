@@ -750,6 +750,12 @@ function saveCoreChoiceConf() {
 		}
 	}
 
+	// the two emulators use different canvas contexts
+	// reloading the page to instanciate the new emulator
+	if (!emulator.IsRunning()){
+		location.reload()
+	}
+
 	return true;
 }
 

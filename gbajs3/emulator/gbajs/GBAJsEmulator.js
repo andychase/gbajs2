@@ -234,9 +234,16 @@ class GBAJsEmulator {
 	quitGame() {
 		this.reset();
 		this.lcdFade();
+		this.isPaused = false;
+		this.isRunning = false;
 	}
 
-	quitEmulator() {}
+	quitEmulator() {
+		this.reset();
+		this.lcdFade();
+		this.isPaused = false;
+		this.isRunning = false;
+	}
 
 	// chrome will pause audio due to their autoplay policy changes
 	// this is a simple way around this, this function will resume the
