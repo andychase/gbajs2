@@ -130,14 +130,21 @@ class mGBAEmulator {
 		this.module.buttonUnpress(keyId);
 	}
 
-	remapKeyBinding(name, _keyBindingCode, keybindingName) {
+	remapKeyBinding(name, keyBindingCode, keybindingName) {
 		keybindingName = keybindingName.replace(/arrow/gi, ''); //mgba arrow bindings use up, down, left, right
 		//handle edge cases
+		// enter is named Return in emscripten SDL key mapping
 		if (keybindingName === 'Enter') {
 			keybindingName = 'Return';
 		}
+		// input is trimmed, rely on keycode for space
+		if (keyBindingCode === '32') {
+			keybindingName = 'Space';
+		}
 
-		this.module.bindKey(keybindingName, name);
+		if (keybindingName && name) {
+			this.module.bindKey(keybindingName, name);
+		}
 	}
 
 	setFastForward(mode, value) {
@@ -216,6 +223,7 @@ class mGBAEmulator {
 	}
 
 	// this function was generated with chatgpt
+	// simple fade to background color
 	lcdFade() {
 		let canvas = this.module.canvas;
 		let gl = canvas.getContext('webgl');

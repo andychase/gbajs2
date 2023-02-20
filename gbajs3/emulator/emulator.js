@@ -15,9 +15,9 @@ class GameBoyAdvanceEmulator {
 		if (!this.emulator || this.emulator.invalid) {
 			return {
 				invalid: true,
-				errors: ['Error instanciating emulator fo type: '+emulator].concat(
-					this.emulator.errors
-				)
+				errors: [
+					'Error instanciating emulator fo type: ' + emulator
+				].concat(this.emulator.errors)
 			};
 		}
 	}
@@ -56,7 +56,7 @@ class GameBoyAdvanceEmulator {
 		return this.emulator.getVolume();
 	}
 
-	SetPixelated(pixelated){
+	SetPixelated(pixelated) {
 		this.emulator.setPixelated(pixelated);
 	}
 

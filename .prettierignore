@@ -5,3 +5,5 @@
 /**/docker-compose.yml
 /**/nginx.conf
 /**/auth/**/*
+/**/mgba.js
+/**/mgba.wasm

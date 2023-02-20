@@ -594,14 +594,9 @@ function remapUserKeyBindings() {
 			descrip != '' &&
 			keybinding_code != null &&
 			keybinding_code != '' &&
-			keybinding_name != null &&
-			keybinding_name != '' //vancise check this, might want to map things to space (allow)
+			keybinding_name != null
 		) {
-			emulator.RemapKeyBinding(
-				descrip.toUpperCase(),
-				keybinding_code,
-				keybinding_name
-			);
+			emulator.RemapKeyBinding(descrip, keybinding_code, keybinding_name);
 		}
 	});
 }

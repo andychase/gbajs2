@@ -232,7 +232,8 @@ class GBAJsEmulator {
 
 	// optional methods
 	quitGame() {
-		this.reset(); //vancise hmmm
+		this.reset();
+		this.lcdFade();
 	}
 
 	quitEmulator() {}
