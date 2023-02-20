@@ -28,6 +28,7 @@ const pre_cache_urls = [
 	'/resources/biosbin.js',
 	'/resources/gba-api.js',
 	'/emulator/mGBA/wasm/mgba.js',
+	'/emulator/mGBA/wasm/mgba.wasm',
 	'/emulator/mGBA/mGBAEmulator.js',
 	'/emulator/gbajs/GBAJsEmulator.js',
 	'/emulator/emulator.js'
