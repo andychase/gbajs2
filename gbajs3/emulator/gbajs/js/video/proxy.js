@@ -94,7 +94,7 @@ class MemoryProxy {
 
 class GameBoyAdvanceRenderProxy {
 	constructor() {
-		this.worker = new Worker('js/video/worker.js');
+		this.worker = new Worker('emulator/gbajs/js/video/worker.js');
 
 		this.currentFrame = 0;
 		this.delay = 0;

@@ -35,6 +35,10 @@ button {
 	height: 100%;
 }
 
+.pixelatedCanvas {
+	image-rendering: pixelated !important;
+}
+
 #screenwrapper {
 	border: solid 1px black;
 	overflow: visible;

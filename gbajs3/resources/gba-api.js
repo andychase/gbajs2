@@ -107,7 +107,11 @@ function loadRomFromServer(query_select_rom) {
 
 	xhr.onload = function () {
 		if (xhr.status == 200) {
-			localStorage.setItem('current-loaded-rom-filename', query_select_rom)
+			localStorage.setItem(
+				'current-loaded-rom-filename',
+				query_select_rom
+			);
+			xhr.response.name = query_select_rom;
 			run(xhr.response, true);
 		} else {
 			console.log(
@@ -130,7 +134,11 @@ function loadSaveFromServer(query_select_save) {
 
 	xhr.onload = function () {
 		if (xhr.status == 200) {
-			localStorage.setItem('current-loaded-save-filename', query_select_save);
+			localStorage.setItem(
+				'current-loaded-save-filename',
+				query_select_save
+			);
+			xhr.response.name = query_select_save;
 			uploadSavedataPending(xhr.response);
 		} else {
 			console.log(

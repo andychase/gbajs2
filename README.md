@@ -1,31 +1,46 @@
 gbajs3 -- My Personal Fork
 ======
 
-This project is a re-skin of the gbajs2 fork by andychase, with some additions.  
+This project is a Game Boy Advance emulator that is freely licensed and works in any modern browser without plugins.
 
-This project was driven specifically by my want to play older gba rom hacks outside of desktop applications without side loading or building through xcode.
+It began as a re-skin of the [gbajs2](https://github.com/andychase/gbajs2) fork by andychase, but now supports both the [mGBA wasm](https://github.com/thenick775/mgba/tree/feature/wasm) core as well as gbajs (a pure javascript GBA core).
 
-A server side rendering approach is planned in the near future.
+This project was driven specifically by my need to play modern GBA rom hacks outside of desktop applications, without side loading or building through xcode.
 
 Use it online! <https://gba.nicholas-vancise.dev>
 
-Do not attempt to log into the server unless you are the server owner, your IP may be banned.
+Do not attempt to log into the server unless you are the server owner or an approved user, your IP may be banned.
 
 ## New Feature List
+* Golang server for logged-in user support
+* Nginx server for gbajs3 content
 * Fast Forward
 * Remappable Keyboard Bindings
 * Virtual Controls (Desktop/Mobile)
 * Movable desktop canvas and controls
 * Mobile UI support
 * Offline PWA Support
-* Functional Surface-level ASM debugger
+* Functional Surface-level ASM debugger (gbajs only)
+* Interchangeable cores
+    * mGBA support (wasm based)
+    * gbajs support (pure javascript)
+
+## Existing Feature List
+- Both cores support realtime clock
+- For additional gbajs2 features:
+    - [Compatibility](https://github.com/andychase/gbajs2/wiki/Compatibility-List)
+    - [Emulator features](https://github.com/andychase/gbajs2)
+- For additional mGBA features:
+    - [mGBA wasm fork Readme](https://github.com/thenick775/mgba/tree/feature/wasm)
+    - [official mGBA Readme](https://github.com/mgba-emu/mgba)
 
 ## To Do
 * mGBA wasm support (enhanced compatibility and performance)
 * Debugger enhancements
 * Cheat entry/injection implementation
+* mGBA Save State Support
 
-## Sample Screenshots/Gifs
+## Sample Screenshots
 
 * Example Desktop
 
@@ -67,33 +82,20 @@ go run users_db_helper.go
 * Simply run `docker-compose up --build` and your services will build and start
 * Golang api swagger UI can be found at `/api/documentation/`
 
-# -- (Original README below) --
-
-gbajs2 is a Game Boy Advance emulator written in Javascript from scratch using HTML5 technologies like Canvas and Web Audio. 
-It is freely licensed and works in any modern browser without plugins.
-
-Use it online!
-
-See the issues page for feature suggestions and ways you can help contribute!
-
-Mailing list for general discussion or if you want to just be kept in the loop: ...
-
-## Feature List
-
-* Playable compatibility, see [compatibility](https://github.com/andychase/gbajs2/wiki/Compatibility-List)
-* Acceptable performance on modern browsers
-* Pure javascript, allowing easy API access
-* Realtime clock gamepad support (Pokemon Ruby)
-* Save games
-
 ## License
-Original work by Endrift. Repo: (Archived / No longer maintained) https://github.com/endrift/gbajs
-
+Original work by Endrift. Repo: (Archived / No longer maintained)
+https://github.com/endrift/gbajs
 Copyright © 2012 – 2013, Jeffrey Pfau
 
-Copyright © 2020, Andrew Chase
+Original work by Endrift. Repo: (mGBA wasm base)
+https://github.com/endrift/mgba
+mGBA is Copyright © 2013 – 2018 Jeffrey Pfau. It is distributed under the [Mozilla Public License version 2.0](https://www.mozilla.org/MPL/2.0/). A full copy of the license is available at my [fork](https://github.com/thenick775/mgba).
 
-Copyright © 2022, Nicholas VanCise
+Original work by andychase. Repo: (gbajs2 base)
+https://github.com/andychase/gbajs2
+Copyright © 2020, Andrew Chase 
+
+Copyright © 2022 - 2023, Nicholas VanCise
 
 All rights reserved.
 

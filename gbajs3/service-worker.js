@@ -1,4 +1,4 @@
-var VERSION = 'v1';
+var VERSION = 'v2';
 var CACHE_NAME = 'gbajs3-' + VERSION;
 
 const pre_cache_urls = [
@@ -7,26 +7,31 @@ const pre_cache_urls = [
 	'/index.html',
 	'/resources/main.css',
 	'/resources/init-main.js',
-	'/js/util.js',
-	'/js/core.js',
-	'/js/arm.js',
-	'/js/thumb.js',
-	'/js/mmu.js',
-	'/js/io.js',
-	'/js/audio.js',
-	'/js/video.js',
-	'/js/video/proxy.js',
-	'/js/video/software.js',
-	'/js/irq.js',
-	'/js/keypad.js',
-	'/js/sio.js',
-	'/js/savedata.js',
-	'/js/gpio.js',
-	'/js/gba.js',
-	'/js/video/worker.js',
+	'/emulator/gbajs/js/util.js',
+	'/emulator/gbajs/js/core.js',
+	'/emulator/gbajs/js/arm.js',
+	'/emulator/gbajs/js/thumb.js',
+	'/emulator/gbajs/js/mmu.js',
+	'/emulator/gbajs/js/io.js',
+	'/emulator/gbajs/js/audio.js',
+	'/emulator/gbajs/js/video.js',
+	'/emulator/gbajs/js/video/proxy.js',
+	'/emulator/gbajs/js/video/software.js',
+	'/emulator/gbajs/js/irq.js',
+	'/emulator/gbajs/js/keypad.js',
+	'/emulator/gbajs/js/sio.js',
+	'/emulator/gbajs/js/savedata.js',
+	'/emulator/gbajs/js/gpio.js',
+	'/emulator/gbajs/js/gba.js',
+	'/emulator/gbajs/js/video/worker.js',
 	'/resources/xhr.js',
 	'/resources/biosbin.js',
-	'/resources/gba-api.js'
+	'/resources/gba-api.js',
+	'/emulator/mGBA/wasm/mgba.js',
+	'/emulator/mGBA/wasm/mgba.wasm',
+	'/emulator/mGBA/mGBAEmulator.js',
+	'/emulator/gbajs/GBAJsEmulator.js',
+	'/emulator/emulator.js'
 ];
 
 // service worker code
