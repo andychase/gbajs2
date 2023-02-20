@@ -616,11 +616,14 @@ function sendCurrentSaveToServer() {
 	const current_loaded_save_filename = localStorage.getItem(
 		'current-loaded-save-filename'
 	);
-	const backup_initial_filename = localStorage.getItem(
-		'current-loaded-rom-filename'
-	).replace('.gba','.sav');
+	const backup_initial_filename = localStorage
+		.getItem('current-loaded-rom-filename')
+		.replace('.gba', '.sav');
 
-	var file = new File([blob], current_loaded_save_filename || backup_initial_filename);
+	var file = new File(
+		[blob],
+		current_loaded_save_filename || backup_initial_filename
+	);
 	var container = new DataTransfer();
 	container.items.add(file);
 	$('#saveloader')[0].files = container.files; //onchange event should be triggered here
@@ -645,6 +648,11 @@ function quickReload() {
 	if (!localReloadSuccessful) {
 		quickReloadServer();
 	} else {
+		setVolume(
+			$('#soundSwitchCheckChecked').is(':checked')
+				? $('#volume_slider').val()
+				: 0
+		);
 		$('#actioncontrolpanel').fadeIn();
 	}
 }

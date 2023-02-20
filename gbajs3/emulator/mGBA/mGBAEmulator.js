@@ -215,134 +215,89 @@ class mGBAEmulator {
 		}
 	}
 
-	// uses webgl canvas context, vancise refactor
-	// chatcgpt answer here was trash
+	// this function was generated with chatgpt
 	lcdFade() {
-		let gl = this.module.canvas.getContext('webgl');
+		let canvas = this.module.canvas;
+		let gl = canvas.getContext('webgl');
 
-		let i = 0;
-		let drawInterval = setInterval(function () {
-			i++;
-			let pixelData = new Uint8Array(240 * 160 * 4);
-			gl.readPixels(0, 0, 240, 160, gl.RGB, gl.UNSIGNED_BYTE, pixelData);
-			for (let y = 0; y < 160; ++y) {
-				for (let x = 0; x < 240; ++x) {
-					let xDiff = Math.abs(x - 120);
-					let yDiff = Math.abs(y - 80) * 0.8;
-					let xFactor = (120 - i - xDiff) / 120;
-					let yFactor =
-						(80 -
-							i -
-							(y & 1) * 10 -
-							yDiff +
-							Math.pow(xDiff, 1 / 2)) /
-						80;
-					pixelData[(x + y * 240) * 4 + 3] *=
-						Math.pow(xFactor, 1 / 3) * Math.pow(yFactor, 1 / 2);
-				}
-			}
-			// create and bind the buffer
-			let buffer = gl.createBuffer();
-			gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-			gl.bufferData(gl.ARRAY_BUFFER, pixelData, gl.STATIC_DRAW);
+		gl.viewport(0, 0, canvas.width, canvas.height);
 
-			// create the vertex shader
-			let vertexShader = gl.createShader(gl.VERTEX_SHADER);
-			gl.shaderSource(
-				vertexShader,
-				`
-	      attribute vec2 a_position;
-	      attribute vec2 a_texCoord;
-	      uniform mat3 u_matrix;
-	      varying vec2 v_texCoord;
-	      void main() {
-	        gl_Position = vec4((u_matrix * vec3(a_position, 1)).xy, 0, 1);
-	        v_texCoord = a_texCoord;
-	      }
-	    `
-			);
-			gl.compileShader(vertexShader);
+		const texture = gl.createTexture();
+		gl.bindTexture(gl.TEXTURE_2D, texture);
+		gl.texImage2D(
+			gl.TEXTURE_2D,
+			0,
+			gl.RGBA,
+			canvas.width,
+			canvas.height,
+			0,
+			gl.RGBA,
+			gl.UNSIGNED_BYTE,
+			null
+		);
 
-			// create the fragment shader
-			let fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
-			gl.shaderSource(
-				fragmentShader,
-				`
-	      precision mediump float;
-	      uniform sampler2D u_image;
-	      varying vec2 v_texCoord;
-	      void main() {
-	        gl_FragColor = texture2D(u_image, v_texCoord);
-	      }
-	    `
-			);
-			gl.compileShader(fragmentShader);
+		const framebuffer = gl.createFramebuffer();
+		gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
+		gl.framebufferTexture2D(
+			gl.FRAMEBUFFER,
+			gl.COLOR_ATTACHMENT0,
+			gl.TEXTURE_2D,
+			texture,
+			0
+		);
 
-			// create and link the program
-			let program = gl.createProgram();
-			gl.attachShader(program, vertexShader);
-			gl.attachShader(program, fragmentShader);
-			gl.linkProgram(program);
-			gl.useProgram(program);
+		// Use a smaller vertex buffer with just 4 vertices (two triangles)
+		const vertices = new Float32Array([-1, 1, -1, -1, 1, 1, 1, -1]);
+		const vertexBuffer = gl.createBuffer();
+		gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+		gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+		gl.enableVertexAttribArray(0);
+		gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
 
-			// set the attributes and uniforms
-			let positionLocation = gl.getAttribLocation(program, 'a_position');
-			gl.enableVertexAttribArray(positionLocation);
-			gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 16, 0);
-			let texCoordLocation = gl.getAttribLocation(program, 'a_texCoord');
-			gl.enableVertexAttribArray(texCoordLocation);
-			gl.vertexAttribPointer(texCoordLocation, 2, gl.FLOAT, false, 16, 8);
-			let matrixLocation = gl.getUniformLocation(program, 'u_matrix');
-			gl.uniformMatrix3fv(matrixLocation, false, [
-				2 / 240,
-				0,
-				0,
-				0,
-				-2 / 160,
-				0,
-				-1,
-				1,
-				1
-			]);
-			let imageLocation = gl.getUniformLocation(program, 'u_image');
-			gl.uniform1i(imageLocation, 0);
-			// create the texture
-			let texture = gl.createTexture();
-			gl.bindTexture(gl.TEXTURE_2D, texture);
-			gl.texParameteri(
-				gl.TEXTURE_2D,
-				gl.TEXTURE_WRAP_S,
-				gl.CLAMP_TO_EDGE
-			);
-			gl.texParameteri(
-				gl.TEXTURE_2D,
-				gl.TEXTURE_WRAP_T,
-				gl.CLAMP_TO_EDGE
-			);
-			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-			gl.texImage2D(
-				gl.TEXTURE_2D,
-				0,
-				gl.RGBA,
-				240,
-				160,
-				0,
-				gl.RGBA,
-				gl.UNSIGNED_BYTE,
-				pixelData
-			);
+		gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 
-			// draw the texture
-			gl.drawArrays(gl.TRIANGLES, 0, 6);
-			//target.clearRect(0, 0, 480, 320);
-			//gl.clear(gl.CLEAR_BUFFER_BIT);
-			if (i > 40) {
-				clearInterval(drawInterval);
-			} else {
-				//callback();
-			}
-		}, 50);
+		const pixels = new Uint8Array(canvas.width * canvas.height * 4);
+		gl.readPixels(
+			0,
+			0,
+			canvas.width,
+			canvas.height,
+			gl.RGBA,
+			gl.UNSIGNED_BYTE,
+			pixels
+		);
+
+		const computedStyle = getComputedStyle(canvas);
+		const bgColor = computedStyle.backgroundColor;
+		const bgColorComponents = bgColor.match(/\d+/g);
+		const bgR = bgColorComponents[0] / 255;
+		const bgG = bgColorComponents[1] / 255;
+		const bgB = bgColorComponents[2] / 255;
+
+		for (let i = 3; i < pixels.length; i += 4) {
+			pixels[i] = Math.max(0, pixels[i] - 10);
+			pixels[i - 3] = Math.round((1 - pixels[i] / 255) * bgR * 255);
+			pixels[i - 2] = Math.round((1 - pixels[i] / 255) * bgG * 255);
+			pixels[i - 1] = Math.round((1 - pixels[i] / 255) * bgB * 255);
+		}
+
+		gl.bindTexture(gl.TEXTURE_2D, texture);
+		gl.texImage2D(
+			gl.TEXTURE_2D,
+			0,
+			gl.RGBA,
+			canvas.width,
+			canvas.height,
+			0,
+			gl.RGBA,
+			gl.UNSIGNED_BYTE,
+			pixels
+		);
+
+		gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+
+		// Draw the faded image using the same smaller vertex buffer
+		gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 	}
 
 	//EnterCheat(cheat_code) {
