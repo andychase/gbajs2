@@ -97,6 +97,14 @@ $('#loginModal').on('hide.bs.modal', function () {
 	emulator.EnableKeyboardInput();
 });
 
+$('#manageSaveStatesButton').click(function () {
+	emulator.DisableKeyboardInput();
+});
+
+$('#saveStatesModal').on('hide.bs.modal', function () {
+	emulator.EnableKeyboardInput();
+});
+
 $('#loginForm').on('submit', function (e) {
 	e.preventDefault();
 	login();
@@ -320,7 +328,9 @@ function runCredentialsWrapper(file) {
 function reset() {
 	let hasCrashed = emulator.Reset();
 	if (!hasCrashed) {
-		emulator.LCDFade();
+		setTimeout(() => {
+			emulator.LCDFade();
+		}, 50);
 	}
 
 	$('#actioncontrolpanel').fadeOut();
@@ -630,6 +640,22 @@ function sendCurrentSaveToServer() {
 	//}
 }
 
+function listSaveStates() {
+	let saveStates = emulator.ListSaveStates();
+
+	saveStates = saveStates.filter((e) => e !== '.' && e !== '..');
+
+	$('#saveStateList').empty();
+
+	if (saveStates.length) {
+		saveStates.forEach(function (saveStateName, index) {
+			$('<li>' + saveStateName + '</li>').appendTo('#saveStateList');
+		});
+
+		$('#saveStateList').parent().show();
+	}
+}
+
 function quickReloadCredentialsWrapper(file) {
 	if (checkAccessTok()) {
 		$('#quickReloadServerModal').modal('show');
@@ -649,6 +675,8 @@ function quickReload() {
 				: 0
 		);
 		$('#actioncontrolpanel').fadeIn();
+		enableRunMenuNode();
+		disablePreMenuNode();
 	}
 }
 
@@ -752,8 +780,8 @@ function saveCoreChoiceConf() {
 
 	// the two emulators use different canvas contexts
 	// reloading the page to instanciate the new emulator
-	if (!emulator.IsRunning()){
-		location.reload()
+	if (!emulator.IsRunning()) {
+		location.reload();
 	}
 
 	return true;

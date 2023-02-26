@@ -4,6 +4,7 @@ class mGBAEmulator {
 		this.isRunning = false;
 		this.savePath = '/data/saves/';
 		this.romPath = '/data/games/';
+		this.saveStatePath = '/data/states';
 
 		this.module = {
 			canvas: (function () {
@@ -41,6 +42,26 @@ class mGBAEmulator {
 			that.writeSav(file.name, e.target.result);
 		};
 		reader.readAsArrayBuffer(file);
+	}
+
+	createSaveState(slot) {
+		return this.module.saveState(slot);
+	}
+
+	loadSaveState(slot) {
+		return this.module.loadState(slot);
+	}
+
+	listSaveStates() {
+		return this.module.FS.readdir(this.saveStatePath);
+	}
+
+	deleteSaveState(slot) {
+		let saveStateName = this.module.saveName.split('/').pop();
+		saveStateName = saveStateName.replace('.sav', '.ss' + slot);
+		const saveStatePath = this.saveStatePath + '/' + saveStateName;
+
+		this.module.FS.unlink(saveStatePath);
 	}
 
 	pause() {

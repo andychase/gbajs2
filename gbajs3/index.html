@@ -209,7 +209,7 @@
 			class="modal fade"
 			id="controlsModal"
 			tabindex="-1"
-			aria-labelledby="controlsModal"
+			aria-labelledby="controlsModalLabel"
 			aria-hidden="true"
 		>
 			<div class="modal-dialog">
@@ -357,7 +357,7 @@
 			class="modal fade"
 			id="extraControlsModal"
 			tabindex="-1"
-			aria-labelledby="extraControlsModal"
+			aria-labelledby="extraControlsModalLabel"
 			aria-hidden="true"
 		>
 			<div class="modal-dialog">
@@ -435,7 +435,7 @@
 			class="modal fade"
 			id="chooseCoreModal"
 			tabindex="-1"
-			aria-labelledby="chooseCoreModal"
+			aria-labelledby="chooseCoreModalLabel"
 			aria-hidden="true"
 		>
 			<div class="modal-dialog">
@@ -502,6 +502,90 @@
 							onclick="saveCoreChoiceConf()"
 						>
 							Save configuration
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div
+			class="modal fade"
+			id="saveStatesModal"
+			tabindex="-1"
+			aria-labelledby="saveStatesModalLabel"
+			aria-hidden="true"
+		>
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="saveStatesModalLabel">
+							Manage Save States
+						</h5>
+						<button
+							type="button"
+							class="btn-close"
+							data-bs-dismiss="modal"
+							aria-label="Close"
+						></button>
+					</div>
+					<div class="modal-body">
+						<div class="row" style="padding: 10px">
+							<div class="prefixNumberInput">
+								<span class="prefix">Save Slot</span>
+								<input
+									id="savestateslot"
+									type="number"
+									min="0"
+									step="1"
+								/>
+							</div>
+						</div>
+						<div class="btn-toolbar" style="padding: 10px">
+							<button
+								type="button"
+								class="btn btn-primary btn-sm me-2 mb-2"
+								onclick="emulator.LoadSaveState($('#savestateslot').val())"
+								data-bs-dismiss="modal"
+							>
+								Load
+							</button>
+							<button
+								type="button"
+								class="btn btn-primary btn-sm me-2 mb-2"
+								onclick="emulator.CreateSaveState($('#savestateslot').val())"
+								data-bs-dismiss="modal"
+							>
+								Create
+							</button>
+							<button
+								type="button"
+								class="btn btn-primary btn-sm me-2 mb-2"
+								onclick="listSaveStates()"
+							>
+								List
+							</button>
+							<button
+								type="button"
+								class="btn btn-primary btn-sm me-2 mb-2"
+								onclick="emulator.DeleteSaveState($('#savestateslot').val())"
+							>
+								Delete
+							</button>
+						</div>
+						<div
+							class="row border-top"
+							style="padding: 10px; display: none"
+						>
+							<ul id="saveStateList"></ul>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button
+							type="button"
+							class="btn btn-secondary"
+							data-bs-dismiss="modal"
+						>
+							Close
 						</button>
 					</div>
 				</div>
@@ -950,6 +1034,16 @@
 						>
 							<i class="bx bx-cloud-download"></i>
 							<span class="mx-2">Download Save</span>
+						</li>
+						<li
+							href="#"
+							class="nav-link"
+							id="manageSaveStatesButton"
+							data-bs-toggle="modal"
+							data-bs-target="#saveStatesModal"
+						>
+							<i class="bx bx-bookmarks"></i>
+							<span class="mx-2">Manage Save States</span>
 						</li>
 						<li
 							href="#"

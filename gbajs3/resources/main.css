@@ -890,3 +890,38 @@ ul#links li:not(:first-child)::before {
 .clear .o-pad a.left:active:after {
 	border-right-color: rgba(0, 0, 0, 0.6);
 }
+
+.prefixNumberInput {
+	display: flex;
+	align-items: center;
+	max-width: 300px;
+	background: #fff;
+	border: 1px solid #a0a0a0;
+	border-radius: 4px;
+	padding-left: 0.5rem;
+	overflow: hidden;
+	font-family: sans-serif;
+}
+
+.prefixNumberInput .prefix {
+	font-weight: 300;
+	font-size: 14px;
+	color: #999;
+}
+
+.prefixNumberInput input {
+	flex-grow: 1;
+	font-size: 14px;
+	background: #fff;
+	border: none;
+	outline: none;
+	padding: 0.5rem;
+}
+
+.prefixNumberInput:focus-within {
+	border-color: #777;
+}
+
+#savestateslot::-webkit-inner-spin-button {
+	opacity: 1;
+}
