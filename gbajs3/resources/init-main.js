@@ -195,7 +195,7 @@ $(window).on('orientationchange', function (event) {
 			"sendsavetoservervc div:not('#sendsavetoservervcbuttonhandle')",
 			"quickreloadvc div:not('#quickreloadvcbuttonhandle')",
 			"savestatevc div:not('#savestatevcbuttonhandle')",
-			"loadstatevc div:not('loadstatevcbuttonhandle')"
+			"loadstatevc div:not('#loadstatevcbuttonhandle')"
 		]);
 
 		$('#sidebar').removeAttr('style'); //maybe need remove style instead
@@ -228,7 +228,7 @@ $(window).on('orientationchange', function (event) {
 			"sendsavetoservervc div:not('#sendsavetoservervcbuttonhandle')",
 			"quickreloadvc div:not('#quickreloadvcbuttonhandle')",
 			"savestatevc div:not('#savestatevcbuttonhandle')",
-			"loadstatevc div:not('loadstatevcbuttonhandle')"
+			"loadstatevc div:not('#loadstatevcbuttonhandle')"
 		]);
 
 		$('#sidebar').css('right', '-350px');
