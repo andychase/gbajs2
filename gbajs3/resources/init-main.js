@@ -25,6 +25,9 @@ if (emulator.invalid) {
 	console.log('failed to create emulator:', emulator.errors);
 }
 
+//set current save state value from localStorage
+$('#savestateslot').val(localStorage.getItem('current-save-state-slot') || 0);
+
 window.mobileCheck = function () {
 	let check = false;
 	(function (a) {
@@ -156,6 +159,12 @@ $('#quickreloadvc').draggable({
 $('#sendsavetoservervc').draggable({
 	handle: '#sendsavetoservervcbuttonhandle'
 });
+$('#savestatevc').draggable({
+	handle: '#savestatevcbuttonhandle'
+});
+$('#loadstatevc').draggable({
+	handle: '#loadstatevcbuttonhandle'
+});
 emulator.SetPixelated(true);
 
 setDpadEvents([
@@ -178,21 +187,17 @@ $(window).on('orientationchange', function (event) {
 		islandscape = false;
 		$('#dpadholder').removeClass('clear');
 		$('#dpadholder').addClass('dark');
-		$("#dpadlrbuttonholder div:not('#lrbuttonhandle')").removeClass(
-			'clearbutton'
-		);
-		$(
-			"#dpadstartselectbuttonholder div:not('#startselectbuttonhandle')"
-		).removeClass('clearbutton');
-		$("#dpadabbuttonholder div:not('#abbuttonhandle')").removeClass(
-			'clearbutton'
-		);
-		$(
-			"#sendsavetoservervc div:not('#sendsavetoservervcbuttonhandle')"
-		).removeClass('clearbutton');
-		$("#quickreloadvc div:not('#quickreloadvcbuttonhandle')").removeClass(
-			'clearbutton'
-		);
+
+		removeClearButtonClass([
+			"dpadlrbuttonholder div:not('#lrbuttonhandle')",
+			"dpadstartselectbuttonholder div:not('#startselectbuttonhandle')",
+			"dpadabbuttonholder div:not('#abbuttonhandle')",
+			"sendsavetoservervc div:not('#sendsavetoservervcbuttonhandle')",
+			"quickreloadvc div:not('#quickreloadvcbuttonhandle')",
+			"savestatevc div:not('#savestatevcbuttonhandle')",
+			"loadstatevc div:not('loadstatevcbuttonhandle')"
+		]);
+
 		$('#sidebar').removeAttr('style'); //maybe need remove style instead
 		$('#menunav').removeAttr('style');
 		$('#menu-btn').removeAttr('style');
@@ -215,21 +220,17 @@ $(window).on('orientationchange', function (event) {
 		islandscape = true;
 		$('#dpadholder').removeClass('dark');
 		$('#dpadholder').addClass('clear');
-		$("#dpadlrbuttonholder div:not('#lrbuttonhandle')").addClass(
-			'clearbutton'
-		);
-		$(
-			"#dpadstartselectbuttonholder div:not('#startselectbuttonhandle')"
-		).addClass('clearbutton');
-		$("#dpadabbuttonholder div:not('#abbuttonhandle')").addClass(
-			'clearbutton'
-		);
-		$(
-			"#sendsavetoservervc div:not('#sendsavetoservervcbuttonhandle')"
-		).addClass('clearbutton');
-		$("#quickreloadvc div:not('#quickreloadvcbuttonhandle')").addClass(
-			'clearbutton'
-		);
+
+		addClearButtonClass([
+			"dpadlrbuttonholder div:not('#lrbuttonhandle')",
+			"dpadstartselectbuttonholder div:not('#startselectbuttonhandle')",
+			"dpadabbuttonholder div:not('#abbuttonhandle')",
+			"sendsavetoservervc div:not('#sendsavetoservervcbuttonhandle')",
+			"quickreloadvc div:not('#quickreloadvcbuttonhandle')",
+			"savestatevc div:not('#savestatevcbuttonhandle')",
+			"loadstatevc div:not('loadstatevcbuttonhandle')"
+		]);
+
 		$('#sidebar').css('right', '-350px');
 		$('#menunav').css('bottom', '25px');
 		$('#menu-btn').css({ 'margin-left': 'auto', 'margin-right': '-62px' });
@@ -471,6 +472,18 @@ function disableMenuNodesById(nodes) {
 	});
 }
 
+function addClearButtonClass(nodes) {
+	nodes.forEach(function (elem) {
+		$('#' + elem).addClass('clearbutton');
+	});
+}
+
+function removeClearButtonClass(nodes) {
+	nodes.forEach(function (elem) {
+		$('#' + elem).removeClass('clearbutton');
+	});
+}
+
 function enableVirtualControls() {
 	if (virtualControlsEnabled) {
 		disableDpad();
@@ -640,6 +653,26 @@ function sendCurrentSaveToServer() {
 	//}
 }
 
+function loadSaveState(slot) {
+	emulator.LoadSaveState(slot);
+	localStorage.setItem('current-save-state-slot', slot);
+}
+
+function createSaveState(slot) {
+	emulator.CreateSaveState(slot);
+	localStorage.setItem('current-save-state-slot', slot);
+}
+
+function loadCurrentSaveState() {
+	let slot = localStorage.getItem('current-save-state-slot');
+	emulator.LoadSaveState(slot);
+}
+
+function createCurrentSaveState() {
+	let slot = localStorage.getItem('current-save-state-slot');
+	emulator.CreateSaveState(slot);
+}
+
 function listSaveStates() {
 	let saveStates = emulator.ListSaveStates();
 
@@ -715,7 +748,9 @@ function quickReloadServer() {
 function saveExtraControlsConf() {
 	const extraControls = [
 		'flexCheckQuickReloadVC',
-		'flexCheckSendSaveToServerVC'
+		'flexCheckSendSaveToServerVC',
+		'flexCheckSaveStateVC',
+		'flexCheckLoadStateVC'
 	];
 
 	for (extraControl of extraControls) {
@@ -734,7 +769,9 @@ function saveExtraControlsConf() {
 function processExtraControlsConf() {
 	const extraControls = [
 		'flexCheckQuickReloadVC',
-		'flexCheckSendSaveToServerVC'
+		'flexCheckSendSaveToServerVC',
+		'flexCheckSaveStateVC',
+		'flexCheckLoadStateVC'
 	];
 
 	for (extraControl of extraControls) {
@@ -749,7 +786,9 @@ function processExtraControlsConf() {
 function hideExtraControls() {
 	const extraControls = [
 		'flexCheckQuickReloadVC',
-		'flexCheckSendSaveToServerVC'
+		'flexCheckSendSaveToServerVC',
+		'flexCheckSaveStateVC',
+		'flexCheckLoadStateVC'
 	];
 
 	for (extraControl of extraControls) {
