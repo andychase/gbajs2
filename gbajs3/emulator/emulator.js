@@ -155,6 +155,33 @@ class GameBoyAdvanceEmulator {
 		}
 	}
 
+	CreateSaveState(slot) {
+		if (this.emulatorCan('createSaveState')) {
+			return this.emulator.createSaveState(slot);
+		}
+		return false;
+	}
+
+	ListSaveStates() {
+		if (this.emulatorCan('listSaveStates')) {
+			return this.emulator.listSaveStates();
+		}
+		return [];
+	}
+
+	LoadSaveState(slot) {
+		if (this.emulatorCan('loadSaveState')) {
+			return this.emulator.loadSaveState(slot);
+		}
+		return false;
+	}
+
+	DeleteSaveState(slot) {
+		if (this.emulatorCan('deleteSaveState')) {
+			this.emulator.deleteSaveState(slot);
+		}
+	}
+
 	// helpers
 	emulatorCan(methodname) {
 		if (this.emulator) {

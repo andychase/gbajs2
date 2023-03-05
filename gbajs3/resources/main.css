@@ -341,6 +341,102 @@ button {
 	cursor: pointer;
 }
 
+#savestatevc {
+	position: absolute;
+	top: 78%;
+	left: 5%;
+	-webkit-user-select: none; /*for ios hover zoom bubble*/
+}
+
+#savestatevcbutton {
+	width: 40px;
+	height: 40px;
+	background-color: #111;
+	border-radius: 100px;
+	cursor: pointer;
+	margin-left: 6px;
+	margin-top: 9px;
+	position: absolute;
+	border-style: solid;
+}
+
+#savestatevcbutton > i {
+	font-size: 25px;
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	-webkit-transform: translate(-50%, -50%);
+	transform: translate(-50%, -50%);
+}
+
+#savestatevcbutton:active,
+#savestatevcbutton:active::after,
+#savestatevcbutton:active::before {
+	border-color: #61e22d;
+	color: #61e22d;
+	transition: 0.25s;
+}
+
+#savestatevcbuttonhandle {
+	position: absolute;
+	width: 30px;
+	height: 30px;
+	background-color: red;
+	top: -3px;
+	left: 7px;
+	transform: translate(-50%, -50%);
+	border-radius: 100px;
+	cursor: pointer;
+}
+
+#loadstatevc {
+	position: absolute;
+	top: 78%;
+	left: 13%;
+	-webkit-user-select: none; /*for ios hover zoom bubble*/
+}
+
+#loadstatevcbutton {
+	width: 40px;
+	height: 40px;
+	background-color: #111;
+	border-radius: 100px;
+	cursor: pointer;
+	margin-left: 6px;
+	margin-top: 9px;
+	position: absolute;
+	border-style: solid;
+}
+
+#loadstatevcbutton > i {
+	font-size: 25px;
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	-webkit-transform: translate(-50%, -50%);
+	transform: translate(-50%, -50%);
+}
+
+#loadstatevcbutton:active,
+#loadstatevcbutton:active::after,
+#loadstatevcbutton:active::before {
+	border-color: #61e22d;
+	color: #61e22d;
+	transition: 0.25s;
+}
+
+#loadstatevcbuttonhandle {
+	position: absolute;
+	width: 30px;
+	height: 30px;
+	background-color: red;
+	top: -3px;
+	left: 7px;
+	transform: translate(-50%, -50%);
+	border-radius: 100px;
+	cursor: pointer;
+}
+
 .clearbutton {
 	background-color: transparent !important;
 }
@@ -382,6 +478,16 @@ button {
 	#sendsavetoservervc {
 		top: 148vw;
 		left: 49%;
+	}
+
+	#savestatevc {
+		top: 104vw;
+		left: 54%;
+	}
+
+	#loadstatevc {
+		top: 97vw;
+		left: 64%;
 	}
 }
 
@@ -425,6 +531,16 @@ button {
 	#sendsavetoservervc {
 		top: 6vh;
 		left: 23%;
+	}
+
+	#savestatevc {
+		top: 87vh;
+		left: 30%;
+	}
+
+	#loadstatevc {
+		top: 87vh;
+		left: 80%;
 	}
 }
 
@@ -889,4 +1005,47 @@ ul#links li:not(:first-child)::before {
 }
 .clear .o-pad a.left:active:after {
 	border-right-color: rgba(0, 0, 0, 0.6);
+}
+
+.prefixNumberInput {
+	display: flex;
+	align-items: center;
+	max-width: 300px;
+	background: #fff;
+	border: 1px solid #a0a0a0;
+	border-radius: 4px;
+	padding-left: 0.5rem;
+	overflow: hidden;
+	font-family: sans-serif;
+}
+
+.prefixNumberInput .prefix {
+	font-weight: 300;
+	font-size: 14px;
+	color: #999;
+}
+
+.prefixNumberInput input {
+	flex-grow: 1;
+	font-size: 14px;
+	background: #fff;
+	border: none;
+	outline: none;
+	padding: 0.5rem;
+}
+
+.prefixNumberInput:focus-within {
+	border-color: #777;
+}
+
+#savestateslot[type='number']{
+	font-size: 16px;
+}
+
+#savestateslot::-webkit-inner-spin-button {
+	opacity: 1;
+}
+
+#saveStatesModal .modal-body .nav-item .nav-link {
+	color: #000 !important;
 }

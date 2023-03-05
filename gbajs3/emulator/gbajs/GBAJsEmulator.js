@@ -204,7 +204,6 @@ class GBAJsEmulator {
 
 	screenShot() {
 		var resizedCanvas = document.createElement('canvas');
-		$(resizedCanvas).addClass('pixelatedCanvas');
 		var resizedContext = resizedCanvas.getContext('2d');
 		resizedContext.mozImageSmoothingEnabled = false;
 		resizedContext.webkitImageSmoothingEnabled = false;
