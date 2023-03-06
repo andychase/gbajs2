@@ -36,7 +36,6 @@ Do not attempt to log into the server unless you are the server owner or an appr
     - [official mGBA Readme](https://github.com/mgba-emu/mgba)
 
 ## To Do
-* mGBA wasm support (enhanced compatibility and performance)
 * Debugger enhancements
 * Cheat entry/injection implementation
 
