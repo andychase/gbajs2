@@ -5,7 +5,9 @@ COPY ./gbajs3 /var/www/
 
 # replace env vars (javascript)
 ARG CLIENT_HOST
-RUN sed -i "s;<CLIENT_HOST>;${CLIENT_HOST};" /var/www/resources/gba-api.js
+RUN sed -i "s;<CLIENT_HOST>;${CLIENT_HOST};" /var/www/resources/gba-api.js && \
+	sed -i "s;<CLIENT_HOST>;${CLIENT_HOST};" /var/www/robots.txt && \
+	sed -i "s;<CLIENT_HOST>;${CLIENT_HOST};" /var/www/sitemap.xml
 
 # minify all js/css files except emscripten generated mgba.js
 RUN cd /var/www/ && find . | egrep '(.*\.js|.*\.css)' | egrep -v 'mgba.js' | xargs -n 1 -I {} minify -o {} {}
