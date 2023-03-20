@@ -1038,7 +1038,7 @@ ul#links li:not(:first-child)::before {
 	border-color: #777;
 }
 
-#savestateslot[type='number']{
+#savestateslot[type='number'] {
 	font-size: 16px;
 }
 

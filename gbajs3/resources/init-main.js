@@ -85,10 +85,11 @@ if (window.mobileCheck()) {
 	window.oncontextmenu = function () {
 		return false;
 	};
+	isMobile = true;
+	handleOrientationChange(window.orientation, true);
+	$('#sidenavcleardismiss').toggle('active');
 	enableVirtualControls();
 	disableVirtualControlsMenuNode();
-	$('#sidenavcleardismiss').toggle('active');
-	isMobile = true;
 }
 
 //login handlers
@@ -180,75 +181,93 @@ setDpadEvents([
 	dpad_select_button
 ]);
 
-$(window).on('orientationchange', function (event) {
-	const orient = window.orientation;
+function handleOrientationChange(orient, initial = false) {
+	if (isMobile) {
+		if (orient == '0') {
+			islandscape = false;
+			$('#dpadholder').removeClass('clear');
+			$('#dpadholder').addClass('dark');
 
-	if (orient == '0') {
-		islandscape = false;
-		$('#dpadholder').removeClass('clear');
-		$('#dpadholder').addClass('dark');
+			removeClearButtonClass([
+				"dpadlrbuttonholder div:not('#lrbuttonhandle')",
+				"dpadstartselectbuttonholder div:not('#startselectbuttonhandle')",
+				"dpadabbuttonholder div:not('#abbuttonhandle')",
+				"sendsavetoservervc div:not('#sendsavetoservervcbuttonhandle')",
+				"quickreloadvc div:not('#quickreloadvcbuttonhandle')",
+				"savestatevc div:not('#savestatevcbuttonhandle')",
+				"loadstatevc div:not('#loadstatevcbuttonhandle')"
+			]);
 
-		removeClearButtonClass([
-			"dpadlrbuttonholder div:not('#lrbuttonhandle')",
-			"dpadstartselectbuttonholder div:not('#startselectbuttonhandle')",
-			"dpadabbuttonholder div:not('#abbuttonhandle')",
-			"sendsavetoservervc div:not('#sendsavetoservervcbuttonhandle')",
-			"quickreloadvc div:not('#quickreloadvcbuttonhandle')",
-			"savestatevc div:not('#savestatevcbuttonhandle')",
-			"loadstatevc div:not('#loadstatevcbuttonhandle')"
-		]);
+			$('#sidebar').removeAttr('style');
+			$('#menunav').removeAttr('style');
+			$('#menu-btn').removeAttr('style');
+			$('.nav-container').removeAttr('style');
+			$('#screenwrapper').removeAttr('style');
+			actioncontrolorient = true;
+			orientActionControlPanel();
+			setTimeout(() => {
+				var newtop =
+					parseInt($('#screenwrapper').css('top'), 10) +
+					parseInt($('#screenwrapper').css('height'), 10) +
+					(isMobile ? 0 : 5) +
+					'px';
+				$('#actioncontrolpanel').css({
+					top: newtop,
+					left: $('#screenwrapper').css('left')
+				});
+			}, '50');
+		} else {
+			islandscape = true;
+			$('#dpadholder').removeClass('dark');
+			$('#dpadholder').addClass('clear');
 
-		$('#sidebar').removeAttr('style'); //maybe need remove style instead
-		$('#menunav').removeAttr('style');
-		$('#menu-btn').removeAttr('style');
-		$('.nav-container').removeAttr('style');
-		$('#screenwrapper').removeAttr('style');
-		actioncontrolorient = true;
-		orientActionControlPanel();
-		setTimeout(() => {
-			var newtop =
-				parseInt($('#screenwrapper').css('top'), 10) +
-				parseInt($('#screenwrapper').css('height'), 10) +
-				(isMobile ? 0 : 5) +
-				'px';
-			$('#actioncontrolpanel').css({
-				top: newtop,
-				left: $('#screenwrapper').css('left')
+			addClearButtonClass([
+				"dpadlrbuttonholder div:not('#lrbuttonhandle')",
+				"dpadstartselectbuttonholder div:not('#startselectbuttonhandle')",
+				"dpadabbuttonholder div:not('#abbuttonhandle')",
+				"sendsavetoservervc div:not('#sendsavetoservervcbuttonhandle')",
+				"quickreloadvc div:not('#quickreloadvcbuttonhandle')",
+				"savestatevc div:not('#savestatevcbuttonhandle')",
+				"loadstatevc div:not('#loadstatevcbuttonhandle')"
+			]);
+
+			$('#sidebar').css('right', '-350px');
+			$('#menunav').css('bottom', '25px');
+			$('#menu-btn').css({
+				'margin-left': 'auto',
+				'margin-right': '-62px'
 			});
-		}, '50');
-	} else {
-		islandscape = true;
-		$('#dpadholder').removeClass('dark');
-		$('#dpadholder').addClass('clear');
+			$('.nav-container').css('margin-left', 'calc(100% - 6rem)');
+			actioncontrolorient = false;
+			orientActionControlPanel();
+			$('#screenwrapper').css({
+				left:
+					parseInt($('#actioncontrolpanel').css('left'), 10) +
+					parseInt($('#actioncontrolpanel').css('width'), 10) +
+					'px',
+				margin: 'inherit'
+			});
+		}
 
-		addClearButtonClass([
-			"dpadlrbuttonholder div:not('#lrbuttonhandle')",
-			"dpadstartselectbuttonholder div:not('#startselectbuttonhandle')",
-			"dpadabbuttonholder div:not('#abbuttonhandle')",
-			"sendsavetoservervc div:not('#sendsavetoservervcbuttonhandle')",
-			"quickreloadvc div:not('#quickreloadvcbuttonhandle')",
-			"savestatevc div:not('#savestatevcbuttonhandle')",
-			"loadstatevc div:not('#loadstatevcbuttonhandle')"
-		]);
-
-		$('#sidebar').css('right', '-350px');
-		$('#menunav').css('bottom', '25px');
-		$('#menu-btn').css({ 'margin-left': 'auto', 'margin-right': '-62px' });
-		$('.nav-container').css('margin-left', 'calc(100% - 6rem)');
-		actioncontrolorient = false;
-		orientActionControlPanel();
-		$('#screenwrapper').css({
-			left:
-				parseInt($('#actioncontrolpanel').css('left'), 10) +
-				parseInt($('#actioncontrolpanel').css('width'), 10) +
-				'px',
-			margin: 'inherit'
-		});
+		if (
+			$('#sidenavcleardismiss').is(':visible') ||
+			(initial && islandscape)
+		) {
+			handleMenuButtonClick(islandscape, false);
+		}
 	}
+}
+
+$(window).on('orientationchange', function (event) {
+	handleOrientationChange(window.orientation);
 });
 
 //easy sidebar menu close on mobile
 menu_btn.addEventListener('click', () => {
+	handleMenuButtonClick(islandscape, isMobile);
+});
+
+function handleMenuButtonClick(isLandscape, isMobile) {
 	if (islandscape) {
 		sidebar.classList.remove('active-nav');
 		container.classList.remove('active-cont');
@@ -263,7 +282,7 @@ menu_btn.addEventListener('click', () => {
 	if (isMobile) {
 		$('#sidenavcleardismiss').toggle('active');
 	}
-});
+}
 
 $('#sidenavcleardismiss').click(function (e) {
 	e.preventDefault();
@@ -296,6 +315,7 @@ function run(file, fromServer = false) {
 			);
 			// enable control panel and menu nodes
 			$('#actioncontrolpanel').fadeIn();
+			handleOrientationChange(window.orientation);
 			if (!islandscape) {
 				var newtop =
 					parseInt($('#screenwrapper').css('top'), 10) +
@@ -543,13 +563,21 @@ function setDpadEvents(elems) {
 		elem.addEventListener('pointerenter', (e) => {
 			if (isKeyDown) {
 				emulator.SimulateKeyDown(keyId);
+				elem.releasePointerCapture(e.pointerId); // <- Important!
 			}
 		});
 
 		elem.addEventListener('pointerleave', (e) => {
 			if (isKeyDown) {
 				emulator.SimulateKeyUp(keyId);
+				elem.releasePointerCapture(e.pointerId); // <- Important!
 			}
+		});
+
+		elem.addEventListener('pointercancel', (e) => {
+			isKeyDown = false;
+			emulator.SimulateKeyUp(keyId);
+			elem.releasePointerCapture(e.pointerId);
 		});
 	});
 }
@@ -708,6 +736,7 @@ function quickReload() {
 				: 0
 		);
 		$('#actioncontrolpanel').fadeIn();
+		handleOrientationChange(window.orientation);
 		enableRunMenuNode();
 		disablePreMenuNode();
 	}
