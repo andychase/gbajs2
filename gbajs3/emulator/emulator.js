@@ -104,6 +104,10 @@ class GameBoyAdvanceEmulator {
 		this.emulator.screenShot();
 	}
 
+	DefaultKeyBindings() {
+		return this.emulator.defaultKeyBindings();
+	}
+
 	// optional methods
 	QuitGame() {
 		if (this.emulatorCan('quitGame')) {

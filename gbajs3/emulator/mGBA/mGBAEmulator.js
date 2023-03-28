@@ -211,6 +211,22 @@ class mGBAEmulator {
 		this.module.screenShot(this._copyCanvas);
 	}
 
+	// Note: this solution is not accurate for all keyboard layouts
+	defaultKeyBindings() {
+		return [
+			{ descrip: 'Up', keybind: 'Up' },
+			{ descrip: 'Down', keybind: 'Down' },
+			{ descrip: 'Left', keybind: 'Left' },
+			{ descrip: 'Right', keybind: 'Right' },
+			{ descrip: 'A', keybind: 'X' },
+			{ descrip: 'B', keybind: 'Z' },
+			{ descrip: 'L', keybind: 'A' },
+			{ descrip: 'R', keybind: 'S' },
+			{ descrip: 'Start', keybind: 'Enter' },
+			{ descrip: 'Select', keybind: 'Backspace' }
+		];
+	}
+
 	// optional methods
 	quitGame() {
 		this.module.quitGame();

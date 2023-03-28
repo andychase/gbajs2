@@ -25,6 +25,9 @@ if (emulator.invalid) {
 	console.log('failed to create emulator:', emulator.errors);
 }
 
+//set controls based on core defaults
+processEmulatorDefaultKeyBindings();
+
 //set current save state value from localStorage
 $('#savestateslot').val(localStorage.getItem('current-save-state-slot') || 0);
 
@@ -630,6 +633,27 @@ function orientActionControlPanel() {
 function fillUserKeyBinding(event, cell) {
 	cell.textContent = event.key;
 	$(cell).attr('data-keycode', event.keyCode);
+}
+
+function processEmulatorDefaultKeyBindings() {
+	const keyBindings = emulator.DefaultKeyBindings();
+
+	keyBindings.forEach(function ({ descrip, keybind }) {
+		keyBindingElem = `
+			<tr>
+				<td class="descrip">${descrip}</td>
+				<td
+					contenteditable
+					class="keybind"
+					onkeyup="fillUserKeyBinding(event,this);"
+				>
+					${keybind}
+				</td>
+			</tr>
+		`;
+
+		$(keyBindingElem).appendTo('#controlsTable');
+	});
 }
 
 function remapUserKeyBindings() {
