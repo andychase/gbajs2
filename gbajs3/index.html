@@ -588,6 +588,152 @@
 			</div>
 		</div>
 
+		<div
+			class="modal fade"
+			id="manageCheatsModal"
+			tabindex="-1"
+			aria-labelledby="manageCheatsModalLabel"
+			aria-hidden="true"
+		>
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="manageCheatsModalLabel">
+							Manage Cheats
+						</h5>
+						<button
+							type="button"
+							class="btn-close"
+							data-bs-dismiss="modal"
+							aria-label="Close"
+						></button>
+					</div>
+					<div class="modal-body fullOverflow">
+						<div role="tabpanel">
+							<!-- tabs -->
+							<ul class="nav nav-tabs">
+								<li class="nav-item">
+									<a
+										id="cheatsEditorTabHeader"
+										href="#manageCheatsTab"
+										class="nav-link active"
+										data-bs-toggle="tab"
+										>Cheat Editor</a
+									>
+								</li>
+								<li class="nav-item">
+									<a
+										id="rawCheatsTabHeader"
+										href="#rawCheatsTab"
+										class="nav-link"
+										data-bs-toggle="tab"
+										onclick="$('#rawCheats').height($('#rawCheats').prop('scrollHeight'));"
+										>View Raw</a
+									>
+								</li>
+								<li class="nav-item">
+									<a
+										id="cheatsHelpTabHeader"
+										href="#cheatsHelpTab"
+										class="nav-link"
+										data-bs-toggle="tab"
+										>Help</a
+									>
+								</li>
+							</ul>
+						</div>
+						<!-- tab content -->
+						<div class="tab-content">
+							<div
+								role="tabpanel"
+								class="tab-pane active"
+								id="manageCheatsTab"
+							>
+								<table id="cheatsTable" class="table">
+									<tr>
+										<th scope="col">Name</th>
+										<th scope="col">Cheat</th>
+										<th scope="col">Enabled</th>
+									</tr>
+									<!-- filled in by javascript based on loaded cheats files -->
+								</table>
+							</div>
+							<div
+								role="tabpanel"
+								class="tab-pane"
+								id="rawCheatsTab"
+							>
+								<textarea
+									id="rawCheats"
+									contenteditable
+								></textarea>
+							</div>
+							<div
+								role="tabpanel"
+								class="tab-pane"
+								id="cheatsHelpTab"
+							>
+								<p>
+									This cheat editor will read and write cheats
+									in libretro format, and works with the mGBA
+									core only.
+								</p>
+								<p>
+									The Raw panel will show your cheat file in
+									its raw form, allowing for use and editing
+									of cheates in any format accepted by mGBA.
+								</p>
+								<p>
+									Join multi-line cheats with '+', ex.
+									'00001234 000A+00000002 0003'.
+								</p>
+								<p>Controls:</p>
+								<ul>
+									<li>
+										new cheat will add a new cheat row in
+										the editor
+									</li>
+									<li>
+										close will dismiss the interface,
+										alternatively click outside of the modal
+									</li>
+									<li>
+										save cheats will persist changes from
+										the editor or raw panel dependong on
+										which panel is currently open
+									</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button
+							type="button"
+							class="btn btn-secondary"
+							onclick="newCheatsRow()"
+						>
+							New Cheat
+						</button>
+						<button
+							type="button"
+							class="btn btn-secondary"
+							data-bs-dismiss="modal"
+						>
+							Close
+						</button>
+						<button
+							type="button"
+							class="btn btn-secondary"
+							data-bs-dismiss="modal"
+							onclick="saveCheatsToFile()"
+						>
+							Save Cheats
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
 		<div id="loginModal" class="modal fade">
 			<div class="modal-dialog modal-login">
 				<div class="modal-content">
@@ -973,6 +1119,22 @@
 						<li
 							href="#"
 							class="nav-link"
+							onclick="document.getElementById('cheatloader').click()"
+						>
+							<i class="bx bx-cloud-upload"></i>
+							<span class="mx-2">Upload Cheat File</span>
+							<input
+								id="cheatloader"
+								type="file"
+								onchange="emulator.LoadCheatsFile(this.files[0]);$(this).val('')"
+							/>
+							<label class="aria-invisible" for="cheatloader"
+								>Upload Cheat File</label
+							>
+						</li>
+						<li
+							href="#"
+							class="nav-link"
 							onclick="document.getElementById('loader').click()"
 						>
 							<i class="bx bx-upload"></i>
@@ -1037,6 +1199,16 @@
 						>
 							<i class="bx bx-bookmarks"></i>
 							<span class="mx-2">Manage Save States</span>
+						</li>
+						<li
+							href="#"
+							class="nav-link"
+							id="manageCheatsButton"
+							data-bs-toggle="modal"
+							data-bs-target="#manageCheatsModal"
+						>
+							<i class="bx bx-edit"></i>
+							<span class="mx-2">Manage Cheats</span>
 						</li>
 						<li
 							href="#"

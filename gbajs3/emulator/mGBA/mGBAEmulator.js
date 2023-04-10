@@ -4,6 +4,7 @@ class mGBAEmulator {
 		this.isRunning = false;
 		this.savePath = '/data/saves/';
 		this.romPath = '/data/games/';
+		this.cheatsPath = '/data/cheats/';
 		this.saveStatePath = '/data/states';
 
 		this.module = {
@@ -25,12 +26,14 @@ class mGBAEmulator {
 
 	// interface for emulators:
 	// required methods
-	run(file, callback) {
+	run(file, callback = null) {
 		var reader = new FileReader();
 		var that = this;
 		reader.onload = function (e) {
 			that.isRunning = that.loadBuffer(file.name, e.target.result);
-			callback(that.isRunning);
+			if (callback) {
+				callback(that.isRunning);
+			}
 		};
 		reader.readAsArrayBuffer(file);
 	}
@@ -42,6 +45,77 @@ class mGBAEmulator {
 			that.writeSav(file.name, e.target.result);
 		};
 		reader.readAsArrayBuffer(file);
+	}
+
+	loadCheatsFile(file) {
+		var reader = new FileReader();
+		var that = this;
+		reader.onload = function (e) {
+			that.writeCheats(file.name, e.target.result);
+			if (that.isRunning) {
+				that.module.autoLoadCheats();
+			}
+		};
+		reader.readAsArrayBuffer(file);
+	}
+
+	parseCheatsString(cheatsStr) {
+		// only libretro cheats format is supported at this time
+		return this.parseCheatsStringLibRetro(cheatsStr);
+	}
+
+	// parses libretro cheats format input as string
+	// returns object where each key is a cheat of the
+	// output: { <cheat #>: {desc: "<your description>", enable: true|false, code: "<cheat code>"} ...}
+	parseCheatsStringLibRetro(cheatsStr) {
+		const lines = cheatsStr.split('\n');
+
+		if (!lines[0].match('^cheats = [0-9]+')) {
+			return false;
+		}
+
+		let parsedCheats = {};
+		for (const cheatLine of lines) {
+			if (cheatLine.startsWith('cheats = ') || cheatLine === '') {
+				continue;
+			}
+
+			const match = cheatLine.match(
+				/^cheat([0-9]+)_([a-zA-Z]+)\s*=\s*"?([a-zA-Z0-9\s\+:_]+)"?$/
+			);
+
+			if (match) {
+				const cheatNumber = match[1];
+				const cheatType = match[2];
+				const cheatValue = match[3];
+
+				if (parsedCheats[cheatNumber]) {
+					parsedCheats[cheatNumber][cheatType] = cheatValue;
+				} else {
+					parsedCheats[cheatNumber] = {};
+					parsedCheats[cheatNumber][cheatType] = cheatValue;
+				}
+			}
+		}
+
+		return parsedCheats;
+	}
+
+	getCurrentCheatsFile() {
+		let cheatsName = this.filepathToFileName(
+			this.module.gameName,
+			'.cheats'
+		);
+
+		try {
+			return this.module.FS.readFile(this.cheatsPath + cheatsName);
+		} catch {
+			return null;
+		}
+	}
+
+	getCurrentCheatsFileName() {
+		return this.filepathToFileName(this.module.gameName, '.cheats');
 	}
 
 	createSaveState(slot) {
@@ -57,8 +131,10 @@ class mGBAEmulator {
 	}
 
 	deleteSaveState(slot) {
-		let saveStateName = this.module.saveName.split('/').pop();
-		saveStateName = saveStateName.replace('.sav', '.ss' + slot);
+		let saveStateName = this.filepathToFileName(
+			this.module.saveName,
+			'.ss' + slot
+		);
 		const saveStatePath = this.saveStatePath + '/' + saveStateName;
 
 		this.module.FS.unlink(saveStatePath);
@@ -345,14 +421,6 @@ class mGBAEmulator {
 		gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 	}
 
-	//EnterCheat(cheat_code) {
-	//
-	//}
-
-	//ToggleCheat(cheat_name) { //desired params? id or string??
-	//
-	//}
-
 	//EnableDebug() {
 	//
 	//}
@@ -366,11 +434,30 @@ class mGBAEmulator {
 		return res;
 	}
 
+	writeCheats(name, buffer) {
+		var res = this.module.FS.writeFile(
+			this.cheatsPath + name,
+			new Uint8Array(buffer)
+		);
+		return res;
+	}
+
 	loadBuffer(name, buffer) {
 		var filepath = this.romPath + name;
 		this.module.FS.writeFile(filepath, new Uint8Array(buffer));
 		var res = this.module.loadGame(filepath);
 
 		return res;
+	}
+
+	filepathToFileName(path, withExtension = null) {
+		let fileName = path.split('/').pop();
+
+		if (withExtension) {
+			const ext = '.' + fileName.split('.').pop();
+			fileName = fileName.replace(ext, withExtension);
+		}
+
+		return fileName;
 	}
 }

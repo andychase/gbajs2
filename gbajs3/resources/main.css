@@ -1046,6 +1046,29 @@ ul#links li:not(:first-child)::before {
 	opacity: 1;
 }
 
-#saveStatesModal .modal-body .nav-item .nav-link {
+#saveStatesModal .modal-body .nav-item .nav-link,
+#manageCheatsModal .modal-body .nav-item .nav-link {
 	color: #000 !important;
+}
+
+.fullOverflow {
+	overflow: auto;
+}
+
+#rawCheats {
+	width: 100%;
+	min-height: 100px;
+	max-height: 500px;
+}
+
+.cheatsRow .descrip[placeholder]:empty:before,
+.cheatsRow .cheatCode[placeholder]:empty:before {
+	content: attr(placeholder);
+	color: #555;
+	opacity: 0.3;
+}
+
+.cheatsRow .descrip[placeholder]:empty:focus:before,
+.cheatsRow .cheatCode[placeholder]:empty:focus:before {
+	content: '';
 }

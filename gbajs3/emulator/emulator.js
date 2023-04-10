@@ -24,7 +24,7 @@ class GameBoyAdvanceEmulator {
 
 	// interface for emulators:
 	// required methods
-	Run(file, callback) {
+	Run(file, callback = null) {
 		this.emulator.run(file, callback);
 	}
 
@@ -121,19 +121,6 @@ class GameBoyAdvanceEmulator {
 		}
 	}
 
-	EnterCheat(cheat_code) {
-		if (this.emulatorCan('enterCheat')) {
-			this.emulator.enterCheat(cheat_code);
-		}
-	}
-
-	ToggleCheat(cheat_name) {
-		//desired params? id or string??
-		if (this.emulatorCan('toggleCheat')) {
-			this.emulator.toggleCheat(cheat_name);
-		}
-	}
-
 	EnableDebug() {
 		if (this.emulatorCan('enableDebug')) {
 			this.emulator.enableDebug();
@@ -147,7 +134,7 @@ class GameBoyAdvanceEmulator {
 		return false;
 	}
 
-	AudioPolyfill(callback) {
+	AudioPolyfill(callback = null) {
 		if (this.emulatorCan('audioPolyfill')) {
 			this.emulator.audioPolyfill(callback);
 		}
@@ -184,6 +171,33 @@ class GameBoyAdvanceEmulator {
 		if (this.emulatorCan('deleteSaveState')) {
 			this.emulator.deleteSaveState(slot);
 		}
+	}
+
+	LoadCheatsFile(file) {
+		if (this.emulatorCan('loadCheatsFile')) {
+			this.emulator.loadCheatsFile(file);
+		}
+	}
+
+	GetCurrentCheatsFile() {
+		if (this.emulatorCan('getCurrentCheatsFile')) {
+			return this.emulator.getCurrentCheatsFile();
+		}
+		return false;
+	}
+
+	GetCurrentCheatsFileName() {
+		if (this.emulatorCan('getCurrentCheatsFileName')) {
+			return this.emulator.getCurrentCheatsFileName();
+		}
+		return false;
+	}
+
+	ParseCheatsString(cheatsStr) {
+		if (this.emulatorCan('parseCheatsString')) {
+			return this.emulator.parseCheatsString(cheatsStr);
+		}
+		return false;
 	}
 
 	// helpers

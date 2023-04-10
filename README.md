@@ -1,4 +1,4 @@
-gbajs3 -- My Personal Fork
+gbajs3 -- A Browser Based Game Boy Advance Emulator
 ======
 
 This project is a Game Boy Advance emulator that is freely licensed and works in any modern browser without plugins.
@@ -22,6 +22,7 @@ Do not attempt to log into the server unless you are the server owner or an appr
 * Offline PWA Support
 * Functional Surface-level ASM debugger (gbajs only)
 * Save state support (mGBA only)
+* Cheat code support (mGBA only)
 * Interchangeable cores
     * mGBA support (wasm based)
     * gbajs support (pure javascript)
@@ -37,7 +38,9 @@ Do not attempt to log into the server unless you are the server owner or an appr
 
 ## To Do
 * Debugger enhancements
-* Cheat entry/injection implementation
+* Server enhancements
+* Additional database support (Postgres)
+* Admin UI
 
 ## Sample Screenshots
 

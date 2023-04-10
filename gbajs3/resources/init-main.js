@@ -112,6 +112,18 @@ $('#saveStatesModal').on('hide.bs.modal', function () {
 	emulator.EnableKeyboardInput();
 });
 
+$('#manageCheatsButton').click(function () {
+	emulator.DisableKeyboardInput();
+});
+
+$('#manageCheatsModal').on('show.bs.modal', function () {
+	processEmulatorCheats();
+});
+
+$('#manageCheatsModal').on('hide.bs.modal', function () {
+	emulator.EnableKeyboardInput();
+});
+
 $('#loginForm').on('submit', function (e) {
 	e.preventDefault();
 	login();
@@ -185,6 +197,8 @@ setDpadEvents([
 ]);
 
 function handleOrientationChange(orient, initial = false) {
+	const initialOrientation = islandscape;
+
 	if (isMobile) {
 		if (orient == '0') {
 			islandscape = false;
@@ -252,11 +266,14 @@ function handleOrientationChange(orient, initial = false) {
 			});
 		}
 
+		const hasOrientationChanged = initialOrientation !== islandscape;
+		const shouldToggleClearDismiss = !hasOrientationChanged && isMobile;
+
 		if (
 			$('#sidenavcleardismiss').is(':visible') ||
 			(initial && islandscape)
 		) {
-			handleMenuButtonClick(islandscape, false);
+			handleMenuButtonClick(islandscape, shouldToggleClearDismiss);
 		}
 	}
 }
@@ -332,6 +349,7 @@ function run(file, fromServer = false) {
 			}
 			enableRunMenuNode();
 			disablePreMenuNode();
+			processEmulatorCheats();
 
 			initialLoad = false;
 			if (file && file.name) {
@@ -796,6 +814,111 @@ function quickReloadServer() {
 	//reload current in use rom
 	query_select_rom = current_loaded_rom_filename;
 	loadRomFromServer(query_select_rom);
+}
+
+function newCheatsRow(description = '', code = '', isCheatActive = false) {
+	cheatRowElem = `
+		<tr class="cheatsRow">
+			<td 
+				contenteditable
+				class="descrip"
+				placeholder="Name"
+			>${description}</td>
+			<td
+				contenteditable
+				class="cheatCode"
+				placeholder="820XXXXX 1234"
+			>${code}</td>
+			<td class="isCheatActive">
+				<input
+					type="checkbox"
+					${isCheatActive ? 'checked' : ''}
+				/>
+			</td>
+		</tr>
+	`;
+
+	$(cheatRowElem).appendTo('#cheatsTable');
+}
+
+function processEmulatorCheats() {
+	const cheatsFile = emulator.GetCurrentCheatsFile();
+	if (!cheatsFile) {
+		return;
+	}
+
+	const enc = new TextDecoder('utf-8');
+	const cheatsContent = enc.decode(cheatsFile);
+	// set raw editor value
+	$('#rawCheats').val(cheatsContent);
+
+	// parse cheats file, only libretro format supported at this time
+	const parsedCheats = emulator.ParseCheatsString(cheatsContent);
+	if (!parsedCheats) {
+		// must view in raw format, not in libretro file format
+		$('#rawCheatsTabHeader').tab('show');
+		return;
+	}
+
+	// clear previous UI rows
+	$('#cheatsTable .cheatsRow').remove();
+
+	// sync UI with uploaded cheats file
+	for (const idx in parsedCheats) {
+		const cheat = parsedCheats[idx];
+		newCheatsRow(
+			cheat['desc'],
+			cheat['code'],
+			cheat['enable'] === 'true' ? true : false
+		);
+	}
+}
+
+function saveCheatsToFile() {
+	var libretroCheatsFile = null;
+
+	if ($('#rawCheatsTab').hasClass('active')) {
+		libretroCheatsFile = $('#rawCheats').val();
+	} else {
+		const libretroCheats = $('#cheatsTable tr')
+			.map(function (idx, cheatRow) {
+				if (idx === 0) return null;
+
+				const descrip = $(this).find('.descrip').text().trim();
+				const cheatCode = $(this).find('.cheatCode').text().trim();
+				const isEnabled = $(this)
+					.find('.isCheatActive input')
+					.is(':checked');
+
+				if (
+					!descrip ||
+					descrip === '' ||
+					!cheatCode ||
+					cheatCode === ''
+				) {
+					return null;
+				}
+
+				// write cheats in libretro format
+				return `cheat${
+					idx - 1
+				}_desc = "${descrip}"\ncheat${idx - 1}_enable = ${isEnabled}\ncheat${idx - 1}_code = "${cheatCode}"\n`;
+			})
+			.toArray();
+
+		if (libretroCheats?.length) {
+			libretroCheatsFile =
+				`cheats = ${libretroCheats?.length}\n\n` +
+				libretroCheats.join('\n');
+		}
+	}
+
+	if (libretroCheatsFile) {
+		var blob = new Blob([libretroCheatsFile], { type: 'text/plain' });
+		var file = new File([blob], emulator.GetCurrentCheatsFileName());
+
+		emulator.LoadCheatsFile(file);
+	}
 }
 
 function saveExtraControlsConf() {
