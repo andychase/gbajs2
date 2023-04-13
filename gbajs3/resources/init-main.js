@@ -31,6 +31,9 @@ processEmulatorDefaultKeyBindings();
 //set current save state value from localStorage
 $('#savestateslot').val(localStorage.getItem('current-save-state-slot') || 0);
 
+//set extra controls conf UI initial state from localStorage
+processExtraControlsConf(false);
+
 window.mobileCheck = function () {
 	let check = false;
 	(function (a) {
@@ -468,35 +471,35 @@ function disableDpadButtons() {
 	$('#dpadlrbuttonholder').fadeOut();
 }
 
-function enableLogoutRomSaveQuickServermenuNodes() {
+function enableLogoutRomSaveQuickServerMenuNodes() {
 	enableMenuNodesById([
 		'serverlogout',
 		'loadserverrom',
 		'loadserversave',
 		'sendsavetoserver',
-		'quickreloadserver',
-		'extracontrols'
+		'quickreloadserver'
 	]);
+	enableLoggedInVirtualControls();
 }
 
-function offlineEnableRomSaveServermenuNodes() {
+function offlineEnableRomSaveServerMenuNodes() {
 	enableMenuNodesById([
 		'loadserverrom',
 		'loadserversave',
-		'quickreloadserver',
-		'extracontrols'
+		'quickreloadserver'
 	]);
+	enableLoggedInVirtualControls();
 }
 
-function disableLogoutRomSaveServermenuNodes() {
+function disableLogoutRomSaveServerMenuNodes() {
 	disableMenuNodesById([
 		'serverlogout',
 		'loadserverrom',
 		'loadserversave',
 		'sendsavetoserver',
-		'quickreloadserver',
-		'extracontrols'
+		'quickreloadserver'
 	]);
+	disableLoggedInVirtualControls();
 }
 
 function enableMenuNodesById(nodes) {
@@ -511,6 +514,16 @@ function disableMenuNodesById(nodes) {
 		$('#' + elem).removeClass('enabled');
 		$('#' + elem).addClass('disabled');
 	});
+}
+
+function enableLoggedInVirtualControls() {
+	$('#sendSaveToServerVCConf td:first-child').removeClass('text-muted');
+	$('#sendSaveToServerVCConf td input').prop('disabled', false);
+}
+
+function disableLoggedInVirtualControls() {
+	$('#sendSaveToServerVCConf td:first-child').addClass('text-muted');
+	$('#sendSaveToServerVCConf td input').prop('disabled', true);
 }
 
 function addClearButtonClass(nodes) {
@@ -785,6 +798,8 @@ function quickReload() {
 }
 
 function quickReloadServer() {
+	if (!checkAccessTok()) return;
+
 	const current_loaded_save_filename = localStorage.getItem(
 		'current-loaded-save-filename'
 	);
@@ -942,7 +957,7 @@ function saveExtraControlsConf() {
 	}
 }
 
-function processExtraControlsConf() {
+function processExtraControlsConf(shouldToggle = true) {
 	const extraControls = [
 		'flexCheckQuickReloadVC',
 		'flexCheckSendSaveToServerVC',
@@ -954,7 +969,9 @@ function processExtraControlsConf() {
 		savedControl = localStorage.getItem(extraControl);
 		if (savedControl) {
 			$('#' + extraControl).prop('checked', true);
-			toggleExtraControl(extraControl, true);
+			if (shouldToggle) {
+				toggleExtraControl(extraControl, true);
+			}
 		}
 	}
 }

@@ -38,7 +38,7 @@ function login() {
 			}
 			$('#login-username').val('');
 			$('#login-password').val('');
-			enableLogoutRomSaveQuickServermenuNodes();
+			enableLogoutRomSaveQuickServerMenuNodes();
 		},
 		error: function (XMLHttpRequest, textStatus, errorThrown) {
 			if (XMLHttpRequest.readyState == 0) {
@@ -46,7 +46,7 @@ function login() {
 				if (!navigator.onLine) {
 					console.log('login request has failed..no connect..');
 					//we should be able to get these from cache provided its populated
-					offlineEnableRomSaveServermenuNodes();
+					offlineEnableRomSaveServerMenuNodes();
 					accesstoken = 'offline_first_dummy';
 				} else {
 					console.log('login has failed');
@@ -79,7 +79,7 @@ function logout() {
 		success: function (result, teststatus, resp) {
 			if (resp.status == 200) {
 				console.log('logout successful');
-				disableLogoutRomSaveServermenuNodes();
+				disableLogoutRomSaveServerMenuNodes();
 				accesstoken = '';
 			} else {
 				console.log('logout has failed');
@@ -240,7 +240,7 @@ function refreshAccessToken() {
 					initialParamRomandSave();
 					initialLoad = false;
 				}
-				enableLogoutRomSaveQuickServermenuNodes();
+				enableLogoutRomSaveQuickServerMenuNodes();
 			} else {
 				console.log('refresh token has failed');
 				accesstoken = '';
@@ -256,7 +256,7 @@ function refreshAccessToken() {
 						initialParamRomandSave();
 						initialLoad = false;
 					}
-					offlineEnableRomSaveServermenuNodes();
+					offlineEnableRomSaveServerMenuNodes();
 					accesstoken = 'offline_first_dummy';
 				}
 			} else {

@@ -216,7 +216,7 @@
 				<div class="modal-content">
 					<div class="modal-header">
 						<h5 class="modal-title" id="controlsModalLabel">
-							Game Boy Advance Button mapping
+							Game Boy Advance Controls
 						</h5>
 						<button
 							type="button"
@@ -226,13 +226,111 @@
 						></button>
 					</div>
 					<div class="modal-body">
-						<table id="controlsTable" class="table">
-							<tr>
-								<th scope="col">GBA</th>
-								<th scope="col">Edit Key Bindings</th>
-							</tr>
-							<!-- filled in by javascript based on core -->
-						</table>
+						<div role="tabpanel">
+							<!-- tabs -->
+							<ul class="nav nav-tabs">
+								<li class="nav-item">
+									<a
+										href="#keyBindingsTab"
+										class="nav-link active"
+										data-bs-toggle="tab"
+										>Key Bindings</a
+									>
+								</li>
+								<li class="nav-item">
+									<a
+										href="#extraControlsTab"
+										class="nav-link"
+										data-bs-toggle="tab"
+										>Virtual Controls</a
+									>
+								</li>
+							</ul>
+						</div>
+
+						<!-- tab content -->
+						<div class="tab-content">
+							<div
+								role="tabpanel"
+								class="tab-pane active"
+								id="keyBindingsTab"
+							>
+								<table id="controlsTable" class="table">
+									<tr>
+										<th scope="col">GBA Input</th>
+										<th scope="col">Edit Key Bindings</th>
+									</tr>
+									<!-- filled in by javascript based on core -->
+								</table>
+							</div>
+							<div
+								role="tabpanel"
+								class="tab-pane"
+								id="extraControlsTab"
+							>
+								<table id="extraControlsTable" class="table">
+									<tr>
+										<th scope="col">Feature</th>
+										<th scope="col">Enable</th>
+									</tr>
+									<tr>
+										<td class="descrip">Save State</td>
+										<td>
+											<div class="form-check">
+												<input
+													class="form-check-input"
+													type="checkbox"
+													value=""
+													id="flexCheckSaveStateVC"
+												/>
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<td class="descrip">Load State</td>
+										<td>
+											<div class="form-check">
+												<input
+													class="form-check-input"
+													type="checkbox"
+													value=""
+													id="flexCheckLoadStateVC"
+												/>
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<td class="descrip">Quick Reload</td>
+										<td>
+											<div class="form-check">
+												<input
+													class="form-check-input"
+													type="checkbox"
+													value=""
+													id="flexCheckQuickReloadVC"
+												/>
+											</div>
+										</td>
+									</tr>
+									<tr id="sendSaveToServerVCConf">
+										<td class="descrip text-muted">
+											Send Save to Server
+										</td>
+										<td>
+											<div class="form-check">
+												<input
+													class="form-check-input"
+													type="checkbox"
+													value=""
+													id="flexCheckSendSaveToServerVC"
+													disabled
+												/>
+											</div>
+										</td>
+									</tr>
+								</table>
+							</div>
+						</div>
 					</div>
 					<div class="modal-footer">
 						<button
@@ -245,87 +343,9 @@
 						<button
 							type="button"
 							class="btn btn-primary"
-							onclick="remapUserKeyBindings()"
+							onclick="$('#extraControlsTab').hasClass('active') ? saveExtraControlsConf() : remapUserKeyBindings()"
 						>
 							Save changes
-						</button>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<div
-			class="modal fade"
-			id="extraControlsModal"
-			tabindex="-1"
-			aria-labelledby="extraControlsModalLabel"
-			aria-hidden="true"
-		>
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h5 class="modal-title" id="extraControlsModalLabel">
-							Extra Logged-in Controls
-						</h5>
-						<button
-							type="button"
-							class="btn-close"
-							data-bs-dismiss="modal"
-							aria-label="Close"
-						></button>
-					</div>
-					<div class="modal-body">
-						<table id="extraControlsTable" class="table">
-							<tr>
-								<th scope="col">Feature</th>
-								<th scope="col">Enable</th>
-							</tr>
-							<tr>
-								<td class="descrip">
-									Quick Reload (Virtual Control)
-								</td>
-								<td>
-									<div class="form-check">
-										<input
-											class="form-check-input"
-											type="checkbox"
-											value=""
-											id="flexCheckQuickReloadVC"
-										/>
-									</div>
-								</td>
-							</tr>
-							<tr>
-								<td class="descrip">
-									Send Save to Server (Virtual Control)
-								</td>
-								<td>
-									<div class="form-check">
-										<input
-											class="form-check-input"
-											type="checkbox"
-											value=""
-											id="flexCheckSendSaveToServerVC"
-										/>
-									</div>
-								</td>
-							</tr>
-						</table>
-					</div>
-					<div class="modal-footer">
-						<button
-							type="button"
-							class="btn btn-secondary"
-							data-bs-dismiss="modal"
-						>
-							Close
-						</button>
-						<button
-							type="button"
-							class="btn btn-primary"
-							onclick="saveExtraControlsConf()"
-						>
-							Save configuration
 						</button>
 					</div>
 				</div>
@@ -430,139 +450,54 @@
 						></button>
 					</div>
 					<div class="modal-body">
-						<div role="tabpanel">
-							<!-- tabs -->
-							<ul class="nav nav-tabs">
-								<li class="nav-item">
-									<a
-										href="#manageSaveStatesTab"
-										class="nav-link active"
-										data-bs-toggle="tab"
-										>Save States</a
-									>
-								</li>
-								<li class="nav-item">
-									<a
-										href="#saveStateExtraControlsTab"
-										class="nav-link"
-										data-bs-toggle="tab"
-										>Extra Controls</a
-									>
-								</li>
-							</ul>
-
-							<!-- tab content -->
-							<div class="tab-content">
-								<div
-									role="tabpanel"
-									class="tab-pane active"
-									id="manageSaveStatesTab"
-								>
-									<div class="row" style="padding: 10px">
-										<div class="prefixNumberInput">
-											<span class="prefix"
-												>Save Slot</span
-											>
-											<input
-												id="savestateslot"
-												type="number"
-												min="0"
-												step="1"
-											/>
-										</div>
-									</div>
-									<div
-										class="btn-toolbar"
-										style="padding: 10px"
-									>
-										<button
-											type="button"
-											class="btn btn-primary btn-sm me-2 mb-2"
-											onclick="loadSaveState($('#savestateslot').val())"
-											data-bs-dismiss="modal"
-										>
-											Load
-										</button>
-										<button
-											type="button"
-											class="btn btn-primary btn-sm me-2 mb-2"
-											onclick="createSaveState($('#savestateslot').val())"
-											data-bs-dismiss="modal"
-										>
-											Create
-										</button>
-										<button
-											type="button"
-											class="btn btn-primary btn-sm me-2 mb-2"
-											onclick="listSaveStates()"
-										>
-											List
-										</button>
-										<button
-											type="button"
-											class="btn btn-primary btn-sm me-2 mb-2"
-											onclick="emulator.DeleteSaveState($('#savestateslot').val())"
-										>
-											Delete
-										</button>
-									</div>
-									<div
-										class="row border-top"
-										style="padding: 10px; display: none"
-									>
-										<ul id="saveStateList"></ul>
-									</div>
-								</div>
-								<div
-									role="tabpanel"
-									class="tab-pane"
-									id="saveStateExtraControlsTab"
-								>
-									<div class="row" style="padding: 10px">
-										<table
-											id="extraControlsTable"
-											class="table"
-										>
-											<tr>
-												<th scope="col">Feature</th>
-												<th scope="col">Enable</th>
-											</tr>
-											<tr>
-												<td class="descrip">
-													Save State (Virtual Control)
-												</td>
-												<td>
-													<div class="form-check">
-														<input
-															class="form-check-input"
-															type="checkbox"
-															value=""
-															onclick="$('#mGBAPersistanceSaveButton').show()"
-															id="flexCheckSaveStateVC"
-														/>
-													</div>
-												</td>
-											</tr>
-											<tr>
-												<td class="descrip">
-													Load State (Virtual Control)
-												</td>
-												<td>
-													<div class="form-check">
-														<input
-															class="form-check-input"
-															type="checkbox"
-															value=""
-															onclick="$('#mGBAPersistanceSaveButton').show()"
-															id="flexCheckLoadStateVC"
-														/>
-													</div>
-												</td>
-											</tr>
-										</table>
-									</div>
-								</div>
+						<div class="row" style="padding: 10px">
+							<div class="prefixNumberInput">
+								<span class="prefix">Save Slot</span>
+								<input
+									id="savestateslot"
+									type="number"
+									min="0"
+									step="1"
+								/>
 							</div>
+						</div>
+						<div class="btn-toolbar" style="padding: 10px">
+							<button
+								type="button"
+								class="btn btn-primary btn-sm me-2 mb-2"
+								onclick="loadSaveState($('#savestateslot').val())"
+								data-bs-dismiss="modal"
+							>
+								Load
+							</button>
+							<button
+								type="button"
+								class="btn btn-primary btn-sm me-2 mb-2"
+								onclick="createSaveState($('#savestateslot').val())"
+								data-bs-dismiss="modal"
+							>
+								Create
+							</button>
+							<button
+								type="button"
+								class="btn btn-primary btn-sm me-2 mb-2"
+								onclick="listSaveStates()"
+							>
+								List
+							</button>
+							<button
+								type="button"
+								class="btn btn-primary btn-sm me-2 mb-2"
+								onclick="emulator.DeleteSaveState($('#savestateslot').val())"
+							>
+								Delete
+							</button>
+						</div>
+						<div
+							class="row border-top"
+							style="padding: 10px; display: none"
+						>
+							<ul id="saveStateList"></ul>
 						</div>
 					</div>
 					<div class="modal-footer">
@@ -572,16 +507,6 @@
 							data-bs-dismiss="modal"
 						>
 							Close
-						</button>
-						<button
-							type="button"
-							class="btn btn-secondary"
-							data-bs-dismiss="modal"
-							style="display: none"
-							id="mGBAPersistanceSaveButton"
-							onclick="saveExtraControlsConf()"
-						>
-							Save Configuration
 						</button>
 					</div>
 				</div>
@@ -1190,6 +1115,10 @@
 							<i class="bx bx-cloud-download"></i>
 							<span class="mx-2">Download Save</span>
 						</li>
+						<li href="#" class="nav-link" onclick="quickReload()">
+							<i class="bx bx-redo"></i>
+							<span class="mx-2">Quick Reload</span>
+						</li>
 						<li
 							href="#"
 							class="nav-link"
@@ -1309,17 +1238,6 @@
 						>
 							<i class="bx bx-cloud-upload"></i>
 							<span class="mx-2">Send Save to Server</span>
-						</li>
-						<li
-							id="extracontrols"
-							href="#"
-							class="nav-link disabled"
-							data-bs-toggle="modal"
-							data-bs-target="#extraControlsModal"
-							onclick=""
-						>
-							<i class="bx bxs-joystick"></i>
-							<span class="mx-2">Extra Controls</span>
 						</li>
 					</ul>
 				</div>

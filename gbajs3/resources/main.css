@@ -1046,7 +1046,7 @@ ul#links li:not(:first-child)::before {
 	opacity: 1;
 }
 
-#saveStatesModal .modal-body .nav-item .nav-link,
+#controlsModal .modal-body .nav-item .nav-link,
 #manageCheatsModal .modal-body .nav-item .nav-link {
 	color: #000 !important;
 }
