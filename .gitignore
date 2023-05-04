@@ -8,3 +8,7 @@
 /**/*.log
 /**/authapi
 /**/authserver
+/**/build/**
+/**/adm.ini
+/**/config*.json
+/**/pg_data/**

@@ -26,6 +26,8 @@ Do not attempt to log into the server unless you are the server owner or an appr
 * Interchangeable cores
     * mGBA support (wasm based)
     * gbajs support (pure javascript)
+* Admin UI
+* Postgres support
 
 ## Existing Feature List
 - Both cores support realtime clock
@@ -39,8 +41,8 @@ Do not attempt to log into the server unless you are the server owner or an appr
 ## To Do
 * Debugger enhancements
 * Server enhancements
-* Additional database support (Postgres)
-* Admin UI
+    - request an account feature suite
+    - s3 backed file storage
 
 ## Sample Screenshots
 
@@ -54,34 +56,36 @@ Do not attempt to log into the server unless you are the server owner or an appr
 
 <img src="./readme-graphics/gbajs3-mobile-landscape.png">
 
-## Docker
+## Getting Started
 * Requires an env file of the format:
 ```
+# gbajs3
 ROM_PATH=./<local-server-rom-path>/
 SAVE_PATH=./<local-server-save-path>/
 CLIENT_HOST=https://<your-client-location>
 CERT_LOC=./<path to your certificate>
 KEY_LOC=./<path to your key>
+
+# admin
+ADMIN_APP_ID=<your unique alphanumeric app id>
+
+# postgres
+PG_DB_HOST=<database host>
+PG_DB_USER=<databse user>
+PG_DB_PASSWORD=<databse user password>
+GBAJS_DB_NAME=<your gbajs3 database name, default `gbajs3`>
+ADMIN_DB_NAME=<your goadmin database name, default `goadmin`>
+PG_DB_PORT=<postgres db port, default 5432>
+PG_SSL_MODE=<pg ssl mode>
+PG_DATA_LOCATION=./<path to postgres persistent mountpoint>
 ```
 * Run `cp .env.example .env` for local builds, then adjust values or add certs/required directories
 * Testing certificates can be created with:
 ```
 openssl req -x509 -sha256 -nodes -days 365 -newkey rsa:2048 -keyout privateKey.key -out certificate.crt
 ```
-* Golang api expects a sqlite file within the ./docker/server/auth directory consisting of username/password pairs generated with bcrypt.GenerateFromPassword, as well as two uuid fields for token id's
-```
-type User struct {
-  Username  string
-  PassHash  []byte
-  TokenSlug uuid.UUID
-  TokenID   uuid.UUID
-}
-```
-* There is a helper script in ./docker/helper/users_db_helper.go that can be used to generate your initial database file. This will output a file of the name users.db.
-```
-go run users_db_helper.go
-```
-* Simply run `docker-compose up --build` and your services will build and start
+* Run `docker-compose up --build` and your services will build and start
+* Admin UI can be found at `/admin`, default password for all admin users are `admin`, **please log in to the admin portal and change the default passwords immediately**
 * Golang api swagger UI can be found at `/api/documentation/`
 
 ## License

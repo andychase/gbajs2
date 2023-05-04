@@ -4,8 +4,8 @@ services:
         image: nginx
         logging:
             options:
-                max-size: '50m'
-                max-file: '5'
+                max-size: '20m'
+                max-file: '3'
             driver: json-file
         build:
             context: ..
@@ -17,6 +17,7 @@ services:
             - "80:80"
         depends_on:
             - gba-auth-server
+            - gba-admin-server
         cap_add:
             - NET_ADMIN
             - NET_RAW
@@ -24,21 +25,79 @@ services:
             - ${CERT_LOC}:/certs/fullchain.pem
             - ${KEY_LOC}:/certs/privkey.pem
 
+    gba-admin-server:
+        image: gba-admin-server
+        logging:
+            options:
+                max-size: '20m'
+                max-file: '3'
+            driver: json-file
+        build:
+            context: .
+            dockerfile: ./server/admin/Dockerfile
+        depends_on:
+            gba-postgres:
+                condition: service_healthy
+        environment:
+            - CLIENT_HOST=${CLIENT_HOST}
+            - APP_ID=${ADMIN_APP_ID}
+            - PG_DB_HOST=${PG_DB_HOST}
+            - PG_DB_USER=${PG_DB_USER}
+            - PG_DB_PASSWORD=${PG_DB_PASSWORD}
+            - GBAJS_DB_NAME=${GBAJS_DB_NAME}
+            - ADMIN_DB_NAME=${ADMIN_DB_NAME}
+            - PG_DB_PORT=${PG_DB_PORT}
+            - PG_SSL_MODE=${PG_SSL_MODE}
+        volumes:
+            - ${CERT_LOC}:/app/certs/fullchain.pem
+            - ${KEY_LOC}:/app/certs/privkey.pem
+
     gba-auth-server:
         image: gba-auth-server
         logging:
             options:
-                max-size: '50m'
-                max-file: '5'
+                max-size: '20m'
+                max-file: '3'
             driver: json-file
         build:
             context: .
             dockerfile: ./server/auth/Dockerfile
+        depends_on:
+            gba-postgres:
+                condition: service_healthy
         environment:
             - CLIENT_HOST=${CLIENT_HOST}
+            - PG_DB_HOST=${PG_DB_HOST}
+            - PG_DB_USER=${PG_DB_USER}
+            - PG_DB_PASSWORD=${PG_DB_PASSWORD}
+            - PG_DB_NAME=${GBAJS_DB_NAME}
+            - PG_DB_PORT=${PG_DB_PORT}
+            - PG_SSL_MODE=${PG_SSL_MODE}
         volumes:
-            - ./server/auth/users.db:/app/users.db
             - ${ROM_PATH}:/app/local_roms
             - ${SAVE_PATH}:/app/local_saves
             - ${CERT_LOC}:/app/certs/fullchain.pem
             - ${KEY_LOC}:/app/certs/privkey.pem
+
+    gba-postgres:
+        image: gba-postgres
+        logging:
+            options:
+                max-size: '20m'
+                max-file: '3'
+            driver: json-file
+        build:
+            context: .
+            dockerfile: ./server/postgres/Dockerfile
+        environment:
+            POSTGRES_USER: ${PG_DB_USER}
+            POSTGRES_PASSWORD: ${PG_DB_PASSWORD}
+            POSTGRES_DB: ${ADMIN_DB_NAME}
+        command: postgres
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -q -U ${PG_DB_USER} -d ${ADMIN_DB_NAME} -h ${PG_DB_HOST}"]
+            interval: 10s
+            timeout: 5s
+            retries: 12
+        volumes:
+            - ${PG_DATA_LOCATION}:/var/lib/postgresql/data

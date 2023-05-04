@@ -16,7 +16,7 @@ var no_auth_routes = map[string]bool{
 	"/api/tokens/refresh": true,
 }
 
-//app routes
+// app routes
 var ROUTES = Routes{
 	Route{
 		method:  "GET",
@@ -24,7 +24,7 @@ var ROUTES = Routes{
 		handler: helloWorld,
 	},
 
-	//auth paths
+	// auth paths
 	Route{
 		method:  "POST",
 		pattern: "/api/account/login",
@@ -41,7 +41,7 @@ var ROUTES = Routes{
 		handler: tokenRefresh,
 	},
 
-	//gba paths
+	// gba paths
 	Route{
 		method:  "GET",
 		pattern: "/api/save/download",

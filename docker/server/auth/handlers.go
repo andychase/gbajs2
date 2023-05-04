@@ -3,12 +3,8 @@ package main
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
 	"fmt"
-	"io"
-	"io/ioutil"
 	"net/http"
-	"os"
 	"path/filepath"
 	"time"
 )
@@ -23,7 +19,7 @@ import (
 // @Failure 500 {string} string
 // @Failure 501 {string} string
 // @Router / [get]
-func helloWorld(w http.ResponseWriter, r *http.Request) { //intro message to show connection was established
+func helloWorld(w http.ResponseWriter, r *http.Request) { // intro message to show connection was established
 	fmt.Fprintf(w, "Hello World! This is a GBA file/auth server, written in Golang.")
 }
 
@@ -45,7 +41,14 @@ func downloadSave(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	data, err := ioutil.ReadFile(savePath + fname)
+
+	storePath, err := getStorePathFromClaims(r.Context())
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	data, err := readFileData(savePath + storePath + fname)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
@@ -72,7 +75,14 @@ func downloadRom(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	data, err := ioutil.ReadFile(romPath + fname)
+
+	storePath, err := getStorePathFromClaims(r.Context())
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	data, err := readFileData(romPath + storePath + fname)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
@@ -103,32 +113,22 @@ func uploadRom(w http.ResponseWriter, r *http.Request) {
 	}
 	defer file.Close()
 
-	if filepath.Ext(handler.Filename) != ".gba" {
+	if filepath.Ext(handler.Filename) != ".gba" &&
+		filepath.Ext(handler.Filename) != ".gbc" &&
+		filepath.Ext(handler.Filename) != ".gb" {
 		w.WriteHeader(http.StatusBadRequest)
-		fmt.Fprintf(w, "File not in gba format, expected extention is .gba")
+		fmt.Fprintf(w, "File not in gba format, expected extentions are .gba/.gbc/.gb")
 		return
 	}
 
-	if _, err := os.Stat(romPath + handler.Filename); err == nil {
-		// path/to/whatever exists
-		f, err := os.OpenFile(romPath+handler.Filename, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
-		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-		defer f.Close()
-		io.Copy(f, file)
-	} else if errors.Is(err, os.ErrNotExist) {
-		// path/to/whatever does *not* exist
-		f, err := os.OpenFile(romPath+handler.Filename, os.O_WRONLY|os.O_CREATE, 0666)
-		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-		defer f.Close()
-		io.Copy(f, file)
-	} else {
-		// Schrodinger: file may or may not exist. See err for details.
+	storePath, err := getStorePathFromClaims(r.Context())
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	err = createOrOverwriteFileIfNotExists(romPath+storePath+handler.Filename, file)
+	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -156,26 +156,14 @@ func uploadSave(w http.ResponseWriter, r *http.Request) {
 	}
 	defer file.Close()
 
-	if _, err := os.Stat(savePath + handler.Filename); err == nil {
-		// path/to/whatever exists
-		f, err := os.OpenFile(savePath+handler.Filename, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
-		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-		defer f.Close()
-		io.Copy(f, file)
-	} else if errors.Is(err, os.ErrNotExist) {
-		// path/to/whatever does *not* exist
-		f, err := os.OpenFile(savePath+handler.Filename, os.O_WRONLY|os.O_CREATE, 0666)
-		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-		defer f.Close()
-		io.Copy(f, file)
-	} else {
-		// Schrodinger: file may or may not exist. See err for details.
+	storePath, err := getStorePathFromClaims(r.Context())
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	err = createOrOverwriteFileIfNotExists(savePath+storePath+handler.Filename, file)
+	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -193,18 +181,19 @@ func uploadSave(w http.ResponseWriter, r *http.Request) {
 // @Failure 501 {string} string
 // @Router /api/rom/list [get]
 func listAllRoms(w http.ResponseWriter, r *http.Request) {
-	files, err := ioutil.ReadDir(romPath)
+	storePath, err := getStorePathFromClaims(r.Context())
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	fileNames, err := fileNamesFromDirPath(romPath + storePath)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	res := []string{}
 
-	for _, file := range files {
-		res = append(res, file.Name())
-	}
-
-	resp, err := json.Marshal(res)
+	resp, err := json.Marshal(fileNames)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -226,18 +215,19 @@ func listAllRoms(w http.ResponseWriter, r *http.Request) {
 // @Failure 501 {string} string
 // @Router /api/save/list [get]
 func listAllSaves(w http.ResponseWriter, r *http.Request) {
-	files, err := ioutil.ReadDir(savePath)
+	storePath, err := getStorePathFromClaims(r.Context())
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	fileNames, err := fileNamesFromDirPath(savePath + storePath)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	res := []string{}
 
-	for _, file := range files {
-		res = append(res, file.Name())
-	}
-
-	resp, err := json.Marshal(res)
+	resp, err := json.Marshal(fileNames)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return

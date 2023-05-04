@@ -18,7 +18,6 @@ import (
 	"github.com/rs/cors"
 	"github.com/satori/go.uuid"
 	"github.com/swaggo/http-swagger"
-	"github.com/glebarez/sqlite"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 	"log"
@@ -28,10 +27,10 @@ import (
 )
 
 const (
-	romPath = "./local_roms/"
+	romPath  = "./local_roms/"
 	savePath = "./local_saves/"
-	certLoc = "./certs/fullchain.pem"
-	keyLoc = "./certs/privkey.pem"
+	certLoc  = "./certs/fullchain.pem"
+	keyLoc   = "./certs/privkey.pem"
 )
 
 var (
@@ -39,22 +38,22 @@ var (
 	AccessSignKey []byte
 )
 
-func serveRequests(port string, certloc string, keyloc string, client_host string) {
+func serveRequests(port string, certLoc string, keyLoc string, clientHost string) {
 	router := mux.NewRouter().StrictSlash(false)
-	//here are our handlers for paths to different actions performed by this api are set up, defined in paths.go
+	// here are our handlers for paths to different actions performed by this api are set up, defined in paths.go
 	for _, route := range ROUTES {
-		if !no_auth_routes[route.pattern] { //path requires authorization
+		if !no_auth_routes[route.pattern] { // path requires authorization
 			route.handler = authorize(route.handler).(http.HandlerFunc)
 		}
 
-		route.handler = gz.GzipHandler(route.handler).(http.HandlerFunc) //default gzip middleware if accepted
+		route.handler = gz.GzipHandler(route.handler).(http.HandlerFunc) // default gzip middleware if accepted
 
 		router.Handle(route.pattern, route.handler).Methods(route.method)
 	}
 
-	//cors support
+	// cors support
 	c := cors.New(cors.Options{
-		AllowedOrigins:   []string{client_host},
+		AllowedOrigins:   []string{clientHost},
 		AllowCredentials: true,
 		AllowedMethods:   []string{"GET", "POST", "OPTIONS"},
 		AllowedHeaders:   []string{"Accept", "Content-Type", "Content-Length", "Accept-Encoding", "Authorization", "X-Real-Ip", "X-Forwarded-For", "Host", "User-Agent", "Connection"},
@@ -62,17 +61,17 @@ func serveRequests(port string, certloc string, keyloc string, client_host strin
 		Debug:            false,
 	})
 
-	//below for eventual permanent swagger docs
-	/*myRouter.PathPrefix("/documentation/").Handler(httpSwagger.Handler( //if we ever have a stable api deployment, this can be used to make it searchable
-		httpSwagger.URL("http://localhost:8081/documentation/doc.json"), //The url pointing to API definition"
+	// below for eventual permanent swagger docs
+	/*myRouter.PathPrefix("/documentation/").Handler(httpSwagger.Handler( // if we ever have a stable api deployment, this can be used to make it searchable
+		httpSwagger.URL("http://localhost:8081/documentation/doc.json"), // The url pointing to API definition"
 	))*/
-	router.PathPrefix("/api/documentation/").Handler(httpSwagger.WrapHandler) //here is where I have added the swagger endpoint
+	router.PathPrefix("/api/documentation/").Handler(httpSwagger.WrapHandler) // swagger documentation endpoint
 
-	log.Fatal(http.ListenAndServeTLS(port, certloc, keyloc, c.Handler(router))) //the port and address for api set here, provided from the properties file
+	log.Fatal(http.ListenAndServeTLS(port, certLoc, keyLoc, c.Handler(router)))
 }
 
 func main() {
-	fmt.Println("In main, gba/jwt auth server started")
+	fmt.Println("gbajs3 auth server started")
 	var err error
 	AccessSignKey = uuid.Must(uuid.NewV4(), err).Bytes()
 	if err != nil {
@@ -81,11 +80,11 @@ func main() {
 	}
 	clientHost := os.Getenv("CLIENT_HOST")
 
-	logfile := &lumberjack.Logger{ //handle rolling logs internally
+	logfile := &lumberjack.Logger{ // handle rolling logs internally
 		Filename:   "./logs/auth_server_log.log",
 		MaxSize:    50, // megabytes
 		MaxBackups: 5,
-		MaxAge:     15,   //days
+		MaxAge:     15,   // days
 		Compress:   true, // disabled by default
 	}
 	log.SetOutput(logfile)
@@ -103,15 +102,17 @@ func main() {
 		),
 	}
 
-	userdb, err = gorm.Open(sqlite.Open("users.db"), gconf)
-
+	userdb, err = newGbaJsDatabase(gconf)
 	if err != nil {
-		fmt.Println("Error, could not connect to users db")
+		fmt.Println("Error, could not connect to gbajs3 db")
 		panic(err)
 	}
 
-	userdb.AutoMigrate(&User{})
+	err = userdb.AutoMigrate(&User{})
+	if err != nil {
+		fmt.Println("Error automigrate has failed", err)
+	}
 
 	log.Println("handling requests initiated")
-	serveRequests(":443", certLoc, keyLoc, clientHost) //start server
+	serveRequests(":443", certLoc, keyLoc, clientHost)
 }

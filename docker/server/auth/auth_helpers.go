@@ -3,11 +3,10 @@ package main
 import (
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
-	"github.com/satori/go.uuid"
 )
 
-//checks whether a refresh jwt presented as a string is valid, returns claims
-//along with boolean indicator of validity
+// checks whether a refresh jwt presented as a string is valid, returns claims
+// along with boolean indicator of validity
 func isValidRefreshJWT(tokenstring string) (jwt.MapClaims, bool) {
 	claims, tokenslug := jwt.MapClaims{}, []byte{}
 	token, err := jwt.ParseWithClaims(tokenstring, claims, func(token *jwt.Token) (interface{}, error) {
@@ -17,15 +16,15 @@ func isValidRefreshJWT(tokenstring string) (jwt.MapClaims, bool) {
 
 		c, ok := token.Claims.(jwt.MapClaims)
 		if !ok {
-			fmt.Println("error with claims")
+			return nil, fmt.Errorf("error casting claims")
 		}
+
 		tokenslug = getTokenSlugForTokenID(c["sub"].(string))
+
 		return tokenslug, nil
 	})
 
 	if err != nil {
-		fmt.Println("printing parse jwt error here 2")
-		fmt.Println(err) //here for debug only
 		return nil, false
 	} else if err == nil && token.Valid {
 		return claims, true
@@ -34,8 +33,8 @@ func isValidRefreshJWT(tokenstring string) (jwt.MapClaims, bool) {
 	return nil, false
 }
 
-//checks whether a refresh jwt presented as a string is valid, returns claims
-//along with boolean indicator of validity
+// checks whether a refresh jwt presented as a string is valid, returns claims
+// along with boolean indicator of validity
 func isValidAccessJWT(tokenstring string) (jwt.MapClaims, bool) {
 	claims := jwt.MapClaims{}
 	token, err := jwt.ParseWithClaims(tokenstring, claims, func(token *jwt.Token) (interface{}, error) {
@@ -47,31 +46,21 @@ func isValidAccessJWT(tokenstring string) (jwt.MapClaims, bool) {
 	})
 
 	if err != nil {
-		fmt.Println("printing parse jwt error here 2")
-		fmt.Println(err) //here for debug only
 		return nil, false
-	} else if err == nil && token.Valid && claims["sub"] != nil {
+	} else if err == nil && token.Valid && claims["store"] != nil {
 		return claims, true
 	}
 
 	return nil, false
 }
 
-//fetches user token slug for username, used with authentication flow to decode jwt
+// fetches user token slug for username, used with authentication flow to decode jwt
 func getTokenSlugForTokenID(tokenid string) []byte {
-	var user User
-	err := userdb.Table("users").Select("token_slug").Where("token_id = ?", tokenid).Scan(&user).Error
-
+	tokenSlug, err := fetchTokenSlugByTokenId(tokenid)
 	if err != nil {
-		fmt.Println("unable to fetch user")
 		fmt.Println(err)
 		return nil
 	}
 
-	if user.TokenSlug == uuid.Nil {
-		fmt.Println("unable to fetch user")
-		return nil
-	}
-
-	return []byte(user.TokenSlug.String())
+	return tokenSlug
 }
