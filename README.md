@@ -56,6 +56,10 @@ Do not attempt to log into the server unless you are the server owner or an appr
 
 <img src="./readme-graphics/gbajs3-mobile-landscape.png">
 
+* Example Admin
+
+<img src="./readme-graphics/admin-desktop.png">
+
 ## Getting Started
 * Requires an env file of the format:
 ```

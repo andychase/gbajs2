@@ -17,7 +17,7 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
--- Name: goadmin_menu_myid_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+-- Name: goadmin_menu_myid_seq; Type: SEQUENCE; Schema: public; Owner: <PG_DB_USER>
 --
 
 CREATE SEQUENCE public.goadmin_menu_myid_seq
@@ -28,14 +28,14 @@ CREATE SEQUENCE public.goadmin_menu_myid_seq
     CACHE 1;
 
 
-ALTER TABLE public.goadmin_menu_myid_seq OWNER TO postgres;
+ALTER TABLE public.goadmin_menu_myid_seq OWNER TO <PG_DB_USER>;
 
 SET default_tablespace = '';
 
 SET default_table_access_method = heap;
 
 --
--- Name: goadmin_menu; Type: TABLE; Schema: public; Owner: postgres
+-- Name: goadmin_menu; Type: TABLE; Schema: public; Owner: <PG_DB_USER>
 --
 
 CREATE TABLE public.goadmin_menu (
@@ -54,10 +54,10 @@ CREATE TABLE public.goadmin_menu (
 );
 
 
-ALTER TABLE public.goadmin_menu OWNER TO postgres;
+ALTER TABLE public.goadmin_menu OWNER TO <PG_DB_USER>;
 
 --
--- Name: goadmin_operation_log_myid_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+-- Name: goadmin_operation_log_myid_seq; Type: SEQUENCE; Schema: public; Owner: <PG_DB_USER>
 --
 
 CREATE SEQUENCE public.goadmin_operation_log_myid_seq
@@ -68,10 +68,10 @@ CREATE SEQUENCE public.goadmin_operation_log_myid_seq
     CACHE 1;
 
 
-ALTER TABLE public.goadmin_operation_log_myid_seq OWNER TO postgres;
+ALTER TABLE public.goadmin_operation_log_myid_seq OWNER TO <PG_DB_USER>;
 
 --
--- Name: goadmin_operation_log; Type: TABLE; Schema: public; Owner: postgres
+-- Name: goadmin_operation_log; Type: TABLE; Schema: public; Owner: <PG_DB_USER>
 --
 
 CREATE TABLE public.goadmin_operation_log (
@@ -86,10 +86,10 @@ CREATE TABLE public.goadmin_operation_log (
 );
 
 
-ALTER TABLE public.goadmin_operation_log OWNER TO postgres;
+ALTER TABLE public.goadmin_operation_log OWNER TO <PG_DB_USER>;
 
 --
--- Name: goadmin_permissions_myid_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+-- Name: goadmin_permissions_myid_seq; Type: SEQUENCE; Schema: public; Owner: <PG_DB_USER>
 --
 
 CREATE SEQUENCE public.goadmin_permissions_myid_seq
@@ -100,10 +100,10 @@ CREATE SEQUENCE public.goadmin_permissions_myid_seq
     CACHE 1;
 
 
-ALTER TABLE public.goadmin_permissions_myid_seq OWNER TO postgres;
+ALTER TABLE public.goadmin_permissions_myid_seq OWNER TO <PG_DB_USER>;
 
 --
--- Name: goadmin_permissions; Type: TABLE; Schema: public; Owner: postgres
+-- Name: goadmin_permissions; Type: TABLE; Schema: public; Owner: <PG_DB_USER>
 --
 
 CREATE TABLE public.goadmin_permissions (
@@ -117,10 +117,10 @@ CREATE TABLE public.goadmin_permissions (
 );
 
 
-ALTER TABLE public.goadmin_permissions OWNER TO postgres;
+ALTER TABLE public.goadmin_permissions OWNER TO <PG_DB_USER>;
 
 --
--- Name: goadmin_role_menu; Type: TABLE; Schema: public; Owner: postgres
+-- Name: goadmin_role_menu; Type: TABLE; Schema: public; Owner: <PG_DB_USER>
 --
 
 CREATE TABLE public.goadmin_role_menu (
@@ -131,10 +131,10 @@ CREATE TABLE public.goadmin_role_menu (
 );
 
 
-ALTER TABLE public.goadmin_role_menu OWNER TO postgres;
+ALTER TABLE public.goadmin_role_menu OWNER TO <PG_DB_USER>;
 
 --
--- Name: goadmin_role_permissions; Type: TABLE; Schema: public; Owner: postgres
+-- Name: goadmin_role_permissions; Type: TABLE; Schema: public; Owner: <PG_DB_USER>
 --
 
 CREATE TABLE public.goadmin_role_permissions (
@@ -145,10 +145,10 @@ CREATE TABLE public.goadmin_role_permissions (
 );
 
 
-ALTER TABLE public.goadmin_role_permissions OWNER TO postgres;
+ALTER TABLE public.goadmin_role_permissions OWNER TO <PG_DB_USER>;
 
 --
--- Name: goadmin_role_users; Type: TABLE; Schema: public; Owner: postgres
+-- Name: goadmin_role_users; Type: TABLE; Schema: public; Owner: <PG_DB_USER>
 --
 
 CREATE TABLE public.goadmin_role_users (
@@ -159,10 +159,10 @@ CREATE TABLE public.goadmin_role_users (
 );
 
 
-ALTER TABLE public.goadmin_role_users OWNER TO postgres;
+ALTER TABLE public.goadmin_role_users OWNER TO <PG_DB_USER>;
 
 --
--- Name: goadmin_roles_myid_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+-- Name: goadmin_roles_myid_seq; Type: SEQUENCE; Schema: public; Owner: <PG_DB_USER>
 --
 
 CREATE SEQUENCE public.goadmin_roles_myid_seq
@@ -173,10 +173,10 @@ CREATE SEQUENCE public.goadmin_roles_myid_seq
     CACHE 1;
 
 
-ALTER TABLE public.goadmin_roles_myid_seq OWNER TO postgres;
+ALTER TABLE public.goadmin_roles_myid_seq OWNER TO <PG_DB_USER>;
 
 --
--- Name: goadmin_roles; Type: TABLE; Schema: public; Owner: postgres
+-- Name: goadmin_roles; Type: TABLE; Schema: public; Owner: <PG_DB_USER>
 --
 
 CREATE TABLE public.goadmin_roles (
@@ -188,10 +188,10 @@ CREATE TABLE public.goadmin_roles (
 );
 
 
-ALTER TABLE public.goadmin_roles OWNER TO postgres;
+ALTER TABLE public.goadmin_roles OWNER TO <PG_DB_USER>;
 
 --
--- Name: goadmin_session_myid_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+-- Name: goadmin_session_myid_seq; Type: SEQUENCE; Schema: public; Owner: <PG_DB_USER>
 --
 
 CREATE SEQUENCE public.goadmin_session_myid_seq
@@ -202,10 +202,10 @@ CREATE SEQUENCE public.goadmin_session_myid_seq
     CACHE 1;
 
 
-ALTER TABLE public.goadmin_session_myid_seq OWNER TO postgres;
+ALTER TABLE public.goadmin_session_myid_seq OWNER TO <PG_DB_USER>;
 
 --
--- Name: goadmin_session; Type: TABLE; Schema: public; Owner: postgres
+-- Name: goadmin_session; Type: TABLE; Schema: public; Owner: <PG_DB_USER>
 --
 
 CREATE TABLE public.goadmin_session (
@@ -217,10 +217,10 @@ CREATE TABLE public.goadmin_session (
 );
 
 
-ALTER TABLE public.goadmin_session OWNER TO postgres;
+ALTER TABLE public.goadmin_session OWNER TO <PG_DB_USER>;
 
 --
--- Name: goadmin_site_myid_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+-- Name: goadmin_site_myid_seq; Type: SEQUENCE; Schema: public; Owner: <PG_DB_USER>
 --
 
 CREATE SEQUENCE public.goadmin_site_myid_seq
@@ -231,10 +231,10 @@ CREATE SEQUENCE public.goadmin_site_myid_seq
     CACHE 1;
 
 
-ALTER TABLE public.goadmin_site_myid_seq OWNER TO postgres;
+ALTER TABLE public.goadmin_site_myid_seq OWNER TO <PG_DB_USER>;
 
 --
--- Name: goadmin_site; Type: TABLE; Schema: public; Owner: postgres
+-- Name: goadmin_site; Type: TABLE; Schema: public; Owner: <PG_DB_USER>
 --
 
 CREATE TABLE public.goadmin_site (
@@ -249,10 +249,10 @@ CREATE TABLE public.goadmin_site (
 );
 
 
-ALTER TABLE public.goadmin_site OWNER TO postgres;
+ALTER TABLE public.goadmin_site OWNER TO <PG_DB_USER>;
 
 --
--- Name: goadmin_user_permissions; Type: TABLE; Schema: public; Owner: postgres
+-- Name: goadmin_user_permissions; Type: TABLE; Schema: public; Owner: <PG_DB_USER>
 --
 
 CREATE TABLE public.goadmin_user_permissions (
@@ -263,10 +263,10 @@ CREATE TABLE public.goadmin_user_permissions (
 );
 
 
-ALTER TABLE public.goadmin_user_permissions OWNER TO postgres;
+ALTER TABLE public.goadmin_user_permissions OWNER TO <PG_DB_USER>;
 
 --
--- Name: goadmin_users_myid_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+-- Name: goadmin_users_myid_seq; Type: SEQUENCE; Schema: public; Owner: <PG_DB_USER>
 --
 
 CREATE SEQUENCE public.goadmin_users_myid_seq
@@ -277,10 +277,10 @@ CREATE SEQUENCE public.goadmin_users_myid_seq
     CACHE 1;
 
 
-ALTER TABLE public.goadmin_users_myid_seq OWNER TO postgres;
+ALTER TABLE public.goadmin_users_myid_seq OWNER TO <PG_DB_USER>;
 
 --
--- Name: goadmin_users; Type: TABLE; Schema: public; Owner: postgres
+-- Name: goadmin_users; Type: TABLE; Schema: public; Owner: <PG_DB_USER>
 --
 
 CREATE TABLE public.goadmin_users (
@@ -295,10 +295,10 @@ CREATE TABLE public.goadmin_users (
 );
 
 
-ALTER TABLE public.goadmin_users OWNER TO postgres;
+ALTER TABLE public.goadmin_users OWNER TO <PG_DB_USER>;
 
 --
--- Data for Name: goadmin_menu; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: goadmin_menu; Type: TABLE DATA; Schema: public; Owner: <PG_DB_USER>
 --
 
 INSERT INTO public.goadmin_menu VALUES (11, 0, 0, 1, 'Welcome', '', '', 'fa-cubes', '', NULL, '2023-04-19 05:27:20.83973', '2023-04-23 00:19:06');
@@ -312,7 +312,7 @@ INSERT INTO public.goadmin_menu VALUES (9, 1, 0, 8, 'operation log', '', '', 'fa
 
 
 --
--- Data for Name: goadmin_permissions; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: goadmin_permissions; Type: TABLE DATA; Schema: public; Owner: <PG_DB_USER>
 --
 
 INSERT INTO public.goadmin_permissions VALUES (1, 'All permission', '*', '', '*', '2019-09-10 00:00:00', '2019-09-10 00:00:00');
@@ -327,7 +327,7 @@ INSERT INTO public.goadmin_permissions VALUES (9, 'users Export', 'users_export'
 
 
 --
--- Data for Name: goadmin_role_menu; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: goadmin_role_menu; Type: TABLE DATA; Schema: public; Owner: <PG_DB_USER>
 --
 
 INSERT INTO public.goadmin_role_menu VALUES (1, 1, '2019-09-10 00:00:00', '2019-09-10 00:00:00');
@@ -338,7 +338,7 @@ INSERT INTO public.goadmin_role_menu VALUES (2, 11, '2023-04-23 00:19:06.49426',
 
 
 --
--- Data for Name: goadmin_role_permissions; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: goadmin_role_permissions; Type: TABLE DATA; Schema: public; Owner: <PG_DB_USER>
 --
 
 INSERT INTO public.goadmin_role_permissions VALUES (1, 1, '2019-09-10 00:00:00', '2019-09-10 00:00:00');
@@ -347,14 +347,14 @@ INSERT INTO public.goadmin_role_permissions VALUES (2, 2, '2019-09-10 00:00:00',
 
 
 --
--- Data for Name: goadmin_role_users; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: goadmin_role_users; Type: TABLE DATA; Schema: public; Owner: <PG_DB_USER>
 --
 
 INSERT INTO public.goadmin_role_users VALUES (1, 1, '2023-04-17 03:01:13.273042', '2023-04-17 03:01:13.273042');
 
 
 --
--- Data for Name: goadmin_roles; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: goadmin_roles; Type: TABLE DATA; Schema: public; Owner: <PG_DB_USER>
 --
 
 INSERT INTO public.goadmin_roles VALUES (1, 'Administrator', 'administrator', '2019-09-10 00:00:00', '2019-09-10 00:00:00');
@@ -362,70 +362,70 @@ INSERT INTO public.goadmin_roles VALUES (2, 'Operator', 'operator', '2019-09-10 
 
 
 --
--- Data for Name: goadmin_user_permissions; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: goadmin_user_permissions; Type: TABLE DATA; Schema: public; Owner: <PG_DB_USER>
 --
 
 INSERT INTO public.goadmin_user_permissions VALUES (1, 1, '2023-04-17 03:01:13.283665', '2023-04-17 03:01:13.283665');
 
 
 --
--- Data for Name: goadmin_users; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: goadmin_users; Type: TABLE DATA; Schema: public; Owner: <PG_DB_USER>
 --
 
 INSERT INTO public.goadmin_users VALUES (1, 'admin', '$2a$10$OxWYJJGTP2gi00l2x06QuOWqw5VR47MQCJ0vNKnbMYfrutij10Hwe', 'admin', '', NULL, '2019-09-10 00:00:00', '2023-04-16 20:01:13');
 
 
 --
--- Name: goadmin_menu_myid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+-- Name: goadmin_menu_myid_seq; Type: SEQUENCE SET; Schema: public; Owner: <PG_DB_USER>
 --
 
 SELECT pg_catalog.setval('public.goadmin_menu_myid_seq', 11, true);
 
 
 --
--- Name: goadmin_operation_log_myid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+-- Name: goadmin_operation_log_myid_seq; Type: SEQUENCE SET; Schema: public; Owner: <PG_DB_USER>
 --
 
 SELECT pg_catalog.setval('public.goadmin_operation_log_myid_seq', 1, true);
 
 
 --
--- Name: goadmin_permissions_myid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+-- Name: goadmin_permissions_myid_seq; Type: SEQUENCE SET; Schema: public; Owner: <PG_DB_USER>
 --
 
 SELECT pg_catalog.setval('public.goadmin_permissions_myid_seq', 9, true);
 
 
 --
--- Name: goadmin_roles_myid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+-- Name: goadmin_roles_myid_seq; Type: SEQUENCE SET; Schema: public; Owner: <PG_DB_USER>
 --
 
 SELECT pg_catalog.setval('public.goadmin_roles_myid_seq', 2, true);
 
 
 --
--- Name: goadmin_session_myid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+-- Name: goadmin_session_myid_seq; Type: SEQUENCE SET; Schema: public; Owner: <PG_DB_USER>
 --
 
 SELECT pg_catalog.setval('public.goadmin_session_myid_seq', 1, true);
 
 
 --
--- Name: goadmin_site_myid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+-- Name: goadmin_site_myid_seq; Type: SEQUENCE SET; Schema: public; Owner: <PG_DB_USER>
 --
 
 SELECT pg_catalog.setval('public.goadmin_site_myid_seq', 1, true);
 
 
 --
--- Name: goadmin_users_myid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+-- Name: goadmin_users_myid_seq; Type: SEQUENCE SET; Schema: public; Owner: <PG_DB_USER>
 --
 
 SELECT pg_catalog.setval('public.goadmin_users_myid_seq', 2, true);
 
 
 --
--- Name: goadmin_menu goadmin_menu_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: goadmin_menu goadmin_menu_pkey; Type: CONSTRAINT; Schema: public; Owner: <PG_DB_USER>
 --
 
 ALTER TABLE ONLY public.goadmin_menu
@@ -433,7 +433,7 @@ ALTER TABLE ONLY public.goadmin_menu
 
 
 --
--- Name: goadmin_operation_log goadmin_operation_log_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: goadmin_operation_log goadmin_operation_log_pkey; Type: CONSTRAINT; Schema: public; Owner: <PG_DB_USER>
 --
 
 ALTER TABLE ONLY public.goadmin_operation_log
@@ -441,7 +441,7 @@ ALTER TABLE ONLY public.goadmin_operation_log
 
 
 --
--- Name: goadmin_permissions goadmin_permissions_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: goadmin_permissions goadmin_permissions_pkey; Type: CONSTRAINT; Schema: public; Owner: <PG_DB_USER>
 --
 
 ALTER TABLE ONLY public.goadmin_permissions
@@ -449,7 +449,7 @@ ALTER TABLE ONLY public.goadmin_permissions
 
 
 --
--- Name: goadmin_roles goadmin_roles_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: goadmin_roles goadmin_roles_pkey; Type: CONSTRAINT; Schema: public; Owner: <PG_DB_USER>
 --
 
 ALTER TABLE ONLY public.goadmin_roles
@@ -457,7 +457,7 @@ ALTER TABLE ONLY public.goadmin_roles
 
 
 --
--- Name: goadmin_session goadmin_session_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: goadmin_session goadmin_session_pkey; Type: CONSTRAINT; Schema: public; Owner: <PG_DB_USER>
 --
 
 ALTER TABLE ONLY public.goadmin_session
@@ -465,7 +465,7 @@ ALTER TABLE ONLY public.goadmin_session
 
 
 --
--- Name: goadmin_site goadmin_site_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: goadmin_site goadmin_site_pkey; Type: CONSTRAINT; Schema: public; Owner: <PG_DB_USER>
 --
 
 ALTER TABLE ONLY public.goadmin_site
@@ -473,7 +473,7 @@ ALTER TABLE ONLY public.goadmin_site
 
 
 --
--- Name: goadmin_users goadmin_users_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: goadmin_users goadmin_users_pkey; Type: CONSTRAINT; Schema: public; Owner: <PG_DB_USER>
 --
 
 ALTER TABLE ONLY public.goadmin_users
@@ -485,7 +485,7 @@ ALTER TABLE ONLY public.goadmin_users
 --
 
 REVOKE USAGE ON SCHEMA public FROM PUBLIC;
-GRANT ALL ON SCHEMA public TO postgres;
+GRANT ALL ON SCHEMA public TO <PG_DB_USER>;
 GRANT ALL ON SCHEMA public TO PUBLIC;
 
 

@@ -89,6 +89,8 @@ services:
         build:
             context: .
             dockerfile: ./server/postgres/Dockerfile
+            args:
+                PG_DB_USER: ${PG_DB_USER}
         environment:
             POSTGRES_USER: ${PG_DB_USER}
             POSTGRES_PASSWORD: ${PG_DB_PASSWORD}

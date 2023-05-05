@@ -17,13 +17,13 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
--- Name: gbajs3; Type: DATABASE; Schema: -; Owner: postgres
+-- Name: gbajs3; Type: DATABASE; Schema: -; Owner: <PG_DB_USER>
 --
 
 CREATE DATABASE gbajs3 WITH TEMPLATE = template0 ENCODING = 'UTF8' LOCALE_PROVIDER = libc LOCALE = 'en_US.utf8';
 
 
-ALTER DATABASE gbajs3 OWNER TO postgres;
+ALTER DATABASE gbajs3 OWNER TO <PG_DB_USER>;
 
 \connect gbajs3
 
