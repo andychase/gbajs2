@@ -101,7 +101,7 @@ function loadRomFromServer(query_select_rom) {
 		return;
 	}
 	var xhr = new XMLHttpRequest();
-	xhr.open('GET', serverloc + '/api/rom/download?rom=' + query_select_rom);
+	xhr.open('GET', serverloc + '/api/rom/download?rom=' + encodeURIComponent(query_select_rom));
 	xhr.setRequestHeader('Authorization', 'Bearer ' + accesstoken);
 	xhr.responseType = 'blob';
 
@@ -128,7 +128,7 @@ function loadSaveFromServer(query_select_save) {
 		return;
 	}
 	var xhr = new XMLHttpRequest();
-	xhr.open('GET', serverloc + '/api/save/download?save=' + query_select_save);
+	xhr.open('GET', serverloc + '/api/save/download?save=' + encodeURIComponent(query_select_save));
 	xhr.setRequestHeader('Authorization', 'Bearer ' + accesstoken);
 	xhr.responseType = 'blob';
 
