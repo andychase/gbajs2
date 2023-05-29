@@ -2,12 +2,13 @@ package main
 
 import (
 	"fmt"
-	"github.com/satori/go.uuid"
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
 	"os"
 	"strings"
 	"time"
+
+	uuid "github.com/satori/go.uuid"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
 // fetches postgres dsn from environment
@@ -28,12 +29,12 @@ func pgDSN() string {
 
 // creates a new gbajs database, sets connection defaults, and pings to establish connection
 func newGbaJsDatabase(gconf *gorm.Config) (*gorm.DB, error) {
-	userdb, err := gorm.Open(postgres.Open(pgDSN()), gconf)
+	db, err := gorm.Open(postgres.Open(pgDSN()), gconf)
 	if err != nil {
 		return nil, err
 	}
 
-	sqlDB, err := userdb.DB()
+	sqlDB, err := db.DB()
 	if err != nil {
 		return nil, err
 	}
@@ -53,7 +54,12 @@ func newGbaJsDatabase(gconf *gorm.Config) (*gorm.DB, error) {
 		return nil, err
 	}
 
-	return userdb, nil
+	err = db.AutoMigrate(&User{})
+	if err != nil {
+		return nil, fmt.Errorf("Error automigrate has failed: %w", err)
+	}
+
+	return db, nil
 }
 
 // user db functions
@@ -71,9 +77,11 @@ func fetchUserByUsername(username string) (*User, error) {
 
 // updates a users token fields
 func updateUserTokenFields(user *User, tokenId uuid.UUID, tokenSlug uuid.UUID) error {
-	err := userdb.Model(&user).Updates(map[string]interface{}{"token_id": tokenId, "token_slug": tokenSlug}).Error
-	if err != nil {
+	result := userdb.Model(&user).Updates(map[string]interface{}{"token_id": tokenId, "token_slug": tokenSlug})
+	if err := result.Error; err != nil {
 		return err
+	} else if result.RowsAffected == 0 {
+		return fmt.Errorf("User does not exist")
 	}
 
 	return nil
@@ -82,14 +90,13 @@ func updateUserTokenFields(user *User, tokenId uuid.UUID, tokenSlug uuid.UUID) e
 // fetches a users token slug by token id
 func fetchTokenSlugByTokenId(tokenId string) ([]byte, error) {
 	var user User
-	err := userdb.Table("users").Select("token_slug").Where("token_id = ?", tokenId).Scan(&user).Error
+	err := userdb.Table("users").Select("token_slug").Where("token_id = ?", tokenId).First(&user).Error
 
 	if err != nil {
 		return nil, fmt.Errorf("unable to fetch user: %w", err)
 	}
 
 	if user.TokenSlug == uuid.Nil {
-		fmt.Println("unable to fetch user")
 		return nil, fmt.Errorf("unable to fetch user: uuid is nil")
 	}
 

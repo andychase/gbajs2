@@ -3,13 +3,14 @@ package main
 import (
 	"context"
 	"encoding/json"
-	"fmt"
-	"github.com/dgrijalva/jwt-go"
-	"github.com/satori/go.uuid"
-	"golang.org/x/crypto/bcrypt"
+	"log"
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/golang-jwt/jwt/v5"
+	uuid "github.com/satori/go.uuid"
+	"golang.org/x/crypto/bcrypt"
 )
 
 // jwt authorization middleware
@@ -48,7 +49,7 @@ func tokenRefresh(w http.ResponseWriter, r *http.Request) {
 	var t string
 	refreshtok, err := r.Cookie("refresh-tok") // get the refresh token cookie
 	if err != nil {
-		fmt.Println("Cant find cookie")
+		log.Println("Cant find cookie")
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
@@ -62,7 +63,7 @@ func tokenRefresh(w http.ResponseWriter, r *http.Request) {
 		claims["store"] = refresh_claims["store"].(string)
 		claims["exp"] = time.Now().Add(time.Minute * 5).Unix()
 
-		t, err = accesstoken.SignedString([]byte(AccessSignKey))
+		t, err = accesstoken.SignedString([]byte(accessSignKey))
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
@@ -146,7 +147,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 	rtClaims := refreshToken.Claims.(jwt.MapClaims)
 	// set claims
 	rtClaims["sub"] = new_tokenid.String()
-	rtClaims["store"] = user.StorageDir
+	rtClaims["store"] = user.StorageDir.String()
 	rtClaims["exp"] = time.Now().Add(time.Hour * 7).Unix()
 	// generate encoded token and send it as response.
 	// the signing string should be secret (a generated UUID works too) -> using slug unique to user
@@ -160,9 +161,9 @@ func login(w http.ResponseWriter, r *http.Request) {
 	accesstoken := jwt.New(jwt.SigningMethodHS256)
 	// set claims
 	claims := accesstoken.Claims.(jwt.MapClaims)
-	claims["store"] = user.StorageDir
+	claims["store"] = user.StorageDir.String()
 	claims["exp"] = time.Now().Add(time.Minute * 5).Unix()
-	t, err := accesstoken.SignedString([]byte(AccessSignKey))
+	t, err := accesstoken.SignedString([]byte(accessSignKey))
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -176,7 +177,8 @@ func login(w http.ResponseWriter, r *http.Request) {
 		MaxAge:   25200,
 		HttpOnly: true,
 		SameSite: http.SameSiteNoneMode,
-		Secure:   true}
+		Secure:   true,
+	}
 
 	http.SetCookie(w, &cookie)
 	json.NewEncoder(w).Encode(t) // send access token in response, must be last here
@@ -200,6 +202,7 @@ func logout(w http.ResponseWriter, r *http.Request) {
 		MaxAge:   -1,
 		HttpOnly: true,
 		SameSite: http.SameSiteNoneMode,
-		Secure:   true} // change this to true later for ssl only (PWA)
+		Secure:   true,
+	}
 	http.SetCookie(w, &cookie)
 }

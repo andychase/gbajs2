@@ -2,10 +2,8 @@ package main
 
 import (
 	"github.com/satori/go.uuid"
+	"net/http"
 )
-
-// type for route list
-type Routes []Route
 
 // @Description User Credentials
 type UserCredentials struct {
@@ -21,3 +19,13 @@ type User struct {
 	TokenID    uuid.UUID `gorm:"type:uuid;index"`
 	StorageDir uuid.UUID `gorm:"type:uuid;unique;not null;default:uuid_generate_v4()"`
 }
+
+// Route structure of a single route
+type Route struct {
+	method  string
+	pattern string
+	handler http.HandlerFunc
+}
+
+// Convenience type for route list
+type Routes []Route

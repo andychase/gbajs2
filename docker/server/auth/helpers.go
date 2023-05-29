@@ -4,9 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/dgrijalva/jwt-go"
+	"github.com/golang-jwt/jwt/v5"
+	"github.com/spf13/afero"
 	"io"
-	"mime/multipart"
 	"os"
 )
 
@@ -32,21 +32,24 @@ func getStorePathFromClaims(ctx context.Context) (string, error) {
 // file handling helpers
 // takes in a directory path, creates if not exists
 func createDirectoryIfNotExists(dirPath string) error {
-	if _, err := os.Stat(dirPath); errors.Is(err, os.ErrNotExist) {
-		err := os.Mkdir(dirPath, os.ModePerm)
+	if _, err := appFs.Stat(dirPath); errors.Is(err, os.ErrNotExist) {
+		err := appFs.Mkdir(dirPath, os.ModePerm)
 		if err != nil {
 			return err
 		}
+	} else if err != nil {
+		return err
 	}
 
 	return nil
 }
 
-// takes in a file path, and creates if not exists or overwrites
-func createOrOverwriteFileIfNotExists(filePath string, file multipart.File) error {
-	if _, err := os.Stat(filePath); err == nil {
+// takes in a file path, and an io.Reader (in this case a multipart.File),
+// and creates if not exists or overwrites
+func createOrOverwriteFileIfNotExists(filePath string, file io.Reader) error {
+	if _, err := appFs.Stat(filePath); err == nil {
 		// path/to/whatever exists
-		f, err := os.OpenFile(filePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
+		f, err := appFs.OpenFile(filePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
 		if err != nil {
 			return err
 		}
@@ -54,7 +57,7 @@ func createOrOverwriteFileIfNotExists(filePath string, file multipart.File) erro
 		io.Copy(f, file)
 	} else if errors.Is(err, os.ErrNotExist) {
 		// path/to/whatever does *not* exist
-		f, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE, 0666)
+		f, err := appFs.OpenFile(filePath, os.O_WRONLY|os.O_CREATE, 0666)
 		if err != nil {
 			return err
 		}
@@ -70,7 +73,7 @@ func createOrOverwriteFileIfNotExists(filePath string, file multipart.File) erro
 
 // returns names of all files in a directory as an array of strings
 func fileNamesFromDirPath(dirPath string) ([]string, error) {
-	files, err := os.ReadDir(dirPath)
+	files, err := afero.ReadDir(appFs, dirPath)
 	if err != nil {
 		return nil, err
 	}
@@ -85,7 +88,7 @@ func fileNamesFromDirPath(dirPath string) ([]string, error) {
 
 // reads file data from disk
 func readFileData(filePath string) ([]byte, error) {
-	data, err := os.ReadFile(filePath)
+	data, err := afero.ReadFile(appFs, filePath)
 
 	if err != nil {
 		err = fmt.Errorf("error reading file data: %w", err)

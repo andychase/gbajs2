@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"path/filepath"
 	"time"
@@ -50,7 +51,7 @@ func downloadSave(w http.ResponseWriter, r *http.Request) {
 
 	data, err := readFileData(savePath + storePath + fname)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 	w.Header().Add("Content-Type", "application/x-spss-sav")
@@ -84,7 +85,7 @@ func downloadRom(w http.ResponseWriter, r *http.Request) {
 
 	data, err := readFileData(romPath + storePath + fname)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 	w.Header().Add("Content-Type", "application/x-gba-rom")
@@ -107,7 +108,7 @@ func uploadRom(w http.ResponseWriter, r *http.Request) {
 
 	file, handler, err := r.FormFile("rom")
 	if err != nil {
-		fmt.Println("Error Retrieving the formFile")
+		log.Println("Error Retrieving the formFile")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -150,7 +151,7 @@ func uploadSave(w http.ResponseWriter, r *http.Request) {
 
 	file, handler, err := r.FormFile("save")
 	if err != nil {
-		fmt.Println("Error Retrieving the formFile")
+		log.Println("Error Retrieving the formFile")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}

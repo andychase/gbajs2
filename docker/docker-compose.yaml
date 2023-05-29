@@ -74,8 +74,8 @@ services:
             - PG_DB_PORT=${PG_DB_PORT}
             - PG_SSL_MODE=${PG_SSL_MODE}
         volumes:
-            - ${ROM_PATH}:/app/local_roms
-            - ${SAVE_PATH}:/app/local_saves
+            - ${ROM_PATH}:/app/data/local_roms
+            - ${SAVE_PATH}:/app/data/local_saves
             - ${CERT_LOC}:/app/certs/fullchain.pem
             - ${KEY_LOC}:/app/certs/privkey.pem
 

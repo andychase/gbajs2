@@ -1,15 +1,10 @@
 package main
 
 import (
+	gz "github.com/NYTimes/gziphandler"
+	"github.com/gorilla/mux"
 	"net/http"
 )
-
-// Route structure of a single route
-type Route struct {
-	method  string
-	pattern string
-	handler http.HandlerFunc
-}
 
 var no_auth_routes = map[string]bool{
 	"/api/account/login":  true,
@@ -72,4 +67,18 @@ var ROUTES = Routes{
 		pattern: "/api/save/list",
 		handler: listAllSaves,
 	},
+}
+
+func addRoutes(router *mux.Router, routes Routes) {
+	for _, route := range routes {
+		if !no_auth_routes[route.pattern] { // path requires authorization
+			// add authorization middleware
+			route.handler = authorize(route.handler).(http.HandlerFunc)
+		}
+
+		// default gzip middleware if accepted
+		route.handler = gz.GzipHandler(route.handler).(http.HandlerFunc)
+
+		router.Handle(route.pattern, route.handler).Methods(route.method)
+	}
 }
