@@ -1,7 +1,6 @@
 //globals
 var statepause = 'play';
 var stateff = false;
-var isKeyDown = false;
 var isMobile = false;
 var actioncontrolorient = false; //false-> horizontal, true-> vertical
 var virtualControlsEnabled = false;
@@ -75,10 +74,10 @@ var menu_btn = document.querySelector('#menu-btn');
 var sidebar = document.querySelector('#sidebar');
 var container = document.querySelector('.nav-container');
 
-var dpad_right = document.querySelector('#dpadholder > nav > a.right');
-var dpad_up = document.querySelector('#dpadholder > nav > a.up');
-var dpad_left = document.querySelector('#dpadholder > nav > a.left');
-var dpad_down = document.querySelector('#dpadholder > nav > a.down');
+var dpad_right = document.querySelector('#dpadholder > nav > div.right');
+var dpad_up = document.querySelector('#dpadholder > nav > div.up');
+var dpad_left = document.querySelector('#dpadholder > nav > div.left');
+var dpad_down = document.querySelector('#dpadholder > nav > div.down');
 var dpad_a_button = document.querySelector('#dpadabutton');
 var dpad_b_button = document.querySelector('#dpadbbutton');
 var dpad_l_button = document.querySelector('#dpadlbutton');
@@ -580,36 +579,56 @@ const fullScreen = () => {
 
 //set dpad/button event listeners
 function setDpadEvents(elems) {
+	var isKeyDown = {};
+	var pointerCount = 0;
+
 	elems.forEach(function (elem, index) {
 		var keyId = $(elem).attr('data-keyid').toLowerCase();
 
 		elem.addEventListener('pointerdown', (e) => {
-			isKeyDown = true;
+			pointerCount += 1;
+			isKeyDown[keyId] = true;
 			emulator.SimulateKeyDown(keyId);
 			elem.releasePointerCapture(e.pointerId); // <- Important!
 		});
 
 		elem.addEventListener('pointerup', (e) => {
-			isKeyDown = false;
+			if (pointerCount > 0) {
+				pointerCount -= 1;
+			}
+			isKeyDown[keyId] = false;
 			emulator.SimulateKeyUp(keyId);
 		});
 
 		elem.addEventListener('pointerenter', (e) => {
-			if (isKeyDown) {
+			if (pointerCount > 0) {
+				isKeyDown[keyId] = true;
 				emulator.SimulateKeyDown(keyId);
 				elem.releasePointerCapture(e.pointerId); // <- Important!
 			}
 		});
 
 		elem.addEventListener('pointerleave', (e) => {
-			if (isKeyDown) {
+			if (isKeyDown[keyId]) {
+				isKeyDown[keyId] = false;
+				emulator.SimulateKeyUp(keyId);
+				elem.releasePointerCapture(e.pointerId); // <- Important!
+			}
+		});
+
+		elem.addEventListener('pointerout', (e) => {
+			if (isKeyDown[keyId]) {
+				isKeyDown[keyId] = false;
 				emulator.SimulateKeyUp(keyId);
 				elem.releasePointerCapture(e.pointerId); // <- Important!
 			}
 		});
 
 		elem.addEventListener('pointercancel', (e) => {
-			isKeyDown = false;
+			if (pointerCount > 0) {
+				pointerCount -= 1;
+			}
+			isKeyDown[keyId] = false;
 			emulator.SimulateKeyUp(keyId);
 			elem.releasePointerCapture(e.pointerId);
 		});

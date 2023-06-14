@@ -1,4 +1,4 @@
-var VERSION = 'v2';
+var VERSION = 'v2.12';
 var CACHE_NAME = 'gbajs3-' + VERSION;
 
 const pre_cache_urls = [

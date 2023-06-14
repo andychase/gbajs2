@@ -1282,17 +1282,25 @@
 		></div>
 		<!-- end sidebar -->
 
-		<div class="set dark" id="dpadholder" style="display: none">
+		<div
+			class="set dark noSelectDragOrTouch"
+			id="dpadholder"
+			style="display: none"
+		>
 			<nav class="o-pad">
-				<a class="up" href="#" data-keyid="UP"></a>
-				<a class="right" href="#" data-keyid="RIGHT"></a>
-				<a class="down" href="#" data-keyid="DOWN"></a>
-				<a class="left" href="#" data-keyid="LEFT"></a>
+				<div class="up" data-keyid="UP"></div>
+				<div class="right" data-keyid="RIGHT"></div>
+				<div class="down" data-keyid="DOWN"></div>
+				<div class="left" data-keyid="LEFT"></div>
 			</nav>
 			<div id="dpadhandle"></div>
 		</div>
 
-		<div id="dpadabbuttonholder" style="display: none">
+		<div
+			class="noSelectDragOrTouch"
+			id="dpadabbuttonholder"
+			style="display: none"
+		>
 			<div id="dpadabutton" data-keyid="A"><p class="h3">A</p></div>
 			<div id="dpadbbutton" data-keyid="B"><p class="h3">B</p></div>
 			<div id="abbuttonhandle"></div>
@@ -1302,26 +1310,42 @@
 			></div>
 		</div>
 
-		<div id="dpadstartselectbuttonholder" style="display: none">
+		<div
+			class="noSelectDragOrTouch"
+			id="dpadstartselectbuttonholder"
+			style="display: none"
+		>
 			<div id="dpadstartbutton" data-keyid="START">Start</div>
 			<div id="dpadselectbutton" data-keyid="SELECT">Select</div>
 			<div id="startselectbuttonhandle"></div>
 		</div>
 
-		<div id="dpadlrbuttonholder" style="display: none">
+		<div
+			class="noSelectDragOrTouch"
+			id="dpadlrbuttonholder"
+			style="display: none"
+		>
 			<div id="dpadlbutton" data-keyid="L">L</div>
 			<div id="dpadrbutton" data-keyid="R">R</div>
 			<div id="lrbuttonhandle"></div>
 		</div>
 
-		<div id="quickreloadvc" style="display: none">
+		<div
+			class="noSelectDragOrTouch"
+			id="quickreloadvc"
+			style="display: none"
+		>
 			<div id="quickreloadvcbutton" onclick="quickReload()">
 				<i class="fa fa-refresh fa-flip-horizontal"></i>
 			</div>
 			<div id="quickreloadvcbuttonhandle"></div>
 		</div>
 
-		<div id="sendsavetoservervc" style="display: none">
+		<div
+			class="noSelectDragOrTouch"
+			id="sendsavetoservervc"
+			style="display: none"
+		>
 			<div
 				id="sendsavetoservervcbutton"
 				onclick="sendCurrentSaveToServer()"
@@ -1331,14 +1355,14 @@
 			<div id="sendsavetoservervcbuttonhandle"></div>
 		</div>
 
-		<div id="savestatevc" style="display: none">
+		<div class="noSelectDragOrTouch" id="savestatevc" style="display: none">
 			<div id="savestatevcbutton" onclick="createCurrentSaveState()">
 				<i class="fa fa-save fa-flip-horizontal"></i>
 			</div>
 			<div id="savestatevcbuttonhandle"></div>
 		</div>
 
-		<div id="loadstatevc" style="display: none">
+		<div class="noSelectDragOrTouch" id="loadstatevc" style="display: none">
 			<div id="loadstatevcbutton" onclick="loadCurrentSaveState()">
 				<i class="fa fa-bookmark fa-flip-horizontal"></i>
 			</div>
