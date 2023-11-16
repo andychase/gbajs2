@@ -1,0 +1,45 @@
+#root {
+  text-align: center;
+  height: 100dvh;
+  width: 100dvw;
+}
+
+.ReactModalPortal {
+  position: absolute;
+  height: 1px;
+  width: 1px;
+}
+
+.ReactModal__Body--open,
+.ReactModal__Html--open {
+  overflow: hidden;
+}
+
+.ReactModal__Content {
+  opacity: 0;
+  transform: translateY(-100px);
+  transition: all 400ms ease-in-out;
+}
+
+.ReactModal__Content--after-open {
+  opacity: 1;
+  transform: translateY(0px);
+}
+
+.ReactModal__Content--before-close {
+  opacity: 0;
+  transform: translateY(-100px);
+}
+
+.ReactModal__Overlay {
+  opacity: 0;
+  transition: all 400ms ease-in-out;
+}
+
+.ReactModal__Overlay--after-open {
+  opacity: 1;
+}
+
+.ReactModal__Overlay--before-close {
+  opacity: 0;
+}

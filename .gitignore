@@ -13,3 +13,4 @@
 /**/config*.json
 /**/pg_data/**
 /**/test_data/**
+/**/stats*

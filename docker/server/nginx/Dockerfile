@@ -1,25 +1,28 @@
-# first stage - minifier
-FROM ubuntu:latest as minifier
-RUN apt-get update && apt-get install minify
-COPY ./gbajs3 /var/www/
+# first stage - builder
+FROM node:21.1.0-alpine3.18 as builder
+WORKDIR /app
+COPY ./gbajs3 /app
 
-# replace env vars (javascript)
 ARG CLIENT_HOST
-RUN sed -i "s;<CLIENT_HOST>;${CLIENT_HOST};" /var/www/resources/gba-api.js && \
-	sed -i "s;<CLIENT_HOST>;${CLIENT_HOST};" /var/www/robots.txt && \
-	sed -i "s;<CLIENT_HOST>;${CLIENT_HOST};" /var/www/sitemap.xml
+ENV VITE_GBA_SERVER_LOCATION=${CLIENT_HOST}
 
-# minify all js/css files except emscripten generated mgba.js
-RUN cd /var/www/ && find . | egrep '(.*\.js|.*\.css)' | egrep -v 'mgba.js' | xargs -n 1 -I {} minify -o {} {}
+RUN npm install
+RUN npm run build
 
 # second stage, server
 FROM nginx:stable-alpine
-COPY ./docker/server/nginx/nginx.conf /etc/nginx/conf.d/default.conf
+COPY ./docker/server/nginx/nginx.conf.template /etc/nginx/templates/nginx.conf.template
 
-# replace env vars (nginx conf)
+# copy build
+COPY --from=builder /app/dist /var/www/
+
+# legacy v1 archived
 ARG CLIENT_HOST
-RUN sed -i "s;<CLIENT_HOST>;${CLIENT_HOST};" /etc/nginx/conf.d/default.conf
-COPY --from=minifier /var/www /var/www
+COPY ./legacy/v1.zip /var/www/
+RUN cd /var/www/ && \
+	unzip ./v1.zip && \
+	rm ./v1.zip && \
+	find ./v1/ -type f -exec sed -i "s;<CLIENT_HOST>;${CLIENT_HOST};" {} +
 
 # install fail2ban, fail2ban config
 RUN apk add rsyslog fail2ban

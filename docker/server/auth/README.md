@@ -48,7 +48,7 @@ For full testing and coverage use the following command (requires docker for dat
 go test --v --cover --useosfs --race ./...
 ```
 
-To test using a memory mapped file system use:
+To test using a memory mapped file system use (requires docker for database integration tests):
 
 ```
 go test --v --cover --race ./...

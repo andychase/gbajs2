@@ -18,6 +18,8 @@ services:
         depends_on:
             - gba-auth-server
             - gba-admin-server
+        environment:
+            - CLIENT_HOST=${CLIENT_HOST}
         cap_add:
             - NET_ADMIN
             - NET_RAW
