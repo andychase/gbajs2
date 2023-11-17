@@ -9,6 +9,8 @@ This project was driven specifically by my need to play modern GBA rom hacks out
 
 Use it online! <https://gba.nicholas-vancise.dev>
 
+Note: legacy features are still available in the [v1 link](https://gba.nicholas-vancise.dev/v1/), you may need to clear your cookies to use v1.
+
 Do not attempt to log into the server unless you are the server owner or an approved user, your IP may be banned.
 
 ## New Feature List
