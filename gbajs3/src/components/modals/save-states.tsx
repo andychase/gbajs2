@@ -10,6 +10,7 @@ import { ModalFooter } from './modal-footer.tsx';
 import { ModalHeader } from './modal-header.tsx';
 import { EmulatorContext } from '../../context/emulator/emulator.tsx';
 import { ModalContext } from '../../context/modal/modal.tsx';
+import { saveStateSlotLocalStorageKey } from '../controls/consts.tsx';
 import {
   EmbeddedProductTour,
   type TourSteps
@@ -101,7 +102,7 @@ export const SaveStatesModal = () => {
   >();
   const [saveStateError, setSaveStateError] = useState<string | null>(null);
   const [currentSlot, setCurrentSlot] = useLocalStorage(
-    'currentSaveStateSlot',
+    saveStateSlotLocalStorageKey,
     0
   );
   const saveStatesFormId = useId();

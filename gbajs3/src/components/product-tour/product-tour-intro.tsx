@@ -2,6 +2,8 @@ import Joyride, { STATUS, type Step } from 'react-joyride';
 import { styled } from 'styled-components';
 import { useLocalStorage } from 'usehooks-ts';
 
+import { productTourLocalStorageKey } from './consts.tsx';
+
 export type CompletedProductTourSteps = {
   hasCompletedProductTourIntro?: string | boolean;
   [key: string]: string | boolean | undefined;
@@ -85,7 +87,7 @@ const steps: Step[] = [
 
 export const ProductTourIntro = () => {
   const [hasCompletedProductTourSteps, setHasCompletedProductTourSteps] =
-    useLocalStorage<CompletedProductTourSteps>('completedProductTour', {
+    useLocalStorage<CompletedProductTourSteps>(productTourLocalStorageKey, {
       hasCompletedProductTourIntro: false
     });
 

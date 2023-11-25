@@ -23,6 +23,7 @@ import { Rnd } from 'react-rnd';
 import { css, styled, useTheme } from 'styled-components';
 import { useLocalStorage } from 'usehooks-ts';
 
+import { emulatorVolumeLocalStorageKey } from '../../context/emulator/consts.tsx';
 import { EmulatorContext } from '../../context/emulator/emulator.tsx';
 import {
   EmbeddedProductTour,
@@ -160,7 +161,7 @@ export const ControlPanel = ({ setExternalBounds }: ControlPanelProps) => {
   const resizePanelControlId = useId();
   const volumeSliderControlId = useId();
   const [currentEmulatorVolume, setCurrentEmulatorVolume] = useLocalStorage(
-    'currentEmulatorVolume',
+    emulatorVolumeLocalStorageKey,
     1
   );
 

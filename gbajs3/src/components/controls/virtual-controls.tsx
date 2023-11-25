@@ -10,6 +10,10 @@ import {
 import { styled, useTheme } from 'styled-components';
 import { useLocalStorage } from 'usehooks-ts';
 
+import {
+  saveStateSlotLocalStorageKey,
+  virtualControlsLocalStorageKey
+} from './consts.tsx';
 import { OPad } from './o-pad.tsx';
 import { VirtualButton } from './virtual-button.tsx';
 import { AuthContext } from '../../context/auth/auth.tsx';
@@ -54,10 +58,13 @@ export const VirtualControls = ({
   const { emulator, isEmulatorRunning } = useContext(EmulatorContext);
   const { isAuthenticated } = useContext(AuthContext);
   const { setModalContent, setIsModalOpen } = useContext(ModalContext);
-  const [currentSaveStateSlot] = useLocalStorage('currentSaveStateSlot', 0);
+  const [currentSaveStateSlot] = useLocalStorage(
+    saveStateSlotLocalStorageKey,
+    0
+  );
   const [areVirtualControlsEnabled] =
     useLocalStorage<AreVirtualControlsEnabledProps>(
-      'areVirtualControlsEnabled',
+      virtualControlsLocalStorageKey,
       {}
     );
 

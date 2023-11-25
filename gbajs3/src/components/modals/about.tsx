@@ -6,13 +6,14 @@ import { ModalBody } from './modal-body.tsx';
 import { ModalFooter } from './modal-footer.tsx';
 import { ModalHeader } from './modal-header.tsx';
 import { ModalContext } from '../../context/modal/modal.tsx';
+import { productTourLocalStorageKey } from '../product-tour/consts.tsx';
 
 import type { CompletedProductTourSteps } from '../product-tour/product-tour-intro.tsx';
 
 export const AboutModal = () => {
   const { setIsModalOpen } = useContext(ModalContext);
   const [, setHasCompletedProductTourSteps] =
-    useLocalStorage<CompletedProductTourSteps>('completedProductTour', {});
+    useLocalStorage<CompletedProductTourSteps>(productTourLocalStorageKey, {});
 
   return (
     <>

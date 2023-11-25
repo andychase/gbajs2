@@ -4,6 +4,7 @@ import { useForm, type SubmitHandler } from 'react-hook-form';
 import { styled, useTheme } from 'styled-components';
 import { useLocalStorage } from 'usehooks-ts';
 
+import { virtualControlsLocalStorageKey } from '../../controls/consts.tsx';
 import { ManagedCheckbox } from '../../shared/managed-checkbox.tsx';
 
 const StyledForm = styled.form`
@@ -34,7 +35,7 @@ export type AreVirtualControlsEnabledProps = {
 export const VirtualControlsForm = ({ id }: VirtualControlsFormProps) => {
   const [areVirtualControlsEnabled, setAreVirtualControlsEnabled] =
     useLocalStorage<AreVirtualControlsEnabledProps>(
-      'areVirtualControlsEnabled',
+      virtualControlsLocalStorageKey,
       {}
     );
   const theme = useTheme();

@@ -8,6 +8,10 @@ import {
 } from 'react';
 import { useLocalStorage } from 'usehooks-ts';
 
+import {
+  emulatorKeyBindingsLocalStorageKey,
+  emulatorVolumeLocalStorageKey
+} from './consts.tsx';
 import { fadeCanvas } from '../../components/screen/fade.tsx';
 import { useEmulator } from '../../hooks/use-emulator.tsx';
 
@@ -47,10 +51,13 @@ export const EmulatorProvider = ({ children }: EmulatorProviderProps) => {
   const [isEmulatorRunning, setIsEmulatorRunning] = useState(false);
   const [areItemsDraggable, setAreItemsDraggable] = useState(false);
   const [areItemsResizable, setAreItemsResizable] = useState(false);
-  const [currentEmulatorVolume] = useLocalStorage('currentEmulatorVolume', 1);
+  const [currentEmulatorVolume] = useLocalStorage(
+    emulatorVolumeLocalStorageKey,
+    1
+  );
   const emulator = useEmulator(canvas);
   const [currentKeyBindings] = useLocalStorage<KeyBinding[] | null>(
-    'currentEmulatorKeyBindings',
+    emulatorKeyBindingsLocalStorageKey,
     null
   );
 

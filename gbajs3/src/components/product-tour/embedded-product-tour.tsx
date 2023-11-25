@@ -2,6 +2,7 @@ import { useContext, useState } from 'react';
 import Joyride, { STATUS, type Step } from 'react-joyride';
 import { useInterval, useLocalStorage } from 'usehooks-ts';
 
+import { productTourLocalStorageKey } from './consts.tsx';
 import { ModalContext } from '../../context/modal/modal.tsx';
 
 import type { CompletedProductTourSteps } from './product-tour-intro.tsx';
@@ -39,7 +40,7 @@ export const EmbeddedProductTour = ({
   zIndex = 500 // note, value here is +100 in react joyride/floater
 }: EmbeddedProductTourProps) => {
   const [hasCompletedProductTourSteps, setHasCompletedProductTourSteps] =
-    useLocalStorage<CompletedProductTourSteps>('completedProductTour', {
+    useLocalStorage<CompletedProductTourSteps>(productTourLocalStorageKey, {
       [completedProductTourStepName]: false
     });
   const { isModalOpen } = useContext(ModalContext);
