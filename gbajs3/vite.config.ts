@@ -1,7 +1,6 @@
 import { defineConfig, splitVendorChunkPlugin } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
-import { viteStaticCopy } from 'vite-plugin-static-copy';
 import { visualizer } from 'rollup-plugin-visualizer';
 
 export default defineConfig({
@@ -63,14 +62,6 @@ export default defineConfig({
           }
         ]
       }
-    }),
-    viteStaticCopy({
-      targets: [
-        {
-          src: 'src/emulator/mgba/wasm/mgba.wasm',
-          dest: 'assets'
-        }
-      ]
     }),
     splitVendorChunkPlugin(),
     visualizer({ gzipSize: true })
