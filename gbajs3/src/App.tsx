@@ -6,6 +6,7 @@ import { UserControls } from './components/controls/user-controls.tsx';
 import { ModalContainer } from './components/modals/modal-container.tsx';
 import { NavigationMenu } from './components/navigation-menu/navigation-menu.tsx';
 import { ProductTourIntro } from './components/product-tour/product-tour-intro.tsx';
+import { PwaPrompt } from './components/pwa-prompt/pwa-prompt.tsx';
 import { Screen } from './components/screen/screen.tsx';
 import { AuthProvider } from './context/auth/auth.tsx';
 import { EmulatorProvider } from './context/emulator/emulator.tsx';
@@ -17,6 +18,7 @@ export const App = () => {
     <ThemeProvider theme={GbaDarkTheme}>
       <ProductTourIntro />
       <Toaster />
+      <PwaPrompt />
       <AuthProvider>
         <EmulatorProvider>
           <ModalProvider>
