@@ -1,5 +1,5 @@
 import { Button, Tabs, Tab } from '@mui/material';
-import { useContext, useEffect, useState, type ReactNode, useId } from 'react';
+import { useContext, useId, useState, type ReactNode } from 'react';
 import { styled } from 'styled-components';
 
 import { KeyBindingsForm } from './controls/key-bindings-form.tsx';
@@ -63,15 +63,8 @@ const ControlTabs = ({
 
   const handleChange = (_: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
+    setFormId(newValue === 0 ? virtualControlsFormId : keyBindingsFormId);
   };
-
-  useEffect(() => {
-    if (value === 0) {
-      setFormId(virtualControlsFormId);
-    } else if (value === 1) {
-      setFormId(keyBindingsFormId);
-    }
-  }, [value, setFormId, keyBindingsFormId, virtualControlsFormId]);
 
   return (
     <>
