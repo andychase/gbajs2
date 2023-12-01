@@ -91,7 +91,7 @@ export const ControlsModal = () => {
   const virtualControlsFormId = useId();
   const keyBindingsFormId = useId();
   const saveChangesButtonId = useId();
-  const [formId, setFormId] = useState<string | null>(null);
+  const [formId, setFormId] = useState<string | null>(virtualControlsFormId);
 
   const tourSteps: TourSteps = [
     {
