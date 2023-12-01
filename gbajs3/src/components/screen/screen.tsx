@@ -1,5 +1,5 @@
 import { useMediaQuery } from '@mui/material';
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useCallback, useContext, useState } from 'react';
 import { Rnd } from 'react-rnd';
 import { styled, useTheme } from 'styled-components';
 
@@ -41,32 +41,32 @@ export const Screen = () => {
   const theme = useTheme();
   const [hasDraggedOrResized, setHasDraggedOrResized] = useState(false);
   const isLargerThanPhone = useMediaQuery(theme.isLargerThanPhone);
-  const screenWrapperRef = useRef<Rnd>(null);
-  const canvasRef = useRef(null);
   const { setCanvas, areItemsDraggable, areItemsResizable } =
     useContext(EmulatorContext);
   const screenWrapperXStart = isLargerThanPhone ? NavigationMenuWidth + 10 : 0;
   const screenWrapperYStart = isLargerThanPhone ? 15 : 0;
 
-  useEffect(() => {
-    if (screenWrapperRef.current && !hasDraggedOrResized) {
-      screenWrapperRef.current.updatePosition({
-        x: screenWrapperXStart,
-        y: screenWrapperYStart
-      });
-    }
-  }, [hasDraggedOrResized, screenWrapperXStart, screenWrapperYStart]);
+  const refUpdateDefaultPosition = useCallback(
+    (node: Rnd | null) => {
+      if (!hasDraggedOrResized) {
+        node?.updatePosition({
+          x: screenWrapperXStart,
+          y: screenWrapperYStart
+        });
+      }
+    },
+    [hasDraggedOrResized, screenWrapperXStart, screenWrapperYStart]
+  );
 
-  useEffect(() => {
-    if (canvasRef.current) {
-      setCanvas(canvasRef.current);
-    }
-  }, [canvasRef, setCanvas]);
+  const refSetCanvas = useCallback(
+    (node: HTMLCanvasElement | null) => setCanvas(node),
+    [setCanvas]
+  );
 
   return (
     <ScreenWrapper
       disableDragging={!areItemsDraggable}
-      ref={screenWrapperRef}
+      ref={refUpdateDefaultPosition}
       enableResizing={areItemsResizable}
       resizeHandleComponent={{
         topRight: <GripperHandle variation="topRight" />,
@@ -93,8 +93,7 @@ export const Screen = () => {
       onDragStart={() => setHasDraggedOrResized(true)}
     >
       <RenderCanvas
-        ref={canvasRef}
-        id="screen"
+        ref={refSetCanvas}
         width={renderCanvasWidth}
         height={renderCanvasHeight}
         $pixelated

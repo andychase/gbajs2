@@ -1,9 +1,8 @@
 import { Slider, useMediaQuery } from '@mui/material';
 import {
+  useCallback,
   useContext,
-  useEffect,
   useId,
-  useRef,
   useState,
   type Dispatch,
   type ReactNode
@@ -151,7 +150,6 @@ export const ControlPanel = ({ setExternalBounds }: ControlPanelProps) => {
   const [isFastForwardOn, setIsFastForwardOn] = useState(false);
   const theme = useTheme();
   const isLargerThanPhone = useMediaQuery(theme.isLargerThanPhone);
-  const dragRef = useRef<Rnd>(null);
   const [isEmulatorPaused, setIsEmulatorPaused] = useState(false);
   const controlPanelId = useId();
   const playPanelControlId = useId();
@@ -165,12 +163,14 @@ export const ControlPanel = ({ setExternalBounds }: ControlPanelProps) => {
     1
   );
 
-  useEffect(() => {
-    if (canvas && dragRef?.current?.resizableElement?.current)
+  const refSetExternalBounds = useCallback(
+    (node: Rnd | null) => {
       setExternalBounds(
-        dragRef.current.resizableElement.current.getBoundingClientRect()
+        node?.resizableElement.current?.getBoundingClientRect()
       );
-  }, [setExternalBounds, canvas]);
+    },
+    [setExternalBounds]
+  );
 
   if (!canvas?.parentElement) return null;
 
@@ -275,7 +275,7 @@ export const ControlPanel = ({ setExternalBounds }: ControlPanelProps) => {
           bottomRight: { marginBottom: '15px', marginRight: '15px' },
           bottomLeft: { marginBottom: '15px', marginLeft: '15px' }
         }}
-        ref={dragRef}
+        ref={refSetExternalBounds}
         cancel=".noDrag"
         size={{ width: '', height: 'auto' }}
         default={{
