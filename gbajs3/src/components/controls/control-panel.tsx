@@ -193,10 +193,14 @@ export const ControlPanel = ({ setExternalBounds }: ControlPanelProps) => {
     setIsEmulatorPaused(false);
   };
 
-  const setVolume = (event: Event) => {
-    const volumePercent = Number((event.target as HTMLInputElement)?.value);
+  const setVolume = (volumePercent: number) => {
     emulator?.setVolume(volumePercent);
     setCurrentEmulatorVolume(volumePercent);
+  };
+
+  const setVolumeFromEvent = (event: Event) => {
+    const volumePercent = Number((event.target as HTMLInputElement)?.value);
+    setVolume(volumePercent);
   };
 
   const tourSteps: TourSteps = [
@@ -350,7 +354,7 @@ export const ControlPanel = ({ setExternalBounds }: ControlPanelProps) => {
               )}
             </PanelControl>
             <VolumeSliderControl id={volumeSliderControlId}>
-              <BiVolumeMute />
+              <BiVolumeMute onClick={() => setVolume(0)} />
               <MutedMarkSlider
                 aria-label="Volume"
                 value={currentEmulatorVolume}
@@ -363,7 +367,7 @@ export const ControlPanel = ({ setExternalBounds }: ControlPanelProps) => {
                   margin: '0 10px',
                   maxHeight: '40px'
                 }}
-                onChange={setVolume}
+                onChange={setVolumeFromEvent}
                 onFocus={emulator?.disableKeyboardInput}
                 onBlur={emulator?.enableKeyboardInput}
                 onClick={() => {
@@ -372,7 +376,7 @@ export const ControlPanel = ({ setExternalBounds }: ControlPanelProps) => {
                   emulator?.enableKeyboardInput();
                 }}
               />
-              <BiVolumeFull />
+              <BiVolumeFull onClick={() => setVolume(1)} />
             </VolumeSliderControl>
           </IconContext.Provider>
         </Panel>
