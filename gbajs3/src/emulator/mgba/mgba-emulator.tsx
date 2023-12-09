@@ -50,8 +50,8 @@ export type GBAEmulator = {
   parsedCheatsToFile: (cheatsList: ParsedCheats[]) => File | null;
   pause: () => void;
   quickReload: () => void;
-  quitGame: () => void;
   quitEmulator: () => void;
+  quitGame: () => void;
   remapKeyBindings: (keyBindings: KeyBinding[]) => void;
   resume: () => void;
   run: (romPath: string) => boolean;
@@ -208,7 +208,12 @@ export const mGBAEmulator = (mGBA: mGBAEmulatorTypeDef): GBAEmulator => {
     loadSaveState: mGBA.loadState,
     listSaveStates: () => mGBA.FS.readdir(paths.saveStatePath),
     listRoms: () => mGBA.FS.readdir(paths.gamePath),
-    setVolume: mGBA.setVolume,
+    setVolume: (volumePercent) => {
+      if (mGBA.SDL2.audioContext.state === 'suspended')
+        mGBA.SDL2.audioContext.resume();
+
+      mGBA.setVolume(volumePercent);
+    },
     getVolume: mGBA.getVolume,
     enableKeyboardInput: () => mGBA.toggleInput(true),
     disableKeyboardInput: () => mGBA.toggleInput(false),

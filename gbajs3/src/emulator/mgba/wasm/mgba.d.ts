@@ -64,6 +64,14 @@ declare namespace mGBA {
     saveName?: string;
     // extra exported runtime methods
     FS: typeof FS & FSWithAnalyze;
+    // SDL2
+    SDL2: {
+      audio: {
+        currentOutputBuffer: AudioBuffer;
+        scriptProcessorNode: ScriptProcessorNode;
+      };
+      audioContext: AudioContext;
+    };
   }
 
   // eslint-disable-next-line import/no-default-export
