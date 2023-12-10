@@ -26,6 +26,10 @@ declare namespace mGBA {
     };
   }
 
+  // see: https://developer.mozilla.org/en-US/docs/Web/API/BaseAudioContext/state
+  //      interrupted is a valid property on iOS
+  type ExtendedAudioContextState = AudioContextState | 'interrupted';
+
   export interface mGBAEmulator extends EmscriptenModule {
     // custom methods from preamble
     autoLoadCheats(): boolean;
@@ -70,7 +74,9 @@ declare namespace mGBA {
         currentOutputBuffer: AudioBuffer;
         scriptProcessorNode: ScriptProcessorNode;
       };
-      audioContext: AudioContext;
+      audioContext: Omit<AudioContext, 'state'> & {
+        readonly state: ExtendedAudioContextState;
+      };
     };
   }
 
