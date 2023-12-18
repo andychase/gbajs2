@@ -20,7 +20,7 @@ export const useLogin = () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password }),
-        credentials: 'include',
+        credentials: 'include'
       };
 
       const res = await fetch(url, options);
@@ -31,7 +31,7 @@ export const useLogin = () => {
 
   const { data, isLoading, error, execute } = useAsyncData({
     fetchFn: executeLogin,
-    clearDataOnLoad: true,
+    clearDataOnLoad: true
   });
 
   return { data, isLoading, error, execute };

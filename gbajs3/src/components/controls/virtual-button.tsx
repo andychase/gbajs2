@@ -3,12 +3,14 @@ import Draggable from 'react-draggable';
 import { styled } from 'styled-components';
 
 import { EmulatorContext } from '../../context/emulator/emulator.tsx';
+import { LayoutContext } from '../../context/layout/layout.tsx';
 import { ButtonBase } from '../shared/custom-button-base.tsx';
 
 type VirtualButtonProps = {
   isRectangular?: boolean;
   width?: number;
   children: ReactNode;
+  inputName: string;
   keyId?: string;
   initialPosition?: {
     top: string;
@@ -84,6 +86,7 @@ export const VirtualButton = ({
   width = 60,
   children,
   keyId,
+  inputName,
   onClick,
   initialPosition,
   initialOffset,
@@ -91,7 +94,8 @@ export const VirtualButton = ({
   ariaLabel
 }: VirtualButtonProps) => {
   const { emulator, areItemsDraggable } = useContext(EmulatorContext);
-  const dragRef = useRef(null);
+  const { layouts, setLayout } = useContext(LayoutContext);
+  const dragRef = useRef<HTMLButtonElement | null>(null);
 
   if (!enabled) return null;
 
@@ -129,11 +133,17 @@ export const VirtualButton = ({
       }
     : {};
 
+  const position = layouts?.[inputName]?.position ?? { x: 0, y: 0 };
+
   return (
     <Draggable
       nodeRef={dragRef}
       positionOffset={initialOffset}
+      position={position}
       disabled={!areItemsDraggable}
+      onStop={(_, data) =>
+        setLayout(inputName, { position: { x: data.x, y: data.y } })
+      }
     >
       {isRectangular ? (
         <RectangularButton

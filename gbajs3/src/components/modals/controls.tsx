@@ -7,6 +7,7 @@ import { VirtualControlsForm } from './controls/virtual-controls-form.tsx';
 import { ModalBody } from './modal-body.tsx';
 import { ModalFooter } from './modal-footer.tsx';
 import { ModalHeader } from './modal-header.tsx';
+import { LayoutContext } from '../../context/layout/layout.tsx';
 import { ModalContext } from '../../context/modal/modal.tsx';
 import {
   EmbeddedProductTour,
@@ -23,6 +24,7 @@ type ControlTabsProps = {
   setFormId: React.Dispatch<React.SetStateAction<string | null>>;
   virtualControlsFormId: string;
   keyBindingsFormId: string;
+  resetPositionsButtonId: string;
 };
 
 const TabsWithBorder = styled(Tabs)`
@@ -57,8 +59,10 @@ const TabPanel = ({ children, index, value }: TabPanelProps) => {
 const ControlTabs = ({
   setFormId,
   virtualControlsFormId,
-  keyBindingsFormId
+  keyBindingsFormId,
+  resetPositionsButtonId
 }: ControlTabsProps) => {
+  const { clearLayouts } = useContext(LayoutContext);
   const [value, setValue] = useState(0);
 
   const handleChange = (_: React.SyntheticEvent, newValue: number) => {
@@ -78,6 +82,13 @@ const ControlTabs = ({
       </TabsWithBorder>
       <TabPanel value={value} index={0}>
         <VirtualControlsForm id={virtualControlsFormId} />
+        <Button
+          id={resetPositionsButtonId}
+          sx={{ marginTop: '10px' }}
+          onClick={clearLayouts}
+        >
+          Reset All Positions
+        </Button>
       </TabPanel>
       <TabPanel value={value} index={1}>
         <KeyBindingsForm id={keyBindingsFormId} />
@@ -91,6 +102,7 @@ export const ControlsModal = () => {
   const virtualControlsFormId = useId();
   const keyBindingsFormId = useId();
   const saveChangesButtonId = useId();
+  const resetPositionsButtonId = useId();
   const [formId, setFormId] = useState<string | null>(virtualControlsFormId);
 
   const tourSteps: TourSteps = [
@@ -101,6 +113,15 @@ export const ControlsModal = () => {
         </p>
       ),
       target: `#${CSS.escape(virtualControlsFormId)}`
+    },
+    {
+      content: (
+        <p>
+          Use this button to reset the positions of the screen, control panel,
+          and all virtual controls.
+        </p>
+      ),
+      target: `#${CSS.escape(resetPositionsButtonId)}`
     },
     {
       content: (
@@ -147,6 +168,7 @@ export const ControlsModal = () => {
           setFormId={setFormId}
           virtualControlsFormId={virtualControlsFormId}
           keyBindingsFormId={keyBindingsFormId}
+          resetPositionsButtonId={resetPositionsButtonId}
         />
       </ModalBody>
       <ModalFooter>

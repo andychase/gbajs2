@@ -1,8 +1,8 @@
 import { useMediaQuery } from '@mui/material';
+import { useLocalStorage } from '@uidotdev/usehooks';
 import { useEffect } from 'react';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { styled, useTheme } from 'styled-components';
-import { useLocalStorage } from 'usehooks-ts';
 
 import { virtualControlsLocalStorageKey } from '../../controls/consts.tsx';
 import { ManagedCheckbox } from '../../shared/managed-checkbox.tsx';
@@ -34,9 +34,8 @@ export type AreVirtualControlsEnabledProps = {
 
 export const VirtualControlsForm = ({ id }: VirtualControlsFormProps) => {
   const [areVirtualControlsEnabled, setAreVirtualControlsEnabled] =
-    useLocalStorage<AreVirtualControlsEnabledProps>(
-      virtualControlsLocalStorageKey,
-      {}
+    useLocalStorage<AreVirtualControlsEnabledProps | undefined>(
+      virtualControlsLocalStorageKey
     );
   const theme = useTheme();
   const isLargerThanPhone = useMediaQuery(theme.isLargerThanPhone);

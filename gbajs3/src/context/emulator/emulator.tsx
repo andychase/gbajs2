@@ -1,3 +1,4 @@
+import { useLocalStorage } from '@uidotdev/usehooks';
 import {
   createContext,
   useMemo,
@@ -6,7 +7,6 @@ import {
   type ReactNode,
   type SetStateAction
 } from 'react';
-import { useLocalStorage } from 'usehooks-ts';
 
 import {
   emulatorKeyBindingsLocalStorageKey,
@@ -56,9 +56,8 @@ export const EmulatorProvider = ({ children }: EmulatorProviderProps) => {
     1
   );
   const emulator = useEmulator(canvas);
-  const [currentKeyBindings] = useLocalStorage<KeyBinding[] | null>(
-    emulatorKeyBindingsLocalStorageKey,
-    null
+  const [currentKeyBindings] = useLocalStorage<KeyBinding[] | undefined>(
+    emulatorKeyBindingsLocalStorageKey
   );
 
   const emu = useMemo<GBAEmulator | null>(() => {

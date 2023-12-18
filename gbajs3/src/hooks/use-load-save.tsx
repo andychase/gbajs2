@@ -20,8 +20,8 @@ export const useLoadSave = () => {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${accessToken}`,
-        },
+          Authorization: `Bearer ${accessToken}`
+        }
       };
 
       const res = await fetch(url, options);
@@ -35,7 +35,7 @@ export const useLoadSave = () => {
 
   const { data, isLoading, error, execute } = useAsyncData({
     fetchFn: executeLoadSave,
-    clearDataOnLoad: true,
+    clearDataOnLoad: true
   });
 
   return { data, isLoading, error, execute };

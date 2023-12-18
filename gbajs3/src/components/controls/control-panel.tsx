@@ -1,10 +1,10 @@
 import { Slider, useMediaQuery } from '@mui/material';
+import { useLocalStorage } from '@uidotdev/usehooks';
 import {
   useCallback,
   useContext,
   useId,
   useState,
-  type Dispatch,
   type ReactNode
 } from 'react';
 import { IconContext } from 'react-icons';
@@ -20,20 +20,16 @@ import {
 import { TbResize } from 'react-icons/tb';
 import { Rnd } from 'react-rnd';
 import { css, styled, useTheme } from 'styled-components';
-import { useLocalStorage } from 'usehooks-ts';
 
 import { emulatorVolumeLocalStorageKey } from '../../context/emulator/consts.tsx';
 import { EmulatorContext } from '../../context/emulator/emulator.tsx';
+import { LayoutContext } from '../../context/layout/layout.tsx';
 import {
   EmbeddedProductTour,
   type TourSteps
 } from '../product-tour/embedded-product-tour.tsx';
 import { ButtonBase } from '../shared/custom-button-base.tsx';
 import { GripperHandle } from '../shared/gripper-handle.tsx';
-
-type ControlPanelProps = {
-  setExternalBounds: Dispatch<DOMRect | undefined>;
-};
 
 type PanelControlProps = {
   $onClick?: () => void;
@@ -46,14 +42,6 @@ type PanelControlProps = {
 type PanelControlButtonProps = {
   $shouldGrow?: boolean;
 };
-
-const DragWrapper = styled(Rnd)`
-  width: 100dvw;
-
-  @media ${({ theme }) => theme.isLargerThanPhone} {
-    width: fit-content;
-  }
-`;
 
 const Panel = styled.ul`
   background-color: ${({ theme }) => theme.panelBlueGray};
@@ -137,9 +125,8 @@ const MutedMarkSlider = styled(Slider)`
   }
 `;
 
-export const ControlPanel = ({ setExternalBounds }: ControlPanelProps) => {
+export const ControlPanel = () => {
   const {
-    canvas,
     emulator,
     isEmulatorRunning,
     areItemsDraggable,
@@ -147,6 +134,7 @@ export const ControlPanel = ({ setExternalBounds }: ControlPanelProps) => {
     areItemsResizable,
     setAreItemsResizable
   } = useContext(EmulatorContext);
+  const { layouts, setLayout } = useContext(LayoutContext);
   const [isFastForwardOn, setIsFastForwardOn] = useState(false);
   const theme = useTheme();
   const isLargerThanPhone = useMediaQuery(theme.isLargerThanPhone);
@@ -163,19 +151,21 @@ export const ControlPanel = ({ setExternalBounds }: ControlPanelProps) => {
     1
   );
 
-  const refSetExternalBounds = useCallback(
+  const refSetLayout = useCallback(
     (node: Rnd | null) => {
-      setExternalBounds(
-        node?.resizableElement.current?.getBoundingClientRect()
-      );
+      if (!layouts?.controlPanel?.initialBounds && node)
+        setLayout('controlPanel', {
+          initialBounds: node.resizableElement.current?.getBoundingClientRect()
+        });
     },
-    [setExternalBounds]
+    [setLayout, layouts]
   );
 
-  if (!canvas?.parentElement) return null;
+  const canvasBounds = layouts?.screen?.initialBounds;
+
+  if (!canvasBounds) return null;
 
   const dragWrapperPadding = isLargerThanPhone ? 5 : 0;
-  const canvasBounds = canvas.parentElement.getBoundingClientRect();
 
   const togglePlay = () => {
     isEmulatorPaused ? emulator?.resume() : emulator?.pause();
@@ -265,9 +255,21 @@ export const ControlPanel = ({ setExternalBounds }: ControlPanelProps) => {
     }
   ];
 
+  const defaultPosition = {
+    x: Math.floor(canvasBounds.left),
+    y: Math.floor(canvasBounds.bottom + dragWrapperPadding)
+  };
+  const defaultSize = {
+    width: isLargerThanPhone ? 'auto' : '100dvw',
+    height: 'auto'
+  };
+
+  const position = layouts?.controlPanel?.position ?? defaultPosition;
+  const size = layouts?.controlPanel?.size ?? defaultSize;
+
   return (
     <>
-      <DragWrapper
+      <Rnd
         id={controlPanelId}
         disableDragging={!areItemsDraggable}
         enableResizing={areItemsResizable}
@@ -279,14 +281,22 @@ export const ControlPanel = ({ setExternalBounds }: ControlPanelProps) => {
           bottomRight: { marginBottom: '15px', marginRight: '15px' },
           bottomLeft: { marginBottom: '15px', marginLeft: '15px' }
         }}
-        ref={refSetExternalBounds}
+        ref={refSetLayout}
         cancel=".noDrag"
-        size={{ width: '', height: 'auto' }}
+        position={position}
+        size={size}
+        onDragStop={(_, data) => {
+          setLayout('controlPanel', { position: { x: data.x, y: data.y } });
+        }}
+        onResizeStop={(_1, _2, ref, _3, position) => {
+          setLayout('controlPanel', {
+            size: { width: ref.clientWidth, height: ref.clientHeight },
+            position: { ...position }
+          });
+        }}
         default={{
-          x: Math.floor(canvasBounds.left),
-          y: Math.floor(canvasBounds.bottom + dragWrapperPadding),
-          width: 'auto',
-          height: 'auto'
+          ...defaultPosition,
+          ...defaultSize
         }}
       >
         <Panel>
@@ -380,7 +390,7 @@ export const ControlPanel = ({ setExternalBounds }: ControlPanelProps) => {
             </VolumeSliderControl>
           </IconContext.Provider>
         </Panel>
-      </DragWrapper>
+      </Rnd>
       <EmbeddedProductTour
         steps={tourSteps}
         completedProductTourStepName="hasCompletedControlPanelTour"

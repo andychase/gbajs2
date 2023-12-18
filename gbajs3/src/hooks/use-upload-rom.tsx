@@ -19,9 +19,9 @@ export const useUpLoadRom = () => {
       const options: RequestInit = {
         method: 'POST',
         headers: {
-          Authorization: `Bearer ${accessToken}`,
+          Authorization: `Bearer ${accessToken}`
         },
-        body: formData,
+        body: formData
       };
 
       return fetch(url, options);
@@ -31,7 +31,7 @@ export const useUpLoadRom = () => {
 
   const { data, isLoading, error, execute } = useAsyncData({
     fetchFn: executeUploadRom,
-    clearDataOnLoad: true,
+    clearDataOnLoad: true
   });
 
   return { data, isLoading, error, execute };

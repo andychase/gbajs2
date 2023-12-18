@@ -9,6 +9,7 @@ import Draggable from 'react-draggable';
 import { styled } from 'styled-components';
 
 import { EmulatorContext } from '../../context/emulator/emulator.tsx';
+import { LayoutContext } from '../../context/layout/layout.tsx';
 
 import type { Position } from 'react-rnd';
 
@@ -122,6 +123,7 @@ const RightArrow = styled(DirectionArrow)`
 
 export const OPad = ({ initialPosition }: OPadProps) => {
   const { emulator, areItemsDraggable } = useContext(EmulatorContext);
+  const { layouts, setLayout } = useContext(LayoutContext);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isControlled, setIsControlled] = useState(true);
   const containerDragRef = useRef<HTMLDivElement>(null);
@@ -236,8 +238,17 @@ export const OPad = ({ initialPosition }: OPadProps) => {
     unpressEmulatorArrow(event.pointerId);
   };
 
+  const dragPosition = layouts?.oPad?.position ?? { x: 0, y: 0 };
+
   return (
-    <Draggable nodeRef={containerDragRef} disabled={!areItemsDraggable}>
+    <Draggable
+      nodeRef={containerDragRef}
+      disabled={!areItemsDraggable}
+      position={dragPosition}
+      onStop={(_, data) =>
+        setLayout('oPad', { position: { x: data.x, y: data.y } })
+      }
+    >
       <BackgroundContainer
         ref={containerDragRef}
         $initialPosition={initialPosition}

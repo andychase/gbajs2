@@ -1,9 +1,9 @@
 import { Button, TextField } from '@mui/material';
+import { useLocalStorage } from '@uidotdev/usehooks';
 import { useCallback, useContext, useEffect, useId, useState } from 'react';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { BiError, BiPlus, BiTrash } from 'react-icons/bi';
 import { styled, useTheme } from 'styled-components';
-import { useLocalStorage } from 'usehooks-ts';
 
 import { ModalBody } from './modal-body.tsx';
 import { ModalFooter } from './modal-footer.tsx';

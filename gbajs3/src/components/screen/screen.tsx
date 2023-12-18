@@ -1,10 +1,11 @@
 import { useMediaQuery } from '@mui/material';
-import { useCallback, useContext, useState } from 'react';
+import { useCallback, useContext } from 'react';
 import { Rnd } from 'react-rnd';
 import { styled, useTheme } from 'styled-components';
 
 import { renderCanvasWidth, renderCanvasHeight } from './consts.tsx';
 import { EmulatorContext } from '../../context/emulator/emulator.tsx';
+import { LayoutContext } from '../../context/layout/layout.tsx';
 import { NavigationMenuWidth } from '../navigation-menu/consts.tsx';
 import { GripperHandle } from '../shared/gripper-handle.tsx';
 
@@ -33,35 +34,48 @@ const ScreenWrapper = styled(Rnd)`
   width: 100dvw;
 
   @media ${({ theme }) => theme.isLargerThanPhone} {
-    width: calc(100dvw - ${NavigationMenuWidth + 25}px);
+    width: calc(100dvw - ${NavigationMenuWidth + 35}px);
   }
 `;
 
 export const Screen = () => {
   const theme = useTheme();
-  const [hasDraggedOrResized, setHasDraggedOrResized] = useState(false);
   const isLargerThanPhone = useMediaQuery(theme.isLargerThanPhone);
   const { setCanvas, areItemsDraggable, areItemsResizable } =
     useContext(EmulatorContext);
+  const { layouts, setLayout, hasSetLayout } = useContext(LayoutContext);
   const screenWrapperXStart = isLargerThanPhone ? NavigationMenuWidth + 10 : 0;
   const screenWrapperYStart = isLargerThanPhone ? 15 : 0;
 
   const refUpdateDefaultPosition = useCallback(
     (node: Rnd | null) => {
-      if (!hasDraggedOrResized) {
-        node?.updatePosition({
-          x: screenWrapperXStart,
-          y: screenWrapperYStart
+      if (!hasSetLayout)
+        node?.resizableElement?.current?.style?.removeProperty('width');
+
+      if (!layouts?.screen?.initialBounds && node)
+        setLayout('screen', {
+          initialBounds: node.resizableElement.current?.getBoundingClientRect()
         });
-      }
     },
-    [hasDraggedOrResized, screenWrapperXStart, screenWrapperYStart]
+    [hasSetLayout, layouts, setLayout]
   );
 
   const refSetCanvas = useCallback(
     (node: HTMLCanvasElement | null) => setCanvas(node),
     [setCanvas]
   );
+
+  const defaultPosition = {
+    x: isLargerThanPhone ? screenWrapperXStart : 0,
+    y: isLargerThanPhone ? screenWrapperYStart : 0
+  };
+  const defaultSize = {
+    width: isLargerThanPhone ? '' : '100dvw',
+    height: 'auto'
+  };
+
+  const position = layouts?.screen?.position ?? defaultPosition;
+  const size = layouts?.screen?.size ?? defaultSize;
 
   return (
     <ScreenWrapper
@@ -81,16 +95,21 @@ export const Screen = () => {
         topLeft: { marginTop: '15px', marginLeft: '15px' }
       }}
       default={{
-        x: isLargerThanPhone ? screenWrapperXStart : 0,
-        y: isLargerThanPhone ? screenWrapperYStart : 0,
-        width: 'auto',
-        height: 'auto'
+        ...defaultPosition,
+        ...defaultSize
       }}
-      // initial width needs to be controlled from css
-      size={{ width: '', height: 'auto' }}
+      position={position}
+      size={size}
+      onDragStop={(_, data) => {
+        setLayout('screen', { position: { x: data.x, y: data.y } });
+      }}
+      onResizeStop={(_1, _2, ref, _3, position) => {
+        setLayout('screen', {
+          size: { width: ref.clientWidth, height: ref.clientHeight },
+          position: { ...position }
+        });
+      }}
       lockAspectRatio={3 / 2}
-      onResizeStart={() => setHasDraggedOrResized(true)}
-      onDragStart={() => setHasDraggedOrResized(true)}
     >
       <RenderCanvas
         ref={refSetCanvas}
