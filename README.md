@@ -5,7 +5,7 @@ This project is a Game Boy Advance emulator that is freely licensed and works in
 
 It began as a re-skin of the [gbajs2](https://github.com/andychase/gbajs2) fork by andychase, but now supports the [mGBA wasm](https://github.com/thenick775/mgba/tree/feature/wasm) core through the use of emscripten, for a feature rich user experience.
 
-This project was driven specifically by my need to play modern GBA rom hacks outside of desktop applications, without side loading or building through xcode.
+This project was driven specifically by a need to play modern GBA rom hacks outside of desktop applications, without side loading or building through xcode. It is designed as an all-in-one mono repo containing the backend services and frontend services.
 
 Use it online! <https://gba.nicholas-vancise.dev>
 
@@ -65,7 +65,19 @@ Do not attempt to log into the server unless you are the server owner or an appr
 <img src="./readme-graphics/admin-desktop.png">
 
 ## Getting Started
-* Requires an env file of the format:
+* Local builds require [docker](https://www.docker.com)
+
+* From the project root, navigate to the `docker` directory:
+```
+cd ./docker
+```
+
+* Copy the `.env.example` for local builds:
+```
+cp .env.example .env
+```
+
+* This will generate a `.env` file of the format:
 ```
 # gbajs3
 ROM_PATH=./<local-server-rom-path>/
@@ -87,14 +99,32 @@ PG_DB_PORT=<postgres db port, default 5432>
 PG_SSL_MODE=<pg ssl mode>
 PG_DATA_LOCATION=./<path to postgres persistent mountpoint>
 ```
-* Run `cp .env.example .env` for local builds, then adjust values or add certs/required directories
-* Testing certificates can be created with:
+
+* Source this env file to get easy access to the default certificate paths:
 ```
-openssl req -x509 -sha256 -nodes -days 365 -newkey rsa:2048 -keyout privateKey.key -out certificate.crt
+source ./.env
 ```
-* Run `docker-compose up --build` and your services will build and start
-* Admin UI can be found at `/admin`, default password for all admin users are `admin`, **please log in to the admin portal and change the default passwords immediately**
-* Golang api swagger UI can be found at `/api/documentation/`
+
+* Generate test SSL certificates using your desired mechanism and move them to the default locations:
+
+Ex. [openssl](https://formulae.brew.sh/formula/openssl@1.1)
+```
+openssl req -x509 -sha256 -nodes -days 365 -newkey rsa:2048 -keyout $KEY_LOC -out $CERT_LOC
+```
+
+* Build and run the docker containers:
+```
+docker compose up --build
+``` 
+
+* Once docker has created the containers, the webserver will be available at https://localhost
+
+* The Admin UI can be found at https://localhost/admin
+    * The default password for all admin users is `admin`, **please log in to the admin portal and change the default passwords immediately**
+
+* Golang api swagger UI can be found at https://localhost/api/documentation/
+
+* To run each service individually without docker, see the nested READMEs under `./docker/server/`
 
 ## Contributing
 
