@@ -103,7 +103,7 @@ func TestTokenRefresh(t *testing.T) {
 		Expires:  time.Now().Add(7 * time.Hour),
 		MaxAge:   25200,
 		HttpOnly: true,
-		SameSite: http.SameSiteNoneMode,
+		SameSite: http.SameSiteStrictMode,
 		Secure:   true,
 	}
 
@@ -119,7 +119,7 @@ func TestTokenRefresh(t *testing.T) {
 		Expires:  time.Now().Add(7 * time.Hour),
 		MaxAge:   25200,
 		HttpOnly: true,
-		SameSite: http.SameSiteNoneMode,
+		SameSite: http.SameSiteStrictMode,
 		Secure:   true,
 	}
 
@@ -290,7 +290,7 @@ func TestLogout(t *testing.T) {
 			Expires:  time.Now().Add(-24 * time.Hour),
 			MaxAge:   -1,
 			HttpOnly: true,
-			SameSite: http.SameSiteNoneMode,
+			SameSite: http.SameSiteStrictMode,
 			Secure:   true},
 		},
 	}

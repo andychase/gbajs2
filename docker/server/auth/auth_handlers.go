@@ -176,7 +176,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 		Expires:  time.Now().Add(7 * time.Hour),
 		MaxAge:   25200,
 		HttpOnly: true,
-		SameSite: http.SameSiteNoneMode,
+		SameSite: http.SameSiteStrictMode,
 		Secure:   true,
 	}
 
@@ -201,7 +201,7 @@ func logout(w http.ResponseWriter, r *http.Request) {
 		Expires:  time.Now().Add(-24 * time.Hour),
 		MaxAge:   -1,
 		HttpOnly: true,
-		SameSite: http.SameSiteNoneMode,
+		SameSite: http.SameSiteStrictMode,
 		Secure:   true,
 	}
 	http.SetCookie(w, &cookie)
