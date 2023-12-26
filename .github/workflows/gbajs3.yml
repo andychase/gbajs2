@@ -1,0 +1,54 @@
+name: Gbajs3
+
+on:
+  push:
+    branches: ['**']
+
+jobs:
+  pre_job:
+    continue-on-error: true
+    runs-on: ubuntu-latest
+    outputs:
+      should_skip: ${{ steps.skip_check.outputs.should_skip }}
+    steps:
+      - id: skip_check
+        uses: fkirc/skip-duplicate-actions@v5
+        with:
+          concurrent_skipping: 'same_content_newer'
+
+  build:
+    needs: pre_job
+    if: needs.pre_job.outputs.should_skip != 'true'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./gbajs3
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          sparse-checkout: gbajs3
+          sparse-checkout-cone-mode: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20.1.0
+
+      - name: Install dependencies
+        run: |
+          npm ci
+
+      - name: Build
+        run: |
+          npm run build
+
+      - name: Lint
+        run: |
+          npm run lint
+
+      # TODO
+      # - name: Test
+      #   run: |
+      #     npm run test

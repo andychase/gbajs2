@@ -1,0 +1,48 @@
+name: auth
+
+on:
+  push:
+    branches: ['**']
+
+jobs:
+  pre_job:
+    continue-on-error: true
+    runs-on: ubuntu-latest
+    outputs:
+      should_skip: ${{ steps.skip_check.outputs.should_skip }}
+    steps:
+      - id: skip_check
+        uses: fkirc/skip-duplicate-actions@v5
+        with:
+          concurrent_skipping: 'same_content_newer'
+
+  build:
+    needs: pre_job
+    if: needs.pre_job.outputs.should_skip != 'true'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./docker/server/auth
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          sparse-checkout: docker/server/auth
+          sparse-checkout-cone-mode: false
+
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: 'stable'
+          check-latest: true
+          cache-dependency-path: docker/server/auth/go.sum
+
+      - name: Format
+        run: if [ "$(gofmt -s -l . | wc -l)" -gt 0 ]; then exit 1; fi
+
+      - name: Build
+        run: CGO_ENABLED=0 GOOS=linux go build -a -ldflags '-w -s'
+
+      - name: Test
+        run: go test --v --cover --useosfs --race ./...

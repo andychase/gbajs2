@@ -15,7 +15,6 @@ import "github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
 // "users" => http://localhost:9033/admin/info/users
 //
 // example end
-//
 var Generators = map[string]table.Generator{
 
 	"gbajs3-users": GetUsersTable,
