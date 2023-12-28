@@ -1,0 +1,44 @@
+name: Unprotected
+
+on:
+  push:
+    branches: ['**', '!master']
+  pull_request:
+    branches: ['**', '!master']
+
+jobs:
+  change-detect:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+    outputs:
+      admin: ${{ steps.filter.outputs.admin }}
+      auth: ${{ steps.filter.outputs.auth }}
+      gbajs3: ${{ steps.filter.outputs.gbajs3 }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            admin:
+              - 'docker/server/admin/**'
+            auth:
+              - 'docker/server/auth/**'
+            gbajs3:
+              - 'gbajs3/**'
+
+  admin:
+    needs: change-detect
+    if: needs.change-detect.outputs.admin == 'true'
+    uses: ./.github/workflows/admin.workflow.yml
+
+  auth:
+    needs: change-detect
+    if: needs.change-detect.outputs.auth == 'true'
+    uses: ./.github/workflows/auth.workflow.yml
+
+  gbajs3:
+    needs: change-detect
+    if: needs.change-detect.outputs.gbajs3 == 'true'
+    uses: ./.github/workflows/gbajs3.workflow.yml

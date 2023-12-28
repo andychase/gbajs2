@@ -1,0 +1,17 @@
+name: Protected
+
+on:
+  push:
+    branches: ['master']
+  pull_request:
+    branches: ['master']
+
+jobs:
+  admin:
+    uses: ./.github/workflows/admin.workflow.yml
+
+  auth:
+    uses: ./.github/workflows/auth.workflow.yml
+
+  gbajs3:
+    uses: ./.github/workflows/gbajs3.workflow.yml

@@ -1,24 +1,10 @@
-name: admin
+name: Build Admin
 
 on:
-  push:
-    branches: ['**']
+  workflow_call:
 
 jobs:
-  pre_job:
-    continue-on-error: true
-    runs-on: ubuntu-latest
-    outputs:
-      should_skip: ${{ steps.skip_check.outputs.should_skip }}
-    steps:
-      - id: skip_check
-        uses: fkirc/skip-duplicate-actions@v5
-        with:
-          concurrent_skipping: 'same_content_newer'
-
   build:
-    needs: pre_job
-    if: github.ref == 'refs/heads/master' || needs.pre_job.outputs.should_skip != 'true'
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -26,7 +12,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           sparse-checkout: docker/server/admin
           sparse-checkout-cone-mode: false
