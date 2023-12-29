@@ -1,7 +1,5 @@
 import { domToCanvas } from 'modern-screenshot';
 
-import { renderCanvasWidth, renderCanvasHeight } from './consts.tsx';
-
 // uses a webgl canvas context,
 // clears the canvas to all black immediately
 const clearWebGlCanvas = (canvas: HTMLCanvasElement) => {
@@ -21,25 +19,30 @@ const lcdFade2d = (canvas: HTMLCanvasElement) => {
 
   if (!context) return;
 
-  const pixelData = context.getImageData(
-    0,
-    0,
-    renderCanvasWidth,
-    renderCanvasHeight
-  );
+  const videoWidth = canvas.width;
+  const videoHeight = canvas.height;
+  const halfVideoWidth = videoWidth / 2;
+  const halfVideoHeight = videoHeight / 2;
+
+  const pixelData = context.getImageData(0, 0, videoWidth, videoHeight);
 
   const drawInterval = setInterval(() => {
     drawCount++;
 
-    for (let y = 0; y < renderCanvasHeight; ++y) {
-      for (let x = 0; x < renderCanvasWidth; ++x) {
-        const xDiff = Math.abs(x - 120);
-        const yDiff = Math.abs(y - 80) * 0.8;
-        const xFactor = (120 - drawCount - xDiff) / 120;
+    for (let y = 0; y < videoHeight; ++y) {
+      for (let x = 0; x < videoWidth; ++x) {
+        const xDiff = Math.abs(x - halfVideoWidth);
+        const yDiff = Math.abs(y - halfVideoHeight) * 0.8;
+        const xFactor = (halfVideoWidth - drawCount - xDiff) / halfVideoWidth;
         const yFactor =
-          (80 - drawCount - (y & 1) * 10 - yDiff + Math.pow(xDiff, 1 / 2)) / 80;
+          (halfVideoHeight -
+            drawCount -
+            (y & 1) * 10 -
+            yDiff +
+            Math.pow(xDiff, 1 / 2)) /
+          halfVideoHeight;
 
-        pixelData.data[(x + y * renderCanvasWidth) * 4 + 3] *=
+        pixelData.data[(x + y * videoWidth) * 4 + 3] *=
           Math.pow(xFactor, 1 / 3) * Math.pow(yFactor, 1 / 2);
       }
     }
@@ -75,6 +78,9 @@ export const fadeCanvas = (
         copyCanvas.style.position = 'absolute';
         copyCanvas.style.top = '0';
         copyCanvas.style.left = '0';
+        copyCanvas.style.right = '0';
+        copyCanvas.style.margin = '0 auto';
+        copyCanvas.style.objectFit = 'contain';
         canvas.parentElement?.appendChild(copyCanvas);
 
         lcdFade2d(copyCanvas);

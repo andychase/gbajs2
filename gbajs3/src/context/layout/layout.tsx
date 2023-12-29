@@ -1,11 +1,6 @@
-import { useLocalStorage } from '@uidotdev/usehooks';
-import {
-  createContext,
-  useCallback,
-  useEffect,
-  useMemo,
-  type ReactNode
-} from 'react';
+import { createContext, useCallback, useEffect, type ReactNode } from 'react';
+
+import { useLayouts } from '../../hooks/use-layouts.tsx';
 
 type Layout = {
   position?: { x: number; y: number };
@@ -26,8 +21,6 @@ type LayoutContextProps = {
 
 type LayoutProviderProps = { children: ReactNode };
 
-const layoutLocalStorageKey = 'componentLayouts';
-
 export const LayoutContext = createContext<LayoutContextProps>({
   layouts: {},
   hasSetLayout: false,
@@ -36,19 +29,7 @@ export const LayoutContext = createContext<LayoutContextProps>({
 });
 
 export const LayoutProvider = ({ children }: LayoutProviderProps) => {
-  const [layouts, setLayouts] = useLocalStorage<Layouts>(
-    layoutLocalStorageKey,
-    {}
-  );
-  const hasSetLayout = useMemo(
-    () =>
-      !!Object.values(layouts).some(
-        (layout) => !!layout?.position || !!layout?.size
-      ),
-    [layouts]
-  );
-
-  const clearLayouts = useCallback(() => setLayouts({}), [setLayouts]);
+  const { layouts, setLayouts, hasSetLayout, clearLayouts } = useLayouts();
 
   const setLayout = useCallback(
     (layoutKey: string, layout: Layout) =>

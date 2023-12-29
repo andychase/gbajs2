@@ -25,7 +25,6 @@ export const GbaDarkTheme: DefaultTheme = {
   pattensBlue: '#dee2e6',
   pureBlack: '#000',
   pureWhite: '#fff',
-  screenLight: '#65696d',
   darkGray: '#111',
   panelControlGray: '#a9a9a9',
   panelBlueGray: '#4f555a'

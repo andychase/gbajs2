@@ -21,7 +21,6 @@ declare module 'styled-components' {
     pattensBlue: string;
     pureBlack: string;
     pureWhite: string;
-    screenLight: string;
     darkGray: string;
     panelControlGray: string;
     panelBlueGray: string;

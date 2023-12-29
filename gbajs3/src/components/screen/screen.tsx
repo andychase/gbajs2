@@ -3,7 +3,6 @@ import { useCallback, useContext } from 'react';
 import { Rnd } from 'react-rnd';
 import { styled, useTheme } from 'styled-components';
 
-import { renderCanvasWidth, renderCanvasHeight } from './consts.tsx';
 import { EmulatorContext } from '../../context/emulator/emulator.tsx';
 import { LayoutContext } from '../../context/layout/layout.tsx';
 import { NavigationMenuWidth } from '../navigation-menu/consts.tsx';
@@ -13,14 +12,21 @@ type RenderCanvasProps = {
   $pixelated?: boolean;
 };
 
+const defaultGBACanvasWidth = 240;
+const defaultGBACanvasHeight = 160;
+
 const RenderCanvas = styled.canvas<RenderCanvasProps>`
-  background-color: ${({ theme }) => theme.screenLight};
+  background-color: ${({ theme }) => theme.pureBlack};
   image-rendering: -webkit-optimize-contrast;
   image-rendering: -moz-crisp-edges;
   image-rendering: -o-crisp-edges;
   width: 100%;
   height: 100%;
   display: block;
+  margin: 0 auto;
+  max-height: 100%;
+  max-width: 100%;
+  object-fit: contain;
 
   ${({ $pixelated = false }) =>
     $pixelated &&
@@ -29,7 +35,8 @@ const RenderCanvas = styled.canvas<RenderCanvasProps>`
 `;
 
 const ScreenWrapper = styled(Rnd)`
-  border: solid 1px black;
+  background-color: ${({ theme }) => theme.pureBlack};
+  border: solid 1px ${({ theme }) => theme.pureBlack};
   overflow: visible;
   width: 100dvw;
 
@@ -71,7 +78,7 @@ export const Screen = () => {
   };
   const defaultSize = {
     width: isLargerThanPhone ? '' : '100dvw',
-    height: 'auto'
+    height: isLargerThanPhone ? 'auto' : '66.67dvw'
   };
 
   const position = layouts?.screen?.position ?? defaultPosition;
@@ -109,12 +116,11 @@ export const Screen = () => {
           position: { ...position }
         });
       }}
-      lockAspectRatio={3 / 2}
     >
       <RenderCanvas
         ref={refSetCanvas}
-        width={renderCanvasWidth}
-        height={renderCanvasHeight}
+        width={defaultGBACanvasWidth}
+        height={defaultGBACanvasHeight}
         $pixelated
       />
     </ScreenWrapper>
