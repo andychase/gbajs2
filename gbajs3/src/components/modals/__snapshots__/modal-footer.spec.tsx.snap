@@ -1,0 +1,10 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`<ModalFooter /> > container matches snapshot 1`] = `
+<div
+  class="sc-beySPh cnMBY"
+  data-testid="modal-footer:wrapper"
+>
+  Test Footer Content
+</div>
+`;

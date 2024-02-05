@@ -1,5 +1,5 @@
 import { Button } from '@mui/material';
-import { useContext, useEffect, useState, useId, type ReactNode } from 'react';
+import { useEffect, useState, useId, type ReactNode } from 'react';
 import { BiError } from 'react-icons/bi';
 import { PacmanLoader } from 'react-spinners';
 import { styled, useTheme } from 'styled-components';
@@ -7,8 +7,7 @@ import { styled, useTheme } from 'styled-components';
 import { ModalBody } from './modal-body.tsx';
 import { ModalFooter } from './modal-footer.tsx';
 import { ModalHeader } from './modal-header.tsx';
-import { EmulatorContext } from '../../context/emulator/emulator.tsx';
-import { ModalContext } from '../../context/modal/modal.tsx';
+import { useEmulatorContext, useModalContext } from '../../hooks/context.tsx';
 import { useListSaves } from '../../hooks/use-list-saves.tsx';
 import { useLoadSave } from '../../hooks/use-load-save.tsx';
 import {
@@ -109,8 +108,8 @@ const SaveLoadingIndicator = ({
 
 export const LoadSaveModal = () => {
   const theme = useTheme();
-  const { setIsModalOpen } = useContext(ModalContext);
-  const { emulator } = useContext(EmulatorContext);
+  const { setIsModalOpen } = useModalContext();
+  const { emulator } = useEmulatorContext();
   const saveListId = useId();
   const {
     data: saveList,
@@ -128,11 +127,11 @@ export const LoadSaveModal = () => {
   );
 
   useEffect(() => {
-    if (!saveLoading && saveFile) {
+    if (!saveLoading && saveFile && currentSaveLoading) {
       emulator?.uploadSaveOrSaveState(saveFile);
       setCurrentSaveLoading(null);
     }
-  }, [emulator, saveLoading, saveFile]);
+  }, [emulator, saveLoading, saveFile, currentSaveLoading]);
 
   const LoadingIndicator = () => (
     <PacmanLoader

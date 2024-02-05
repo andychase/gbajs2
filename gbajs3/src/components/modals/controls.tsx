@@ -1,5 +1,5 @@
 import { Button, Tabs, Tab } from '@mui/material';
-import { useContext, useId, useState, type ReactNode } from 'react';
+import { useId, useState, type Dispatch, type ReactNode } from 'react';
 import { styled } from 'styled-components';
 
 import { KeyBindingsForm } from './controls/key-bindings-form.tsx';
@@ -7,8 +7,7 @@ import { VirtualControlsForm } from './controls/virtual-controls-form.tsx';
 import { ModalBody } from './modal-body.tsx';
 import { ModalFooter } from './modal-footer.tsx';
 import { ModalHeader } from './modal-header.tsx';
-import { LayoutContext } from '../../context/layout/layout.tsx';
-import { ModalContext } from '../../context/modal/modal.tsx';
+import { useLayoutContext, useModalContext } from '../../hooks/context.tsx';
 import {
   EmbeddedProductTour,
   type TourSteps
@@ -21,7 +20,7 @@ type TabPanelProps = {
 };
 
 type ControlTabsProps = {
-  setFormId: React.Dispatch<React.SetStateAction<string | null>>;
+  setFormId: Dispatch<React.SetStateAction<string>>;
   virtualControlsFormId: string;
   keyBindingsFormId: string;
   resetPositionsButtonId: string;
@@ -62,7 +61,7 @@ const ControlTabs = ({
   keyBindingsFormId,
   resetPositionsButtonId
 }: ControlTabsProps) => {
-  const { clearLayouts } = useContext(LayoutContext);
+  const { clearLayouts } = useLayoutContext();
   const [value, setValue] = useState(0);
 
   const handleChange = (_: React.SyntheticEvent, newValue: number) => {
@@ -75,7 +74,7 @@ const ControlTabs = ({
       <TabsWithBorder
         value={value}
         onChange={handleChange}
-        aria-label="control tabs"
+        aria-label="Control tabs"
       >
         <Tab label="Virtual Controls" {...a11yProps(0)} />
         <Tab label="Key Bindings" {...a11yProps(1)} />
@@ -98,12 +97,12 @@ const ControlTabs = ({
 };
 
 export const ControlsModal = () => {
-  const { setIsModalOpen } = useContext(ModalContext);
+  const { setIsModalOpen } = useModalContext();
   const virtualControlsFormId = useId();
   const keyBindingsFormId = useId();
   const saveChangesButtonId = useId();
   const resetPositionsButtonId = useId();
-  const [formId, setFormId] = useState<string | null>(virtualControlsFormId);
+  const [formId, setFormId] = useState<string>(virtualControlsFormId);
 
   const tourSteps: TourSteps = [
     {
@@ -174,7 +173,7 @@ export const ControlsModal = () => {
       <ModalFooter>
         <Button
           id={saveChangesButtonId}
-          form={formId ?? ''}
+          form={formId}
           type="submit"
           variant="contained"
         >

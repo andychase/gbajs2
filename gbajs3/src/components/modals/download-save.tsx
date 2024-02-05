@@ -1,13 +1,12 @@
 import { Button } from '@mui/material';
-import { useContext, useId, useState } from 'react';
+import { useId, useState } from 'react';
 import { BiError } from 'react-icons/bi';
 import { useTheme } from 'styled-components';
 
 import { ModalBody } from './modal-body.tsx';
 import { ModalFooter } from './modal-footer.tsx';
 import { ModalHeader } from './modal-header.tsx';
-import { EmulatorContext } from '../../context/emulator/emulator.tsx';
-import { ModalContext } from '../../context/modal/modal.tsx';
+import { useEmulatorContext, useModalContext } from '../../hooks/context.tsx';
 import {
   EmbeddedProductTour,
   type TourSteps
@@ -17,8 +16,8 @@ import { CenteredText } from '../shared/styled.tsx';
 
 export const DownloadSaveModal = () => {
   const theme = useTheme();
-  const { setIsModalOpen } = useContext(ModalContext);
-  const { emulator } = useContext(EmulatorContext);
+  const { setIsModalOpen } = useModalContext();
+  const { emulator } = useEmulatorContext();
   const downloadSaveButtonId = useId();
   const [error, setError] = useState(false);
 
@@ -60,13 +59,14 @@ export const DownloadSaveModal = () => {
 
             if (save && saveName) {
               const saveFile = new Blob([save], {
-                type: 'data:application/x-spss-sav'
+                type: 'data:application/octet-stream'
               });
 
               const link = document.createElement('a');
               link.download = saveName;
               link.href = URL.createObjectURL(saveFile);
               link.click();
+              link.remove();
             } else {
               setError(true);
             }

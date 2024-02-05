@@ -1,12 +1,6 @@
-import { Slider, useMediaQuery } from '@mui/material';
+import { IconButton, Slider, useMediaQuery } from '@mui/material';
 import { useLocalStorage } from '@uidotdev/usehooks';
-import {
-  useCallback,
-  useContext,
-  useId,
-  useState,
-  type ReactNode
-} from 'react';
+import { useCallback, useId, useState, type ReactNode } from 'react';
 import { IconContext } from 'react-icons';
 import { AiOutlineFastForward, AiOutlineForward } from 'react-icons/ai';
 import {
@@ -22,8 +16,7 @@ import { Rnd } from 'react-rnd';
 import { css, styled, useTheme } from 'styled-components';
 
 import { emulatorVolumeLocalStorageKey } from '../../context/emulator/consts.tsx';
-import { EmulatorContext } from '../../context/emulator/emulator.tsx';
-import { LayoutContext } from '../../context/layout/layout.tsx';
+import { useEmulatorContext, useLayoutContext } from '../../hooks/context.tsx';
 import {
   EmbeddedProductTour,
   type TourSteps
@@ -33,14 +26,9 @@ import { GripperHandle } from '../shared/gripper-handle.tsx';
 
 type PanelControlProps = {
   $onClick?: () => void;
-  $shouldGrow?: boolean;
   ariaLabel: string;
   children: ReactNode;
   id: string;
-};
-
-type PanelControlButtonProps = {
-  $shouldGrow?: boolean;
 };
 
 const Panel = styled.ul`
@@ -72,6 +60,17 @@ const InteractivePanelControlStyle = css`
   align-items: center;
   justify-content: center;
   color: ${({ theme }) => theme.pureBlack};
+`;
+
+const PanelControlButton = styled(ButtonBase).attrs({
+  className: 'noDrag'
+})`
+  ${InteractivePanelControlStyle}
+
+  border: none;
+  flex-grow: 1;
+  margin: 0;
+  padding: 0;
 
   &:focus {
     box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
@@ -82,36 +81,19 @@ const InteractivePanelControlStyle = css`
   }
 `;
 
-const PanelControlButton = styled(ButtonBase).attrs({
-  className: 'noDrag'
-})<PanelControlButtonProps>`
-  ${InteractivePanelControlStyle}
-
-  border: none;
-  flex-grow: ${({ $shouldGrow = false }) => ($shouldGrow ? 1 : 0)};
-  margin: 0;
-  padding: 0;
-`;
-
 const VolumeSliderControl = styled.li`
   ${InteractivePanelControlStyle}
 `;
 
 const PanelControl = ({
   $onClick,
-  $shouldGrow,
   ariaLabel,
   children,
   id
 }: PanelControlProps) => {
   return (
     <PanelControlWrapper>
-      <PanelControlButton
-        aria-label={ariaLabel}
-        id={id}
-        onClick={$onClick}
-        $shouldGrow={$shouldGrow}
-      >
+      <PanelControlButton aria-label={ariaLabel} id={id} onClick={$onClick}>
         {children}
       </PanelControlButton>
     </PanelControlWrapper>
@@ -133,8 +115,8 @@ export const ControlPanel = () => {
     setAreItemsDraggable,
     areItemsResizable,
     setAreItemsResizable
-  } = useContext(EmulatorContext);
-  const { layouts, setLayout } = useContext(LayoutContext);
+  } = useEmulatorContext();
+  const { layouts, setLayout } = useLayoutContext();
   const [isFastForwardOn, setIsFastForwardOn] = useState(false);
   const theme = useTheme();
   const isLargerThanPhone = useMediaQuery(theme.isLargerThanPhone);
@@ -168,8 +150,10 @@ export const ControlPanel = () => {
   const dragWrapperPadding = isLargerThanPhone ? 5 : 0;
 
   const togglePlay = () => {
-    isEmulatorPaused ? emulator?.resume() : emulator?.pause();
-    setIsEmulatorPaused((prevState) => !prevState);
+    if (isEmulatorRunning) {
+      isEmulatorPaused ? emulator?.resume() : emulator?.pause();
+      setIsEmulatorPaused((prevState) => !prevState);
+    }
   };
 
   const toggleFastForward = () => {
@@ -270,6 +254,7 @@ export const ControlPanel = () => {
   return (
     <>
       <Rnd
+        data-testid="control-panel-wrapper"
         id={controlPanelId}
         disableDragging={!areItemsDraggable}
         enableResizing={areItemsResizable}
@@ -303,8 +288,9 @@ export const ControlPanel = () => {
           <IconContext.Provider value={{ size: '2em' }}>
             <PanelControl
               id={playPanelControlId}
-              ariaLabel={isEmulatorPaused ? 'Play' : 'Pause'}
-              $shouldGrow
+              ariaLabel={
+                isEmulatorPaused || !isEmulatorRunning ? 'Play' : 'Pause'
+              }
               $onClick={togglePlay}
             >
               {isEmulatorPaused || !isEmulatorRunning ? (
@@ -315,8 +301,7 @@ export const ControlPanel = () => {
             </PanelControl>
             <PanelControl
               id={fastForwardPanelControlId}
-              ariaLabel={isFastForwardOn ? 'Fast Forward' : 'Regular Speed'}
-              $shouldGrow
+              ariaLabel={isFastForwardOn ? 'Regular Speed' : 'Fast Forward'}
               $onClick={toggleFastForward}
             >
               {isFastForwardOn ? (
@@ -328,7 +313,6 @@ export const ControlPanel = () => {
             <PanelControl
               id={quitGamePanelControlId}
               ariaLabel="Quit Game"
-              $shouldGrow
               $onClick={quitGame}
             >
               <BiUndo />
@@ -336,7 +320,6 @@ export const ControlPanel = () => {
             <PanelControl
               id={dragPanelControlId}
               ariaLabel={areItemsDraggable ? 'Anchor Items' : 'Drag Items'}
-              $shouldGrow
               $onClick={() => {
                 setAreItemsDraggable((prevState) => !prevState);
               }}
@@ -352,7 +335,6 @@ export const ControlPanel = () => {
               ariaLabel={
                 areItemsResizable ? 'Stop Resizing Items' : 'Resize Items'
               }
-              $shouldGrow
               $onClick={() => {
                 setAreItemsResizable((prevState) => !prevState);
               }}
@@ -364,9 +346,20 @@ export const ControlPanel = () => {
               )}
             </PanelControl>
             <VolumeSliderControl id={volumeSliderControlId}>
-              <BiVolumeMute onClick={() => setVolume(0)} />
+              <IconButton
+                aria-label="Mute Volume"
+                size="small"
+                sx={{
+                  padding: 0,
+                  color: theme.pureBlack,
+                  '&:active': { color: theme.gbaThemeBlue }
+                }}
+                onClick={() => setVolume(0)}
+              >
+                <BiVolumeMute style={{ maxHeight: '100%' }} />
+              </IconButton>
               <MutedMarkSlider
-                aria-label="Volume"
+                aria-label="Volume Slider"
                 value={currentEmulatorVolume}
                 step={0.1}
                 marks
@@ -380,13 +373,22 @@ export const ControlPanel = () => {
                 onChange={setVolumeFromEvent}
                 onFocus={emulator?.disableKeyboardInput}
                 onBlur={emulator?.enableKeyboardInput}
-                onClick={() => {
-                  // click is triggered on keyup, if using mouse this
-                  // is the desired behavior after focus is gained
-                  emulator?.enableKeyboardInput();
-                }}
+                // click is triggered on keyup, if using mouse this
+                // is the desired behavior after focus is gained
+                onClick={emulator?.enableKeyboardInput}
               />
-              <BiVolumeFull onClick={() => setVolume(1)} />
+              <IconButton
+                aria-label="Max Volume"
+                size="small"
+                sx={{
+                  padding: 0,
+                  color: theme.pureBlack,
+                  '&:active': { color: theme.gbaThemeBlue }
+                }}
+                onClick={() => setVolume(1)}
+              >
+                <BiVolumeFull />
+              </IconButton>
             </VolumeSliderControl>
           </IconContext.Provider>
         </Panel>

@@ -1,3 +1,4 @@
+/// <reference types="vitest" />
 import { defineConfig, splitVendorChunkPlugin } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
@@ -90,6 +91,21 @@ export default defineConfig({
           }
         }
       }
+    }
+  },
+  test: {
+    globals: true,
+    restoreMocks: true,
+    environment: 'jsdom',
+    setupFiles: './test/setup.ts',
+    coverage: {
+      provider: 'v8',
+      exclude: [
+        'test/**',
+        'src/emulator/mgba/wasm/**',
+        '**/*.d.ts',
+        '**/*eslint*'
+      ]
     }
   }
 });

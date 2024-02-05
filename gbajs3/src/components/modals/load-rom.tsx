@@ -1,5 +1,5 @@
 import { Button } from '@mui/material';
-import { useContext, useEffect, useState, useId, type ReactNode } from 'react';
+import { useEffect, useState, useId, type ReactNode } from 'react';
 import { BiError } from 'react-icons/bi';
 import { PacmanLoader } from 'react-spinners';
 import { styled, useTheme } from 'styled-components';
@@ -7,8 +7,7 @@ import { styled, useTheme } from 'styled-components';
 import { ModalBody } from './modal-body.tsx';
 import { ModalFooter } from './modal-footer.tsx';
 import { ModalHeader } from './modal-header.tsx';
-import { EmulatorContext } from '../../context/emulator/emulator.tsx';
-import { ModalContext } from '../../context/modal/modal.tsx';
+import { useEmulatorContext, useModalContext } from '../../hooks/context.tsx';
 import { useListRoms } from '../../hooks/use-list-roms.tsx';
 import { useLoadRom } from '../../hooks/use-load-rom.tsx';
 import {
@@ -109,8 +108,8 @@ const RomLoadingIndicator = ({
 
 export const LoadRomModal = () => {
   const theme = useTheme();
-  const { setIsModalOpen } = useContext(ModalContext);
-  const { emulator } = useContext(EmulatorContext);
+  const { setIsModalOpen } = useModalContext();
+  const { emulator } = useEmulatorContext();
   const romListId = useId();
   const {
     data: romList,
@@ -128,7 +127,7 @@ export const LoadRomModal = () => {
   );
 
   useEffect(() => {
-    if (!romLoading && romFile) {
+    if (!romLoading && romFile && currentRomLoading) {
       const runCallback = () => {
         emulator?.run(emulator.filePaths().gamePath + '/' + romFile.name);
       };
@@ -136,7 +135,7 @@ export const LoadRomModal = () => {
       emulator?.uploadRom(romFile, runCallback);
       setCurrentRomLoading(null);
     }
-  }, [emulator, romLoading, romFile]);
+  }, [emulator, romLoading, romFile, currentRomLoading]);
 
   const LoadingIndicator = () => (
     <PacmanLoader

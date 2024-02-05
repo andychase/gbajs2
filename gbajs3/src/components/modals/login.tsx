@@ -1,5 +1,5 @@
 import { TextField, Button } from '@mui/material';
-import { useContext, useEffect, useId } from 'react';
+import { useEffect, useId } from 'react';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { BiError } from 'react-icons/bi';
 import { PacmanLoader } from 'react-spinners';
@@ -8,8 +8,7 @@ import { styled, useTheme } from 'styled-components';
 import { ModalBody } from './modal-body.tsx';
 import { ModalFooter } from './modal-footer.tsx';
 import { ModalHeader } from './modal-header.tsx';
-import { AuthContext } from '../../context/auth/auth.tsx';
-import { ModalContext } from '../../context/modal/modal.tsx';
+import { useAuthContext, useModalContext } from '../../hooks/context.tsx';
 import { useLogin } from '../../hooks/use-login.tsx';
 import {
   EmbeddedProductTour,
@@ -35,8 +34,8 @@ const StyledForm = styled.form`
 
 export const LoginModal = () => {
   const theme = useTheme();
-  const { setIsModalOpen } = useContext(ModalContext);
-  const { setAccessToken, setAccessTokenSource } = useContext(AuthContext);
+  const { setIsModalOpen } = useModalContext();
+  const { setAccessToken, setAccessTokenSource } = useAuthContext();
   const loginFormId = useId();
   const {
     execute: executeLogin,
@@ -90,11 +89,16 @@ export const LoginModal = () => {
       <ModalBody>
         {loginLoading ? (
           <PacmanLoader
+            data-testid="login-spinner"
             color={theme.gbaThemeBlue}
             cssOverride={{ margin: '0 auto' }}
           />
         ) : (
-          <StyledForm id={loginFormId} onSubmit={handleSubmit(onSubmit)}>
+          <StyledForm
+            aria-label="Login Form"
+            id={loginFormId}
+            onSubmit={handleSubmit(onSubmit)}
+          >
             <TextField
               error={!!errors?.username}
               label="Username"

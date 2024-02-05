@@ -23,12 +23,9 @@ type AuthContextProps = {
 
 type AuthProviderProps = { children: ReactNode };
 
-export const AuthContext = createContext<AuthContextProps>({
-  accessToken: null,
-  setAccessToken: () => undefined,
-  setAccessTokenSource: () => undefined,
-  isAuthenticated: () => false,
-});
+export const AuthContext = createContext<AuthContextProps | null>(null);
+
+AuthContext.displayName = 'AuthContext';
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const fourMinutesInMS = 240 * 1000;

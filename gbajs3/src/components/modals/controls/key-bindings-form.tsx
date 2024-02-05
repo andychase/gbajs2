@@ -1,11 +1,10 @@
 import { TextField } from '@mui/material';
 import { useLocalStorage } from '@uidotdev/usehooks';
-import { useContext } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { styled } from 'styled-components';
 
 import { emulatorKeyBindingsLocalStorageKey } from '../../../context/emulator/consts.tsx';
-import { EmulatorContext } from '../../../context/emulator/emulator.tsx';
+import { useEmulatorContext } from '../../../hooks/context.tsx';
 
 import type { KeyBinding } from '../../../emulator/mgba/mgba-emulator.tsx';
 
@@ -24,7 +23,7 @@ const StyledForm = styled.form`
 `;
 
 export const KeyBindingsForm = ({ id }: KeyBindingsFormProps) => {
-  const { emulator, isEmulatorRunning } = useContext(EmulatorContext);
+  const { emulator, isEmulatorRunning } = useEmulatorContext();
   const {
     handleSubmit,
     setValue,
@@ -51,7 +50,11 @@ export const KeyBindingsForm = ({ id }: KeyBindingsFormProps) => {
   const renderedBindings = currentKeyBindings ?? defaultKeyBindings;
 
   return (
-    <StyledForm id={id} onSubmit={handleSubmit(onSubmit)}>
+    <StyledForm
+      aria-label="Key Bindings Form"
+      id={id}
+      onSubmit={handleSubmit(onSubmit)}
+    >
       {renderedBindings?.map((keyBinding) => (
         <Controller
           key={`gba_input_${keyBinding.gbaInput.toLowerCase()}`}

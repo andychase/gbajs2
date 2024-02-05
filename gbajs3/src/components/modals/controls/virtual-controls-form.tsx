@@ -40,9 +40,7 @@ export const VirtualControlsForm = ({ id }: VirtualControlsFormProps) => {
   const theme = useTheme();
   const isLargerThanPhone = useMediaQuery(theme.isLargerThanPhone);
   const areDPadAndButtonsEnabled =
-    areVirtualControlsEnabled?.DPadAndButtons ??
-    (areVirtualControlsEnabled?.DPadAndButtons === undefined &&
-      !isLargerThanPhone);
+    areVirtualControlsEnabled?.DPadAndButtons ?? !isLargerThanPhone;
 
   const { register, handleSubmit, setValue, watch } =
     useForm<ControlsInputProps>({
@@ -65,7 +63,11 @@ export const VirtualControlsForm = ({ id }: VirtualControlsFormProps) => {
   };
 
   return (
-    <StyledForm id={id} onSubmit={handleSubmit(onSubmit)}>
+    <StyledForm
+      aria-label="Virtual Controls Form"
+      id={id}
+      onSubmit={handleSubmit(onSubmit)}
+    >
       <ManagedCheckbox
         label="Virtual D-pad/Buttons"
         watcher={watch('DPadAndButtons')}

@@ -3,6 +3,7 @@ import SvgIcon, { type SvgIconProps } from '@mui/material/SvgIcon';
 export const MinusSquare = (props: SvgIconProps) => {
   return (
     <SvgIcon
+      data-testid="action-box:minus"
       className="minus"
       fontSize="inherit"
       style={{ width: 14, height: 14 }}
@@ -16,6 +17,7 @@ export const MinusSquare = (props: SvgIconProps) => {
 export const PlusSquare = (props: SvgIconProps) => {
   return (
     <SvgIcon
+      data-testid="action-box:plus"
       className="plus"
       fontSize="inherit"
       style={{ width: 14, height: 14 }}
@@ -29,6 +31,7 @@ export const PlusSquare = (props: SvgIconProps) => {
 export const CloseSquare = (props: SvgIconProps) => {
   return (
     <SvgIcon
+      data-testid="action-box:close"
       className="close"
       fontSize="inherit"
       style={{ width: 14, height: 14 }}

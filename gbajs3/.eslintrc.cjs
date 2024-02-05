@@ -6,11 +6,20 @@ module.exports = {
     'plugin:react-hooks/recommended',
     'plugin:import/recommended',
     'plugin:jsx-a11y/recommended',
-    'plugin:styled-components-a11y/recommended'
+    'plugin:styled-components-a11y/recommended',
+    'plugin:testing-library/react',
+    'plugin:jest-dom/recommended'
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: { ecmaVersion: 'latest', sourceType: 'module' },
-  plugins: ['react-refresh', 'import', 'jsx-a11y', 'styled-components-a11y'],
+  plugins: [
+    'react-refresh',
+    'import',
+    'jsx-a11y',
+    'styled-components-a11y',
+    'testing-library',
+    'jest-dom'
+  ],
   rules: {
     '@typescript-eslint/consistent-type-imports': 'error',
     'react-refresh/only-export-components': 'warn',
@@ -34,6 +43,10 @@ module.exports = {
           caseInsensitive: true
         }
       }
+    ],
+    'testing-library/consistent-data-testid': [
+      'error',
+      { testIdPattern: '^([a-z0-9]+-?:?)+$' }
     ]
   }
 };

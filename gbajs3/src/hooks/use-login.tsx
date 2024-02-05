@@ -8,7 +8,7 @@ type LoginProps = {
 };
 
 export const useLogin = () => {
-  const apiLocation: string = import.meta.env.VITE_GBA_SERVER_LOCATION;
+  const apiLocation = import.meta.env.VITE_GBA_SERVER_LOCATION;
 
   const executeLogin = useCallback(
     async (fetchProps?: LoginProps) => {

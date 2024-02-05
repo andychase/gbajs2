@@ -1,5 +1,5 @@
 import { Button } from '@mui/material';
-import { useCallback, useContext, useId, useRef, useState } from 'react';
+import { useCallback, useId, useRef, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { BiCloudUpload } from 'react-icons/bi';
@@ -8,8 +8,7 @@ import { styled } from 'styled-components';
 import { ModalBody } from './modal-body.tsx';
 import { ModalFooter } from './modal-footer.tsx';
 import { ModalHeader } from './modal-header.tsx';
-import { EmulatorContext } from '../../context/emulator/emulator.tsx';
-import { ModalContext } from '../../context/modal/modal.tsx';
+import { useEmulatorContext, useModalContext } from '../../hooks/context.tsx';
 import {
   EmbeddedProductTour,
   type TourSteps
@@ -45,8 +44,8 @@ const BiCloudUploadLarge = styled(BiCloudUpload)`
 `;
 
 export const UploadCheatsModal = () => {
-  const { setIsModalOpen } = useContext(ModalContext);
-  const { emulator } = useContext(EmulatorContext);
+  const { setIsModalOpen } = useModalContext();
+  const { emulator } = useEmulatorContext();
   const {
     register,
     reset,
@@ -118,7 +117,8 @@ export const UploadCheatsModal = () => {
             id: cheatsFormId,
             onSubmit: handleSubmit(onSubmit),
             $isDragActive: isDragActive,
-            onClick: triggerFileInputOnClick
+            onClick: triggerFileInputOnClick,
+            'aria-label': 'Upload Cheats'
           })}
         >
           <HiddenInput
@@ -128,7 +128,8 @@ export const UploadCheatsModal = () => {
                   (cheatsList?.length > 0 && validateFileNames(cheatsList)) ||
                   'At least one .cheats file is required'
               }),
-              ref: hiddenInputRef
+              ref: hiddenInputRef,
+              'data-testid': 'cheatfiles-hidden-input'
             })}
           />
           <BiCloudUploadLarge />

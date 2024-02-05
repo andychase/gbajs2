@@ -25,6 +25,7 @@ export const GripperHandle = ({ variation }: GripperHandleProps) => {
 
   return (
     <FaGripLines
+      data-testid="gripper-handle"
       color={theme.gbaThemeBlue}
       style={{ transform: `rotate(${rotationDegrees})` }}
     />

@@ -1,9 +1,8 @@
-import { useContext, useRef, type ReactNode } from 'react';
+import { useRef, type ReactNode } from 'react';
 import Draggable from 'react-draggable';
 import { styled } from 'styled-components';
 
-import { EmulatorContext } from '../../context/emulator/emulator.tsx';
-import { LayoutContext } from '../../context/layout/layout.tsx';
+import { useEmulatorContext, useLayoutContext } from '../../hooks/context.tsx';
 import { ButtonBase } from '../shared/custom-button-base.tsx';
 
 type VirtualButtonProps = {
@@ -93,8 +92,8 @@ export const VirtualButton = ({
   enabled = false,
   ariaLabel
 }: VirtualButtonProps) => {
-  const { emulator, areItemsDraggable } = useContext(EmulatorContext);
-  const { layouts, setLayout } = useContext(LayoutContext);
+  const { emulator, areItemsDraggable } = useEmulatorContext();
+  const { layouts, setLayout } = useLayoutContext();
   const dragRef = useRef<HTMLButtonElement | null>(null);
 
   if (!enabled) return null;

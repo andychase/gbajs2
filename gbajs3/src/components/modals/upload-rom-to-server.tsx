@@ -1,5 +1,5 @@
 import { Button } from '@mui/material';
-import { useContext, useId } from 'react';
+import { useId } from 'react';
 import { BiError } from 'react-icons/bi';
 import { PacmanLoader } from 'react-spinners';
 import { useTheme } from 'styled-components';
@@ -7,8 +7,7 @@ import { useTheme } from 'styled-components';
 import { ModalBody } from './modal-body.tsx';
 import { ModalFooter } from './modal-footer.tsx';
 import { ModalHeader } from './modal-header.tsx';
-import { EmulatorContext } from '../../context/emulator/emulator.tsx';
-import { ModalContext } from '../../context/modal/modal.tsx';
+import { useEmulatorContext, useModalContext } from '../../hooks/context.tsx';
 import { useUpLoadRom } from '../../hooks/use-upload-rom.tsx';
 import {
   EmbeddedProductTour,
@@ -33,7 +32,11 @@ const DynamicBody = ({
   hasError
 }: DynamicBodyProps) => {
   const LoadingIndicator = () => (
-    <PacmanLoader color={loadingColor} cssOverride={{ margin: '0 auto' }} />
+    <PacmanLoader
+      data-testid="upload-rom-spinner"
+      color={loadingColor}
+      cssOverride={{ margin: '0 auto' }}
+    />
   );
 
   let BodyContents = null;
@@ -67,8 +70,8 @@ const DynamicBody = ({
 
 export const UploadRomToServerModal = () => {
   const theme = useTheme();
-  const { setIsModalOpen } = useContext(ModalContext);
-  const { emulator } = useContext(EmulatorContext);
+  const { setIsModalOpen } = useModalContext();
+  const { emulator } = useEmulatorContext();
   const uploadRomToServerButtonId = useId();
   const { data, isLoading, error, execute: executeUploadRom } = useUpLoadRom();
 

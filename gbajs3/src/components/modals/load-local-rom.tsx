@@ -1,12 +1,11 @@
 import { Button } from '@mui/material';
-import { useContext, useId } from 'react';
+import { useId } from 'react';
 import { styled } from 'styled-components';
 
 import { ModalBody } from './modal-body.tsx';
 import { ModalFooter } from './modal-footer.tsx';
 import { ModalHeader } from './modal-header.tsx';
-import { EmulatorContext } from '../../context/emulator/emulator.tsx';
-import { ModalContext } from '../../context/modal/modal.tsx';
+import { useEmulatorContext, useModalContext } from '../../hooks/context.tsx';
 import {
   EmbeddedProductTour,
   type TourSteps
@@ -55,8 +54,8 @@ const RomList = styled.ul`
 `;
 
 export const LoadLocalRomModal = () => {
-  const { setIsModalOpen } = useContext(ModalContext);
-  const { emulator } = useContext(EmulatorContext);
+  const { setIsModalOpen } = useModalContext();
+  const { emulator } = useEmulatorContext();
   const romListId = useId();
   const ignorePaths = ['.', '..'];
   const localRoms = emulator

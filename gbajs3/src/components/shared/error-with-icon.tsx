@@ -23,7 +23,7 @@ export const ErrorWithIcon = ({
   className
 }: ErrorWithIconProps) => {
   return (
-    <ErrorWrapper className={className}>
+    <ErrorWrapper data-testid="error-with-icon" className={className}>
       {icon}
       <ErrorText>{text}</ErrorText>
     </ErrorWrapper>

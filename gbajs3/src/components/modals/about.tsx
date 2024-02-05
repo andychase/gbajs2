@@ -1,17 +1,16 @@
 import { Button } from '@mui/material';
 import { useLocalStorage } from '@uidotdev/usehooks';
-import { useContext } from 'react';
 
 import { ModalBody } from './modal-body.tsx';
 import { ModalFooter } from './modal-footer.tsx';
 import { ModalHeader } from './modal-header.tsx';
-import { ModalContext } from '../../context/modal/modal.tsx';
+import { useModalContext } from '../../hooks/context.tsx';
 import { productTourLocalStorageKey } from '../product-tour/consts.tsx';
 
 import type { CompletedProductTourSteps } from '../product-tour/product-tour-intro.tsx';
 
 export const AboutModal = () => {
-  const { setIsModalOpen } = useContext(ModalContext);
+  const { setIsModalOpen } = useModalContext();
   const [, setHasCompletedProductTourSteps] = useLocalStorage<
     CompletedProductTourSteps | undefined
   >(productTourLocalStorageKey);

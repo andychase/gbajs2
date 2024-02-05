@@ -1,15 +1,8 @@
-import {
-  useState,
-  useRef,
-  useContext,
-  useCallback,
-  type PointerEvent
-} from 'react';
+import { useState, useRef, useCallback, type PointerEvent } from 'react';
 import Draggable from 'react-draggable';
 import { styled } from 'styled-components';
 
-import { EmulatorContext } from '../../context/emulator/emulator.tsx';
-import { LayoutContext } from '../../context/layout/layout.tsx';
+import { useEmulatorContext, useLayoutContext } from '../../hooks/context.tsx';
 
 import type { Position } from 'react-rnd';
 
@@ -122,8 +115,8 @@ const RightArrow = styled(DirectionArrow)`
 `;
 
 export const OPad = ({ initialPosition }: OPadProps) => {
-  const { emulator, areItemsDraggable } = useContext(EmulatorContext);
-  const { layouts, setLayout } = useContext(LayoutContext);
+  const { emulator, areItemsDraggable } = useEmulatorContext();
+  const { layouts, setLayout } = useLayoutContext();
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isControlled, setIsControlled] = useState(true);
   const containerDragRef = useRef<HTMLDivElement>(null);

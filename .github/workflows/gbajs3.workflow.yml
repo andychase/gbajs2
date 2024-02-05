@@ -34,7 +34,6 @@ jobs:
         run: |
           npm run lint
 
-      # TODO
-      # - name: Test
-      #   run: |
-      #     npm run test
+      - name: Test
+        run: |
+          npm run test

@@ -1,4 +1,4 @@
-import { Button } from '@mui/material';
+import { Button, IconButton } from '@mui/material';
 import { alpha, styled as muiStyled } from '@mui/material/styles';
 import {
   TreeView,
@@ -6,15 +6,14 @@ import {
   treeItemClasses,
   type TreeItemProps
 } from '@mui/x-tree-view';
-import { useCallback, useContext, useEffect, useId, useState } from 'react';
+import { useCallback, useId, useState } from 'react';
 import { BiTrash } from 'react-icons/bi';
 import { styled } from 'styled-components';
 
 import { ModalBody } from './modal-body.tsx';
 import { ModalFooter } from './modal-footer.tsx';
 import { ModalHeader } from './modal-header.tsx';
-import { EmulatorContext } from '../../context/emulator/emulator.tsx';
-import { ModalContext } from '../../context/modal/modal.tsx';
+import { useEmulatorContext, useModalContext } from '../../hooks/context.tsx';
 import {
   EmbeddedProductTour,
   type TourSteps
@@ -30,7 +29,6 @@ import type { FileNode } from '../../emulator/mgba/mgba-emulator.tsx';
 type EmulatorFSProps = {
   id: string;
   allFiles?: FileNode;
-  updateAllFiles: () => void;
   deleteFile: (path: string) => void;
 };
 
@@ -68,26 +66,22 @@ const LeafLabelWrapper = styled.div`
   }
 `;
 
-const EmulatorFS = ({
-  id,
-  allFiles,
-  updateAllFiles,
-  deleteFile
-}: EmulatorFSProps) => {
+const EmulatorFS = ({ id, allFiles, deleteFile }: EmulatorFSProps) => {
   if (!allFiles) return null;
 
-  const deleteAndUpdate = (path: string) => {
-    deleteFile(path);
-    updateAllFiles();
-  };
-
   const renderTree = (node: FileNode) => {
-    const nodeName = node.path.split('/')?.pop() ?? node.path;
+    const nodeName = node.path.split('/').pop();
 
     const leafLabelNode = (
       <LeafLabelWrapper>
         <p>{nodeName}</p>
-        <BiTrash onClick={() => deleteAndUpdate(node.path)} />
+        <IconButton
+          aria-label={`Delete ${nodeName}`}
+          sx={{ padding: 0 }}
+          onClick={() => deleteFile(node.path)}
+        >
+          <BiTrash />
+        </IconButton>
       </LeafLabelWrapper>
     );
 
@@ -122,26 +116,21 @@ const EmulatorFS = ({
 };
 
 export const FileSystemModal = () => {
-  const { setIsModalOpen } = useContext(ModalContext);
-  const { emulator } = useContext(EmulatorContext);
+  const { setIsModalOpen } = useModalContext();
+  const { emulator } = useEmulatorContext();
   const [allFiles, setAllFiles] = useState<FileNode | undefined>();
   const emulatorFsId = useId();
   const saveFileSystemButtonId = useId();
 
-  useEffect(() => {
-    setAllFiles(emulator?.listAllFiles());
-  }, [emulator]);
-
-  const updateAllFiles = useCallback(() => {
-    setAllFiles(emulator?.listAllFiles());
-  }, [emulator]);
-
   const deleteFile = useCallback(
     (path: string) => {
       emulator?.deleteFile(path);
+      setAllFiles(emulator?.listAllFiles());
     },
     [emulator]
   );
+
+  const renderedFiles = allFiles ?? emulator?.listAllFiles();
 
   const tourSteps: TourSteps = [
     {
@@ -176,8 +165,7 @@ export const FileSystemModal = () => {
       <ModalBody>
         <EmulatorFS
           id={emulatorFsId}
-          allFiles={allFiles}
-          updateAllFiles={updateAllFiles}
+          allFiles={renderedFiles}
           deleteFile={deleteFile}
         />
       </ModalBody>

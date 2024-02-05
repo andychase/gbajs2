@@ -1,15 +1,14 @@
 import { Button } from '@mui/material';
-import { useContext } from 'react';
 
 import { ModalBody } from './modal-body.tsx';
 import { ModalFooter } from './modal-footer.tsx';
 import { ModalHeader } from './modal-header.tsx';
-import { ModalContext } from '../../context/modal/modal.tsx';
+import { useModalContext } from '../../hooks/context.tsx';
 
 export const LegalModal = () => {
-  const { setIsModalOpen } = useContext(ModalContext);
-  const currentdata = new Date();
-  const year = currentdata.getFullYear();
+  const { setIsModalOpen } = useModalContext();
+  const currentDate = new Date();
+  const year = currentDate.getFullYear();
 
   return (
     <>

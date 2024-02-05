@@ -17,5 +17,7 @@ const FooterWrapper = styled.div`
 `;
 
 export const ModalFooter = ({ children }: ModalFooterProps) => {
-  return <FooterWrapper>{children}</FooterWrapper>;
+  return (
+    <FooterWrapper data-testid="modal-footer:wrapper">{children}</FooterWrapper>
+  );
 };

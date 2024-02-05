@@ -1,11 +1,11 @@
-import { useCallback, useContext } from 'react';
+import { useCallback } from 'react';
 
+import { useAuthContext } from './context.tsx';
 import { useAsyncData } from './use-async-data.tsx';
-import { AuthContext } from '../context/auth/auth.tsx';
 
 export const useListRoms = ({ loadOnMount = false } = {}) => {
-  const apiLocation: string = import.meta.env.VITE_GBA_SERVER_LOCATION;
-  const { accessToken } = useContext(AuthContext);
+  const apiLocation = import.meta.env.VITE_GBA_SERVER_LOCATION;
+  const { accessToken } = useAuthContext();
 
   const executeListRoms = useCallback(async () => {
     const url = `${apiLocation}/api/rom/list`;
@@ -13,8 +13,8 @@ export const useListRoms = ({ loadOnMount = false } = {}) => {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${accessToken}`,
-      },
+        Authorization: `Bearer ${accessToken}`
+      }
     };
 
     const res = await fetch(url, options);
@@ -24,7 +24,7 @@ export const useListRoms = ({ loadOnMount = false } = {}) => {
   const { data, isLoading, error, execute } = useAsyncData({
     fetchFn: executeListRoms,
     clearDataOnLoad: true,
-    loadOnMount,
+    loadOnMount
   });
 
   return { data, isLoading, error, execute };

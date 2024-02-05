@@ -45,7 +45,7 @@ npm run lint;
 To fix linting issues:
 
 ```
-npm run lint --fix;
+npm run lint -- --fix;
 ```
 
 To assess vulnerabilities, run:

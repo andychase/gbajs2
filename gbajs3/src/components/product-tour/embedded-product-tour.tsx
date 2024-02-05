@@ -1,10 +1,10 @@
 import { useLocalStorage } from '@uidotdev/usehooks';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import Joyride, { STATUS, type Step } from 'react-joyride';
 import { useInterval } from 'usehooks-ts';
 
 import { productTourLocalStorageKey } from './consts.tsx';
-import { ModalContext } from '../../context/modal/modal.tsx';
+import { useModalContext } from '../../hooks/context.tsx';
 
 import type { CompletedProductTourSteps } from './product-tour-intro.tsx';
 
@@ -44,7 +44,7 @@ export const EmbeddedProductTour = ({
     useLocalStorage<CompletedProductTourSteps | undefined>(
       productTourLocalStorageKey
     );
-  const { isModalOpen } = useContext(ModalContext);
+  const { isModalOpen } = useModalContext();
   const [shouldRender, setShouldRender] = useState(renderWithoutDelay);
 
   useInterval(

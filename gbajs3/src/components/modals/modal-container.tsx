@@ -1,8 +1,6 @@
-import { useContext } from 'react';
 import Modal from 'react-modal';
 
-import { EmulatorContext } from '../../context/emulator/emulator.tsx';
-import { ModalContext } from '../../context/modal/modal.tsx';
+import { useEmulatorContext, useModalContext } from '../../hooks/context.tsx';
 
 const modalStyles = {
   overlay: {
@@ -24,9 +22,8 @@ const modalStyles = {
 };
 
 export const ModalContainer = () => {
-  const { modalContent, isModalOpen, setIsModalOpen } =
-    useContext(ModalContext);
-  const { emulator } = useContext(EmulatorContext);
+  const { modalContent, isModalOpen, setIsModalOpen } = useModalContext();
+  const { emulator } = useEmulatorContext();
 
   return (
     <Modal

@@ -21,12 +21,9 @@ type LayoutContextProps = {
 
 type LayoutProviderProps = { children: ReactNode };
 
-export const LayoutContext = createContext<LayoutContextProps>({
-  layouts: {},
-  hasSetLayout: false,
-  clearLayouts: () => undefined,
-  setLayout: () => undefined
-});
+export const LayoutContext = createContext<LayoutContextProps | null>(null);
+
+LayoutContext.displayName = 'LayoutContext';
 
 export const LayoutProvider = ({ children }: LayoutProviderProps) => {
   const { layouts, setLayouts, hasSetLayout, clearLayouts } = useLayouts();

@@ -20,6 +20,7 @@ export const ManagedCheckbox = ({
 }: ManagedCheckBoxProps) => {
   return (
     <FormControlLabel
+      data-testid="managed-checkbox:label"
       id={id}
       control={<Checkbox {...registerProps} checked={!!watcher} />}
       label={label}

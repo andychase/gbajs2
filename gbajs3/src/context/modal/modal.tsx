@@ -15,12 +15,9 @@ type ModalContextProps = {
 
 type ModalProviderProps = { children: ReactNode };
 
-export const ModalContext = createContext<ModalContextProps>({
-  modalContent: null,
-  setModalContent: () => undefined,
-  isModalOpen: false,
-  setIsModalOpen: () => undefined
-});
+export const ModalContext = createContext<ModalContextProps | null>(null);
+
+ModalContext.displayName = 'ModalContext';
 
 export const ModalProvider = ({ children }: ModalProviderProps) => {
   const [modalContent, setModalContent] =

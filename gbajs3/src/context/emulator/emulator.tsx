@@ -36,16 +36,9 @@ type EmulatorProviderProps = {
   children: ReactNode;
 };
 
-export const EmulatorContext = createContext<EmulatorContextProps>({
-  emulator: null,
-  canvas: null,
-  setCanvas: () => undefined,
-  isEmulatorRunning: false,
-  areItemsDraggable: false,
-  setAreItemsDraggable: () => undefined,
-  areItemsResizable: false,
-  setAreItemsResizable: () => undefined
-});
+export const EmulatorContext = createContext<EmulatorContextProps | null>(null);
+
+EmulatorContext.displayName = 'EmulatorContext';
 
 export const EmulatorProvider = ({ children }: EmulatorProviderProps) => {
   const [canvas, setCanvas] = useState<EmulatorContextProps['canvas']>(null);

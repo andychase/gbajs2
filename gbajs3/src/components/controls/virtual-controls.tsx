@@ -1,6 +1,5 @@
 import { useMediaQuery } from '@mui/material';
 import { useLocalStorage } from '@uidotdev/usehooks';
-import { useContext } from 'react';
 import { IconContext } from 'react-icons';
 import {
   BiRefresh,
@@ -16,10 +15,12 @@ import {
 } from './consts.tsx';
 import { OPad } from './o-pad.tsx';
 import { VirtualButton } from './virtual-button.tsx';
-import { AuthContext } from '../../context/auth/auth.tsx';
-import { EmulatorContext } from '../../context/emulator/emulator.tsx';
-import { LayoutContext } from '../../context/layout/layout.tsx';
-import { ModalContext } from '../../context/modal/modal.tsx';
+import {
+  useEmulatorContext,
+  useLayoutContext,
+  useAuthContext,
+  useModalContext
+} from '../../hooks/context.tsx';
 import { UploadSaveToServerModal } from '../modals/upload-save-to-server.tsx';
 
 import type { AreVirtualControlsEnabledProps } from '../modals/controls/virtual-controls-form.tsx';
@@ -50,10 +51,10 @@ export const VirtualControls = () => {
   const theme = useTheme();
   const isLargerThanPhone = useMediaQuery(theme.isLargerThanPhone);
   const isMobileWithUrlBar = useMediaQuery(theme.isMobileWithUrlBar);
-  const { emulator, isEmulatorRunning } = useContext(EmulatorContext);
-  const { isAuthenticated } = useContext(AuthContext);
-  const { setModalContent, setIsModalOpen } = useContext(ModalContext);
-  const { layouts } = useContext(LayoutContext);
+  const { emulator, isEmulatorRunning } = useEmulatorContext();
+  const { isAuthenticated } = useAuthContext();
+  const { setModalContent, setIsModalOpen } = useModalContext();
+  const { layouts } = useLayoutContext();
   const [currentSaveStateSlot] = useLocalStorage(
     saveStateSlotLocalStorageKey,
     0
