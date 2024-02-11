@@ -48,7 +48,7 @@ Do not attempt to log into the server unless you are the server owner or an appr
 * Server enhancements
     - request an account feature suite
     - s3 backed file storage
-
+* SkyEmu secondary core (tentative)
 
 ## Sample Screenshots
 
