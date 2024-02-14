@@ -6,6 +6,7 @@ import { styled, useTheme } from 'styled-components';
 
 import { virtualControlsLocalStorageKey } from '../../controls/consts.tsx';
 import { ManagedCheckbox } from '../../shared/managed-checkbox.tsx';
+import { ManagedSwitch } from '../../shared/managed-switch.tsx';
 
 const StyledForm = styled.form`
   display: flex;
@@ -22,6 +23,7 @@ type ControlsInputProps = {
   LoadState: boolean;
   QuickReload: boolean;
   SendSaveToServer: boolean;
+  NotificationsEnabled: boolean;
 };
 
 export type AreVirtualControlsEnabledProps = {
@@ -30,6 +32,7 @@ export type AreVirtualControlsEnabledProps = {
   LoadState?: boolean;
   QuickReload?: boolean;
   SendSaveToServer?: boolean;
+  NotificationsEnabled?: boolean;
 };
 
 export const VirtualControlsForm = ({ id }: VirtualControlsFormProps) => {
@@ -41,12 +44,15 @@ export const VirtualControlsForm = ({ id }: VirtualControlsFormProps) => {
   const isLargerThanPhone = useMediaQuery(theme.isLargerThanPhone);
   const areDPadAndButtonsEnabled =
     areVirtualControlsEnabled?.DPadAndButtons ?? !isLargerThanPhone;
+  const areNotificationsEnabled =
+    areVirtualControlsEnabled?.NotificationsEnabled ?? true;
 
   const { register, handleSubmit, setValue, watch } =
     useForm<ControlsInputProps>({
       defaultValues: {
         ...areVirtualControlsEnabled,
-        DPadAndButtons: areDPadAndButtonsEnabled
+        DPadAndButtons: areDPadAndButtonsEnabled,
+        NotificationsEnabled: areNotificationsEnabled
       }
     });
 
@@ -92,6 +98,11 @@ export const VirtualControlsForm = ({ id }: VirtualControlsFormProps) => {
         label="Send save to server"
         watcher={watch('SendSaveToServer')}
         registerProps={register('SendSaveToServer')}
+      />
+      <ManagedSwitch
+        label="Enable Notifications"
+        watcher={watch('NotificationsEnabled')}
+        registerProps={register('NotificationsEnabled')}
       />
     </StyledForm>
   );

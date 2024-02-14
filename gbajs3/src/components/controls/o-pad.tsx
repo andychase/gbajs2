@@ -243,6 +243,7 @@ export const OPad = ({ initialPosition }: OPadProps) => {
       }
     >
       <BackgroundContainer
+        aria-label="O-Pad"
         ref={containerDragRef}
         $initialPosition={initialPosition}
         $areItemsDraggable={areItemsDraggable}

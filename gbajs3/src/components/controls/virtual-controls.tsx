@@ -1,5 +1,7 @@
 import { useMediaQuery } from '@mui/material';
 import { useLocalStorage } from '@uidotdev/usehooks';
+import { useId } from 'react';
+import toast from 'react-hot-toast';
 import { IconContext } from 'react-icons';
 import {
   BiRefresh,
@@ -55,6 +57,7 @@ export const VirtualControls = () => {
   const { isAuthenticated } = useAuthContext();
   const { setModalContent, setIsModalOpen } = useModalContext();
   const { layouts } = useLayoutContext();
+  const virtualControlToastId = useId();
   const [currentSaveStateSlot] = useLocalStorage(
     saveStateSlotLocalStorageKey,
     0
@@ -71,10 +74,12 @@ export const VirtualControls = () => {
     (areVirtualControlsEnabled?.DPadAndButtons === undefined &&
       !isLargerThanPhone) ||
     areVirtualControlsEnabled?.DPadAndButtons;
+  const areNotificationsEnabled =
+    areVirtualControlsEnabled?.NotificationsEnabled ?? true;
 
   // align with initial control panel positioning
-  const verticalStartPos = controlPanelBounds?.bottom ?? 0;
-  const horizontalStartPos = controlPanelBounds?.left ?? 0;
+  const verticalStartPos = controlPanelBounds.bottom;
+  const horizontalStartPos = controlPanelBounds.left;
 
   const positionVariations: {
     [key: string]: {
@@ -229,6 +234,18 @@ export const VirtualControls = () => {
     };
   };
 
+  const toastOnCondition = (
+    condition: boolean,
+    successMessage: string,
+    errorMessage: string
+  ) => {
+    if (areNotificationsEnabled)
+      toast[condition ? 'success' : 'error'](
+        condition ? successMessage : errorMessage,
+        { id: virtualControlToastId }
+      );
+  };
+
   const virtualButtons = [
     {
       keyId: 'A',
@@ -290,7 +307,14 @@ export const VirtualControls = () => {
     },
     {
       children: <BiRefresh />,
-      onClick: emulator?.quickReload,
+      onClick: () => {
+        emulator?.quickReload();
+
+        if (!emulator?.getCurrentGameName() && areNotificationsEnabled)
+          toast.error('Load a game to quick reload', {
+            id: virtualControlToastId
+          });
+      },
       width: 40,
       initialPosition: initialPositionForKey('quickreload-button'),
       key: 'quickreload-button',
@@ -302,6 +326,10 @@ export const VirtualControls = () => {
         if (isAuthenticated() && isEmulatorRunning) {
           setModalContent(<UploadSaveToServerModal />);
           setIsModalOpen(true);
+        } else if (areNotificationsEnabled) {
+          toast.error('Please log in and load a game', {
+            id: virtualControlToastId
+          });
         }
       },
       width: 40,
@@ -316,7 +344,13 @@ export const VirtualControls = () => {
     {
       children: <BiSolidBookmark />,
       onClick: () => {
-        emulator?.loadSaveState(currentSaveStateSlot);
+        const wasSuccessful = emulator?.loadSaveState(currentSaveStateSlot);
+
+        toastOnCondition(
+          !!wasSuccessful,
+          `Loaded slot: ${currentSaveStateSlot}`,
+          `Failed to load slot: ${currentSaveStateSlot}`
+        );
       },
       width: 40,
       initialPosition: initialPositionForKey('loadstate-button'),
@@ -330,7 +364,13 @@ export const VirtualControls = () => {
     {
       children: <BiSave />,
       onClick: () => {
-        emulator?.createSaveState(currentSaveStateSlot);
+        const wasSuccessful = emulator?.createSaveState(currentSaveStateSlot);
+
+        toastOnCondition(
+          !!wasSuccessful,
+          `Saved slot: ${currentSaveStateSlot}`,
+          `Failed to save slot: ${currentSaveStateSlot}`
+        );
       },
       width: 40,
       initialPosition: initialPositionForKey('savestate-button'),

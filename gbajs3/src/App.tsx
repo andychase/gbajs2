@@ -1,4 +1,3 @@
-import { Toaster } from 'react-hot-toast';
 import { ThemeProvider } from 'styled-components';
 
 import './App.css';
@@ -9,6 +8,7 @@ import { NavigationMenu } from './components/navigation-menu/navigation-menu.tsx
 import { ProductTourIntro } from './components/product-tour/product-tour-intro.tsx';
 import { PwaPrompt } from './components/pwa-prompt/pwa-prompt.tsx';
 import { Screen } from './components/screen/screen.tsx';
+import { ToasterWithDefaults } from './components/toast/toaster.tsx';
 import { AuthProvider } from './context/auth/auth.tsx';
 import { EmulatorProvider } from './context/emulator/emulator.tsx';
 import { LayoutProvider } from './context/layout/layout.tsx';
@@ -19,7 +19,7 @@ export const App = () => {
   return (
     <ThemeProvider theme={GbaDarkTheme}>
       <ProductTourIntro />
-      <Toaster />
+      <ToasterWithDefaults />
       <PwaPrompt />
       <AuthProvider>
         <EmulatorProvider>

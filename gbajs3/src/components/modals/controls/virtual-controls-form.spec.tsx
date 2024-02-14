@@ -19,6 +19,7 @@ describe('<VirtualControlsForm />', () => {
     expect(screen.getByLabelText('Load State')).toBeInTheDocument();
     expect(screen.getByLabelText('Quick Reload')).toBeInTheDocument();
     expect(screen.getByLabelText('Send save to server')).toBeInTheDocument();
+    expect(screen.getByLabelText('Enable Notifications')).toBeInTheDocument();
   });
 
   it('renders form with provided id', () => {
@@ -49,7 +50,7 @@ describe('<VirtualControlsForm />', () => {
 
     expect(setItemSpy).toHaveBeenCalledWith(
       virtualControlsLocalStorageKey,
-      '{"DPadAndButtons":true,"SaveState":false,"LoadState":false,"QuickReload":false,"SendSaveToServer":false}'
+      '{"DPadAndButtons":true,"NotificationsEnabled":true,"SaveState":false,"LoadState":false,"QuickReload":false,"SendSaveToServer":false}'
     );
   });
 
@@ -71,7 +72,7 @@ describe('<VirtualControlsForm />', () => {
 
     const checkBoxes = screen.getAllByRole('checkbox');
 
-    expect(checkBoxes).toHaveLength(5);
+    expect(checkBoxes).toHaveLength(6);
 
     checkBoxes.forEach(async (checkbox) => {
       await userEvent.click(checkbox);
@@ -81,7 +82,7 @@ describe('<VirtualControlsForm />', () => {
 
     expect(setItemSpy).toHaveBeenCalledWith(
       virtualControlsLocalStorageKey,
-      '{"DPadAndButtons":false,"SaveState":true,"LoadState":true,"QuickReload":true,"SendSaveToServer":true}'
+      '{"DPadAndButtons":false,"NotificationsEnabled":false,"SaveState":true,"LoadState":true,"QuickReload":true,"SendSaveToServer":true}'
     );
   });
 
@@ -132,7 +133,7 @@ describe('<VirtualControlsForm />', () => {
   it('renders initial values from storage', () => {
     localStorage.setItem(
       virtualControlsLocalStorageKey,
-      '{"DPadAndButtons":false,"SaveState":true,"LoadState":true,"QuickReload":true,"SendSaveToServer":true}'
+      '{"DPadAndButtons":false,"NotificationsEnabled":false,"SaveState":true,"LoadState":true,"QuickReload":true,"SendSaveToServer":true}'
     );
 
     renderWithContext(<VirtualControlsForm id="testId" />);
@@ -142,5 +143,6 @@ describe('<VirtualControlsForm />', () => {
     expect(screen.getByLabelText('Load State')).toBeChecked();
     expect(screen.getByLabelText('Quick Reload')).toBeChecked();
     expect(screen.getByLabelText('Send save to server')).toBeChecked();
+    expect(screen.getByLabelText('Enable Notifications')).not.toBeChecked();
   });
 });
