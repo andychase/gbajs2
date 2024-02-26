@@ -38,6 +38,7 @@ export type GBAEmulator = {
   getCurrentCheatsFile: () => Uint8Array;
   getCurrentCheatsFileName: () => string | undefined;
   getCurrentGameName: () => string | undefined;
+  setCurrentGameName: (gameName: string | undefined) => void;
   getCurrentRom: () => Uint8Array | null;
   getCurrentSave: () => Uint8Array | null;
   getCurrentSaveName: () => string | undefined;
@@ -227,6 +228,9 @@ export const mGBAEmulator = (mGBA: mGBAEmulatorTypeDef): GBAEmulator => {
     getCurrentRom: () =>
       mGBA.gameName ? mGBA.FS.readFile(mGBA.gameName) : null,
     getCurrentGameName: () => filepathToFileName(mGBA.gameName),
+    setCurrentGameName: (gameName) => {
+      if (gameName && !mGBA.gameName) mGBA.gameName = gameName;
+    },
     getCurrentSave: () => (mGBA.saveName ? mGBA.getSave() : null),
     getCurrentSaveName: () => filepathToFileName(mGBA.saveName),
     uploadCheats: mGBA.uploadCheats,

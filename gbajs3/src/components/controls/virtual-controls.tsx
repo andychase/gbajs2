@@ -310,6 +310,7 @@ export const VirtualControls = () => {
       onClick: () => {
         emulator?.quickReload();
 
+        // TODO: is this the wrong indicator? maybe use isEmulatorRunning?
         if (!emulator?.getCurrentGameName() && areNotificationsEnabled)
           toast.error('Load a game to quick reload', {
             id: virtualControlToastId

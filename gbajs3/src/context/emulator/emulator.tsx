@@ -10,7 +10,8 @@ import {
 
 import {
   emulatorKeyBindingsLocalStorageKey,
-  emulatorVolumeLocalStorageKey
+  emulatorVolumeLocalStorageKey,
+  emulatorGameNameLocalStorageKey
 } from './consts.tsx';
 import { fadeCanvas } from '../../components/screen/fade.ts';
 import { useEmulator } from '../../hooks/use-emulator.tsx';
@@ -54,13 +55,20 @@ export const EmulatorProvider = ({ children }: EmulatorProviderProps) => {
   const [currentKeyBindings] = useLocalStorage<KeyBinding[] | undefined>(
     emulatorKeyBindingsLocalStorageKey
   );
+  const [storedGameName, setStoredGameName] = useLocalStorage<
+    string | undefined
+  >(emulatorGameNameLocalStorageKey);
 
   const emu = useMemo<GBAEmulator | null>(() => {
     if (!emulator) return null;
+    // quick reload can use this value without
+    // having to run a game in the current session
+    emulator.setCurrentGameName(storedGameName);
 
     const run = (romPath: string) => {
       const isSuccessfulRun = emulator.run(romPath);
       setIsEmulatorRunning(isSuccessfulRun);
+      setStoredGameName(romPath);
       emulator.setVolume(currentEmulatorVolume);
 
       if (currentKeyBindings) emulator.remapKeyBindings(currentKeyBindings);
@@ -105,7 +113,9 @@ export const EmulatorProvider = ({ children }: EmulatorProviderProps) => {
     currentEmulatorVolume,
     currentKeyBindings,
     clearLayouts,
-    hasSetLayout
+    hasSetLayout,
+    storedGameName,
+    setStoredGameName
   ]);
 
   return (
