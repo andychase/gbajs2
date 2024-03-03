@@ -1,3 +1,5 @@
+/// <reference types="emscripten" />
+
 declare namespace mGBA {
   export interface filePaths {
     root: string;
@@ -37,7 +39,7 @@ declare namespace mGBA {
     buttonPress(name: string): void;
     buttonUnpress(name: string): void;
     FSInit(): Promise<void>;
-    FSSync(): void;
+    FSSync(): Promise<void>;
     getMainLoopTiming(): number;
     getSave(): Uint8Array;
     getVolume(): number;
