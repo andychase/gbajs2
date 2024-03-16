@@ -223,6 +223,16 @@ export const CheatsModal = () => {
             fullWidth
             minRows={6}
             variant="outlined"
+            InputProps={{
+              sx: {
+                ['textarea']: {
+                  whiteSpace: 'pre',
+                  // see: https://github.com/mui/material-ui/issues/41490
+                  //      remove/refactor once resolved
+                  overflowX: 'auto !important'
+                }
+              }
+            }}
             helperText={errors?.rawCheats?.message}
             style={{ display: viewRawCheats ? 'block' : 'none' }}
             {...register('rawCheats')}
