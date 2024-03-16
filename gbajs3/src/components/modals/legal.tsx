@@ -149,10 +149,10 @@ export const LegalModal = () => {
           By using the Emulator, you agree to comply with this Disclaimer and
           any applicable laws and regulations. If you have any questions or
           concerns regarding this Disclaimer, please use the contact feature of
-          this website and open an issue in GitHub.
+          this website and open an issue or a discussion in GitHub.
         </p>
 
-        <p>Last updated: June 22 2023</p>
+        <p>Last updated: March 16 2024</p>
 
         <p>© {year}, Nicholas VanCise. All rights reserved.</p>
       </ModalBody>
