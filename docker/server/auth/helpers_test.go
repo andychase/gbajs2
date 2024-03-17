@@ -22,8 +22,8 @@ func TestGetStorePathFromClaims(t *testing.T) {
 		want    string
 		wantErr bool
 	}{
-		{"Happy path, good context", context.WithValue(ctx, "claims", jwt.MapClaims{"store": uuid.Must(uuid.FromString("123e4567-e89b-12d3-a456-426655440000")).String()}), "123e4567-e89b-12d3-a456-426655440000/", false},
-		{"Error case, context claims missing required value", context.WithValue(ctx, "claims", jwt.MapClaims{}), "", true},
+		{"Happy path, good context", context.WithValue(ctx, ContextClaimsKey, jwt.MapClaims{"store": uuid.Must(uuid.FromString("123e4567-e89b-12d3-a456-426655440000")).String()}), "123e4567-e89b-12d3-a456-426655440000/", false},
+		{"Error case, context claims missing required value", context.WithValue(ctx, ContextClaimsKey, jwt.MapClaims{}), "", true},
 		{"Error case, context missing claims", ctx, "", true},
 	}
 

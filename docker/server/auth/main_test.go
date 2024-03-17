@@ -17,7 +17,6 @@ import (
 
 type TestConf struct { //testing specific flags and variables
 	useOsFs                *bool
-	debug                  *bool
 	router                 *mux.Router
 	userDbResourceHostPost string
 }
@@ -96,12 +95,7 @@ func cleanupTestOsFs() error {
 }
 
 func setupTokenKey() {
-	var err error
-	accessSignKey = uuid.Must(uuid.NewV4(), err).Bytes()
-	if err != nil {
-		log.Println("failed to create initial access secret")
-		return
-	}
+	accessSignKey = uuid.NewV4().Bytes()
 }
 
 func setuptestrouter() *mux.Router {

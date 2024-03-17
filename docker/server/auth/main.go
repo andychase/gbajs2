@@ -70,10 +70,7 @@ func main() {
 		keyLoc   = "./certs/privkey.pem"
 	)
 	var err error
-	accessSignKey = uuid.Must(uuid.NewV4(), err).Bytes()
-	if err != nil {
-		panic(fmt.Errorf("failed to create initial access secret: %w", err))
-	}
+	accessSignKey = uuid.NewV4().Bytes()
 	clientHost := os.Getenv("CLIENT_HOST")
 
 	logfile := &lumberjack.Logger{ // handle rolling logs internally
@@ -100,7 +97,7 @@ func main() {
 
 	userdb, err = newGbaJsDatabase(gconf)
 	if err != nil {
-		panic(fmt.Errorf("Error, could not connect to gbajs3 db: %w", err))
+		panic(fmt.Errorf("could not connect to gbajs3 db: %w", err))
 	}
 
 	appFs = afero.NewBasePathFs(afero.NewOsFs(), basePath)

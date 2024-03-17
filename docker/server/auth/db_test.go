@@ -36,17 +36,10 @@ func insertAndSelectTestUser(db *gorm.DB, t *testing.T) *User {
 }
 
 func generateTestUser(t *testing.T) User {
+	newTokenId := uuid.NewV4()
+	newTokenSlug := uuid.NewV4()
+
 	hash, err := bcrypt.GenerateFromPassword([]byte("test_user_pwd"), bcrypt.DefaultCost)
-	if err != nil {
-		t.Errorf("helper generateTestUser() test setup failed: %+v", err)
-	}
-
-	newTokenId := uuid.Must(uuid.NewV4(), err)
-	if err != nil {
-		t.Errorf("helper generateTestUser() test setup failed: %+v", err)
-	}
-
-	newTokenSlug := uuid.Must(uuid.NewV4(), err)
 	if err != nil {
 		t.Errorf("helper generateTestUser() test setup failed: %+v", err)
 	}

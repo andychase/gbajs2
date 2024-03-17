@@ -4,16 +4,23 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/golang-jwt/jwt/v5"
-	"github.com/spf13/afero"
 	"io"
 	"os"
+
+	"github.com/golang-jwt/jwt/v5"
+	"github.com/spf13/afero"
+)
+
+type ContextKey string
+
+const (
+	ContextClaimsKey = ContextKey("claims")
 )
 
 // context helpers
 // returns store claim from context
 func getStorePathFromClaims(ctx context.Context) (string, error) {
-	claims, ok := ctx.Value("claims").(jwt.MapClaims)
+	claims, ok := ctx.Value(ContextClaimsKey).(jwt.MapClaims)
 
 	if !ok {
 		return "", fmt.Errorf("error converting to claims to mapclaims")

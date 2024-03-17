@@ -1,9 +1,10 @@
 package main
 
 import (
+	"net/http"
+
 	gz "github.com/NYTimes/gziphandler"
 	"github.com/gorilla/mux"
-	"net/http"
 )
 
 var no_auth_routes = map[string]bool{

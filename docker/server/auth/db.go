@@ -56,7 +56,7 @@ func newGbaJsDatabase(gconf *gorm.Config) (*gorm.DB, error) {
 
 	err = db.AutoMigrate(&User{})
 	if err != nil {
-		return nil, fmt.Errorf("Error automigrate has failed: %w", err)
+		return nil, fmt.Errorf("automigrate has failed: %w", err)
 	}
 
 	return db, nil

@@ -1,8 +1,9 @@
 package main
 
 import (
-	"github.com/satori/go.uuid"
 	"net/http"
+
+	uuid "github.com/satori/go.uuid"
 )
 
 // @Description User Credentials

@@ -21,7 +21,7 @@ func TestAuthorize(t *testing.T) {
 
 	testEndpointOutput := "test endpoint"
 	testEndpoint := func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, testEndpointOutput)
+		fmt.Fprint(w, testEndpointOutput)
 	}
 
 	accesstoken := jwt.New(jwt.SigningMethodHS256)
