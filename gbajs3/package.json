@@ -16,7 +16,7 @@
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@mui/material": "^5.13.6",
-    "@mui/x-tree-view": "^6.0.0-alpha.4",
+    "@mui/x-tree-view": "^7.0.0",
     "@uidotdev/usehooks": "^2.4.1",
     "jwt-decode": "^4.0.0",
     "modern-screenshot": "^4.4.28",

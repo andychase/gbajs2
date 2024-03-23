@@ -1,7 +1,7 @@
 import { Button, IconButton } from '@mui/material';
 import { alpha, styled as muiStyled } from '@mui/material/styles';
 import {
-  TreeView,
+  SimpleTreeView,
   TreeItem,
   treeItemClasses,
   type TreeItemProps
@@ -42,7 +42,7 @@ const StyledTreeItem = muiStyled((props: TreeItemProps) => (
       opacity: 0.3
     }
   },
-  [`& .${treeItemClasses.group}`]: {
+  [`& .${treeItemClasses.groupTransition}`]: {
     marginLeft: 15,
     paddingLeft: 10,
     borderLeft: `1px dashed ${alpha(theme.palette.text.primary, 0.4)}`
@@ -88,7 +88,7 @@ const EmulatorFS = ({ id, allFiles, deleteFile }: EmulatorFSProps) => {
     return (
       <StyledTreeItem
         key={node.path}
-        nodeId={node.path}
+        itemId={node.path}
         label={node.isDir ? nodeName : leafLabelNode}
       >
         {node.isDir && !!node.children
@@ -101,17 +101,19 @@ const EmulatorFS = ({ id, allFiles, deleteFile }: EmulatorFSProps) => {
   };
 
   return (
-    <TreeView
+    <SimpleTreeView
       id={id}
       aria-label="File System"
-      defaultExpanded={[allFiles.path]}
-      defaultCollapseIcon={<MinusSquare />}
-      defaultExpandIcon={<PlusSquare />}
-      defaultEndIcon={<CloseSquare />}
+      defaultExpandedItems={[allFiles.path]}
+      slots={{
+        collapseIcon: MinusSquare,
+        endIcon: CloseSquare,
+        expandIcon: PlusSquare
+      }}
       sx={{ minHeight: 264 }}
     >
       {renderTree(allFiles)}
-    </TreeView>
+    </SimpleTreeView>
   );
 };
 

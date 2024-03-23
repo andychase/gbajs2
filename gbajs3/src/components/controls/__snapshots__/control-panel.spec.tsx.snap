@@ -164,73 +164,73 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
         />
       </button>
       <span
-        class="MuiSlider-root MuiSlider-colorPrimary MuiSlider-sizeMedium sc-jTQCzO OLXFe css-187mznn-MuiSlider-root"
+        class="MuiSlider-root MuiSlider-colorPrimary MuiSlider-sizeMedium sc-jTQCzO OLXFe css-188mx6n-MuiSlider-root"
         style="width: 100px; margin: 0px 10px; max-height: 40px;"
       >
         <span
-          class="MuiSlider-rail css-14pt78w-MuiSlider-rail"
+          class="MuiSlider-rail css-7o8aqz-MuiSlider-rail"
         />
         <span
-          class="MuiSlider-track css-1gv0vcd-MuiSlider-track"
+          class="MuiSlider-track css-ttgsjq-MuiSlider-track"
           style="left: 0%; width: 100%;"
         />
         <span
-          class="MuiSlider-mark MuiSlider-markActive css-6cwnna-MuiSlider-mark"
+          class="MuiSlider-mark MuiSlider-markActive css-z5sdnj-MuiSlider-mark"
           data-index="0"
           style="left: 0%;"
         />
         <span
-          class="MuiSlider-mark MuiSlider-markActive css-6cwnna-MuiSlider-mark"
+          class="MuiSlider-mark MuiSlider-markActive css-z5sdnj-MuiSlider-mark"
           data-index="1"
           style="left: 10%;"
         />
         <span
-          class="MuiSlider-mark MuiSlider-markActive css-6cwnna-MuiSlider-mark"
+          class="MuiSlider-mark MuiSlider-markActive css-z5sdnj-MuiSlider-mark"
           data-index="2"
           style="left: 20%;"
         />
         <span
-          class="MuiSlider-mark MuiSlider-markActive css-6cwnna-MuiSlider-mark"
+          class="MuiSlider-mark MuiSlider-markActive css-z5sdnj-MuiSlider-mark"
           data-index="3"
           style="left: 30.000000000000004%;"
         />
         <span
-          class="MuiSlider-mark MuiSlider-markActive css-6cwnna-MuiSlider-mark"
+          class="MuiSlider-mark MuiSlider-markActive css-z5sdnj-MuiSlider-mark"
           data-index="4"
           style="left: 40%;"
         />
         <span
-          class="MuiSlider-mark MuiSlider-markActive css-6cwnna-MuiSlider-mark"
+          class="MuiSlider-mark MuiSlider-markActive css-z5sdnj-MuiSlider-mark"
           data-index="5"
           style="left: 50%;"
         />
         <span
-          class="MuiSlider-mark MuiSlider-markActive css-6cwnna-MuiSlider-mark"
+          class="MuiSlider-mark MuiSlider-markActive css-z5sdnj-MuiSlider-mark"
           data-index="6"
           style="left: 60.00000000000001%;"
         />
         <span
-          class="MuiSlider-mark MuiSlider-markActive css-6cwnna-MuiSlider-mark"
+          class="MuiSlider-mark MuiSlider-markActive css-z5sdnj-MuiSlider-mark"
           data-index="7"
           style="left: 70%;"
         />
         <span
-          class="MuiSlider-mark MuiSlider-markActive css-6cwnna-MuiSlider-mark"
+          class="MuiSlider-mark MuiSlider-markActive css-z5sdnj-MuiSlider-mark"
           data-index="8"
           style="left: 80%;"
         />
         <span
-          class="MuiSlider-mark MuiSlider-markActive css-6cwnna-MuiSlider-mark"
+          class="MuiSlider-mark MuiSlider-markActive css-z5sdnj-MuiSlider-mark"
           data-index="9"
           style="left: 90%;"
         />
         <span
-          class="MuiSlider-mark MuiSlider-markActive css-6cwnna-MuiSlider-mark"
+          class="MuiSlider-mark MuiSlider-markActive css-z5sdnj-MuiSlider-mark"
           data-index="10"
           style="left: 100%;"
         />
         <span
-          class="MuiSlider-thumb MuiSlider-thumbSizeMedium MuiSlider-thumbColorPrimary MuiSlider-thumb MuiSlider-thumbSizeMedium MuiSlider-thumbColorPrimary css-jx1sa5-MuiSlider-thumb"
+          class="MuiSlider-thumb MuiSlider-thumbSizeMedium MuiSlider-thumbColorPrimary MuiSlider-thumb MuiSlider-thumbSizeMedium MuiSlider-thumbColorPrimary css-1as9v07-MuiSlider-thumb"
           data-index="0"
           style="left: 100%;"
         >
@@ -446,73 +446,73 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
         />
       </button>
       <span
-        class="MuiSlider-root MuiSlider-colorPrimary MuiSlider-sizeMedium sc-jTQCzO OLXFe css-187mznn-MuiSlider-root"
+        class="MuiSlider-root MuiSlider-colorPrimary MuiSlider-sizeMedium sc-jTQCzO OLXFe css-188mx6n-MuiSlider-root"
         style="width: 100px; margin: 0px 10px; max-height: 40px;"
       >
         <span
-          class="MuiSlider-rail css-14pt78w-MuiSlider-rail"
+          class="MuiSlider-rail css-7o8aqz-MuiSlider-rail"
         />
         <span
-          class="MuiSlider-track css-1gv0vcd-MuiSlider-track"
+          class="MuiSlider-track css-ttgsjq-MuiSlider-track"
           style="left: 0%; width: 100%;"
         />
         <span
-          class="MuiSlider-mark MuiSlider-markActive css-6cwnna-MuiSlider-mark"
+          class="MuiSlider-mark MuiSlider-markActive css-z5sdnj-MuiSlider-mark"
           data-index="0"
           style="left: 0%;"
         />
         <span
-          class="MuiSlider-mark MuiSlider-markActive css-6cwnna-MuiSlider-mark"
+          class="MuiSlider-mark MuiSlider-markActive css-z5sdnj-MuiSlider-mark"
           data-index="1"
           style="left: 10%;"
         />
         <span
-          class="MuiSlider-mark MuiSlider-markActive css-6cwnna-MuiSlider-mark"
+          class="MuiSlider-mark MuiSlider-markActive css-z5sdnj-MuiSlider-mark"
           data-index="2"
           style="left: 20%;"
         />
         <span
-          class="MuiSlider-mark MuiSlider-markActive css-6cwnna-MuiSlider-mark"
+          class="MuiSlider-mark MuiSlider-markActive css-z5sdnj-MuiSlider-mark"
           data-index="3"
           style="left: 30.000000000000004%;"
         />
         <span
-          class="MuiSlider-mark MuiSlider-markActive css-6cwnna-MuiSlider-mark"
+          class="MuiSlider-mark MuiSlider-markActive css-z5sdnj-MuiSlider-mark"
           data-index="4"
           style="left: 40%;"
         />
         <span
-          class="MuiSlider-mark MuiSlider-markActive css-6cwnna-MuiSlider-mark"
+          class="MuiSlider-mark MuiSlider-markActive css-z5sdnj-MuiSlider-mark"
           data-index="5"
           style="left: 50%;"
         />
         <span
-          class="MuiSlider-mark MuiSlider-markActive css-6cwnna-MuiSlider-mark"
+          class="MuiSlider-mark MuiSlider-markActive css-z5sdnj-MuiSlider-mark"
           data-index="6"
           style="left: 60.00000000000001%;"
         />
         <span
-          class="MuiSlider-mark MuiSlider-markActive css-6cwnna-MuiSlider-mark"
+          class="MuiSlider-mark MuiSlider-markActive css-z5sdnj-MuiSlider-mark"
           data-index="7"
           style="left: 70%;"
         />
         <span
-          class="MuiSlider-mark MuiSlider-markActive css-6cwnna-MuiSlider-mark"
+          class="MuiSlider-mark MuiSlider-markActive css-z5sdnj-MuiSlider-mark"
           data-index="8"
           style="left: 80%;"
         />
         <span
-          class="MuiSlider-mark MuiSlider-markActive css-6cwnna-MuiSlider-mark"
+          class="MuiSlider-mark MuiSlider-markActive css-z5sdnj-MuiSlider-mark"
           data-index="9"
           style="left: 90%;"
         />
         <span
-          class="MuiSlider-mark MuiSlider-markActive css-6cwnna-MuiSlider-mark"
+          class="MuiSlider-mark MuiSlider-markActive css-z5sdnj-MuiSlider-mark"
           data-index="10"
           style="left: 100%;"
         />
         <span
-          class="MuiSlider-thumb MuiSlider-thumbSizeMedium MuiSlider-thumbColorPrimary MuiSlider-thumb MuiSlider-thumbSizeMedium MuiSlider-thumbColorPrimary css-jx1sa5-MuiSlider-thumb"
+          class="MuiSlider-thumb MuiSlider-thumbSizeMedium MuiSlider-thumbColorPrimary MuiSlider-thumb MuiSlider-thumbSizeMedium MuiSlider-thumbColorPrimary css-1as9v07-MuiSlider-thumb"
           data-index="0"
           style="left: 100%;"
         >
