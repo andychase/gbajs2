@@ -1,4 +1,10 @@
-import { useState, useRef, useCallback, type PointerEvent } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type PointerEvent
+} from 'react';
 import Draggable from 'react-draggable';
 import { styled } from 'styled-components';
 
@@ -123,26 +129,31 @@ export const OPad = ({ initialPosition }: OPadProps) => {
   const knobDragRef = useRef<HTMLDivElement>(null);
   const [isKeyDown, setIsKeyDown] = useState<KeyState>({});
 
+  useEffect(() => {
+    Object.keys(isKeyDown).forEach((keyId: string) => {
+      if (isKeyDown[keyId as keyof typeof isKeyDown])
+        emulator?.simulateKeyDown(keyId);
+      else emulator?.simulateKeyUp(keyId);
+    });
+  }, [isKeyDown, emulator]);
+
   const pressEmulatorArrow = useCallback(
-    (keyId: string, pointerId: number) => {
-      setIsKeyDown((prevState) => ({ ...prevState, [keyId]: pointerId }));
-      emulator?.simulateKeyDown(keyId);
-    },
-    [emulator]
+    (keyId: string, pointerId: number) =>
+      setIsKeyDown((prevState) => ({ ...prevState, [keyId]: pointerId })),
+    []
   );
 
   const unpressEmulatorArrow = useCallback(
-    (pointerId: number) => {
-      const keyIds = Object.keys(isKeyDown).filter((key: string) => {
-        return isKeyDown[key as keyof typeof isKeyDown] === pointerId;
-      });
-
-      keyIds.forEach((keyId) => {
-        setIsKeyDown((prevState) => ({ ...prevState, [keyId]: undefined }));
-        emulator?.simulateKeyUp(keyId);
-      });
-    },
-    [isKeyDown, emulator]
+    (pointerId: number) =>
+      setIsKeyDown((prevState) =>
+        Object.fromEntries(
+          Object.entries(prevState).map(([key, value]) => [
+            key,
+            value === pointerId ? undefined : value
+          ])
+        )
+      ),
+    []
   );
 
   const getKeyId = ({ x, y }: Position) => {
