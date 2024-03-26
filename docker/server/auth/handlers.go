@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"path/filepath"
+	"slices"
 	"time"
 )
 
@@ -114,11 +115,12 @@ func uploadRom(w http.ResponseWriter, r *http.Request) {
 	}
 	defer file.Close()
 
-	if filepath.Ext(handler.Filename) != ".gba" &&
-		filepath.Ext(handler.Filename) != ".gbc" &&
-		filepath.Ext(handler.Filename) != ".gb" {
+	validRomExtensions := []string{".gba", ".gbc", ".gb", ".zip", ".7z"}
+	fileExtension := filepath.Ext(handler.Filename)
+
+	if !slices.Contains(validRomExtensions, fileExtension) {
 		w.WriteHeader(http.StatusBadRequest)
-		fmt.Fprintf(w, "File not in gba format, expected extentions are .gba/.gbc/.gb")
+		fmt.Fprintf(w, "File not in gba format, expected extensions are .gba/.gbc/.gb/.zip/.7z")
 		return
 	}
 

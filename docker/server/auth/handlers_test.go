@@ -262,9 +262,11 @@ func TestUploadRom(t *testing.T) {
 		{"Happy path, good token and req (.gba)", validToken, "rom", "a.gba", []byte("rom a"), http.StatusOK, "", []byte("rom a"), false, false},
 		{"Happy path, good token and req (.gbc)", validToken, "rom", "b.gbc", []byte("rom b"), http.StatusOK, "", []byte("rom b"), false, false},
 		{"Happy path, good token and req (.gb)", validToken, "rom", "c.gb", []byte("rom c"), http.StatusOK, "", []byte("rom c"), false, false},
+		{"Happy path, good token and req (.zip)", validToken, "rom", "d.zip", []byte("rom d"), http.StatusOK, "", []byte("rom d"), false, false},
+		{"Happy path, good token and req (.7z)", validToken, "rom", "e.7z", []byte("rom e"), http.StatusOK, "", []byte("rom e"), false, false},
 		{"Error case, missing form file", validToken, "rom", "d.gba", nil, http.StatusBadRequest, "", nil, true, false},
 		{"Error case, invalid form field", validToken, "file", "e.gba", []byte("rom e"), http.StatusBadRequest, "", nil, true, false},
-		{"Error case, invalid file extension", validToken, "rom", "f.nds", []byte("rom f"), http.StatusBadRequest, "File not in gba format, expected extentions are .gba/.gbc/.gb", nil, true, false},
+		{"Error case, invalid file extension", validToken, "rom", "f.nds", []byte("rom f"), http.StatusBadRequest, "File not in gba format, expected extensions are .gba/.gbc/.gb/.zip/.7z", nil, true, false},
 		{"Error case, user store does not exist", invalidToken, "rom", "g.gba", []byte("rom g"), http.StatusInternalServerError, "", nil, true, true},
 		{"Error case, missing required claims", invalidTokenMissingClaims, "rom", "h.gba", []byte("rom h"), http.StatusBadRequest, "", nil, true, false},
 	}
