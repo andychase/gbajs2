@@ -134,8 +134,8 @@ export const UploadCheatsModal = () => {
           />
           <BiCloudUploadLarge />
           <p>
-            Drag and drop a cheats file here,
-            <br /> or click to upload a file
+            Drag and drop cheat files here,
+            <br /> or click to upload files
           </p>
           {errors.cheatFiles && (
             <p>
