@@ -91,20 +91,26 @@ export const UploadRomModal = () => {
 
   const file = watch('romFile');
 
+  const validFileExtensions = ['gba', 'gbc', 'gb', 'zip', '7z'];
+
   const validateFileName = (rom: File) =>
-    ['gba', 'gbc', 'gb'].includes(rom.name.split('.').pop() ?? '');
+    validFileExtensions.includes(rom.name.split('.').pop() ?? '');
 
   const tourSteps: TourSteps = [
     {
       content: (
         <>
           <p>
-            Use this area to drag and drop your rom file, or click to select a
-            rom file.
+            Use this area to drag and drop your rom or zipped rom file, or click
+            to select a file.
           </p>
           <p>
-            You may drop or select one rom file at a time, once uploaded your
-            game will boot!
+            Rom files should have an extension of:{' '}
+            {validFileExtensions.map((ext) => `'.${ext}'`).join(', ')}.
+          </p>
+          <p>
+            You may drop or select one rom at a time, once uploaded your game
+            will boot!
           </p>
         </>
       ),
@@ -130,7 +136,7 @@ export const UploadRomModal = () => {
               ...register('romFile', {
                 validate: (rom) =>
                   (!!rom && validateFileName(rom)) ||
-                  'One .gba, .gbc, or .gb file is required'
+                  'One .gba, .gbc, .gb, .zip, or .7z file is required'
               }),
               ref: hiddenInputRef,
               'data-testid': 'romfile-hidden-input'
@@ -138,8 +144,8 @@ export const UploadRomModal = () => {
           />
           <BiCloudUploadLarge />
           <p>
-            Drag and drop a rom file here,
-            <br /> or click to upload a file
+            Drag and drop a rom or zipped rom file here, or click to upload a
+            file
           </p>
           {errors.romFile && (
             <p>

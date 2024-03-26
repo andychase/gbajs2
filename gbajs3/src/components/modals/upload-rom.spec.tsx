@@ -148,7 +148,7 @@ describe('<UploadRomModal />', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Upload' }));
 
     expect(
-      screen.getByText(/One .gba, .gbc, or .gb file is required/)
+      screen.getByText(/One .gba, .gbc, .gb, .zip, or .7z file is required/)
     ).toBeVisible();
   });
 
@@ -156,6 +156,8 @@ describe('<UploadRomModal />', () => {
     ['rom1.gba', false],
     ['rom1.gbc', false],
     ['rom1 (1).gb', false],
+    ['rom1.zip', false],
+    ['rom1.7z', false],
     ['rom1.sav', true],
     ['rom1', true],
     ['', true]
@@ -175,11 +177,11 @@ describe('<UploadRomModal />', () => {
 
     if (expectError) {
       expect(
-        screen.getByText(/One .gba, .gbc, or .gb file is required/)
+        screen.getByText(/One .gba, .gbc, .gb, .zip, or .7z file is required/)
       ).toBeVisible();
     } else {
       expect(
-        screen.queryByText(/One .gba, .gbc, or .gb file is required/)
+        screen.queryByText(/One .gba, .gbc, .gb, .zip, or .7z file is required/)
       ).not.toBeInTheDocument();
     }
   });
@@ -224,12 +226,17 @@ describe('<UploadRomModal />', () => {
 
     expect(
       await screen.findByText(
-        'Use this area to drag and drop your rom file, or click to select a rom file.'
+        'Use this area to drag and drop your rom or zipped rom file, or click to select a file.'
+      )
+    ).toBeInTheDocument();
+    expect(
+      await screen.findByText(
+        "Rom files should have an extension of: '.gba', '.gbc', '.gb', '.zip', '.7z'."
       )
     ).toBeInTheDocument();
     expect(
       screen.getByText(
-        'You may drop or select one rom file at a time, once uploaded your game will boot!'
+        'You may drop or select one rom at a time, once uploaded your game will boot!'
       )
     ).toBeInTheDocument();
 
@@ -240,12 +247,17 @@ describe('<UploadRomModal />', () => {
 
     expect(
       screen.getByText(
-        'Use this area to drag and drop your rom file, or click to select a rom file.'
+        'Use this area to drag and drop your rom or zipped rom file, or click to select a file.'
       )
     ).toBeVisible();
     expect(
       screen.getByText(
-        'You may drop or select one rom file at a time, once uploaded your game will boot!'
+        "Rom files should have an extension of: '.gba', '.gbc', '.gb', '.zip', '.7z'."
+      )
+    ).toBeVisible();
+    expect(
+      screen.getByText(
+        'You may drop or select one rom at a time, once uploaded your game will boot!'
       )
     ).toBeVisible();
   });

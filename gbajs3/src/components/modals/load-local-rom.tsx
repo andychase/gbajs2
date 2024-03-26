@@ -71,6 +71,10 @@ export const LoadLocalRomModal = () => {
             device.
           </p>
           <p>Tap the name of your rom file and your game will boot!</p>
+          <p>
+            To persist roms and other files, use the <i>File System</i> menu
+            item.
+          </p>
         </>
       ),
       target: `#${CSS.escape(romListId)}`

@@ -186,7 +186,7 @@ export const NavigationMenu = () => {
             icon={<BiFolderPlus />}
           >
             <NavLeaf
-              title="Upload Save"
+              title="Upload Saves"
               $disabled={isEmulatorRunning}
               icon={<BiCloudUpload />}
               onClick={() => {
@@ -195,7 +195,7 @@ export const NavigationMenu = () => {
               }}
             />
             <NavLeaf
-              title="Upload Cheat File"
+              title="Upload Cheats"
               $disabled={isEmulatorRunning}
               icon={<BiCloudUpload />}
               onClick={() => {

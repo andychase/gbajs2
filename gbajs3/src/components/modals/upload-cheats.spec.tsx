@@ -296,16 +296,16 @@ describe('<UploadCheatsModal />', () => {
 
     expect(
       await screen.findByText(
-        'Use this area to drag and drop your cheat files, or click to select cheat files.'
+        'Use this area to drag and drop your cheat files, or click to select files.'
       )
     ).toBeInTheDocument();
     expect(
       screen.getByText(
-        "Cheat files should be in libretro format and have the file extension '.cheats'."
+        "Cheat files should be in libretro format and have the extension '.cheats'."
       )
     ).toBeInTheDocument();
     expect(
-      screen.getByText('You may drop or select multiple cheat files!')
+      screen.getByText('You may drop or select multiple files!')
     ).toBeInTheDocument();
 
     // click joyride floater
@@ -315,16 +315,16 @@ describe('<UploadCheatsModal />', () => {
 
     expect(
       screen.getByText(
-        'Use this area to drag and drop your cheat files, or click to select cheat files.'
+        'Use this area to drag and drop your cheat files, or click to select files.'
       )
     ).toBeVisible();
     expect(
       screen.getByText(
-        "Cheat files should be in libretro format and have the file extension '.cheats'."
+        "Cheat files should be in libretro format and have the extension '.cheats'."
       )
     ).toBeVisible();
     expect(
-      screen.getByText('You may drop or select multiple cheat files!')
+      screen.getByText('You may drop or select multiple files!')
     ).toBeVisible();
   });
 });

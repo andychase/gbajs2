@@ -84,9 +84,10 @@ export const UploadSavesModal = () => {
   const files = watch('saveFiles');
 
   const validateFileNames = (saveFiles: File[]) => {
-    return saveFiles.every(
-      (saveFile: File) => saveFile.name.split('.').pop() === 'sav'
-    );
+    return saveFiles.every((saveFile: File) => {
+      const ext = saveFile.name.split('.').pop();
+      return ext === 'sav' || ext?.startsWith('ss');
+    });
   };
 
   const tourSteps: TourSteps = [
@@ -94,10 +95,14 @@ export const UploadSavesModal = () => {
       content: (
         <>
           <p>
-            Use this area to drag and drop your save files, or click to select
-            save files.
+            Use this area to drag and drop your save or save state files, or
+            click to select files.
           </p>
-          <p>You may drop or select multiple save files!</p>
+          <p>
+            Save and save state files should have an extension '.sav' or start
+            with '.ss'.
+          </p>
+          <p>You may drop or select multiple files!</p>
         </>
       ),
       target: `#${CSS.escape(uploadSavesFormId)}`
@@ -122,7 +127,7 @@ export const UploadSavesModal = () => {
               ...register('saveFiles', {
                 validate: (savList) =>
                   (savList?.length > 0 && validateFileNames(savList)) ||
-                  'At least one .sav file is required'
+                  'At least one .sav or .ss file is required'
               }),
               ref: hiddenInputRef,
               'data-testid': 'savefiles-hidden-input'
@@ -130,8 +135,8 @@ export const UploadSavesModal = () => {
           />
           <BiCloudUploadLarge />
           <p>
-            Drag and drop save files here,
-            <br /> or click to upload files
+            Drag and drop save or save state files here, or click to upload
+            files
           </p>
           {errors.saveFiles && (
             <p>

@@ -95,13 +95,13 @@ export const UploadCheatsModal = () => {
         <>
           <p>
             Use this area to drag and drop your cheat files, or click to select
-            cheat files.
+            files.
           </p>
           <p>
-            Cheat files should be in libretro format and have the file extension
+            Cheat files should be in libretro format and have the extension
             '.cheats'.
           </p>
-          <p>You may drop or select multiple cheat files!</p>
+          <p>You may drop or select multiple files!</p>
         </>
       ),
       target: `#${CSS.escape(cheatsFormId)}`

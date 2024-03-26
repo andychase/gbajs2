@@ -87,8 +87,8 @@ describe('<NavigationMenu />', () => {
   describe('menu nodes', () => {
     it.each([
       ['About', <AboutModal />],
-      ['Upload Save', <UploadSavesModal />],
-      ['Upload Cheat File', <UploadCheatsModal />],
+      ['Upload Saves', <UploadSavesModal />],
+      ['Upload Cheats', <UploadCheatsModal />],
       ['Upload Rom', <UploadRomModal />],
       ['Load Local Rom', <LoadLocalRomModal />],
       ['Controls', <ControlsModal />],

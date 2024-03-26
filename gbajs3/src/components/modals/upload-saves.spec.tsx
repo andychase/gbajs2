@@ -220,12 +220,13 @@ describe('<UploadSavesModal />', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Upload' }));
 
     expect(
-      screen.getByText(/At least one .sav file is required/)
+      screen.getByText(/At least one .sav or .ss file is required/)
     ).toBeVisible();
   });
 
   it.each([
     ['rom1.sav', false],
+    ['rom1.ss1', false],
     ['rom1.gba', true],
     ['', true]
   ])('validates input file name: %s', async (fileName, expectError) => {
@@ -244,11 +245,11 @@ describe('<UploadSavesModal />', () => {
 
     if (expectError) {
       expect(
-        screen.getByText(/At least one .sav file is required/)
+        screen.getByText(/At least one .sav or .ss file is required/)
       ).toBeVisible();
     } else {
       expect(
-        screen.queryByText(/At least one .sav file is required/)
+        screen.queryByText(/At least one .sav or .ss file is required/)
       ).not.toBeInTheDocument();
     }
   });
@@ -293,11 +294,16 @@ describe('<UploadSavesModal />', () => {
 
     expect(
       await screen.findByText(
-        'Use this area to drag and drop your save files, or click to select save files.'
+        'Use this area to drag and drop your save or save state files, or click to select files.'
       )
     ).toBeInTheDocument();
     expect(
-      screen.getByText('You may drop or select multiple save files!')
+      await screen.findByText(
+        "Save and save state files should have an extension '.sav' or start with '.ss'."
+      )
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText('You may drop or select multiple files!')
     ).toBeInTheDocument();
 
     // click joyride floater
@@ -307,11 +313,16 @@ describe('<UploadSavesModal />', () => {
 
     expect(
       screen.getByText(
-        'Use this area to drag and drop your save files, or click to select save files.'
+        'Use this area to drag and drop your save or save state files, or click to select files.'
       )
     ).toBeVisible();
     expect(
-      screen.getByText('You may drop or select multiple save files!')
+      screen.getByText(
+        "Save and save state files should have an extension '.sav' or start with '.ss'."
+      )
+    ).toBeVisible();
+    expect(
+      screen.getByText('You may drop or select multiple files!')
     ).toBeVisible();
   });
 });
