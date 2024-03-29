@@ -29,6 +29,7 @@ AuthContext.displayName = 'AuthContext';
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const fourMinutesInMS = 240 * 1000;
+  const hasApiLocation = !!import.meta.env.VITE_GBA_SERVER_LOCATION;
   const [accessToken, setAccessToken] =
     useState<AuthContextProps['accessToken']>(null);
   const [accessTokenSource, setAccessTokenSource] =
@@ -37,19 +38,19 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   // generate initial access token
   const {
     data: accessTokenResp,
-    isLoading: refreshloading,
+    isLoading: refreshLoading,
     execute: executeRefresh,
     error: refreshTokenError,
     clearError: refreshClearError,
-  } = useRefreshAccessToken({ loadOnMount: true });
+  } = useRefreshAccessToken({ loadOnMount: hasApiLocation });
 
   // assign token to context
   useEffect(() => {
-    if (!refreshloading && accessTokenResp) {
+    if (!refreshLoading && accessTokenResp) {
       setAccessToken(accessTokenResp);
       setAccessTokenSource('refresh');
     }
-  }, [refreshloading, accessTokenResp, setAccessToken]);
+  }, [refreshLoading, accessTokenResp, setAccessToken]);
 
   // convenience callback to determine if token is expired
   const isAuthenticated = useCallback(() => {

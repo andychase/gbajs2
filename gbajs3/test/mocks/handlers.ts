@@ -26,7 +26,7 @@ export const handlers = [
 
         return new HttpResponse(`test ${romName} rom`, {
           headers: {
-            'Content-Type': 'applcation/octet-stream'
+            'Content-Type': 'application/octet-stream'
           }
         });
       } else {
@@ -50,7 +50,7 @@ export const handlers = [
 
         return new HttpResponse(`test ${saveName} save`, {
           headers: {
-            'Content-Type': 'applcation/octet-stream'
+            'Content-Type': 'application/octet-stream'
           }
         });
       } else {

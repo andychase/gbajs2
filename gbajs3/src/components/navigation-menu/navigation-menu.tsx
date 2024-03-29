@@ -151,6 +151,7 @@ export const NavigationMenu = () => {
   const menuHeaderId = useId();
 
   const isMenuItemDisabledByAuth = !isAuthenticated();
+  const hasApiLocation = !!import.meta.env.VITE_GBA_SERVER_LOCATION;
 
   return (
     <>
@@ -321,7 +322,11 @@ export const NavigationMenu = () => {
             }}
           />
 
-          <NavComponent title="Profile" icon={<BiUserCheck />}>
+          <NavComponent
+            title="Profile"
+            icon={<BiUserCheck />}
+            $disabled={!hasApiLocation}
+          >
             <NavLeaf
               title="Login"
               icon={<BiLogInCircle />}

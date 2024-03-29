@@ -113,7 +113,7 @@ export const LoadRomModal = () => {
   const romListId = useId();
   const {
     data: romList,
-    isLoading: romListloading,
+    isLoading: romListLoading,
     error: romListError
   } = useListRoms({ loadOnMount: true });
   const {
@@ -166,7 +166,7 @@ export const LoadRomModal = () => {
     <>
       <ModalHeader title="Load Rom" />
       <ModalBody>
-        {romListloading ? (
+        {romListLoading ? (
           <LoadingIndicator />
         ) : (
           <RomLoadingIndicator
@@ -219,7 +219,7 @@ export const LoadRomModal = () => {
       </ModalFooter>
       <EmbeddedProductTour
         skipRenderCondition={
-          romLoading || romListloading || !!romListError || !!romLoadError
+          romLoading || romListLoading || !!romListError || !!romLoadError
         }
         steps={tourSteps}
         completedProductTourStepName="hasCompletedLoadRomTour"

@@ -157,8 +157,8 @@ export const OPad = ({ initialPosition }: OPadProps) => {
   );
 
   const getKeyId = ({ x, y }: Position) => {
-    // Rotate the x and y axis 45 degress,
-    // these are now the gridlines for our quadrants.
+    // Rotate the x and y axis 45 degrees,
+    // these are now the grid lines for our quadrants.
     // Convert to the rotated coordinate system
     const xAxisRotated = x * Math.cos(Math.PI / 4) - y * Math.sin(Math.PI / 4);
     const yAxisRotated = x * Math.sin(Math.PI / 4) + y * Math.cos(Math.PI / 4);
