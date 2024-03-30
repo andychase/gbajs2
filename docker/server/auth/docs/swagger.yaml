@@ -12,7 +12,7 @@ info:
     email: nvancisedev@gmail.com
     name: Nicholas VanCise
     url: https://nicholas-vancise.dev
-  description: This server is designed to provide jwt token support/local file handling
+  description: This server is designed to provide auth support and local file handling
     to my gbajs implementation
   license:
     name: Copyright (c) 2022 Nicholas VanCise
@@ -56,7 +56,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: User login from credentials, issues refresh token cookie, and access
+      description: User login from credentials, issues refresh token cookie and access
         token
       parameters:
       - description: User credentials
@@ -248,7 +248,7 @@ paths:
         required: true
         type: string
       produces:
-      - application/x-spss-sav
+      - application/octet-stream
       responses:
         "200":
           description: OK
@@ -348,7 +348,7 @@ paths:
       - gba
   /api/tokens/refresh:
     post:
-      description: Uses stored refresh token to issue new auth token
+      description: Uses stored refresh token cookie to issue a new auth token
       produces:
       - application/json
       responses:
@@ -368,7 +368,7 @@ paths:
           description: Internal Server Error
           schema:
             type: string
-      summary: Uses stored refresh token cookie to issue new auth token
+      summary: Uses stored refresh token to issue a new auth token
       tags:
       - auth
 swagger: "2.0"

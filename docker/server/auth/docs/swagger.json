@@ -1,7 +1,7 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "This server is designed to provide jwt token support/local file handling to my gbajs implementation",
+        "description": "This server is designed to provide auth support and local file handling to my gbajs implementation",
         "title": "Gba File/JWT Auth Server",
         "contact": {
             "name": "Nicholas VanCise",
@@ -66,7 +66,7 @@
         },
         "/api/account/login": {
             "post": {
-                "description": "User login from credentials, issues refresh token cookie, and access token",
+                "description": "User login from credentials, issues refresh token cookie and access token",
                 "consumes": [
                     "application/json"
                 ],
@@ -338,7 +338,7 @@
             "get": {
                 "description": "Download save from server",
                 "produces": [
-                    "application/x-spss-sav"
+                    "application/octet-stream"
                 ],
                 "tags": [
                     "gba"
@@ -507,14 +507,14 @@
         },
         "/api/tokens/refresh": {
             "post": {
-                "description": "Uses stored refresh token to issue new auth token",
+                "description": "Uses stored refresh token cookie to issue a new auth token",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "auth"
                 ],
-                "summary": "Uses stored refresh token cookie to issue new auth token",
+                "summary": "Uses stored refresh token to issue a new auth token",
                 "responses": {
                     "200": {
                         "description": "Access token",

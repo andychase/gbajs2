@@ -1,11 +1,11 @@
-// @title Gba File/JWT Auth Server
-// @version 1.0
-// @description This server is designed to provide jwt token support/local file handling to my gbajs implementation
+//	@title			Gba File/JWT Auth Server
+//	@version		1.0
+//	@description	This server is designed to provide auth support and local file handling to my gbajs implementation
 
-// @contact.name Nicholas VanCise
-// @contact.url https://nicholas-vancise.dev
-// @contact.email nvancisedev@gmail.com
-// @license.name Copyright (c) 2022 Nicholas VanCise
+//	@contact.name	Nicholas VanCise
+//	@contact.url	https://nicholas-vancise.dev
+//	@contact.email	nvancisedev@gmail.com
+//	@license.name	Copyright (c) 2022 Nicholas VanCise
 
 package main
 

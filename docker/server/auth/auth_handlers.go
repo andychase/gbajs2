@@ -36,15 +36,17 @@ func authorize(endpoint func(http.ResponseWriter, *http.Request)) http.Handler {
 	})
 }
 
-// @Summary Uses stored refresh token cookie to issue new auth token
-// @Description Uses stored refresh token to issue new auth token
-// @Tags auth
-// @Produce application/json
-// @Success 200 {string} json "Access token"
-// @Failure 401 {string} string
-// @Failure 405 {string} string
-// @Failure 500 {string} string
-// @Router /api/tokens/refresh [post]
+// tokenRefresh uses the provided refresh token to issue a new auth token
+//
+//	@Summary		Uses stored refresh token to issue a new auth token
+//	@Description	Uses stored refresh token cookie to issue a new auth token
+//	@Tags			auth
+//	@Produce		application/json
+//	@Success		200	{string}	json	"Access token"
+//	@Failure		401	{string}	string
+//	@Failure		405	{string}	string
+//	@Failure		500	{string}	string
+//	@Router			/api/tokens/refresh [post]
 func tokenRefresh(w http.ResponseWriter, r *http.Request) {
 	var t string
 	refreshtok, err := r.Cookie("refresh-tok") // get the refresh token cookie
@@ -74,18 +76,19 @@ func tokenRefresh(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// validates credentials, and issues access and refresh token, refresh -> httponly cookie -> name: refresh-tok
-// @Summary User Login
-// @Description User login from credentials, issues refresh token cookie, and access token
-// @Tags auth
-// @Accept application/json
-// @Param Data body UserCredentials true "User credentials"
-// @Success 200 {string} string "Access token"
-// @Failure 400 {string} string
-// @Failure 401 {string} string
-// @Failure 405 {string} string
-// @Failure 500 {string} string
-// @Router /api/account/login [post]
+// login validates credentials, and issues access and refresh tokens, refresh -> httponly cookie -> name: refresh-tok
+//
+//	@Summary		User Login
+//	@Description	User login from credentials, issues refresh token cookie and access token
+//	@Tags			auth
+//	@Accept			application/json
+//	@Param			Data	body		UserCredentials	true	"User credentials"
+//	@Success		200		{string}	string			"Access token"
+//	@Failure		400		{string}	string
+//	@Failure		401		{string}	string
+//	@Failure		405		{string}	string
+//	@Failure		500		{string}	string
+//	@Router			/api/account/login [post]
 func login(w http.ResponseWriter, r *http.Request) {
 	creds := &UserCredentials{}
 	err := json.NewDecoder(r.Body).Decode(creds) // decode user credentials
@@ -148,7 +151,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// generate intial access token
+	// generate initial access token
 	accesstoken := jwt.New(jwt.SigningMethodHS256)
 	// set claims
 	claims := accesstoken.Claims.(jwt.MapClaims)
@@ -175,15 +178,17 @@ func login(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(t) // send access token in response, must be last here
 }
 
-// @Summary User Logout
-// @Description User logout
-// @Tags auth
-// @Param Authorization header string true "Bearer Token"
-// @Success 200 {string} string
-// @Failure 401 {string} string
-// @Failure 405 {string} string
-// @Failure 500 {string} string
-// @Router /api/account/logout [post]
+// logout overwrites the current refresh token cookie
+//
+//	@Summary		User Logout
+//	@Description	User logout
+//	@Tags			auth
+//	@Param			Authorization	header		string	true	"Bearer Token"
+//	@Success		200				{string}	string
+//	@Failure		401				{string}	string
+//	@Failure		405				{string}	string
+//	@Failure		500				{string}	string
+//	@Router			/api/account/logout [post]
 func logout(w http.ResponseWriter, r *http.Request) {
 	cookie := http.Cookie{ // expire refresh token cookie
 		Name:     "refresh-tok",

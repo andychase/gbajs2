@@ -40,7 +40,7 @@ server {
     application/vnd.ms-fontobject
     application/wasm
     application/x-gba-rom
-    application/x-spss-sav
+    application/octet-stream
     application/xml
     font/opentype
     font/truetype
@@ -85,8 +85,8 @@ server {
         proxy_set_header X-Forwarded-For $remote_addr;
     }
 
-    #cache control
-    location ~* \.(?:js|css|png|jpe?g|gif|avif|svg|ico|woff|woff2|ttf|ico)$ {
+    # cache control
+    location ~* \.(?:js|css|png|jpe?g|gif|avif|svg|ico|woff|woff2|ttf|ico|wasm)$ {
         expires 365d;
         add_header Vary Accept-Encoding;
         access_log off;
