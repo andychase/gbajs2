@@ -5,7 +5,6 @@ import { describe, expect, it, vi } from 'vitest';
 import { UploadSaveToServerModal } from './upload-save-to-server.tsx';
 import { renderWithContext } from '../../../test/render-with-context.tsx';
 import * as contextHooks from '../../hooks/context.tsx';
-import * as uploadSaveHooks from '../../hooks/use-upload-save.tsx';
 import { productTourLocalStorageKey } from '../product-tour/consts.tsx';
 
 import type { GBAEmulator } from '../../emulator/mgba/mgba-emulator.tsx';
@@ -47,14 +46,26 @@ describe('<UploadSaveToServerModal />', () => {
   });
 
   it('renders error message failure to upload', async () => {
-    vi.spyOn(uploadSaveHooks, 'useUpLoadSave').mockReturnValue({
-      data: null,
-      isLoading: false,
-      error: 'some error',
-      execute: vi.fn()
-    });
+    const { useEmulatorContext: originalEmulator } = await vi.importActual<
+      typeof contextHooks
+    >('../../hooks/context.tsx');
+
+    vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
+      ...originalEmulator(),
+      emulator: {
+        getCurrentSave: () =>
+          new TextEncoder().encode('Some save file contents'),
+        getCurrentSaveName: () => '400'
+      } as GBAEmulator
+    }));
 
     renderWithContext(<UploadSaveToServerModal />);
+
+    await userEvent.click(screen.getByRole('button', { name: 'Upload' }));
+
+    await waitForElementToBeRemoved(
+      screen.queryByTestId('upload-save-spinner')
+    );
 
     expect(screen.getByText('Save file upload has failed')).toBeInTheDocument();
   });

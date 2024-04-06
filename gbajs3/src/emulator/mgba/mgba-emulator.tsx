@@ -174,7 +174,7 @@ export const mGBAEmulator = (mGBA: mGBAEmulatorTypeDef): GBAEmulator => {
 
   // emscriptens SDL_Keycode differs a bit from browser keycode/key mappings
   // this function takes in a keyboard event key, and returns the appropriate
-  // SDL_Keycode key namefor mGBA. See: https://wiki.libsdl.org/SDL2/SDL_Keycode
+  // SDL_Keycode key name for mGBA. See: https://wiki.libsdl.org/SDL2/SDL_Keycode
   const handleKeyBindingEdgeCases = ({ key, location }: KeyBinding): string => {
     // numpad keys are prefixed with 'Keypad' in emscripten SDL key mapping
     let gbaSDLKey = location === KEY_LOCATION_NUMPAD ? `Keypad ${key}` : key;

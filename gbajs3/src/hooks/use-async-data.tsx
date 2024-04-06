@@ -13,7 +13,7 @@ type asyncDataProps<T, R> = {
 export const useAsyncData = <T, R>({
   fetchFn,
   loadOnMount = false,
-  clearDataOnLoad = false,
+  clearDataOnLoad = false
 }: asyncDataProps<T, R>) => {
   const [data, setData] = useState<R | null>(null);
   const [error, setError] = useState<unknown | null>(null);

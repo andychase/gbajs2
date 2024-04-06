@@ -1,8 +1,13 @@
-import { fireEvent, screen } from '@testing-library/react';
+import {
+  fireEvent,
+  screen,
+  waitForElementToBeRemoved
+} from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
 import { UploadRomModal } from './upload-rom.tsx';
+import { testRomLocation } from '../../../test/mocks/handlers.ts';
 import { renderWithContext } from '../../../test/render-with-context.tsx';
 import * as contextHooks from '../../hooks/context.tsx';
 import { productTourLocalStorageKey } from '../product-tour/consts.tsx';
@@ -10,7 +15,7 @@ import { productTourLocalStorageKey } from '../product-tour/consts.tsx';
 import type { GBAEmulator } from '../../emulator/mgba/mgba-emulator.tsx';
 
 describe('<UploadRomModal />', () => {
-  it('clicks file input when form is clicked', async () => {
+  it('clicks file input when drag and drop is clicked', async () => {
     const inputClickSpy = vi.spyOn(HTMLInputElement.prototype, 'click');
 
     renderWithContext(<UploadRomModal />);
@@ -140,6 +145,112 @@ describe('<UploadRomModal />', () => {
     expect(screen.getByText('Upload complete!')).toBeVisible();
     expect(screen.queryByText('File to upload:')).not.toBeInTheDocument();
     expect(screen.queryByText('rom1.gba')).not.toBeInTheDocument();
+  });
+
+  it('uploads rom from external url', async () => {
+    const setIsModalOpenSpy = vi.fn();
+    const uploadRomSpy: (file: File, cb?: () => void) => void = vi.fn(
+      (_file, cb) => cb && cb()
+    );
+    const emulatorRunSpy: (romPath: string) => boolean = vi.fn(() => true);
+
+    const {
+      useEmulatorContext: originalEmulator,
+      useModalContext: originalModal
+    } = await vi.importActual<typeof contextHooks>('../../hooks/context.tsx');
+    // needs to be a consistent object
+    const testEmu = {
+      uploadRom: uploadRomSpy,
+      run: emulatorRunSpy,
+      filePaths: () => ({
+        gamePath: '/games'
+      })
+    } as GBAEmulator;
+
+    vi.spyOn(contextHooks, 'useModalContext').mockImplementation(() => ({
+      ...originalModal(),
+      setIsModalOpen: setIsModalOpenSpy
+    }));
+
+    vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
+      ...originalEmulator(),
+      emulator: testEmu
+    }));
+
+    renderWithContext(<UploadRomModal />);
+
+    const uploadRomFromURLInput = screen.getByLabelText('Rom URL');
+
+    await userEvent.type(
+      uploadRomFromURLInput,
+      `${testRomLocation}/good_rom.gba`
+    );
+
+    await userEvent.click(screen.getByRole('button', { name: 'Upload' }));
+
+    const loadingSpinner = screen.getByText(/Loading rom from url:/);
+    expect(loadingSpinner).toBeVisible();
+    expect(loadingSpinner).toHaveTextContent(`${testRomLocation}/good_rom.gba`);
+
+    await waitForElementToBeRemoved(
+      screen.queryByText(/Loading rom from url:/)
+    );
+
+    expect(uploadRomSpy).toHaveBeenCalledOnce();
+
+    expect(emulatorRunSpy).toHaveBeenCalledOnce();
+    expect(emulatorRunSpy).toHaveBeenCalledWith('/games/good_rom.gba');
+    expect(setIsModalOpenSpy).toHaveBeenCalledWith(false);
+
+    expect(await screen.findByText('Upload complete!')).toBeVisible();
+  });
+
+  it('renders external rom error', async () => {
+    const uploadRomSpy: (file: File, cb?: () => void) => void = vi.fn(
+      (_file, cb) => cb && cb()
+    );
+    const emulatorRunSpy: (romPath: string) => boolean = vi.fn(() => true);
+
+    const { useEmulatorContext: originalEmulator } = await vi.importActual<
+      typeof contextHooks
+    >('../../hooks/context.tsx');
+
+    vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
+      ...originalEmulator(),
+      emulator: {
+        uploadRom: uploadRomSpy,
+        run: emulatorRunSpy,
+        filePaths: () => ({
+          gamePath: '/games'
+        })
+      } as GBAEmulator
+    }));
+
+    renderWithContext(<UploadRomModal />);
+
+    const uploadRomFromURLInput = screen.getByLabelText('Rom URL');
+
+    await userEvent.type(
+      uploadRomFromURLInput,
+      `${testRomLocation}/bad_rom.gba`
+    );
+
+    await userEvent.click(screen.getByRole('button', { name: 'Upload' }));
+
+    const loadingSpinner = screen.getByText(/Loading rom from url:/);
+    expect(loadingSpinner).toBeVisible();
+    expect(loadingSpinner).toHaveTextContent(`${testRomLocation}/bad_rom.gba`);
+
+    await waitForElementToBeRemoved(
+      screen.queryByText(/Loading rom from url:/)
+    );
+
+    expect(uploadRomSpy).not.toHaveBeenCalled();
+    expect(emulatorRunSpy).not.toHaveBeenCalled();
+
+    expect(
+      await screen.findByText('Loading rom from URL has failed')
+    ).toBeVisible();
   });
 
   it('renders form validation error', async () => {

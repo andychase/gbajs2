@@ -25,6 +25,11 @@ export const useLoadRom = () => {
       };
 
       const res = await fetch(url, options);
+
+      if (!res.ok) {
+        throw new Error(`Received unexpected status code: ${res.status}`);
+      }
+
       const blob = await res.blob();
       const file = new File([blob], fetchProps?.romName ?? '');
 

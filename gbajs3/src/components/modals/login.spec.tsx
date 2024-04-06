@@ -5,7 +5,6 @@ import { describe, expect, it, vi } from 'vitest';
 import { LoginModal } from './login.tsx';
 import { renderWithContext } from '../../../test/render-with-context.tsx';
 import * as contextHooks from '../../hooks/context.tsx';
-import * as loginHooks from '../../hooks/use-login.tsx';
 import { productTourLocalStorageKey } from '../product-tour/consts.tsx';
 
 describe('<LoginModal />', () => {
@@ -39,8 +38,8 @@ describe('<LoginModal />', () => {
 
     const loginButton = screen.getByRole('button', { name: 'Login' });
 
-    await userEvent.type(screen.getByLabelText('Username'), 'some_user');
-    await userEvent.type(screen.getByLabelText('Password'), 'some_pass');
+    await userEvent.type(screen.getByLabelText('Username'), 'valid_user');
+    await userEvent.type(screen.getByLabelText('Password'), 'valid_pass');
 
     expect(loginButton).toBeInTheDocument();
 
@@ -67,14 +66,14 @@ describe('<LoginModal />', () => {
   });
 
   it('renders error message failure to login', async () => {
-    vi.spyOn(loginHooks, 'useLogin').mockReturnValue({
-      data: null,
-      isLoading: false,
-      error: 'some error',
-      execute: vi.fn()
-    });
-
     renderWithContext(<LoginModal />);
+
+    await userEvent.type(screen.getByLabelText('Username'), 'invalid_user');
+    await userEvent.type(screen.getByLabelText('Password'), 'invalid_pass');
+
+    await userEvent.click(screen.getByRole('button', { name: 'Login' }));
+
+    await waitForElementToBeRemoved(screen.queryByTestId('login-spinner'));
 
     expect(screen.getByText('Login has failed')).toBeInTheDocument();
   });

@@ -24,7 +24,13 @@ export const useUpLoadSave = () => {
         body: formData
       };
 
-      return fetch(url, options);
+      const res = await fetch(url, options);
+
+      if (!res.ok) {
+        throw new Error(`Received unexpected status code: ${res.status}`);
+      }
+
+      return res;
     },
     [apiLocation, accessToken]
   );

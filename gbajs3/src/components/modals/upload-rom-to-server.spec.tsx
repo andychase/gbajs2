@@ -5,7 +5,6 @@ import { describe, expect, it, vi } from 'vitest';
 import { UploadRomToServerModal } from './upload-rom-to-server.tsx';
 import { renderWithContext } from '../../../test/render-with-context.tsx';
 import * as contextHooks from '../../hooks/context.tsx';
-import * as uploadRomHooks from '../../hooks/use-upload-rom.tsx';
 import { productTourLocalStorageKey } from '../product-tour/consts.tsx';
 
 import type { GBAEmulator } from '../../emulator/mgba/mgba-emulator.tsx';
@@ -44,14 +43,23 @@ describe('<UploadRomToServerModal />', () => {
   });
 
   it('renders error message failure to upload', async () => {
-    vi.spyOn(uploadRomHooks, 'useUpLoadRom').mockReturnValue({
-      data: null,
-      isLoading: false,
-      error: 'some error',
-      execute: vi.fn()
-    });
+    const { useEmulatorContext: originalEmulator } = await vi.importActual<
+      typeof contextHooks
+    >('../../hooks/context.tsx');
+
+    vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
+      ...originalEmulator(),
+      emulator: {
+        getCurrentRom: () => new TextEncoder().encode('Some rom file contents'),
+        getCurrentGameName: () => '400'
+      } as GBAEmulator
+    }));
 
     renderWithContext(<UploadRomToServerModal />);
+
+    await userEvent.click(screen.getByRole('button', { name: 'Upload' }));
+
+    await waitForElementToBeRemoved(screen.queryByTestId('upload-rom-spinner'));
 
     expect(screen.getByText('Rom file upload has failed')).toBeInTheDocument();
   });

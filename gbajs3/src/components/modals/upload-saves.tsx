@@ -140,7 +140,7 @@ export const UploadSavesModal = () => {
           </p>
           {errors.saveFiles && (
             <p>
-              Save file upload has failed: <br /> - {errors.saveFiles.message}
+              Save files are invalid: <br /> - {errors.saveFiles.message}
             </p>
           )}
         </StyledForm>

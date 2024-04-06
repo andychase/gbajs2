@@ -139,8 +139,7 @@ export const UploadCheatsModal = () => {
           </p>
           {errors.cheatFiles && (
             <p>
-              Cheats file submit has failed: <br /> -{' '}
-              {errors.cheatFiles.message}
+              Cheat files are invalid: <br /> - {errors.cheatFiles.message}
             </p>
           )}
         </StyledForm>

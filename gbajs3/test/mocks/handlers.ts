@@ -1,14 +1,15 @@
 import { HttpResponse, delay, http } from 'msw';
 
 export const gbaServerLocationPlaceholder = 'https://server_location.test';
+export const testRomLocation = 'https://rom_location.test';
 
 export const handlers = [
   http.post(`${gbaServerLocationPlaceholder}/api/tokens/refresh`, () => {
-    return HttpResponse.json('', { status: 401 });
+    return new HttpResponse(null, { status: 401 });
   }),
 
   http.post(`${gbaServerLocationPlaceholder}/api/account/logout`, () => {
-    return HttpResponse.json(null, { status: 200 });
+    return new HttpResponse(null, { status: 200 });
   }),
 
   http.get(`${gbaServerLocationPlaceholder}/api/rom/list`, () => {
@@ -26,7 +27,7 @@ export const handlers = [
 
         return new HttpResponse(`test ${romName} rom`, {
           headers: {
-            'Content-Type': 'application/octet-stream'
+            'Content-Type': 'application/x-gba-rom'
           }
         });
       } else {
@@ -59,21 +60,68 @@ export const handlers = [
     }
   ),
 
-  http.post(`${gbaServerLocationPlaceholder}/api/account/login`, async () => {
+  http.post(
+    `${gbaServerLocationPlaceholder}/api/account/login`,
+    async ({ request }) => {
+      const data = (await request.json()) as {
+        username?: string;
+        password?: string;
+      };
+      const isValidUser =
+        data.username?.startsWith('valid') &&
+        data.password?.startsWith('valid');
+
+      await delay();
+
+      if (isValidUser) {
+        return HttpResponse.json('some token', {
+          status: 200
+        });
+      } else {
+        return new HttpResponse(null, { status: 401 });
+      }
+    }
+  ),
+
+  http.post(
+    `${gbaServerLocationPlaceholder}/api/rom/upload`,
+    async ({ request }) => {
+      const formData = await request.formData();
+      const rom = formData.get('rom') as File;
+      const romName = rom.name;
+
+      await delay();
+
+      return new HttpResponse(null, { status: romName == '400' ? 400 : 200 });
+    }
+  ),
+
+  http.post(
+    `${gbaServerLocationPlaceholder}/api/save/upload`,
+    async ({ request }) => {
+      const formData = await request.formData();
+      const save = formData.get('save') as File;
+      const saveName = save.name;
+
+      await delay();
+
+      return new HttpResponse(null, { status: saveName == '400' ? 400 : 200 });
+    }
+  ),
+
+  http.get(`${testRomLocation}/good_rom.gba`, async () => {
     await delay();
 
-    return HttpResponse.json('some token', { status: 200 });
+    return new HttpResponse(`test external rom`, {
+      headers: {
+        'Content-Type': 'application/octet-stream'
+      }
+    });
   }),
 
-  http.post(`${gbaServerLocationPlaceholder}/api/rom/upload`, async () => {
+  http.get(`${testRomLocation}/bad_rom.gba`, async () => {
     await delay();
 
-    return new HttpResponse(null, { status: 200 });
-  }),
-
-  http.post(`${gbaServerLocationPlaceholder}/api/save/upload`, async () => {
-    await delay();
-
-    return new HttpResponse(null, { status: 200 });
+    return new HttpResponse(null, { status: 400 });
   })
 ];
