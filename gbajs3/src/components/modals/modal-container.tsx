@@ -17,7 +17,8 @@ const modalStyles = {
     padding: '0',
     maxHeight: '90dvh',
     display: 'flex',
-    flexDirection: 'column' as const
+    flexDirection: 'column' as const,
+    userSelect: 'text' as const
   }
 };
 
