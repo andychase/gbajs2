@@ -396,7 +396,7 @@ export const ControlPanel = () => {
       <EmbeddedProductTour
         steps={tourSteps}
         completedProductTourStepName="hasCompletedControlPanelTour"
-        zIndex={0}
+        zIndex={isLargerThanPhone ? undefined : 0}
         renderWithoutDelay
         isNotInModal
       />
