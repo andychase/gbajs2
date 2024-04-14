@@ -9,9 +9,11 @@ import {
 } from 'react';
 
 import {
+  emTimingSetTimeout,
+  emulatorGameNameLocalStorageKey,
+  emulatorIsFastForwardOnStorageKey,
   emulatorKeyBindingsLocalStorageKey,
-  emulatorVolumeLocalStorageKey,
-  emulatorGameNameLocalStorageKey
+  emulatorVolumeLocalStorageKey
 } from './consts.tsx';
 import { fadeCanvas } from '../../components/screen/fade.ts';
 import { useEmulator } from '../../hooks/use-emulator.tsx';
@@ -58,12 +60,20 @@ export const EmulatorProvider = ({ children }: EmulatorProviderProps) => {
   const [storedGameName, setStoredGameName] = useLocalStorage<
     string | undefined
   >(emulatorGameNameLocalStorageKey);
+  const [isFastForwardOn] = useLocalStorage(
+    emulatorIsFastForwardOnStorageKey,
+    false
+  );
 
   const emu = useMemo<GBAEmulator | null>(() => {
     if (!emulator) return null;
     // quick reload can use this value without
     // having to run a game in the current session
-    emulator.setCurrentGameName(storedGameName);
+    if (!emulator.getCurrentGameName())
+      emulator.setCurrentGameName(storedGameName);
+
+    if (isFastForwardOn && !emulator.isFastForwardEnabled())
+      emulator.setFastForward(emTimingSetTimeout, 0);
 
     const run = (romPath: string) => {
       const isSuccessfulRun = emulator.run(romPath);
@@ -115,7 +125,8 @@ export const EmulatorProvider = ({ children }: EmulatorProviderProps) => {
     clearLayouts,
     hasSetLayout,
     storedGameName,
-    setStoredGameName
+    setStoredGameName,
+    isFastForwardOn
   ]);
 
   return (

@@ -4,7 +4,12 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { ControlPanel } from './control-panel.tsx';
 import { renderWithContext } from '../../../test/render-with-context.tsx';
-import { emulatorVolumeLocalStorageKey } from '../../context/emulator/consts.tsx';
+import {
+  emTimingRAF,
+  emTimingSetTimeout,
+  emulatorIsFastForwardOnStorageKey,
+  emulatorVolumeLocalStorageKey
+} from '../../context/emulator/consts.tsx';
 import { GbaDarkTheme } from '../../context/theme/theme.tsx';
 import * as contextHooks from '../../hooks/context.tsx';
 import { productTourLocalStorageKey } from '../product-tour/consts.tsx';
@@ -245,12 +250,28 @@ describe('<ControlPanel />', () => {
 
       expect(screen.getByLabelText('Regular Speed')).toBeVisible();
       expect(emulatorSetFastForwardSpy).toHaveBeenCalledOnce();
-      expect(emulatorSetFastForwardSpy).toHaveBeenNthCalledWith(1, 0, 0);
+      expect(emulatorSetFastForwardSpy).toHaveBeenNthCalledWith(
+        1,
+        emTimingSetTimeout,
+        0
+      );
 
       await userEvent.click(screen.getByLabelText('Regular Speed'));
 
       expect(screen.getByLabelText('Fast Forward')).toBeVisible();
-      expect(emulatorSetFastForwardSpy).toHaveBeenNthCalledWith(2, 0, 16);
+      expect(emulatorSetFastForwardSpy).toHaveBeenNthCalledWith(
+        2,
+        emTimingRAF,
+        0
+      );
+    });
+
+    it('renders initial fast forward from storage', () => {
+      localStorage.setItem(emulatorIsFastForwardOnStorageKey, 'true');
+
+      renderWithContext(<ControlPanel />);
+
+      expect(screen.getByLabelText('Regular Speed')).toBeVisible();
     });
 
     it('quits the emulated game', async () => {

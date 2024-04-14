@@ -15,7 +15,12 @@ import { TbResize } from 'react-icons/tb';
 import { Rnd } from 'react-rnd';
 import { css, styled, useTheme } from 'styled-components';
 
-import { emulatorVolumeLocalStorageKey } from '../../context/emulator/consts.tsx';
+import {
+  emTimingRAF,
+  emTimingSetTimeout,
+  emulatorIsFastForwardOnStorageKey,
+  emulatorVolumeLocalStorageKey
+} from '../../context/emulator/consts.tsx';
 import { useEmulatorContext, useLayoutContext } from '../../hooks/context.tsx';
 import {
   EmbeddedProductTour,
@@ -117,7 +122,6 @@ export const ControlPanel = () => {
     setAreItemsResizable
   } = useEmulatorContext();
   const { layouts, setLayout } = useLayoutContext();
-  const [isFastForwardOn, setIsFastForwardOn] = useState(false);
   const theme = useTheme();
   const isLargerThanPhone = useMediaQuery(theme.isLargerThanPhone);
   const [isEmulatorPaused, setIsEmulatorPaused] = useState(false);
@@ -131,6 +135,10 @@ export const ControlPanel = () => {
   const [currentEmulatorVolume, setCurrentEmulatorVolume] = useLocalStorage(
     emulatorVolumeLocalStorageKey,
     1
+  );
+  const [isFastForwardOn, setIsFastForwardOn] = useLocalStorage(
+    emulatorIsFastForwardOnStorageKey,
+    false
   );
 
   const refSetLayout = useCallback(
@@ -157,8 +165,11 @@ export const ControlPanel = () => {
   };
 
   const toggleFastForward = () => {
-    const delay = isFastForwardOn ? 16 : 0;
-    emulator?.setFastForward(0, delay);
+    const mode = isFastForwardOn ? emTimingRAF : emTimingSetTimeout;
+    // no delay for settimeout mode, means 60fps with RAF
+    const delay = 0;
+
+    emulator?.setFastForward(mode, delay);
     setIsFastForwardOn((prevState) => !prevState);
   };
 

@@ -40,7 +40,8 @@ declare namespace mGBA {
     buttonUnpress(name: string): void;
     FSInit(): Promise<void>;
     FSSync(): Promise<void>;
-    getMainLoopTiming(): number;
+    getMainLoopTimingMode(): number;
+    getMainLoopTimingValue(): number;
     getSave(): Uint8Array;
     getVolume(): number;
     listRoms(): void;
