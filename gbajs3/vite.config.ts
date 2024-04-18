@@ -1,5 +1,5 @@
 /// <reference types="vitest" />
-import { defineConfig, splitVendorChunkPlugin } from 'vite';
+import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 import { visualizer } from 'rollup-plugin-visualizer';
@@ -61,21 +61,39 @@ export default defineConfig({
             type: 'image/png',
             purpose: 'maskable'
           }
+        ],
+        screenshots: [
+          {
+            src: 'img/desktop.png',
+            sizes: '2054x1324',
+            type: 'image/png',
+            form_factor: 'wide',
+            label: 'Desktop Gbajs3'
+          },
+          {
+            src: 'img/mobile.png',
+            sizes: '1170x2532',
+            type: 'image/png',
+            form_factor: 'narrow',
+            label: 'Mobile Gbajs3'
+          }
         ]
+      },
+      workbox: {
+        globPatterns: ['**/*.{js,css,html,wasm}']
       }
     }),
-    splitVendorChunkPlugin(),
     visualizer({ gzipSize: true })
   ],
   build: {
     rollupOptions: {
       output: {
         manualChunks: (id) => {
-          const vendorPrefix = 'vendor_';
+          const vendorPrefix = 'vendor';
           if (id.indexOf('node_modules') > -1) {
             if (id.indexOf('@mui') > -1) {
               // vendor mui
-              return vendorPrefix + '@mui';
+              return vendorPrefix + '_@mui';
             }
 
             if (
@@ -84,10 +102,10 @@ export default defineConfig({
               id.indexOf('popper.js') > -1
             ) {
               // vendor react joyride + large deps
-              return vendorPrefix + 'react-joyride';
+              return vendorPrefix + '_react-joyride';
             }
 
-            // returning void defaults to splitVendorChunkPlugin logic
+            return vendorPrefix;
           }
         }
       }
