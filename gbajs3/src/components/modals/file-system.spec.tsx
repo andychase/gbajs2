@@ -52,7 +52,13 @@ describe('<FileSystemModal />', () => {
       {
         path: '/data/states',
         isDir: true,
-        children: []
+        children: [
+          {
+            path: '/data/states/rom1.ss1',
+            isDir: false,
+            children: []
+          }
+        ]
       }
     ]
   };
@@ -139,6 +145,45 @@ describe('<FileSystemModal />', () => {
     expect(listAllFilesSpy).toHaveBeenCalledOnce();
   });
 
+  it('downloads file from the tree', async () => {
+    const getFileSpy: (p: string) => void = vi.fn(() =>
+      new TextEncoder().encode('Some state file contents')
+    );
+    const { useEmulatorContext: original } = await vi.importActual<
+      typeof contextHooks
+    >('../../hooks/context.tsx');
+
+    // unimplemented in jsdom
+    URL.createObjectURL = vi.fn(() => 'object_url:some_rom.sav');
+    // mock to assert click and prevent navigation (unimplemented)
+    const anchorClickSpy = vi
+      .spyOn(HTMLAnchorElement.prototype, 'click')
+      .mockReturnValue();
+    const anchorRemoveSpy = vi.spyOn(HTMLAnchorElement.prototype, 'remove');
+
+    vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => {
+      return {
+        ...original(),
+        emulator: {
+          listAllFiles: () => defaultFSData,
+          getFile: getFileSpy
+        } as GBAEmulator
+      };
+    });
+
+    renderWithContext(<FileSystemModal />);
+
+    await userEvent.click(screen.getByText('states'));
+    await userEvent.click(screen.getByLabelText('Download rom1.ss1'));
+
+    expect(getFileSpy).toHaveBeenCalledOnce();
+    expect(getFileSpy).toHaveBeenCalledWith('/data/states/rom1.ss1');
+
+    expect(URL.createObjectURL).toHaveBeenCalledWith(expect.anything());
+    expect(anchorClickSpy).toHaveBeenCalledOnce();
+    expect(anchorRemoveSpy).toHaveBeenCalledOnce();
+  });
+
   it('saves file system', async () => {
     const emulatorFSSyncSpy: () => void = vi.fn();
     const { useEmulatorContext: original } = await vi.importActual<
@@ -216,7 +261,7 @@ describe('<FileSystemModal />', () => {
 
     expect(
       await screen.findByText(
-        'Use this area to view your current file tree, as well as delete files from the tree.'
+        'Use this area to view your current file tree, download files, and delete files from the tree.'
       )
     ).toBeInTheDocument();
 
@@ -227,7 +272,7 @@ describe('<FileSystemModal />', () => {
 
     expect(
       screen.getByText(
-        'Use this area to view your current file tree, as well as delete files from the tree.'
+        'Use this area to view your current file tree, download files, and delete files from the tree.'
       )
     ).toBeVisible();
 

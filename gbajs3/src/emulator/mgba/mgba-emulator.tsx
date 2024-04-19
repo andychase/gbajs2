@@ -38,11 +38,12 @@ export type GBAEmulator = {
   getCurrentCheatsFile: () => Uint8Array;
   getCurrentCheatsFileName: () => string | undefined;
   getCurrentGameName: () => string | undefined;
-  setCurrentGameName: (gameName: string | undefined) => void;
   getCurrentRom: () => Uint8Array | null;
   getCurrentSave: () => Uint8Array | null;
   getCurrentSaveName: () => string | undefined;
+  getFile: (path: string) => Uint8Array;
   getVolume: () => number;
+  isFastForwardEnabled: () => boolean;
   listAllFiles: () => FileNode;
   listRoms: () => string[];
   listSaveStates: () => string[];
@@ -57,8 +58,8 @@ export type GBAEmulator = {
   resume: () => void;
   run: (romPath: string) => boolean;
   screenShot: (callback: () => void) => void;
+  setCurrentGameName: (gameName: string | undefined) => void;
   setFastForward: (mode: number, value: number) => void;
-  isFastForwardEnabled: () => boolean;
   setVolume: (volumePercent: number) => void;
   simulateKeyDown: (keyId: string) => void;
   simulateKeyUp: (keyId: string) => void;
@@ -235,6 +236,7 @@ export const mGBAEmulator = (mGBA: mGBAEmulatorTypeDef): GBAEmulator => {
     },
     getCurrentSave: () => (mGBA.saveName ? mGBA.getSave() : null),
     getCurrentSaveName: () => filepathToFileName(mGBA.saveName),
+    getFile: (path) => mGBA.FS.readFile(path),
     uploadCheats: mGBA.uploadCheats,
     uploadRom: mGBA.uploadRom,
     uploadSaveOrSaveState: mGBA.uploadSaveOrSaveState,

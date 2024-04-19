@@ -49,7 +49,7 @@ describe('<DownloadSaveModal />', () => {
       typeof contextHooks
     >('../../hooks/context.tsx');
     // unimplemented in jsdom
-    URL.createObjectURL = vi.fn(() => 'objurl:some_rom.sav');
+    URL.createObjectURL = vi.fn(() => 'object_url:some_rom.sav');
     // mock to assert click and prevent navigation (unimplemented)
     const anchorClickSpy = vi
       .spyOn(HTMLAnchorElement.prototype, 'click')

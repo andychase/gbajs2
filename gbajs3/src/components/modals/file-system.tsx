@@ -7,7 +7,7 @@ import {
   type TreeItemProps
 } from '@mui/x-tree-view';
 import { useCallback, useId, useState } from 'react';
-import { BiTrash } from 'react-icons/bi';
+import { BiCloudDownload, BiTrash } from 'react-icons/bi';
 import { styled } from 'styled-components';
 
 import { ModalBody } from './modal-body.tsx';
@@ -30,6 +30,7 @@ type EmulatorFSProps = {
   id: string;
   allFiles?: FileNode;
   deleteFile: (path: string) => void;
+  downloadFile: (path: string) => void;
 };
 
 const StyledTreeItem = muiStyled((props: TreeItemProps) => (
@@ -48,7 +49,8 @@ const StyledTreeItem = muiStyled((props: TreeItemProps) => (
     borderLeft: `1px dashed ${alpha(theme.palette.text.primary, 0.4)}`
   },
   [`& .${treeItemClasses.content}`]: {
-    width: 'auto'
+    width: 'auto',
+    alignItems: 'baseline'
   }
 }));
 
@@ -66,7 +68,17 @@ const LeafLabelWrapper = styled.div`
   }
 `;
 
-const EmulatorFS = ({ id, allFiles, deleteFile }: EmulatorFSProps) => {
+const IconSeparator = styled.div`
+  display: flex;
+  gap: 15px;
+`;
+
+const EmulatorFS = ({
+  id,
+  allFiles,
+  deleteFile,
+  downloadFile
+}: EmulatorFSProps) => {
   if (!allFiles) return null;
 
   const renderTree = (node: FileNode) => {
@@ -75,13 +87,22 @@ const EmulatorFS = ({ id, allFiles, deleteFile }: EmulatorFSProps) => {
     const leafLabelNode = (
       <LeafLabelWrapper>
         <p>{nodeName}</p>
-        <IconButton
-          aria-label={`Delete ${nodeName}`}
-          sx={{ padding: 0 }}
-          onClick={() => deleteFile(node.path)}
-        >
-          <BiTrash />
-        </IconButton>
+        <IconSeparator>
+          <IconButton
+            aria-label={`Download ${nodeName}`}
+            sx={{ padding: 0, margin: 0 }}
+            onClick={() => downloadFile(node.path)}
+          >
+            <BiCloudDownload />
+          </IconButton>
+          <IconButton
+            aria-label={`Delete ${nodeName}`}
+            sx={{ padding: 0 }}
+            onClick={() => deleteFile(node.path)}
+          >
+            <BiTrash />
+          </IconButton>
+        </IconSeparator>
       </LeafLabelWrapper>
     );
 
@@ -132,6 +153,23 @@ export const FileSystemModal = () => {
     [emulator]
   );
 
+  const downloadFile = (path: string) => {
+    const fileName = path.split('/').pop();
+    const file = emulator?.getFile(path);
+
+    if (file && fileName) {
+      const fileDownload = new Blob([file], {
+        type: 'data:application/octet-stream'
+      });
+
+      const link = document.createElement('a');
+      link.download = fileName;
+      link.href = URL.createObjectURL(fileDownload);
+      link.click();
+      link.remove();
+    }
+  };
+
   const renderedFiles = allFiles ?? emulator?.listAllFiles();
 
   const tourSteps: TourSteps = [
@@ -139,8 +177,8 @@ export const FileSystemModal = () => {
       content: (
         <>
           <p>
-            Use this area to view your current file tree, as well as delete
-            files from the tree.
+            Use this area to view your current file tree, download files, and
+            delete files from the tree.
           </p>
           <p>
             Use the <i>plus</i> and <i>minus</i> icons to open and close file
@@ -169,6 +207,7 @@ export const FileSystemModal = () => {
           id={emulatorFsId}
           allFiles={renderedFiles}
           deleteFile={deleteFile}
+          downloadFile={downloadFile}
         />
       </ModalBody>
       <ModalFooter>
