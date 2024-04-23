@@ -1,0 +1,27 @@
+name: Deploy Staging
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: gbajs3
+          sparse-checkout-cone-mode: false
+
+      - id: build-publish
+        uses: bitovi/github-actions-react-to-github-pages@v1.2.3
+        with:
+          checkout: false
+          install_command: cd ./gbajs3 && npm ci
+          path: ./gbajs3/dist
