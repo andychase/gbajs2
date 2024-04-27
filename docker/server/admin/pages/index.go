@@ -1,6 +1,8 @@
 package pages
 
 import (
+	"html/template"
+
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	template2 "github.com/GoAdminGroup/go-admin/template"
@@ -10,14 +12,13 @@ import (
 	"github.com/GoAdminGroup/themes/sword/components/chart_legend"
 	"github.com/GoAdminGroup/themes/sword/components/description"
 	"github.com/GoAdminGroup/themes/sword/components/progress_group"
-	"html/template"
 )
 
 // TODO: restructure for gbajs3
 
 func GetDashBoard(ctx *context.Context) (types.Panel, error) {
 
-	components := template2.Get(config.GetTheme())
+	components := template2.Get(ctx, config.GetTheme())
 	colComp := components.Col()
 
 	/**************************

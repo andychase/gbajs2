@@ -26,6 +26,7 @@ func main() {
 }
 
 func startServer() {
+	log.Println("admin server started")
 	const certLoc = "./certs/fullchain.pem"
 	const keyLoc = "./certs/privkey.pem"
 
@@ -52,7 +53,8 @@ func startServer() {
 	models.Init(eng.PostgresqlConnection())
 
 	go func() {
-		_ = http.ListenAndServeTLS(":443", certLoc, keyLoc, app)
+		log.Println("handling requests initiated")
+		log.Fatal(http.ListenAndServeTLS(":443", certLoc, keyLoc, app))
 	}()
 
 	quit := make(chan os.Signal, 1)
