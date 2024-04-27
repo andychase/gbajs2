@@ -255,7 +255,7 @@ export const VirtualControls = () => {
         x: '-100%',
         y: '0px'
       },
-      key: 'a-button',
+      keyName: 'a-button',
       enabled: shouldShowVirtualButtonsAndDpad
     },
     {
@@ -266,7 +266,7 @@ export const VirtualControls = () => {
         x: '-100%',
         y: '0px'
       },
-      key: 'b-button',
+      keyName: 'b-button',
       enabled: shouldShowVirtualButtonsAndDpad
     },
     {
@@ -274,7 +274,7 @@ export const VirtualControls = () => {
       isRectangular: true,
       children: <VirtualButtonTextSmall>Start</VirtualButtonTextSmall>,
       initialPosition: initialPositionForKey('start-button'),
-      key: 'start-button',
+      keyName: 'start-button',
       enabled: shouldShowVirtualButtonsAndDpad
     },
     {
@@ -282,7 +282,7 @@ export const VirtualControls = () => {
       isRectangular: true,
       children: <VirtualButtonTextSmall>Select</VirtualButtonTextSmall>,
       initialPosition: initialPositionForKey('select-button'),
-      key: 'select-button',
+      keyName: 'select-button',
       enabled: shouldShowVirtualButtonsAndDpad
     },
     {
@@ -290,7 +290,7 @@ export const VirtualControls = () => {
       isRectangular: true,
       children: <VirtualButtonTextSmall>L</VirtualButtonTextSmall>,
       initialPosition: initialPositionForKey('l-button'),
-      key: 'l-button',
+      keyName: 'l-button',
       enabled: shouldShowVirtualButtonsAndDpad
     },
     {
@@ -302,7 +302,7 @@ export const VirtualControls = () => {
         x: '-100%',
         y: '0px'
       },
-      key: 'r-button',
+      keyName: 'r-button',
       enabled: shouldShowVirtualButtonsAndDpad
     },
     {
@@ -318,7 +318,7 @@ export const VirtualControls = () => {
       },
       width: 40,
       initialPosition: initialPositionForKey('quickreload-button'),
-      key: 'quickreload-button',
+      keyName: 'quickreload-button',
       enabled: areVirtualControlsEnabled?.QuickReload
     },
     {
@@ -339,7 +339,7 @@ export const VirtualControls = () => {
         x: '-100%',
         y: '0px'
       },
-      key: 'uploadsave-button',
+      keyName: 'uploadsave-button',
       enabled: areVirtualControlsEnabled?.SendSaveToServer
     },
     {
@@ -359,7 +359,7 @@ export const VirtualControls = () => {
         x: '-100%',
         y: '0px'
       },
-      key: 'loadstate-button',
+      keyName: 'loadstate-button',
       enabled: areVirtualControlsEnabled?.LoadState
     },
     {
@@ -379,7 +379,7 @@ export const VirtualControls = () => {
         x: '-100%',
         y: '0px'
       },
-      key: 'savestate-button',
+      keyName: 'savestate-button',
       enabled: areVirtualControlsEnabled?.SaveState
     }
   ];
@@ -391,8 +391,9 @@ export const VirtualControls = () => {
       )}
       {virtualButtons.map((virtualButtonProps) => (
         <VirtualButton
-          ariaLabel={keyToAriaLabel(virtualButtonProps.key)}
-          inputName={virtualButtonProps.key}
+          ariaLabel={keyToAriaLabel(virtualButtonProps.keyName)}
+          inputName={virtualButtonProps.keyName}
+          key={virtualButtonProps.keyName}
           {...virtualButtonProps}
         />
       ))}

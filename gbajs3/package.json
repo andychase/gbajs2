@@ -38,7 +38,7 @@
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.1.6",
-    "@testing-library/react": "^14.1.2",
+    "@testing-library/react": "^15.0.5",
     "@testing-library/user-event": "^14.5.2",
     "@types/emscripten": "^1.39.6",
     "@types/react": "^18.2.46",
