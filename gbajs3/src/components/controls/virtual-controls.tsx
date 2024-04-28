@@ -70,10 +70,17 @@ export const VirtualControls = () => {
 
   if (!controlPanelBounds) return null;
 
-  const shouldShowVirtualButtonsAndDpad =
-    (areVirtualControlsEnabled?.DPadAndButtons === undefined &&
-      !isLargerThanPhone) ||
-    areVirtualControlsEnabled?.DPadAndButtons;
+  const shouldShowVirtualControl = (virtualControlEnabled?: boolean) => {
+    return (
+      (virtualControlEnabled === undefined && !isLargerThanPhone) ||
+      !!virtualControlEnabled
+    );
+  };
+
+  const shouldShowVirtualButtonsAndOpad = shouldShowVirtualControl(
+    areVirtualControlsEnabled?.OpadAndButtons
+  );
+
   const areNotificationsEnabled =
     areVirtualControlsEnabled?.NotificationsEnabled ?? true;
 
@@ -256,7 +263,7 @@ export const VirtualControls = () => {
         y: '0px'
       },
       keyName: 'a-button',
-      enabled: shouldShowVirtualButtonsAndDpad
+      enabled: shouldShowVirtualButtonsAndOpad
     },
     {
       keyId: 'B',
@@ -267,7 +274,7 @@ export const VirtualControls = () => {
         y: '0px'
       },
       keyName: 'b-button',
-      enabled: shouldShowVirtualButtonsAndDpad
+      enabled: shouldShowVirtualButtonsAndOpad
     },
     {
       keyId: 'START',
@@ -275,7 +282,7 @@ export const VirtualControls = () => {
       children: <VirtualButtonTextSmall>Start</VirtualButtonTextSmall>,
       initialPosition: initialPositionForKey('start-button'),
       keyName: 'start-button',
-      enabled: shouldShowVirtualButtonsAndDpad
+      enabled: shouldShowVirtualButtonsAndOpad
     },
     {
       keyId: 'SELECT',
@@ -283,7 +290,7 @@ export const VirtualControls = () => {
       children: <VirtualButtonTextSmall>Select</VirtualButtonTextSmall>,
       initialPosition: initialPositionForKey('select-button'),
       keyName: 'select-button',
-      enabled: shouldShowVirtualButtonsAndDpad
+      enabled: shouldShowVirtualButtonsAndOpad
     },
     {
       keyId: 'L',
@@ -291,7 +298,7 @@ export const VirtualControls = () => {
       children: <VirtualButtonTextSmall>L</VirtualButtonTextSmall>,
       initialPosition: initialPositionForKey('l-button'),
       keyName: 'l-button',
-      enabled: shouldShowVirtualButtonsAndDpad
+      enabled: shouldShowVirtualButtonsAndOpad
     },
     {
       keyId: 'R',
@@ -303,14 +310,13 @@ export const VirtualControls = () => {
         y: '0px'
       },
       keyName: 'r-button',
-      enabled: shouldShowVirtualButtonsAndDpad
+      enabled: shouldShowVirtualButtonsAndOpad
     },
     {
       children: <BiRefresh />,
       onClick: () => {
         emulator?.quickReload();
 
-        // TODO: is this the wrong indicator? maybe use isEmulatorRunning?
         if (!emulator?.getCurrentGameName() && areNotificationsEnabled)
           toast.error('Load a game to quick reload', {
             id: virtualControlToastId
@@ -319,7 +325,7 @@ export const VirtualControls = () => {
       width: 40,
       initialPosition: initialPositionForKey('quickreload-button'),
       keyName: 'quickreload-button',
-      enabled: areVirtualControlsEnabled?.QuickReload
+      enabled: shouldShowVirtualControl(areVirtualControlsEnabled?.QuickReload)
     },
     {
       children: <BiSolidCloudUpload />,
@@ -340,7 +346,9 @@ export const VirtualControls = () => {
         y: '0px'
       },
       keyName: 'uploadsave-button',
-      enabled: areVirtualControlsEnabled?.SendSaveToServer
+      enabled: shouldShowVirtualControl(
+        areVirtualControlsEnabled?.SendSaveToServer
+      )
     },
     {
       children: <BiSolidBookmark />,
@@ -360,7 +368,7 @@ export const VirtualControls = () => {
         y: '0px'
       },
       keyName: 'loadstate-button',
-      enabled: areVirtualControlsEnabled?.LoadState
+      enabled: shouldShowVirtualControl(areVirtualControlsEnabled?.LoadState)
     },
     {
       children: <BiSave />,
@@ -380,13 +388,13 @@ export const VirtualControls = () => {
         y: '0px'
       },
       keyName: 'savestate-button',
-      enabled: areVirtualControlsEnabled?.SaveState
+      enabled: shouldShowVirtualControl(areVirtualControlsEnabled?.SaveState)
     }
   ];
 
   return (
     <IconContext.Provider value={{ color: theme.pureWhite, size: '2em' }}>
-      {shouldShowVirtualButtonsAndDpad && (
+      {shouldShowVirtualButtonsAndOpad && (
         <OPad initialPosition={initialPositionForKey('o-pad')} />
       )}
       {virtualButtons.map((virtualButtonProps) => (

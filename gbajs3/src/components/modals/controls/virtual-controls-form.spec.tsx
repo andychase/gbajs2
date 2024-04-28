@@ -50,7 +50,7 @@ describe('<VirtualControlsForm />', () => {
 
     expect(setItemSpy).toHaveBeenCalledWith(
       virtualControlsLocalStorageKey,
-      '{"DPadAndButtons":true,"NotificationsEnabled":true,"SaveState":false,"LoadState":false,"QuickReload":false,"SendSaveToServer":false}'
+      '{"OpadAndButtons":true,"SaveState":true,"LoadState":true,"QuickReload":true,"SendSaveToServer":true,"NotificationsEnabled":true}'
     );
   });
 
@@ -82,11 +82,11 @@ describe('<VirtualControlsForm />', () => {
 
     expect(setItemSpy).toHaveBeenCalledWith(
       virtualControlsLocalStorageKey,
-      '{"DPadAndButtons":false,"NotificationsEnabled":false,"SaveState":true,"LoadState":true,"QuickReload":true,"SendSaveToServer":true}'
+      '{"OpadAndButtons":false,"SaveState":false,"LoadState":false,"QuickReload":false,"SendSaveToServer":false,"NotificationsEnabled":false}'
     );
   });
 
-  it('DPadAndButtons is true by default on mobile resolutions', () => {
+  it('virtual controls are true by default on mobile resolutions', () => {
     vi.spyOn(window, 'matchMedia').mockImplementation((query) => ({
       matches: query !== GbaDarkTheme.isLargerThanPhone,
       media: '',
@@ -100,15 +100,14 @@ describe('<VirtualControlsForm />', () => {
 
     renderWithContext(<VirtualControlsForm id="testId" />);
 
-    const dpadAndButtonsCheckbox = screen.getByLabelText(
-      'Virtual D-pad/Buttons'
-    );
-
-    expect(dpadAndButtonsCheckbox).toBeInTheDocument();
-    expect(dpadAndButtonsCheckbox).toBeChecked();
+    expect(screen.getByLabelText('Virtual D-pad/Buttons')).toBeChecked();
+    expect(screen.getByLabelText('Save State')).toBeChecked();
+    expect(screen.getByLabelText('Load State')).toBeChecked();
+    expect(screen.getByLabelText('Quick Reload')).toBeChecked();
+    expect(screen.getByLabelText('Send save to server')).toBeChecked();
   });
 
-  it('DPadAndButtons is false by default on desktop resolutions', () => {
+  it('virtual controls are false by default on desktop resolutions', () => {
     vi.spyOn(window, 'matchMedia').mockImplementation((query) => ({
       matches: query === GbaDarkTheme.isLargerThanPhone,
       media: '',
@@ -122,18 +121,17 @@ describe('<VirtualControlsForm />', () => {
 
     renderWithContext(<VirtualControlsForm id="testId" />);
 
-    const dpadAndButtonsCheckbox = screen.getByLabelText(
-      'Virtual D-pad/Buttons'
-    );
-
-    expect(dpadAndButtonsCheckbox).toBeInTheDocument();
-    expect(dpadAndButtonsCheckbox).not.toBeChecked();
+    expect(screen.getByLabelText('Virtual D-pad/Buttons')).not.toBeChecked();
+    expect(screen.getByLabelText('Save State')).not.toBeChecked();
+    expect(screen.getByLabelText('Load State')).not.toBeChecked();
+    expect(screen.getByLabelText('Quick Reload')).not.toBeChecked();
+    expect(screen.getByLabelText('Send save to server')).not.toBeChecked();
   });
 
   it('renders initial values from storage', () => {
     localStorage.setItem(
       virtualControlsLocalStorageKey,
-      '{"DPadAndButtons":false,"NotificationsEnabled":false,"SaveState":true,"LoadState":true,"QuickReload":true,"SendSaveToServer":true}'
+      '{"OpadAndButtons":false,"SaveState":true,"LoadState":true,"QuickReload":true,"SendSaveToServer":true,"NotificationsEnabled":false}'
     );
 
     renderWithContext(<VirtualControlsForm id="testId" />);

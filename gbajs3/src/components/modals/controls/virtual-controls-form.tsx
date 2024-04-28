@@ -1,6 +1,5 @@
 import { useMediaQuery } from '@mui/material';
 import { useLocalStorage } from '@uidotdev/usehooks';
-import { useEffect } from 'react';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { styled, useTheme } from 'styled-components';
 
@@ -8,17 +7,12 @@ import { virtualControlsLocalStorageKey } from '../../controls/consts.tsx';
 import { ManagedCheckbox } from '../../shared/managed-checkbox.tsx';
 import { ManagedSwitch } from '../../shared/managed-switch.tsx';
 
-const StyledForm = styled.form`
-  display: flex;
-  flex-direction: column;
-`;
-
 type VirtualControlsFormProps = {
   id: string;
 };
 
-type ControlsInputProps = {
-  DPadAndButtons: boolean;
+export type AreVirtualControlsEnabledProps = {
+  OpadAndButtons: boolean;
   SaveState: boolean;
   LoadState: boolean;
   QuickReload: boolean;
@@ -26,14 +20,12 @@ type ControlsInputProps = {
   NotificationsEnabled: boolean;
 };
 
-export type AreVirtualControlsEnabledProps = {
-  DPadAndButtons?: boolean;
-  SaveState?: boolean;
-  LoadState?: boolean;
-  QuickReload?: boolean;
-  SendSaveToServer?: boolean;
-  NotificationsEnabled?: boolean;
-};
+type ControlsInputProps = AreVirtualControlsEnabledProps;
+
+const StyledForm = styled.form`
+  display: flex;
+  flex-direction: column;
+`;
 
 export const VirtualControlsForm = ({ id }: VirtualControlsFormProps) => {
   const [areVirtualControlsEnabled, setAreVirtualControlsEnabled] =
@@ -42,24 +34,27 @@ export const VirtualControlsForm = ({ id }: VirtualControlsFormProps) => {
     );
   const theme = useTheme();
   const isLargerThanPhone = useMediaQuery(theme.isLargerThanPhone);
-  const areDPadAndButtonsEnabled =
-    areVirtualControlsEnabled?.DPadAndButtons ?? !isLargerThanPhone;
-  const areNotificationsEnabled =
-    areVirtualControlsEnabled?.NotificationsEnabled ?? true;
 
-  const { register, handleSubmit, setValue, watch } =
-    useForm<ControlsInputProps>({
-      defaultValues: {
-        ...areVirtualControlsEnabled,
-        DPadAndButtons: areDPadAndButtonsEnabled,
-        NotificationsEnabled: areNotificationsEnabled
-      }
-    });
+  const shouldShowVirtualControl = (virtualControlEnabled?: boolean) => {
+    return (
+      (virtualControlEnabled === undefined && !isLargerThanPhone) ||
+      !!virtualControlEnabled
+    );
+  };
 
-  useEffect(() => {
-    // DPadAndButtons is the only value that can dynamically change without user input
-    setValue('DPadAndButtons', areDPadAndButtonsEnabled);
-  }, [areDPadAndButtonsEnabled, setValue]);
+  const { register, handleSubmit, watch } = useForm<ControlsInputProps>({
+    values: areVirtualControlsEnabled ?? {
+      OpadAndButtons: shouldShowVirtualControl(undefined),
+      SaveState: shouldShowVirtualControl(undefined),
+      LoadState: shouldShowVirtualControl(undefined),
+      QuickReload: shouldShowVirtualControl(undefined),
+      SendSaveToServer: shouldShowVirtualControl(undefined),
+      NotificationsEnabled: true
+    },
+    resetOptions: {
+      keepDirtyValues: true
+    }
+  });
 
   const onSubmit: SubmitHandler<ControlsInputProps> = async (formData) => {
     setAreVirtualControlsEnabled((prevState) => ({
@@ -76,8 +71,8 @@ export const VirtualControlsForm = ({ id }: VirtualControlsFormProps) => {
     >
       <ManagedCheckbox
         label="Virtual D-pad/Buttons"
-        watcher={watch('DPadAndButtons')}
-        registerProps={register('DPadAndButtons')}
+        watcher={watch('OpadAndButtons')}
+        registerProps={register('OpadAndButtons')}
       />
       <ManagedCheckbox
         label="Save State"

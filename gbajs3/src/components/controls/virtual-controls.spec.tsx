@@ -3,10 +3,7 @@ import { userEvent } from '@testing-library/user-event';
 import * as toast from 'react-hot-toast';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import {
-  saveStateSlotLocalStorageKey,
-  virtualControlsLocalStorageKey
-} from './consts.tsx';
+import { saveStateSlotLocalStorageKey } from './consts.tsx';
 import { VirtualControls } from './virtual-controls.tsx';
 import { renderWithContext } from '../../../test/render-with-context.tsx';
 import { GbaDarkTheme } from '../../context/theme/theme.tsx';
@@ -66,11 +63,32 @@ describe('<VirtualControls />', () => {
   });
 
   describe('Additional Controls', () => {
-    beforeEach(() => {
-      localStorage.setItem(
-        virtualControlsLocalStorageKey,
-        '{"DPadAndButtons":true,"SaveState":true,"LoadState":true,"QuickReload":true,"SendSaveToServer":true}'
-      );
+    it('renders no additional controls by default on desktop', () => {
+      vi.spyOn(window, 'matchMedia').mockImplementation((query) => ({
+        matches: query === GbaDarkTheme.isLargerThanPhone,
+        media: '',
+        addListener: () => {},
+        removeListener: () => {},
+        onchange: () => {},
+        addEventListener: () => {},
+        removeEventListener: () => {},
+        dispatchEvent: () => true
+      }));
+
+      renderWithContext(<VirtualControls />);
+
+      expect(
+        screen.queryByLabelText('Quickreload Button')
+      ).not.toBeInTheDocument();
+      expect(
+        screen.queryByLabelText('Uploadsave Button')
+      ).not.toBeInTheDocument();
+      expect(
+        screen.queryByLabelText('Loadstate Button')
+      ).not.toBeInTheDocument();
+      expect(
+        screen.queryByLabelText('Savestate Buttonn')
+      ).not.toBeInTheDocument();
     });
 
     it('quick reloads game', async () => {
