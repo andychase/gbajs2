@@ -126,12 +126,6 @@ export const ControlPanel = () => {
   const isLargerThanPhone = useMediaQuery(theme.isLargerThanPhone);
   const [isEmulatorPaused, setIsEmulatorPaused] = useState(false);
   const controlPanelId = useId();
-  const playPanelControlId = useId();
-  const fastForwardPanelControlId = useId();
-  const quitGamePanelControlId = useId();
-  const dragPanelControlId = useId();
-  const resizePanelControlId = useId();
-  const volumeSliderControlId = useId();
   const [currentEmulatorVolume, setCurrentEmulatorVolume] = useLocalStorage(
     emulatorVolumeLocalStorageKey,
     1
@@ -209,17 +203,17 @@ export const ControlPanel = () => {
         </p>
       ),
       placementBeacon: 'bottom',
-      target: `#${CSS.escape(playPanelControlId)}`
+      target: `#${CSS.escape(`${controlPanelId}--play`)}`
     },
     {
       content: <p>Use this button to turn fast forward on and off.</p>,
       placementBeacon: 'bottom',
-      target: `#${CSS.escape(fastForwardPanelControlId)}`
+      target: `#${CSS.escape(`${controlPanelId}--fast-forward`)}`
     },
     {
       content: <p>Use this button to quit your current game.</p>,
       placementBeacon: 'bottom',
-      target: `#${CSS.escape(quitGamePanelControlId)}`
+      target: `#${CSS.escape(`${controlPanelId}--quit-game`)}`
     },
     {
       content: (
@@ -230,13 +224,13 @@ export const ControlPanel = () => {
       ),
       placement: 'right',
       placementBeacon: 'bottom',
-      target: `#${CSS.escape(dragPanelControlId)}`
+      target: `#${CSS.escape(`${controlPanelId}--drag`)}`
     },
     {
       content: <p>Use this button to resize the screen and control panel.</p>,
       placement: 'right',
       placementBeacon: 'bottom',
-      target: `#${CSS.escape(resizePanelControlId)}`
+      target: `#${CSS.escape(`${controlPanelId}--resize`)}`
     },
     {
       content: (
@@ -246,7 +240,7 @@ export const ControlPanel = () => {
         </>
       ),
       placementBeacon: 'bottom',
-      target: `#${CSS.escape(volumeSliderControlId)}`
+      target: `#${CSS.escape(`${controlPanelId}--volume-slider`)}`
     }
   ];
 
@@ -298,7 +292,7 @@ export const ControlPanel = () => {
         <Panel>
           <IconContext.Provider value={{ size: '2em' }}>
             <PanelControl
-              id={playPanelControlId}
+              id={`${controlPanelId}--play`}
               ariaLabel={
                 isEmulatorPaused || !isEmulatorRunning ? 'Play' : 'Pause'
               }
@@ -311,7 +305,7 @@ export const ControlPanel = () => {
               )}
             </PanelControl>
             <PanelControl
-              id={fastForwardPanelControlId}
+              id={`${controlPanelId}--fast-forward`}
               ariaLabel={isFastForwardOn ? 'Regular Speed' : 'Fast Forward'}
               $onClick={toggleFastForward}
             >
@@ -322,14 +316,14 @@ export const ControlPanel = () => {
               )}
             </PanelControl>
             <PanelControl
-              id={quitGamePanelControlId}
+              id={`${controlPanelId}--quit-game`}
               ariaLabel="Quit Game"
               $onClick={quitGame}
             >
               <BiUndo />
             </PanelControl>
             <PanelControl
-              id={dragPanelControlId}
+              id={`${controlPanelId}--drag`}
               ariaLabel={areItemsDraggable ? 'Anchor Items' : 'Drag Items'}
               $onClick={() => {
                 setAreItemsDraggable((prevState) => !prevState);
@@ -342,7 +336,7 @@ export const ControlPanel = () => {
               )}
             </PanelControl>
             <PanelControl
-              id={resizePanelControlId}
+              id={`${controlPanelId}--resize`}
               ariaLabel={
                 areItemsResizable ? 'Stop Resizing Items' : 'Resize Items'
               }
@@ -356,7 +350,7 @@ export const ControlPanel = () => {
                 <TbResize />
               )}
             </PanelControl>
-            <VolumeSliderControl id={volumeSliderControlId}>
+            <VolumeSliderControl id={`${controlPanelId}--volume-slider`}>
               <IconButton
                 aria-label="Mute Volume"
                 size="small"

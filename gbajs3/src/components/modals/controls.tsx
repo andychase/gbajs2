@@ -98,11 +98,10 @@ const ControlTabs = ({
 
 export const ControlsModal = () => {
   const { setIsModalOpen } = useModalContext();
-  const virtualControlsFormId = useId();
-  const keyBindingsFormId = useId();
-  const saveChangesButtonId = useId();
-  const resetPositionsButtonId = useId();
-  const [formId, setFormId] = useState<string>(virtualControlsFormId);
+  const baseId = useId();
+  const [formId, setFormId] = useState<string>(
+    `${baseId}--virtual-controls-form`
+  );
 
   const tourSteps: TourSteps = [
     {
@@ -111,7 +110,7 @@ export const ControlsModal = () => {
           Select which virtual controls you wish to enable in this form tab.
         </p>
       ),
-      target: `#${CSS.escape(virtualControlsFormId)}`
+      target: `#${CSS.escape(`${baseId}--virtual-controls-form`)}`
     },
     {
       content: (
@@ -120,7 +119,7 @@ export const ControlsModal = () => {
           and all virtual controls.
         </p>
       ),
-      target: `#${CSS.escape(resetPositionsButtonId)}`
+      target: `#${CSS.escape(`${baseId}--reset-positions-button`)}`
     },
     {
       content: (
@@ -146,7 +145,7 @@ export const ControlsModal = () => {
         </p>
       ),
       placement: 'top-end',
-      target: `#${CSS.escape(keyBindingsFormId)}`
+      target: `#${CSS.escape(`${baseId}--key-bindings-form`)}`
     },
     {
       content: (
@@ -155,7 +154,7 @@ export const ControlsModal = () => {
           form tab.
         </p>
       ),
-      target: `#${CSS.escape(saveChangesButtonId)}`
+      target: `#${CSS.escape(`${baseId}--save-changes-button`)}`
     }
   ];
 
@@ -165,14 +164,14 @@ export const ControlsModal = () => {
       <ModalBody>
         <ControlTabs
           setFormId={setFormId}
-          virtualControlsFormId={virtualControlsFormId}
-          keyBindingsFormId={keyBindingsFormId}
-          resetPositionsButtonId={resetPositionsButtonId}
+          virtualControlsFormId={`${baseId}--virtual-controls-form`}
+          keyBindingsFormId={`${baseId}--key-bindings-form`}
+          resetPositionsButtonId={`${baseId}--reset-positions-button`}
         />
       </ModalBody>
       <ModalFooter>
         <Button
-          id={saveChangesButtonId}
+          id={`${baseId}--save-changes-button`}
           form={formId}
           type="submit"
           variant="contained"

@@ -142,8 +142,7 @@ export const FileSystemModal = () => {
   const { setIsModalOpen } = useModalContext();
   const { emulator } = useEmulatorContext();
   const [allFiles, setAllFiles] = useState<FileNode | undefined>();
-  const emulatorFsId = useId();
-  const saveFileSystemButtonId = useId();
+  const baseId = useId();
 
   const deleteFile = useCallback(
     (path: string) => {
@@ -186,7 +185,7 @@ export const FileSystemModal = () => {
           </p>
         </>
       ),
-      target: `#${CSS.escape(emulatorFsId)}`
+      target: `#${CSS.escape(`${baseId}--emulator-fs`)}`
     },
     {
       content: (
@@ -195,7 +194,7 @@ export const FileSystemModal = () => {
           your device!
         </p>
       ),
-      target: `#${CSS.escape(saveFileSystemButtonId)}`
+      target: `#${CSS.escape(`${baseId}--save-file-system-button`)}`
     }
   ];
 
@@ -204,7 +203,7 @@ export const FileSystemModal = () => {
       <ModalHeader title="File System" />
       <ModalBody>
         <EmulatorFS
-          id={emulatorFsId}
+          id={`${baseId}--emulator-fs`}
           allFiles={renderedFiles}
           deleteFile={deleteFile}
           downloadFile={downloadFile}
@@ -212,7 +211,7 @@ export const FileSystemModal = () => {
       </ModalBody>
       <ModalFooter>
         <Button
-          id={saveFileSystemButtonId}
+          id={`${baseId}--save-file-system-button`}
           variant="contained"
           onClick={emulator?.fsSync}
         >

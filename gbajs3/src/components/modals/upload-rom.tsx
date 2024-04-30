@@ -117,8 +117,6 @@ export const UploadRomModal = () => {
     execute: executeLoadExternalRom
   } = useLoadExternalRom();
   const uploadRomFormId = useId();
-  const dragAndDropFieldId = useId();
-  const romURLFieldId = useId();
 
   useEffect(() => {
     if (!isExternalRomLoading && externalRomFile && currentRomURL) {
@@ -206,13 +204,13 @@ export const UploadRomModal = () => {
           </p>
         </>
       ),
-      target: `#${CSS.escape(dragAndDropFieldId)}`
+      target: `#${CSS.escape(`${uploadRomFormId}--drag-and-drop`)}`
     },
     {
       content: (
         <p>Alternatively, you may load a rom file from an external URL.</p>
       ),
-      target: `#${CSS.escape(romURLFieldId)}`
+      target: `#${CSS.escape(`${uploadRomFormId}--rom-url`)}`
     }
   ];
 
@@ -237,7 +235,7 @@ export const UploadRomModal = () => {
           >
             <StyledDragAndDrop
               {...getRootProps({
-                id: dragAndDropFieldId,
+                id: `${uploadRomFormId}--drag-and-drop`,
                 $isDragActive: isDragActive,
                 onClick: triggerFileInputOnClick,
                 'aria-label': 'Upload Rom'
@@ -274,7 +272,7 @@ export const UploadRomModal = () => {
             </StyledDragAndDrop>
             <p>Or upload from a URL:</p>
             <TextField
-              id={romURLFieldId}
+              id={`${uploadRomFormId}--rom-url`}
               error={!!errors?.romURL}
               label="Rom URL"
               size="small"

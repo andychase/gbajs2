@@ -89,14 +89,7 @@ export const CheatsModal = () => {
   const { setIsModalOpen } = useModalContext();
   const { emulator } = useEmulatorContext();
   const [viewRawCheats, setViewRawCheats] = useState(false);
-  const cheatsFormId = useId();
-  const addCheatButtonId = useId();
-  const submitButtonId = useId();
-  const toggleRawCheatsButtonId = useId();
-  const firstNameFieldId = useId();
-  const firstCheatCodeFieldId = useId();
-  const firstEnabledFieldId = useId();
-  const firstRemoveIconId = useId();
+  const baseId = useId();
   const defaultCheat = { desc: '', code: '', enable: false };
 
   const [rawCheats, parsedCheats] = useMemo(() => {
@@ -137,11 +130,11 @@ export const CheatsModal = () => {
   const tourSteps: TourSteps = [
     {
       content: <p>Use this form to enter, add, and delete cheats.</p>,
-      target: `#${CSS.escape(cheatsFormId)}`
+      target: `#${CSS.escape(`${baseId}--cheats-form`)}`
     },
     {
       content: <p>This form field is for the name of the cheat.</p>,
-      target: `#${CSS.escape(firstNameFieldId)}`
+      target: `#${CSS.escape(`${baseId}--name`)}`
     },
     {
       content: (
@@ -150,17 +143,17 @@ export const CheatsModal = () => {
           <p>Remember to separate multi-line cheats with the '+' character!</p>
         </>
       ),
-      target: `#${CSS.escape(firstCheatCodeFieldId)}`
+      target: `#${CSS.escape(`${baseId}--cheat-code`)}`
     },
     {
       content: <p>Use the checkbox to enable/disable a cheat.</p>,
       placement: 'right',
-      target: `#${CSS.escape(firstEnabledFieldId)}`
+      target: `#${CSS.escape(`${baseId}--enabled`)}`
     },
     {
       content: <p>Use the trash button to remove a cheat entirely.</p>,
       placement: 'right',
-      target: `#${CSS.escape(firstRemoveIconId)}`
+      target: `#${CSS.escape(`${baseId}--remove`)}`
     },
     {
       content: (
@@ -168,7 +161,7 @@ export const CheatsModal = () => {
           Use the <i>plus</i> button to add a new cheat.
         </p>
       ),
-      target: `#${CSS.escape(addCheatButtonId)}`
+      target: `#${CSS.escape(`${baseId}--add-cheat`)}`
     },
     {
       content: (
@@ -177,7 +170,7 @@ export const CheatsModal = () => {
           libretro format.
         </p>
       ),
-      target: `#${CSS.escape(submitButtonId)}`
+      target: `#${CSS.escape(`${baseId}--submit-button`)}`
     },
     {
       content: (
@@ -187,7 +180,7 @@ export const CheatsModal = () => {
         </p>
       ),
       placement: 'right',
-      target: `#${CSS.escape(toggleRawCheatsButtonId)}`
+      target: `#${CSS.escape(`${baseId}--toggle-raw-cheats`)}`
     }
   ];
 
@@ -197,7 +190,7 @@ export const CheatsModal = () => {
       <ModalBody>
         <form
           aria-label="Cheats Form"
-          id={cheatsFormId}
+          id={`${baseId}--cheats-form`}
           onSubmit={handleSubmit((data) => {
             const cheatsFile = viewRawCheats
               ? new File(
@@ -238,71 +231,76 @@ export const CheatsModal = () => {
             {...register('rawCheats')}
           />
           <CheatsList $shouldHide={viewRawCheats}>
-            {fields.map((item, index) => (
-              <Cheat key={item.id}>
-                <CheatsFormSeparator $fullWidth>
-                  <TextField
-                    id={index === 0 ? firstNameFieldId : undefined}
-                    label="Name"
-                    error={!!errors?.cheats?.[index]?.desc}
-                    size="small"
-                    autoComplete="Name"
-                    style={isLargerThanPhone ? { maxWidth: 100 } : undefined}
-                    helperText={errors?.cheats?.[index]?.desc?.message}
-                    {...register(`cheats.${index}.desc`, {
-                      required: {
-                        value: true,
-                        message: 'required'
-                      }
-                    })}
-                  />
-                  <TextField
-                    id={index === 0 ? firstCheatCodeFieldId : undefined}
-                    label="Cheat Code"
-                    error={!!errors?.cheats?.[index]?.code}
-                    size="small"
-                    autoComplete="Code"
-                    helperText={errors?.cheats?.[index]?.code?.message}
-                    {...register(`cheats.${index}.code`, {
-                      required: {
-                        value: true,
-                        message: 'required'
-                      }
-                    })}
-                  />
-                </CheatsFormSeparator>
+            {fields.map((item, index) => {
+              const firstWithId = (id: string) =>
+                index === 0 ? id : undefined;
 
-                <CheatsFormSeparator>
-                  <ManagedCheckbox
-                    id={index === 0 ? firstEnabledFieldId : undefined}
-                    label="Enabled"
-                    watcher={watch(`cheats.${index}.enable`)}
-                    registerProps={register(`cheats.${index}.enable`)}
-                  />
-                  <IconButton
-                    aria-label="Delete"
-                    id={index === 0 ? firstRemoveIconId : undefined}
-                    sx={{
-                      padding: 0,
-                      marginRight: 'auto',
-                      '&:hover': { borderRadius: '10px' },
-                      '&:focus': { borderRadius: '10px' },
-                      '& .MuiTouchRipple-root .MuiTouchRipple-child': {
-                        borderRadius: '10px'
-                      }
-                    }}
-                    onClick={() => remove(index)}
-                  >
-                    <StyledCiSquareRemove />
-                  </IconButton>
-                </CheatsFormSeparator>
-              </Cheat>
-            ))}
+              return (
+                <Cheat key={item.id}>
+                  <CheatsFormSeparator $fullWidth>
+                    <TextField
+                      id={firstWithId(`${baseId}--name`)}
+                      label="Name"
+                      error={!!errors?.cheats?.[index]?.desc}
+                      size="small"
+                      autoComplete="Name"
+                      style={isLargerThanPhone ? { maxWidth: 100 } : undefined}
+                      helperText={errors?.cheats?.[index]?.desc?.message}
+                      {...register(`cheats.${index}.desc`, {
+                        required: {
+                          value: true,
+                          message: 'required'
+                        }
+                      })}
+                    />
+                    <TextField
+                      id={firstWithId(`${baseId}--cheat-code`)}
+                      label="Cheat Code"
+                      error={!!errors?.cheats?.[index]?.code}
+                      size="small"
+                      autoComplete="Code"
+                      helperText={errors?.cheats?.[index]?.code?.message}
+                      {...register(`cheats.${index}.code`, {
+                        required: {
+                          value: true,
+                          message: 'required'
+                        }
+                      })}
+                    />
+                  </CheatsFormSeparator>
+
+                  <CheatsFormSeparator>
+                    <ManagedCheckbox
+                      id={firstWithId(`${baseId}--enabled`)}
+                      label="Enabled"
+                      watcher={watch(`cheats.${index}.enable`)}
+                      registerProps={register(`cheats.${index}.enable`)}
+                    />
+                    <IconButton
+                      aria-label="Delete"
+                      id={firstWithId(`${baseId}--remove`)}
+                      sx={{
+                        padding: 0,
+                        marginRight: 'auto',
+                        '&:hover': { borderRadius: '10px' },
+                        '&:focus': { borderRadius: '10px' },
+                        '& .MuiTouchRipple-root .MuiTouchRipple-child': {
+                          borderRadius: '10px'
+                        }
+                      }}
+                      onClick={() => remove(index)}
+                    >
+                      <StyledCiSquareRemove />
+                    </IconButton>
+                  </CheatsFormSeparator>
+                </Cheat>
+              );
+            })}
           </CheatsList>
           <RowContainer>
             <IconButton
               aria-label="Create new cheat"
-              id={addCheatButtonId}
+              id={`${baseId}--add-cheat`}
               sx={{ padding: 0, display: viewRawCheats ? 'none' : 'flex' }}
               onClick={() => append(defaultCheat)}
             >
@@ -316,15 +314,15 @@ export const CheatsModal = () => {
       </ModalBody>
       <ModalFooter>
         <Button
-          id={submitButtonId}
-          form={cheatsFormId}
+          id={`${baseId}--submit-button`}
+          form={`${baseId}--cheats-form`}
           type="submit"
           variant="contained"
         >
           Submit
         </Button>
         <Button
-          id={toggleRawCheatsButtonId}
+          id={`${baseId}--toggle-raw-cheats`}
           color="info"
           variant="contained"
           onClick={() => setViewRawCheats((prevState) => !prevState)}

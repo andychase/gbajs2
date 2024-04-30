@@ -4,7 +4,7 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
 <div
   class="react-draggable"
   data-testid="control-panel-wrapper"
-  id=":re:"
+  id=":r2:"
   style="position: absolute; user-select: auto; width: auto; height: auto; display: inline-block; top: 0px; left: 0px; cursor: auto; transform: translate(0px,10px); max-width: 9007199254740991px; max-height: 9007199254740991px; box-sizing: border-box; flex-shrink: 0;"
 >
   <ul
@@ -16,7 +16,7 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
       <button
         aria-label="Play"
         class="sc-beySPh eIzeg sc-hLQSwg dTDgnt noDrag"
-        id=":rf:"
+        id=":r2:--play"
       >
         <svg
           fill="currentColor"
@@ -39,7 +39,7 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
       <button
         aria-label="Fast Forward"
         class="sc-beySPh eIzeg sc-hLQSwg dTDgnt noDrag"
-        id=":rg:"
+        id=":r2:--fast-forward"
       >
         <svg
           fill="currentColor"
@@ -62,7 +62,7 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
       <button
         aria-label="Quit Game"
         class="sc-beySPh eIzeg sc-hLQSwg dTDgnt noDrag"
-        id=":rh:"
+        id=":r2:--quit-game"
       >
         <svg
           fill="currentColor"
@@ -85,7 +85,7 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
       <button
         aria-label="Drag Items"
         class="sc-beySPh eIzeg sc-hLQSwg dTDgnt noDrag"
-        id=":ri:"
+        id=":r2:--drag"
       >
         <svg
           fill="currentColor"
@@ -108,7 +108,7 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
       <button
         aria-label="Resize Items"
         class="sc-beySPh eIzeg sc-hLQSwg dTDgnt noDrag"
-        id=":rj:"
+        id=":r2:--resize"
       >
         <svg
           fill="none"
@@ -137,7 +137,7 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
     </li>
     <li
       class="sc-eDLKkx cIrxZO"
-      id=":rk:"
+      id=":r2:--volume-slider"
     >
       <button
         aria-label="Mute Volume"
@@ -286,7 +286,7 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
 <div
   class="react-draggable"
   data-testid="control-panel-wrapper"
-  id=":r7:"
+  id=":r1:"
   style="position: absolute; user-select: auto; height: auto; display: inline-block; top: 0px; left: 0px; cursor: auto; transform: translate(0px,0px); max-width: 9007199254740991px; max-height: 9007199254740991px; box-sizing: border-box; flex-shrink: 0;"
 >
   <ul
@@ -298,7 +298,7 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
       <button
         aria-label="Play"
         class="sc-beySPh eIzeg sc-hLQSwg dTDgnt noDrag"
-        id=":r8:"
+        id=":r1:--play"
       >
         <svg
           fill="currentColor"
@@ -321,7 +321,7 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
       <button
         aria-label="Fast Forward"
         class="sc-beySPh eIzeg sc-hLQSwg dTDgnt noDrag"
-        id=":r9:"
+        id=":r1:--fast-forward"
       >
         <svg
           fill="currentColor"
@@ -344,7 +344,7 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
       <button
         aria-label="Quit Game"
         class="sc-beySPh eIzeg sc-hLQSwg dTDgnt noDrag"
-        id=":ra:"
+        id=":r1:--quit-game"
       >
         <svg
           fill="currentColor"
@@ -367,7 +367,7 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
       <button
         aria-label="Drag Items"
         class="sc-beySPh eIzeg sc-hLQSwg dTDgnt noDrag"
-        id=":rb:"
+        id=":r1:--drag"
       >
         <svg
           fill="currentColor"
@@ -390,7 +390,7 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
       <button
         aria-label="Resize Items"
         class="sc-beySPh eIzeg sc-hLQSwg dTDgnt noDrag"
-        id=":rc:"
+        id=":r1:--resize"
       >
         <svg
           fill="none"
@@ -419,7 +419,7 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
     </li>
     <li
       class="sc-eDLKkx cIrxZO"
-      id=":rd:"
+      id=":r1:--volume-slider"
     >
       <button
         aria-label="Mute Volume"

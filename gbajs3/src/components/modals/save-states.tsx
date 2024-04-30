@@ -99,9 +99,7 @@ export const SaveStatesModal = () => {
     saveStateSlotLocalStorageKey,
     0
   );
-  const saveStatesFormId = useId();
-  const saveStatesListId = useId();
-  const addStateButtonId = useId();
+  const baseId = useId();
   const {
     register,
     handleSubmit,
@@ -142,7 +140,7 @@ export const SaveStatesModal = () => {
         </p>
       ),
       placementBeacon: 'bottom-end',
-      target: `#${CSS.escape(saveStatesFormId)}`
+      target: `#${CSS.escape(`${baseId}--save-state-slot-form`)}`
     },
     {
       content: (
@@ -152,7 +150,7 @@ export const SaveStatesModal = () => {
         </p>
       ),
       placementBeacon: 'bottom-end',
-      target: `#${CSS.escape(saveStatesListId)}`
+      target: `#${CSS.escape(`${baseId}--save-state-list`)}`
     },
     {
       content: (
@@ -162,7 +160,7 @@ export const SaveStatesModal = () => {
         </p>
       ),
       placementBeacon: 'bottom-end',
-      target: `#${CSS.escape(addStateButtonId)}`
+      target: `#${CSS.escape(`${baseId}--add-state-button`)}`
     }
   ];
 
@@ -170,7 +168,10 @@ export const SaveStatesModal = () => {
     <>
       <ModalHeader title="Manage Save States" />
       <ModalBody>
-        <StyledForm id={saveStatesFormId} onSubmit={handleSubmit(onSubmit)}>
+        <StyledForm
+          id={`${baseId}--save-state-slot-form`}
+          onSubmit={handleSubmit(onSubmit)}
+        >
           <TextField
             label="Current Save State Slot"
             type="number"
@@ -186,17 +187,12 @@ export const SaveStatesModal = () => {
               valueAsNumber: true
             })}
           />
-          <Button
-            form={saveStatesFormId}
-            type="submit"
-            variant="outlined"
-            size="small"
-          >
+          <Button type="submit" variant="outlined" size="small">
             Update Slot
           </Button>
         </StyledForm>
 
-        <SaveStatesList id={saveStatesListId}>
+        <SaveStatesList id={`${baseId}--save-state-list`}>
           {renderedSaveStates?.map?.((saveState: string, idx: number) => (
             <StyledLi key={`${saveState}_${idx}`}>
               <LoadSaveStateButton
@@ -241,7 +237,7 @@ export const SaveStatesModal = () => {
           )}
         </SaveStatesList>
         <IconButton
-          id={addStateButtonId}
+          id={`${baseId}--add-state-button`}
           aria-label={`Create new save state`}
           sx={{ padding: 0 }}
           onClick={() => {
