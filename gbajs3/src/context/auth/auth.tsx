@@ -1,4 +1,4 @@
-import {jwtDecode,  type JwtPayload } from 'jwt-decode';
+import { jwtDecode, type JwtPayload } from 'jwt-decode';
 import {
   createContext,
   useState,
@@ -6,7 +6,7 @@ import {
   useCallback,
   type ReactNode,
   type SetStateAction,
-  type Dispatch,
+  type Dispatch
 } from 'react';
 import { useInterval } from 'usehooks-ts';
 
@@ -41,7 +41,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     isLoading: refreshLoading,
     execute: executeRefresh,
     error: refreshTokenError,
-    clearError: refreshClearError,
+    clearError: refreshClearError
   } = useRefreshAccessToken({ loadOnMount: hasApiLocation });
 
   // assign token to context
@@ -92,7 +92,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         accessToken,
         setAccessToken,
         setAccessTokenSource,
-        isAuthenticated,
+        isAuthenticated
       }}
     >
       {children}

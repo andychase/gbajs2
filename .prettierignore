@@ -4,6 +4,7 @@
 /**/docker-compose.yaml
 /**/docker-compose.yml
 /**/nginx.conf
-/**/auth/**/*
+/**/docker/server/auth/**/*
+/**/docker/server/admin/**/*
 /**/mgba.js
 /**/mgba.wasm
