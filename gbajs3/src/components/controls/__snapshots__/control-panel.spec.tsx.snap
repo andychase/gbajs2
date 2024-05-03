@@ -8,14 +8,14 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
   style="position: absolute; user-select: auto; width: auto; height: auto; display: inline-block; top: 0px; left: 0px; cursor: auto; transform: translate(0px,10px); max-width: 9007199254740991px; max-height: 9007199254740991px; box-sizing: border-box; flex-shrink: 0;"
 >
   <ul
-    class="sc-guDLey uWlaT"
+    class="sc-gueXAH hzAavy"
   >
     <li
-      class="sc-dmyCSP kXqwsU"
+      class="sc-dmqGRC duGJpT"
     >
       <button
         aria-label="Play"
-        class="sc-beySPh eIzeg sc-hLQSwg dTDgnt noDrag"
+        class="sc-beqWNU lbsFSi sc-hLseSp gIoKub noDrag"
         id=":r2:--play"
       >
         <svg
@@ -34,11 +34,11 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
       </button>
     </li>
     <li
-      class="sc-dmyCSP kXqwsU"
+      class="sc-dmqGRC duGJpT"
     >
       <button
         aria-label="Fast Forward"
-        class="sc-beySPh eIzeg sc-hLQSwg dTDgnt noDrag"
+        class="sc-beqWNU lbsFSi sc-hLseSp gIoKub noDrag"
         id=":r2:--fast-forward"
       >
         <svg
@@ -57,11 +57,11 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
       </button>
     </li>
     <li
-      class="sc-dmyCSP kXqwsU"
+      class="sc-dmqGRC duGJpT"
     >
       <button
         aria-label="Quit Game"
-        class="sc-beySPh eIzeg sc-hLQSwg dTDgnt noDrag"
+        class="sc-beqWNU lbsFSi sc-hLseSp gIoKub noDrag"
         id=":r2:--quit-game"
       >
         <svg
@@ -80,11 +80,11 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
       </button>
     </li>
     <li
-      class="sc-dmyCSP kXqwsU"
+      class="sc-dmqGRC duGJpT"
     >
       <button
         aria-label="Drag Items"
-        class="sc-beySPh eIzeg sc-hLQSwg dTDgnt noDrag"
+        class="sc-beqWNU lbsFSi sc-hLseSp gIoKub noDrag"
         id=":r2:--drag"
       >
         <svg
@@ -103,11 +103,11 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
       </button>
     </li>
     <li
-      class="sc-dmyCSP kXqwsU"
+      class="sc-dmqGRC duGJpT"
     >
       <button
         aria-label="Resize Items"
-        class="sc-beySPh eIzeg sc-hLQSwg dTDgnt noDrag"
+        class="sc-beqWNU lbsFSi sc-hLseSp gIoKub noDrag"
         id=":r2:--resize"
       >
         <svg
@@ -122,11 +122,6 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
           xmlns="http://www.w3.org/2000/svg"
         >
           <path
-            d="M0 0h24v24H0z"
-            fill="none"
-            stroke="none"
-          />
-          <path
             d="M4 11v8a1 1 0 0 0 1 1h8m-9 -14v-1a1 1 0 0 1 1 -1h1m5 0h2m5 0h1a1 1 0 0 1 1 1v1m0 5v2m0 5v1a1 1 0 0 1 -1 1h-1"
           />
           <path
@@ -136,7 +131,7 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
       </button>
     </li>
     <li
-      class="sc-eDLKkx cIrxZO"
+      class="sc-eDDOjk bmayoZ"
       id=":r2:--volume-slider"
     >
       <button
@@ -164,7 +159,7 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
         />
       </button>
       <span
-        class="MuiSlider-root MuiSlider-colorPrimary MuiSlider-sizeMedium sc-jTQCzO OLXFe css-188mx6n-MuiSlider-root"
+        class="MuiSlider-root MuiSlider-colorPrimary MuiSlider-sizeMedium sc-jTrOVX idxNPr css-188mx6n-MuiSlider-root"
         style="width: 100px; margin: 0px 10px; max-height: 40px;"
       >
         <span
@@ -290,14 +285,14 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
   style="position: absolute; user-select: auto; height: auto; display: inline-block; top: 0px; left: 0px; cursor: auto; transform: translate(0px,0px); max-width: 9007199254740991px; max-height: 9007199254740991px; box-sizing: border-box; flex-shrink: 0;"
 >
   <ul
-    class="sc-guDLey uWlaT"
+    class="sc-gueXAH hzAavy"
   >
     <li
-      class="sc-dmyCSP kXqwsU"
+      class="sc-dmqGRC duGJpT"
     >
       <button
         aria-label="Play"
-        class="sc-beySPh eIzeg sc-hLQSwg dTDgnt noDrag"
+        class="sc-beqWNU lbsFSi sc-hLseSp gIoKub noDrag"
         id=":r1:--play"
       >
         <svg
@@ -316,11 +311,11 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
       </button>
     </li>
     <li
-      class="sc-dmyCSP kXqwsU"
+      class="sc-dmqGRC duGJpT"
     >
       <button
         aria-label="Fast Forward"
-        class="sc-beySPh eIzeg sc-hLQSwg dTDgnt noDrag"
+        class="sc-beqWNU lbsFSi sc-hLseSp gIoKub noDrag"
         id=":r1:--fast-forward"
       >
         <svg
@@ -339,11 +334,11 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
       </button>
     </li>
     <li
-      class="sc-dmyCSP kXqwsU"
+      class="sc-dmqGRC duGJpT"
     >
       <button
         aria-label="Quit Game"
-        class="sc-beySPh eIzeg sc-hLQSwg dTDgnt noDrag"
+        class="sc-beqWNU lbsFSi sc-hLseSp gIoKub noDrag"
         id=":r1:--quit-game"
       >
         <svg
@@ -362,11 +357,11 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
       </button>
     </li>
     <li
-      class="sc-dmyCSP kXqwsU"
+      class="sc-dmqGRC duGJpT"
     >
       <button
         aria-label="Drag Items"
-        class="sc-beySPh eIzeg sc-hLQSwg dTDgnt noDrag"
+        class="sc-beqWNU lbsFSi sc-hLseSp gIoKub noDrag"
         id=":r1:--drag"
       >
         <svg
@@ -385,11 +380,11 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
       </button>
     </li>
     <li
-      class="sc-dmyCSP kXqwsU"
+      class="sc-dmqGRC duGJpT"
     >
       <button
         aria-label="Resize Items"
-        class="sc-beySPh eIzeg sc-hLQSwg dTDgnt noDrag"
+        class="sc-beqWNU lbsFSi sc-hLseSp gIoKub noDrag"
         id=":r1:--resize"
       >
         <svg
@@ -404,11 +399,6 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
           xmlns="http://www.w3.org/2000/svg"
         >
           <path
-            d="M0 0h24v24H0z"
-            fill="none"
-            stroke="none"
-          />
-          <path
             d="M4 11v8a1 1 0 0 0 1 1h8m-9 -14v-1a1 1 0 0 1 1 -1h1m5 0h2m5 0h1a1 1 0 0 1 1 1v1m0 5v2m0 5v1a1 1 0 0 1 -1 1h-1"
           />
           <path
@@ -418,7 +408,7 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
       </button>
     </li>
     <li
-      class="sc-eDLKkx cIrxZO"
+      class="sc-eDDOjk bmayoZ"
       id=":r1:--volume-slider"
     >
       <button
@@ -446,7 +436,7 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
         />
       </button>
       <span
-        class="MuiSlider-root MuiSlider-colorPrimary MuiSlider-sizeMedium sc-jTQCzO OLXFe css-188mx6n-MuiSlider-root"
+        class="MuiSlider-root MuiSlider-colorPrimary MuiSlider-sizeMedium sc-jTrOVX idxNPr css-188mx6n-MuiSlider-root"
         style="width: 100px; margin: 0px 10px; max-height: 40px;"
       >
         <span
