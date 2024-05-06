@@ -68,6 +68,7 @@ export const NavComponent = ({
   return (
     <NavComponentWrapper $disabled={$disabled}>
       <HoverWrapper
+        disabled={$disabled}
         onClick={() => {
           setHeight(height === 0 ? 'auto' : 0);
         }}

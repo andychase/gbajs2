@@ -42,4 +42,10 @@ describe('<ButtonBase />', () => {
 
     expect(ref.current).toBeInTheDocument();
   });
+
+  it('applies disabled', () => {
+    render(<ButtonBase disabled />);
+
+    expect(screen.getByRole('button')).toBeDisabled();
+  });
 });

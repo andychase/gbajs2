@@ -3,8 +3,9 @@ import { styled } from 'styled-components';
 
 type ButtonBaseProps = {
   children?: ReactNode;
-  id?: string;
   className?: string;
+  disabled?: boolean;
+  id?: string;
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
 };
 

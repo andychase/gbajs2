@@ -95,7 +95,11 @@ export const NavLeaf = ({
           {commonChildren}
         </NavLink>
       ) : (
-        <NavLeafButton onClick={onClick} $withPadding={$withPadding}>
+        <NavLeafButton
+          disabled={$disabled}
+          onClick={onClick}
+          $withPadding={$withPadding}
+        >
           {commonChildren}
         </NavLeafButton>
       )}
