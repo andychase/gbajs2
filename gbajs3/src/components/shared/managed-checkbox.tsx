@@ -1,30 +1,23 @@
-import { Checkbox, FormControlLabel } from '@mui/material';
-
-import type { UseFormRegisterReturn } from 'react-hook-form';
+import { Checkbox, FormControlLabel, type CheckboxProps } from '@mui/material';
+import React from 'react';
 
 type ManagedCheckBoxProps = {
   label: string;
-  registerProps: UseFormRegisterReturn;
-  id?: string;
   watcher?: boolean;
-};
+} & CheckboxProps;
 
 // Shared managed checkbox component with label
-// Params: takes in label, react hook form register props,
-//         and a watcher indicating the current value
-export const ManagedCheckbox = ({
-  id,
-  label,
-  registerProps,
-  watcher
-}: ManagedCheckBoxProps) => {
-  return (
-    <FormControlLabel
-      data-testid="managed-checkbox:label"
-      id={id}
-      control={<Checkbox {...registerProps} checked={!!watcher} />}
-      label={label}
-      style={{ margin: 0 }}
-    />
-  );
-};
+// Params: takes in label, button props,
+// and a watcher indicating the current value
+export const ManagedCheckbox = React.forwardRef<
+  HTMLButtonElement,
+  ManagedCheckBoxProps
+>(({ id, label, watcher, ...rest }, ref) => (
+  <FormControlLabel
+    data-testid="managed-checkbox:label"
+    id={id}
+    control={<Checkbox ref={ref} checked={!!watcher} {...rest} />}
+    label={label}
+    style={{ margin: 0 }}
+  />
+));

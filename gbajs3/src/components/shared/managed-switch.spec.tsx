@@ -12,9 +12,7 @@ const mockRegisterProps = {
 
 describe('<ManagedSwitch />', () => {
   it('renders with provided label', () => {
-    render(
-      <ManagedSwitch label="Switch Label" registerProps={mockRegisterProps} />
-    );
+    render(<ManagedSwitch label="Switch Label" {...mockRegisterProps} />);
 
     expect(mockRegisterProps.ref).toHaveBeenCalled();
     expect(screen.getByRole('checkbox')).toBeInTheDocument();
@@ -26,7 +24,7 @@ describe('<ManagedSwitch />', () => {
       <ManagedSwitch
         id="customId"
         label="Switch Label"
-        registerProps={mockRegisterProps}
+        {...mockRegisterProps}
       />
     );
 
@@ -40,7 +38,7 @@ describe('<ManagedSwitch />', () => {
     render(
       <ManagedSwitch
         label="Switch Label"
-        registerProps={mockRegisterProps}
+        {...mockRegisterProps}
         watcher={true}
       />
     );
@@ -52,7 +50,7 @@ describe('<ManagedSwitch />', () => {
     render(
       <ManagedSwitch
         label="Switch Label"
-        registerProps={mockRegisterProps}
+        {...mockRegisterProps}
         watcher={false}
       />
     );

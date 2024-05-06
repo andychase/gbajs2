@@ -72,32 +72,32 @@ export const VirtualControlsForm = ({ id }: VirtualControlsFormProps) => {
       <ManagedCheckbox
         label="Virtual D-pad/Buttons"
         watcher={watch('OpadAndButtons')}
-        registerProps={register('OpadAndButtons')}
+        {...register('OpadAndButtons')}
       />
       <ManagedCheckbox
         label="Save State"
         watcher={watch('SaveState')}
-        registerProps={register('SaveState')}
+        {...register('SaveState')}
       />
       <ManagedCheckbox
         label="Load State"
         watcher={watch('LoadState')}
-        registerProps={register('LoadState')}
+        {...register('LoadState')}
       />
       <ManagedCheckbox
         label="Quick Reload"
         watcher={watch('QuickReload')}
-        registerProps={register('QuickReload')}
+        {...register('QuickReload')}
       />
       <ManagedCheckbox
         label="Send save to server"
         watcher={watch('SendSaveToServer')}
-        registerProps={register('SendSaveToServer')}
+        {...register('SendSaveToServer')}
       />
       <ManagedSwitch
         label="Enable Notifications"
         watcher={watch('NotificationsEnabled')}
-        registerProps={register('NotificationsEnabled')}
+        {...register('NotificationsEnabled')}
       />
     </StyledForm>
   );

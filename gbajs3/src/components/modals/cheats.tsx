@@ -274,7 +274,7 @@ export const CheatsModal = () => {
                       id={firstWithId(`${baseId}--enabled`)}
                       label="Enabled"
                       watcher={watch(`cheats.${index}.enable`)}
-                      registerProps={register(`cheats.${index}.enable`)}
+                      {...register(`cheats.${index}.enable`)}
                     />
                     <IconButton
                       aria-label="Delete"

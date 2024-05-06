@@ -12,12 +12,7 @@ const mockRegisterProps = {
 
 describe('<ManagedCheckbox />', () => {
   it('renders with provided label', () => {
-    render(
-      <ManagedCheckbox
-        label="Checkbox Label"
-        registerProps={mockRegisterProps}
-      />
-    );
+    render(<ManagedCheckbox label="Checkbox Label" {...mockRegisterProps} />);
 
     expect(mockRegisterProps.ref).toHaveBeenCalled();
     expect(screen.getByRole('checkbox')).toBeInTheDocument();
@@ -29,7 +24,7 @@ describe('<ManagedCheckbox />', () => {
       <ManagedCheckbox
         id="customId"
         label="Checkbox Label"
-        registerProps={mockRegisterProps}
+        {...mockRegisterProps}
       />
     );
 
@@ -43,7 +38,7 @@ describe('<ManagedCheckbox />', () => {
     render(
       <ManagedCheckbox
         label="Checkbox Label"
-        registerProps={mockRegisterProps}
+        {...mockRegisterProps}
         watcher={true}
       />
     );
@@ -55,7 +50,7 @@ describe('<ManagedCheckbox />', () => {
     render(
       <ManagedCheckbox
         label="Checkbox Label"
-        registerProps={mockRegisterProps}
+        {...mockRegisterProps}
         watcher={false}
       />
     );
