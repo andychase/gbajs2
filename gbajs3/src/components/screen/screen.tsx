@@ -30,11 +30,22 @@ const ScreenWrapper = styled(Rnd)<RndProps>`
   border: solid 1px ${({ theme }) => theme.pureBlack};
   overflow: visible;
   width: 100dvw;
+  height: calc(100dvw * 2 / 3);
 
   @media ${({ theme }) => theme.isLargerThanPhone} {
-    width: calc(100dvw - ${NavigationMenuWidth + 35}px);
+    width: min(
+      calc(100dvw - ${NavigationMenuWidth + 35}px),
+      calc(85dvh * 3 / 2)
+    );
+    height: 85dvh;
   }
 `;
+
+// overrides rnd styles to fallback to css
+const defaultSize = {
+  width: '',
+  height: ''
+};
 
 export const Screen = () => {
   const theme = useTheme();
@@ -47,8 +58,10 @@ export const Screen = () => {
 
   const refUpdateDefaultPosition = useCallback(
     (node: Rnd | null) => {
-      if (!hasSetLayout)
+      if (!hasSetLayout) {
         node?.resizableElement?.current?.style?.removeProperty('width');
+        node?.resizableElement?.current?.style?.removeProperty('height');
+      }
 
       if (!layouts?.screen?.initialBounds && node)
         setLayout('screen', {
@@ -63,16 +76,10 @@ export const Screen = () => {
     [setCanvas]
   );
 
-  const defaultPosition = {
+  const position = layouts?.screen?.position ?? {
     x: screenWrapperXStart,
     y: screenWrapperYStart
   };
-  const defaultSize = {
-    width: isLargerThanPhone ? '' : '100dvw',
-    height: isLargerThanPhone ? 'auto' : '66.67dvw'
-  };
-
-  const position = layouts?.screen?.position ?? defaultPosition;
   const size = layouts?.screen?.size ?? defaultSize;
 
   return (
@@ -92,10 +99,6 @@ export const Screen = () => {
         bottomRight: { marginBottom: '15px', marginRight: '15px' },
         bottomLeft: { marginBottom: '15px', marginLeft: '15px' },
         topLeft: { marginTop: '15px', marginLeft: '15px' }
-      }}
-      default={{
-        ...defaultPosition,
-        ...defaultSize
       }}
       position={position}
       size={size}
