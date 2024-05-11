@@ -1,6 +1,75 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`<ControlPanel /> > renders with default desktop position and size 1`] = `
+.c2 {
+  font-size: inherit;
+  font-family: inherit;
+  line-height: inherit;
+  padding: inherit;
+}
+
+.c0 {
+  background-color: #4f555a;
+  list-style: none;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+  gap: 10px;
+  padding: 10px;
+  margin: 0;
+  max-width: 100%;
+}
+
+.c1 {
+  display: contents;
+}
+
+.c3 {
+  cursor: pointer;
+  background-color: #a9a9a9;
+  border-radius: 0.25rem;
+  min-width: 40px;
+  min-height: 40px;
+  width: fit-content;
+  height: fit-content;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #000;
+  border: none;
+  flex-grow: 1;
+  margin: 0;
+  padding: 0;
+}
+
+.c3:focus {
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.c3:active {
+  color: #0d6efd;
+}
+
+.c4 {
+  cursor: pointer;
+  background-color: #a9a9a9;
+  border-radius: 0.25rem;
+  min-width: 40px;
+  min-height: 40px;
+  width: fit-content;
+  height: fit-content;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #000;
+}
+
+.c5 >.MuiSlider-markActive {
+  opacity: 1;
+  background-color: currentColor;
+}
+
 <div
   class="react-draggable"
   data-testid="control-panel-wrapper"
@@ -8,14 +77,14 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
   style="position: absolute; user-select: auto; width: auto; height: auto; display: inline-block; top: 0px; left: 0px; cursor: auto; transform: translate(0px,10px); max-width: 9007199254740991px; max-height: 9007199254740991px; box-sizing: border-box; flex-shrink: 0;"
 >
   <ul
-    class="sc-gueXAH hzAavy"
+    class="c0"
   >
     <li
-      class="sc-dmqGRC duGJpT"
+      class="c1"
     >
       <button
         aria-label="Play"
-        class="sc-beqWNU lbsFSi sc-hLseSp gIoKub noDrag"
+        class="c2 c3 noDrag"
         id=":r2:--play"
       >
         <svg
@@ -34,11 +103,11 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
       </button>
     </li>
     <li
-      class="sc-dmqGRC duGJpT"
+      class="c1"
     >
       <button
         aria-label="Fast Forward"
-        class="sc-beqWNU lbsFSi sc-hLseSp gIoKub noDrag"
+        class="c2 c3 noDrag"
         id=":r2:--fast-forward"
       >
         <svg
@@ -57,11 +126,11 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
       </button>
     </li>
     <li
-      class="sc-dmqGRC duGJpT"
+      class="c1"
     >
       <button
         aria-label="Quit Game"
-        class="sc-beqWNU lbsFSi sc-hLseSp gIoKub noDrag"
+        class="c2 c3 noDrag"
         id=":r2:--quit-game"
       >
         <svg
@@ -80,11 +149,11 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
       </button>
     </li>
     <li
-      class="sc-dmqGRC duGJpT"
+      class="c1"
     >
       <button
         aria-label="Drag Items"
-        class="sc-beqWNU lbsFSi sc-hLseSp gIoKub noDrag"
+        class="c2 c3 noDrag"
         id=":r2:--drag"
       >
         <svg
@@ -103,11 +172,11 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
       </button>
     </li>
     <li
-      class="sc-dmqGRC duGJpT"
+      class="c1"
     >
       <button
         aria-label="Resize Items"
-        class="sc-beqWNU lbsFSi sc-hLseSp gIoKub noDrag"
+        class="c2 c3 noDrag"
         id=":r2:--resize"
       >
         <svg
@@ -131,7 +200,7 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
       </button>
     </li>
     <li
-      class="sc-eDDOjk bmayoZ"
+      class="c4"
       id=":r2:--volume-slider"
     >
       <button
@@ -159,7 +228,7 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
         />
       </button>
       <span
-        class="MuiSlider-root MuiSlider-colorPrimary MuiSlider-sizeMedium sc-jTrOVX idxNPr css-188mx6n-MuiSlider-root"
+        class="MuiSlider-root MuiSlider-colorPrimary MuiSlider-sizeMedium c5 css-188mx6n-MuiSlider-root"
         style="width: 100px; margin: 0px 10px; max-height: 40px;"
       >
         <span
@@ -225,7 +294,7 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
           style="left: 100%;"
         />
         <span
-          class="MuiSlider-thumb MuiSlider-thumbSizeMedium MuiSlider-thumbColorPrimary MuiSlider-thumb MuiSlider-thumbSizeMedium MuiSlider-thumbColorPrimary css-1as9v07-MuiSlider-thumb"
+          class="MuiSlider-thumb MuiSlider-thumbSizeMedium MuiSlider-thumbColorPrimary MuiSlider-thumb MuiSlider-thumbSizeMedium MuiSlider-thumbColorPrimary css-cp2j25-MuiSlider-thumb"
           data-index="0"
           style="left: 100%;"
         >
@@ -278,6 +347,75 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
 `;
 
 exports[`<ControlPanel /> > renders with default mobile position and size 1`] = `
+.c2 {
+  font-size: inherit;
+  font-family: inherit;
+  line-height: inherit;
+  padding: inherit;
+}
+
+.c0 {
+  background-color: #4f555a;
+  list-style: none;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+  gap: 10px;
+  padding: 10px;
+  margin: 0;
+  max-width: 100%;
+}
+
+.c1 {
+  display: contents;
+}
+
+.c3 {
+  cursor: pointer;
+  background-color: #a9a9a9;
+  border-radius: 0.25rem;
+  min-width: 40px;
+  min-height: 40px;
+  width: fit-content;
+  height: fit-content;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #000;
+  border: none;
+  flex-grow: 1;
+  margin: 0;
+  padding: 0;
+}
+
+.c3:focus {
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.c3:active {
+  color: #0d6efd;
+}
+
+.c4 {
+  cursor: pointer;
+  background-color: #a9a9a9;
+  border-radius: 0.25rem;
+  min-width: 40px;
+  min-height: 40px;
+  width: fit-content;
+  height: fit-content;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #000;
+}
+
+.c5 >.MuiSlider-markActive {
+  opacity: 1;
+  background-color: currentColor;
+}
+
 <div
   class="react-draggable"
   data-testid="control-panel-wrapper"
@@ -285,14 +423,14 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
   style="position: absolute; user-select: auto; height: auto; display: inline-block; top: 0px; left: 0px; cursor: auto; transform: translate(0px,0px); max-width: 9007199254740991px; max-height: 9007199254740991px; box-sizing: border-box; flex-shrink: 0;"
 >
   <ul
-    class="sc-gueXAH hzAavy"
+    class="c0"
   >
     <li
-      class="sc-dmqGRC duGJpT"
+      class="c1"
     >
       <button
         aria-label="Play"
-        class="sc-beqWNU lbsFSi sc-hLseSp gIoKub noDrag"
+        class="c2 c3 noDrag"
         id=":r1:--play"
       >
         <svg
@@ -311,11 +449,11 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
       </button>
     </li>
     <li
-      class="sc-dmqGRC duGJpT"
+      class="c1"
     >
       <button
         aria-label="Fast Forward"
-        class="sc-beqWNU lbsFSi sc-hLseSp gIoKub noDrag"
+        class="c2 c3 noDrag"
         id=":r1:--fast-forward"
       >
         <svg
@@ -334,11 +472,11 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
       </button>
     </li>
     <li
-      class="sc-dmqGRC duGJpT"
+      class="c1"
     >
       <button
         aria-label="Quit Game"
-        class="sc-beqWNU lbsFSi sc-hLseSp gIoKub noDrag"
+        class="c2 c3 noDrag"
         id=":r1:--quit-game"
       >
         <svg
@@ -357,11 +495,11 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
       </button>
     </li>
     <li
-      class="sc-dmqGRC duGJpT"
+      class="c1"
     >
       <button
         aria-label="Drag Items"
-        class="sc-beqWNU lbsFSi sc-hLseSp gIoKub noDrag"
+        class="c2 c3 noDrag"
         id=":r1:--drag"
       >
         <svg
@@ -380,11 +518,11 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
       </button>
     </li>
     <li
-      class="sc-dmqGRC duGJpT"
+      class="c1"
     >
       <button
         aria-label="Resize Items"
-        class="sc-beqWNU lbsFSi sc-hLseSp gIoKub noDrag"
+        class="c2 c3 noDrag"
         id=":r1:--resize"
       >
         <svg
@@ -408,7 +546,7 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
       </button>
     </li>
     <li
-      class="sc-eDDOjk bmayoZ"
+      class="c4"
       id=":r1:--volume-slider"
     >
       <button
@@ -436,7 +574,7 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
         />
       </button>
       <span
-        class="MuiSlider-root MuiSlider-colorPrimary MuiSlider-sizeMedium sc-jTrOVX idxNPr css-188mx6n-MuiSlider-root"
+        class="MuiSlider-root MuiSlider-colorPrimary MuiSlider-sizeMedium c5 css-188mx6n-MuiSlider-root"
         style="width: 100px; margin: 0px 10px; max-height: 40px;"
       >
         <span
@@ -502,7 +640,7 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
           style="left: 100%;"
         />
         <span
-          class="MuiSlider-thumb MuiSlider-thumbSizeMedium MuiSlider-thumbColorPrimary MuiSlider-thumb MuiSlider-thumbSizeMedium MuiSlider-thumbColorPrimary css-1as9v07-MuiSlider-thumb"
+          class="MuiSlider-thumb MuiSlider-thumbSizeMedium MuiSlider-thumbColorPrimary MuiSlider-thumb MuiSlider-thumbSizeMedium MuiSlider-thumbColorPrimary css-cp2j25-MuiSlider-thumb"
           data-index="0"
           style="left: 100%;"
         >

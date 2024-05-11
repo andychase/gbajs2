@@ -1,8 +1,13 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`<ModalBody /> > container matches snapshot 1`] = `
+.c0 {
+  padding: 1rem;
+  overflow-y: auto;
+}
+
 <div
-  class="sc-beqWNU hkCKfN"
+  class="c0"
 >
   Test Footer Content
 </div>

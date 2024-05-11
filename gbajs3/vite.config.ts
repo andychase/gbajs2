@@ -116,7 +116,7 @@ export default defineConfig({
     globals: true,
     restoreMocks: true,
     environment: 'jsdom',
-    setupFiles: './test/setup.ts',
+    setupFiles: ['./test/setup.ts', 'jest-styled-components'],
     coverage: {
       provider: 'v8',
       exclude: [
