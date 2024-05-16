@@ -9,25 +9,6 @@ declare namespace mGBA {
     saveStatePath: string;
   }
 
-  // Note: this method is available, but missing from emscripten typings
-  // see: https://emscripten.org/docs/api_reference/Filesystem-API.html#FS.analyzePath
-  interface FSWithAnalyze {
-    analyzePath: (
-      path: string,
-      dontResolveLastLink?: boolean
-    ) => {
-      isRoot: boolean;
-      exists: boolean;
-      error: Error;
-      name: string;
-      path: string;
-      object: FS.FSNode;
-      parentExists: boolean;
-      parentPath: stringToUTF16;
-      parentObject: FS.FSNode;
-    };
-  }
-
   // see: https://developer.mozilla.org/en-US/docs/Web/API/BaseAudioContext/state
   //      interrupted is a valid property on iOS
   type ExtendedAudioContextState = AudioContextState | 'interrupted';
@@ -70,7 +51,7 @@ declare namespace mGBA {
     gameName?: string;
     saveName?: string;
     // extra exported runtime methods
-    FS: typeof FS & FSWithAnalyze;
+    FS: typeof FS;
     // SDL2
     SDL2: {
       audio: {
