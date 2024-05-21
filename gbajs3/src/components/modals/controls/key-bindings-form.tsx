@@ -84,6 +84,8 @@ export const KeyBindingsForm = ({ id }: KeyBindingsFormProps) => {
                   key: keyboardEvent.key,
                   location: keyboardEvent.location
                 });
+
+                keyboardEvent.preventDefault();
               }}
               error={!!errors[keyBinding.gbaInput]}
               helperText={errors?.[keyBinding.gbaInput]?.message}

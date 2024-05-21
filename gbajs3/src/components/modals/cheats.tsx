@@ -123,9 +123,9 @@ export const CheatsModal = () => {
     const rawCheats = new TextDecoder().decode(cheatsFile);
     const parsedCheats = emulator?.parseCheatsString(rawCheats) ?? [];
 
-    setValue('rawCheats', rawCheats);
-    setValue('cheats', parsedCheats);
-  }, [emulator, setValue]);
+    if (viewRawCheats) setValue('cheats', parsedCheats);
+    else setValue('rawCheats', rawCheats);
+  }, [emulator, setValue, viewRawCheats]);
 
   const tourSteps: TourSteps = [
     {
