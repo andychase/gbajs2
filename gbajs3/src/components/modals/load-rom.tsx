@@ -8,6 +8,7 @@ import { ModalBody } from './modal-body.tsx';
 import { ModalFooter } from './modal-footer.tsx';
 import { ModalHeader } from './modal-header.tsx';
 import { useEmulatorContext, useModalContext } from '../../hooks/context.tsx';
+import { useRunGame } from '../../hooks/emulator/use-run-game.tsx';
 import { useListRoms } from '../../hooks/use-list-roms.tsx';
 import { useLoadRom } from '../../hooks/use-load-rom.tsx';
 import {
@@ -111,6 +112,7 @@ export const LoadRomModal = () => {
   const { setIsModalOpen } = useModalContext();
   const { emulator } = useEmulatorContext();
   const romListId = useId();
+  const runGame = useRunGame();
   const {
     data: romList,
     isLoading: romListLoading,
@@ -129,13 +131,13 @@ export const LoadRomModal = () => {
   useEffect(() => {
     if (!romLoading && romFile && currentRomLoading) {
       const runCallback = () => {
-        emulator?.run(emulator.filePaths().gamePath + '/' + romFile.name);
+        runGame(emulator?.filePaths().gamePath + '/' + romFile.name);
       };
 
       emulator?.uploadRom(romFile, runCallback);
       setCurrentRomLoading(null);
     }
-  }, [emulator, romLoading, romFile, currentRomLoading]);
+  }, [emulator, romLoading, romFile, currentRomLoading, runGame]);
 
   const LoadingIndicator = () => (
     <PacmanLoader

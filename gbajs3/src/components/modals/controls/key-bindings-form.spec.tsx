@@ -4,7 +4,7 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { KeyBindingsForm } from './key-bindings-form.tsx';
 import { renderWithContext } from '../../../../test/render-with-context.tsx';
-import { emulatorKeyBindingsLocalStorageKey } from '../../../context/emulator/consts.tsx';
+import { emulatorKeyBindingsLocalStorageKey } from '../../../context/emulator/consts.ts';
 import * as contextHooks from '../../../hooks/context.tsx';
 
 import type {
@@ -90,12 +90,15 @@ describe('<KeyBindingsForm />', () => {
   it('form values can be changed and properly persisted', async () => {
     const setItemSpy = vi.spyOn(Storage.prototype, 'setItem');
     const remapBindingsSpy: (keyBindings: KeyBinding[]) => void = vi.fn();
-    const { useEmulatorContext: original } = await vi.importActual<
-      typeof contextHooks
-    >('../../../hooks/context.tsx');
+    const {
+      useEmulatorContext: originalEmulator,
+      useRunningContext: originalRunning
+    } = await vi.importActual<typeof contextHooks>(
+      '../../../hooks/context.tsx'
+    );
 
     vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
-      ...original(),
+      ...originalEmulator(),
       emulator: {
         defaultKeyBindings: () => [
           { gbaInput: 'A', key: 'X', location: 0 },
@@ -104,6 +107,11 @@ describe('<KeyBindingsForm />', () => {
         remapKeyBindings: remapBindingsSpy
       } as GBAEmulator,
       isEmulatorRunning: true
+    }));
+
+    vi.spyOn(contextHooks, 'useRunningContext').mockImplementation(() => ({
+      ...originalRunning(),
+      isRunning: true
     }));
 
     renderWithContext(

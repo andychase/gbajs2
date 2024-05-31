@@ -17,7 +17,7 @@ Do not attempt to log into the server unless you are the server owner or an appr
 * Golang server for logged-in user support
 * Nginx server for gbajs3 content
 * Fast Forward
-* Remappable Keyboard Bindings
+* Re-mappable Keyboard Bindings
 * Virtual Controls (Desktop/Mobile)
 * Movable desktop canvas and controls
 * Mobile UI support
@@ -54,11 +54,11 @@ Do not attempt to log into the server unless you are the server owner or an appr
 
 * Example Desktop
 
-<img src="./readme-graphics/gbajs3-desktop-v2.png">
+<img src="./readme-graphics/gbajs3-desktop-v3.png">
 
 * Example Mobile
 
-<img src="./readme-graphics/gbajs3-mobile-portrait-v2.png" width="400px">
+<img src="./readme-graphics/gbajs3-mobile-portrait-v3.png" width="400px">
 
 * Example Admin
 
@@ -97,7 +97,7 @@ GBAJS_DB_NAME=<your gbajs3 database name, default `gbajs3`>
 ADMIN_DB_NAME=<your goadmin database name, default `goadmin`>
 PG_DB_PORT=<postgres db port, default 5432>
 PG_SSL_MODE=<pg ssl mode>
-PG_DATA_LOCATION=./<path to postgres persistent mountpoint>
+PG_DATA_LOCATION=./<path to postgres persistent mount point>
 ```
 
 * Source this env file to get easy access to the default certificate paths:
@@ -117,7 +117,7 @@ openssl req -x509 -sha256 -nodes -days 365 -newkey rsa:2048 -keyout $KEY_LOC -ou
 docker compose up --build
 ``` 
 
-* Once docker has created the containers, the webserver will be available at https://localhost
+* Once docker has created the containers, the web server will be available at https://localhost
 
 * The Admin UI can be found at https://localhost/admin
     * The default password for all admin users is `admin`, **please log in to the admin portal and change the default passwords immediately**

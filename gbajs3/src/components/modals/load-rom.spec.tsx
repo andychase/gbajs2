@@ -5,6 +5,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { LoadRomModal } from './load-rom.tsx';
 import { renderWithContext } from '../../../test/render-with-context.tsx';
 import * as contextHooks from '../../hooks/context.tsx';
+import * as runGameHooks from '../../hooks/emulator/use-run-game.tsx';
 import * as listRomHooks from '../../hooks/use-list-roms.tsx';
 import * as loadRomHooks from '../../hooks/use-load-rom.tsx';
 import { productTourLocalStorageKey } from '../product-tour/consts.tsx';
@@ -23,7 +24,7 @@ describe('<LoadRomModal />', () => {
     const uploadRomSpy: (file: File, cb?: () => void) => void = vi.fn(
       (_file, cb) => cb && cb()
     );
-    const emulatorRunSpy: (romPath: string) => boolean = vi.fn(() => true);
+    const runGameSpy = vi.fn();
     const { useEmulatorContext: originalEmulator } = await vi.importActual<
       typeof contextHooks
     >('../../hooks/context.tsx');
@@ -32,12 +33,13 @@ describe('<LoadRomModal />', () => {
       ...originalEmulator(),
       emulator: {
         uploadRom: uploadRomSpy,
-        run: emulatorRunSpy,
         filePaths: () => ({
           gamePath: '/games'
         })
       } as GBAEmulator
     }));
+
+    vi.spyOn(runGameHooks, 'useRunGame').mockReturnValue(runGameSpy);
 
     renderWithContext(<LoadRomModal />);
 
@@ -52,8 +54,8 @@ describe('<LoadRomModal />', () => {
     await waitForElementToBeRemoved(screen.queryByText(/Loading rom:/));
 
     expect(uploadRomSpy).toHaveBeenCalledOnce();
-    expect(emulatorRunSpy).toHaveBeenCalledOnce();
-    expect(emulatorRunSpy).toHaveBeenCalledWith('/games/rom1.gba');
+    expect(runGameSpy).toHaveBeenCalledOnce();
+    expect(runGameSpy).toHaveBeenCalledWith('/games/rom1.gba');
   });
 
   it('renders message when there are no roms', () => {

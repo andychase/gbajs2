@@ -5,6 +5,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { LoadLocalRomModal } from './load-local-rom.tsx';
 import { renderWithContext } from '../../../test/render-with-context.tsx';
 import * as contextHooks from '../../hooks/context.tsx';
+import * as runGameHooks from '../../hooks/emulator/use-run-game.tsx';
 import { productTourLocalStorageKey } from '../product-tour/consts.tsx';
 
 import type { GBAEmulator } from '../../emulator/mgba/mgba-emulator.tsx';
@@ -43,7 +44,7 @@ describe('<LoadLocalRomModal />', () => {
 
   it('loads a local rom and closes modal', async () => {
     const setIsModalOpenSpy = vi.fn();
-    const emulatorRunSpy: (romPath: string) => boolean = vi.fn(() => true);
+    const runGameSpy = vi.fn();
     const {
       useEmulatorContext: originalEmulator,
       useModalContext: originalModal
@@ -60,10 +61,11 @@ describe('<LoadLocalRomModal />', () => {
         listRoms: () => ['rom1.gba'],
         filePaths: () => ({
           gamePath: '/games'
-        }),
-        run: emulatorRunSpy
+        })
       } as GBAEmulator
     }));
+
+    vi.spyOn(runGameHooks, 'useRunGame').mockReturnValue(runGameSpy);
 
     renderWithContext(<LoadLocalRomModal />);
 
@@ -71,7 +73,8 @@ describe('<LoadLocalRomModal />', () => {
 
     await userEvent.click(localRom);
 
-    expect(emulatorRunSpy).toHaveBeenCalledWith('/games/rom1.gba');
+    expect(runGameSpy).toHaveBeenCalledOnce();
+    expect(runGameSpy).toHaveBeenCalledWith('/games/rom1.gba');
     expect(setIsModalOpenSpy).toHaveBeenCalledWith(false);
   });
 

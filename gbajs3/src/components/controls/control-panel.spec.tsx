@@ -5,13 +5,12 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ControlPanel } from './control-panel.tsx';
 import { renderWithContext } from '../../../test/render-with-context.tsx';
 import {
-  emTimingRAF,
-  emTimingSetTimeout,
-  emulatorIsFastForwardOnStorageKey,
+  emulatorFFMultiplierLocalStorageKey,
   emulatorVolumeLocalStorageKey
-} from '../../context/emulator/consts.tsx';
+} from '../../context/emulator/consts.ts';
 import { GbaDarkTheme } from '../../context/theme/theme.tsx';
 import * as contextHooks from '../../hooks/context.tsx';
+import * as quitGameHooks from '../../hooks/emulator/use-quit-game.tsx';
 import { productTourLocalStorageKey } from '../product-tour/consts.tsx';
 
 import type { GBAEmulator } from '../../emulator/mgba/mgba-emulator.tsx';
@@ -46,11 +45,11 @@ describe('<ControlPanel />', () => {
     expect(screen.getByRole('list')).toBeVisible();
 
     expect(screen.getByLabelText('Play')).toBeVisible();
-    expect(screen.getByLabelText('Fast Forward')).toBeVisible();
     expect(screen.getByLabelText('Quit Game')).toBeVisible();
     expect(screen.getByLabelText('Drag Items')).toBeVisible();
     expect(screen.getByLabelText('Resize Items')).toBeVisible();
     expect(screen.getByLabelText('Volume Slider')).toBeVisible();
+    expect(screen.getByLabelText('Fast Forward Slider')).toBeVisible();
   });
 
   it('renders with default mobile position and size', () => {
@@ -116,13 +115,11 @@ describe('<ControlPanel />', () => {
 
   it('sets layout on drag', async () => {
     const setLayoutSpy = vi.fn();
-    const {
-      useEmulatorContext: originalEmulator,
-      useLayoutContext: originalLayout
-    } = await vi.importActual<typeof contextHooks>('../../hooks/context.tsx');
+    const { useLayoutContext: originalLayout, useDragContext: originalDrag } =
+      await vi.importActual<typeof contextHooks>('../../hooks/context.tsx');
 
-    vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
-      ...originalEmulator(),
+    vi.spyOn(contextHooks, 'useDragContext').mockImplementation(() => ({
+      ...originalDrag(),
       areItemsDraggable: true
     }));
 
@@ -156,22 +153,26 @@ describe('<ControlPanel />', () => {
 
   it('sets layout on resize', async () => {
     const setLayoutSpy = vi.fn();
-    const {
-      useEmulatorContext: originalEmulator,
-      useLayoutContext: originalLayout
-    } = await vi.importActual<typeof contextHooks>('../../hooks/context.tsx');
+    const { useResizeContext: originalResize } = await vi.importActual<
+      typeof contextHooks
+    >('../../hooks/context.tsx');
 
-    vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
-      ...originalEmulator(),
+    vi.spyOn(contextHooks, 'useResizeContext').mockImplementation(() => ({
+      ...originalResize(),
       areItemsResizable: true
     }));
 
-    vi.spyOn(contextHooks, 'useLayoutContext').mockImplementation(() => ({
-      ...originalLayout(),
+    // needs to be a consistent object
+    const testLayout = {
+      clearLayouts: vi.fn(),
       setLayout: setLayoutSpy,
       hasSetLayout: true,
       layouts: { screen: { initialBounds: new DOMRect() } }
-    }));
+    };
+
+    vi.spyOn(contextHooks, 'useLayoutContext').mockImplementation(
+      () => testLayout
+    );
 
     renderWithContext(<ControlPanel />);
 
@@ -201,17 +202,22 @@ describe('<ControlPanel />', () => {
     it('toggles emulator play', async () => {
       const emulatorPauseSpy: () => void = vi.fn();
       const emulatorResumeSpy: () => void = vi.fn();
-      const { useEmulatorContext: originalEmulator } = await vi.importActual<
-        typeof contextHooks
-      >('../../hooks/context.tsx');
+      const {
+        useEmulatorContext: originalEmulator,
+        useRunningContext: originalRunning
+      } = await vi.importActual<typeof contextHooks>('../../hooks/context.tsx');
 
       vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
         ...originalEmulator(),
-        isEmulatorRunning: true,
         emulator: {
           pause: emulatorPauseSpy,
           resume: emulatorResumeSpy
         } as GBAEmulator
+      }));
+
+      vi.spyOn(contextHooks, 'useRunningContext').mockImplementation(() => ({
+        ...originalRunning(),
+        isRunning: true
       }));
 
       renderWithContext(<ControlPanel />);
@@ -227,67 +233,18 @@ describe('<ControlPanel />', () => {
       expect(emulatorResumeSpy).toHaveBeenCalledOnce();
     });
 
-    it('toggles emulator fast forward', async () => {
-      const emulatorSetFastForwardSpy = vi.fn();
-      const { useEmulatorContext: originalEmulator } = await vi.importActual<
-        typeof contextHooks
-      >('../../hooks/context.tsx');
-
-      vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
-        ...originalEmulator(),
-        isEmulatorRunning: true,
-        emulator: {
-          setFastForward: emulatorSetFastForwardSpy as (
-            mode: number,
-            value: number
-          ) => void
-        } as GBAEmulator
-      }));
-
-      renderWithContext(<ControlPanel />);
-
-      await userEvent.click(screen.getByLabelText('Fast Forward'));
-
-      expect(screen.getByLabelText('Regular Speed')).toBeVisible();
-      expect(emulatorSetFastForwardSpy).toHaveBeenCalledOnce();
-      expect(emulatorSetFastForwardSpy).toHaveBeenNthCalledWith(
-        1,
-        emTimingSetTimeout,
-        0
-      );
-
-      await userEvent.click(screen.getByLabelText('Regular Speed'));
-
-      expect(screen.getByLabelText('Fast Forward')).toBeVisible();
-      expect(emulatorSetFastForwardSpy).toHaveBeenNthCalledWith(
-        2,
-        emTimingRAF,
-        0
-      );
-    });
-
-    it('renders initial fast forward from storage', () => {
-      localStorage.setItem(emulatorIsFastForwardOnStorageKey, 'true');
-
-      renderWithContext(<ControlPanel />);
-
-      expect(screen.getByLabelText('Regular Speed')).toBeVisible();
-    });
-
     it('quits the emulated game', async () => {
-      const emulatorQuitGameSpy: () => void = vi.fn();
-      const { useEmulatorContext: originalEmulator } = await vi.importActual<
+      const quitGameSpy: () => void = vi.fn();
+      const { useRunningContext: originalRunning } = await vi.importActual<
         typeof contextHooks
       >('../../hooks/context.tsx');
 
-      vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
-        ...originalEmulator(),
-        isEmulatorRunning: true,
-        emulator: {
-          quitGame: emulatorQuitGameSpy,
-          pause: vi.fn() as () => void
-        } as GBAEmulator
+      vi.spyOn(contextHooks, 'useRunningContext').mockImplementation(() => ({
+        ...originalRunning(),
+        isRunning: true
       }));
+
+      vi.spyOn(quitGameHooks, 'useQuitGame').mockReturnValue(quitGameSpy);
 
       renderWithContext(<ControlPanel />);
       // game is running and paused
@@ -296,7 +253,7 @@ describe('<ControlPanel />', () => {
 
       await userEvent.click(screen.getByLabelText('Quit Game'));
 
-      expect(emulatorQuitGameSpy).toHaveBeenCalledOnce();
+      expect(quitGameSpy).toHaveBeenCalledOnce();
       // sets paused to false, note emulator still running due to mock
       expect(screen.getByLabelText('Pause')).toBeVisible();
     });
@@ -336,7 +293,6 @@ describe('<ControlPanel />', () => {
 
       vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
         ...originalEmulator(),
-        isEmulatorRunning: true,
         emulator: {
           setVolume: emulatorSetVolumeSpy
         } as GBAEmulator
@@ -363,7 +319,6 @@ describe('<ControlPanel />', () => {
 
       vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
         ...originalEmulator(),
-        isEmulatorRunning: true,
         emulator: {
           setVolume: emulatorSetVolumeSpy
         } as GBAEmulator
@@ -392,7 +347,6 @@ describe('<ControlPanel />', () => {
 
       vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
         ...originalEmulator(),
-        isEmulatorRunning: true,
         emulator: {
           setVolume: emulatorSetVolumeSpy
         } as GBAEmulator
@@ -415,8 +369,100 @@ describe('<ControlPanel />', () => {
 
       renderWithContext(<ControlPanel />);
 
-      expect(screen.getByLabelText('Volume Slider')).toBeVisible();
-      expect(screen.getByDisplayValue(0.75)).toBeVisible();
+      expect(screen.getByLabelText('Volume Slider')).toHaveDisplayValue('0.75');
+    });
+
+    it('turns off fast forward', async () => {
+      const setItemSpy = vi.spyOn(Storage.prototype, 'setItem');
+      const ffMultiplierSpy: (v: number) => void = vi.fn();
+      const { useEmulatorContext: originalEmulator } = await vi.importActual<
+        typeof contextHooks
+      >('../../hooks/context.tsx');
+
+      vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
+        ...originalEmulator(),
+        isEmulatorRunning: true,
+        emulator: {
+          setFastForwardMultiplier: ffMultiplierSpy
+        } as GBAEmulator
+      }));
+
+      renderWithContext(<ControlPanel />);
+
+      await userEvent.click(screen.getByLabelText('Regular Speed'));
+
+      expect(ffMultiplierSpy).toHaveBeenCalledOnce();
+      expect(ffMultiplierSpy).toHaveBeenCalledWith(1);
+      expect(setItemSpy).toHaveBeenCalledWith(
+        emulatorFFMultiplierLocalStorageKey,
+        '1'
+      );
+    });
+
+    it('sets fast forward with slider', async () => {
+      const setItemSpy = vi.spyOn(Storage.prototype, 'setItem');
+      const ffMultiplierSpy: (v: number) => void = vi.fn();
+      const { useEmulatorContext: originalEmulator } = await vi.importActual<
+        typeof contextHooks
+      >('../../hooks/context.tsx');
+
+      vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
+        ...originalEmulator(),
+        isEmulatorRunning: true,
+        emulator: {
+          setFastForwardMultiplier: ffMultiplierSpy
+        } as GBAEmulator
+      }));
+
+      renderWithContext(<ControlPanel />);
+
+      fireEvent.change(screen.getByLabelText('Fast Forward Slider'), {
+        target: { value: 3 }
+      });
+
+      expect(ffMultiplierSpy).toHaveBeenCalledOnce();
+      expect(ffMultiplierSpy).toHaveBeenCalledWith(3);
+      expect(setItemSpy).toHaveBeenCalledWith(
+        emulatorFFMultiplierLocalStorageKey,
+        '3'
+      );
+    });
+
+    it('sets max fast forward', async () => {
+      const setItemSpy = vi.spyOn(Storage.prototype, 'setItem');
+      const ffMultiplierSpy: (v: number) => void = vi.fn();
+      const { useEmulatorContext: originalEmulator } = await vi.importActual<
+        typeof contextHooks
+      >('../../hooks/context.tsx');
+
+      vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
+        ...originalEmulator(),
+        isEmulatorRunning: true,
+        emulator: {
+          setFastForwardMultiplier: ffMultiplierSpy
+        } as GBAEmulator
+      }));
+
+      renderWithContext(<ControlPanel />);
+
+      await userEvent.click(screen.getByLabelText('Max Fast Forward'));
+
+      expect(ffMultiplierSpy).toHaveBeenCalledOnce();
+      expect(ffMultiplierSpy).toHaveBeenCalledWith(5);
+      expect(setItemSpy).toHaveBeenCalledWith(
+        emulatorFFMultiplierLocalStorageKey,
+        '5'
+      );
+    });
+
+    it('renders initial fast forward from storage', () => {
+      localStorage.setItem(emulatorFFMultiplierLocalStorageKey, '4');
+
+      renderWithContext(<ControlPanel />);
+
+      expect(screen.getByLabelText('Fast Forward Slider')).toHaveDisplayValue(
+        '4'
+      );
     });
   });
 
@@ -470,13 +516,6 @@ describe('<ControlPanel />', () => {
     await userEvent.click(screen.getByRole('button', { name: /Next/ }));
 
     expect(
-      screen.getByText('Use this button to turn fast forward on and off.')
-    ).toBeVisible();
-
-    // advance tour
-    await userEvent.click(screen.getByRole('button', { name: /Next/ }));
-
-    expect(
       screen.getByText('Use this button to quit your current game.')
     ).toBeVisible();
 
@@ -508,6 +547,20 @@ describe('<ControlPanel />', () => {
     ).toBeVisible();
     expect(
       screen.getByText('Your volume setting will be saved between refreshes!')
+    ).toBeVisible();
+
+    // advance tour
+    await userEvent.click(screen.getByRole('button', { name: /Next/ }));
+
+    expect(
+      screen.getByText(
+        'Use this slider to increase and decrease the fast forward speed.'
+      )
+    ).toBeVisible();
+    expect(
+      screen.getByText(
+        'Your fast forward setting will be saved between refreshes!'
+      )
     ).toBeVisible();
   });
 });

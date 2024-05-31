@@ -7,6 +7,7 @@ import { NavigationMenuWidth } from './consts.tsx';
 import { NavigationMenu } from './navigation-menu.tsx';
 import { renderWithContext } from '../../../test/render-with-context.tsx';
 import * as contextHooks from '../../hooks/context.tsx';
+import * as quickReloadHooks from '../../hooks/emulator/use-quick-reload.tsx';
 import * as logoutHooks from '../../hooks/use-logout.tsx';
 import { AboutModal } from '../modals/about.tsx';
 import { CheatsModal } from '../modals/cheats.tsx';
@@ -131,7 +132,7 @@ describe('<NavigationMenu />', () => {
         const setModalContextSpy = vi.fn();
         const {
           useModalContext: originalModal,
-          useEmulatorContext: originalEmulator
+          useRunningContext: originalRunning
         } = await vi.importActual<typeof contextHooks>(
           '../../hooks/context.tsx'
         );
@@ -142,9 +143,9 @@ describe('<NavigationMenu />', () => {
           setIsModalOpen: setIsModalOpenSpy
         }));
 
-        vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
-          ...originalEmulator(),
-          isEmulatorRunning: true
+        vi.spyOn(contextHooks, 'useRunningContext').mockImplementation(() => ({
+          ...originalRunning(),
+          isRunning: true
         }));
 
         renderWithContext(<NavigationMenu />);
@@ -160,19 +161,20 @@ describe('<NavigationMenu />', () => {
       }
     );
 
-    it('Quick Reload calls emulator on click when running', async () => {
+    it('Quick Reload calls hook on click when running', async () => {
       const quickReloadSpy: () => void = vi.fn();
-      const { useEmulatorContext: originalEmulator } = await vi.importActual<
+      const { useRunningContext: originalRunning } = await vi.importActual<
         typeof contextHooks
       >('../../hooks/context.tsx');
 
-      vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
-        ...originalEmulator(),
-        isEmulatorRunning: true,
-        emulator: {
-          quickReload: quickReloadSpy
-        } as GBAEmulator
+      vi.spyOn(contextHooks, 'useRunningContext').mockImplementation(() => ({
+        ...originalRunning(),
+        isRunning: true
       }));
+
+      vi.spyOn(quickReloadHooks, 'useQuickReload').mockReturnValue(
+        quickReloadSpy
+      );
 
       renderWithContext(<NavigationMenu />);
 
@@ -187,9 +189,10 @@ describe('<NavigationMenu />', () => {
 
     it('Screenshot calls emulator screenshot and downloads file', async () => {
       const screenShotSpy: (cb: () => void) => void = vi.fn((cb) => cb());
-      const { useEmulatorContext: originalEmulator } = await vi.importActual<
-        typeof contextHooks
-      >('../../hooks/context.tsx');
+      const {
+        useEmulatorContext: originalEmulator,
+        useRunningContext: originalRunning
+      } = await vi.importActual<typeof contextHooks>('../../hooks/context.tsx');
 
       vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
         ...originalEmulator(),
@@ -197,8 +200,12 @@ describe('<NavigationMenu />', () => {
           screenShot: screenShotSpy,
           getCurrentGameName: () => '/some_rom.gba'
         } as GBAEmulator,
-        isEmulatorRunning: true,
         canvas: {} as HTMLCanvasElement
+      }));
+
+      vi.spyOn(contextHooks, 'useRunningContext').mockImplementation(() => ({
+        ...originalRunning(),
+        isRunning: true
       }));
 
       const anchorClickSpy = vi
@@ -220,9 +227,10 @@ describe('<NavigationMenu />', () => {
     });
 
     it('Screenshot toasts on exception', async () => {
-      const { useEmulatorContext: originalEmulator } = await vi.importActual<
-        typeof contextHooks
-      >('../../hooks/context.tsx');
+      const {
+        useEmulatorContext: originalEmulator,
+        useRunningContext: originalRunning
+      } = await vi.importActual<typeof contextHooks>('../../hooks/context.tsx');
 
       vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
         ...originalEmulator(),
@@ -230,8 +238,12 @@ describe('<NavigationMenu />', () => {
           screenShot: (cb) => cb()
           // missing getCurrentGameName
         } as GBAEmulator,
-        isEmulatorRunning: true,
         canvas: {} as HTMLCanvasElement
+      }));
+
+      vi.spyOn(contextHooks, 'useRunningContext').mockImplementation(() => ({
+        ...originalRunning(),
+        isRunning: true
       }));
 
       const toastErrorSpy = vi.spyOn(toast.default, 'error');
@@ -251,16 +263,21 @@ describe('<NavigationMenu />', () => {
       const requestFullScreenSpy: () => Promise<void> = vi.fn(() =>
         Promise.resolve(undefined)
       );
-      const { useEmulatorContext: originalEmulator } = await vi.importActual<
-        typeof contextHooks
-      >('../../hooks/context.tsx');
+      const {
+        useEmulatorContext: originalEmulator,
+        useRunningContext: originalRunning
+      } = await vi.importActual<typeof contextHooks>('../../hooks/context.tsx');
 
       vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
         ...originalEmulator(),
-        isEmulatorRunning: true,
         canvas: {
           requestFullscreen: requestFullScreenSpy
         } as HTMLCanvasElement
+      }));
+
+      vi.spyOn(contextHooks, 'useRunningContext').mockImplementation(() => ({
+        ...originalRunning(),
+        isRunning: true
       }));
 
       renderWithContext(<NavigationMenu />);
@@ -278,16 +295,21 @@ describe('<NavigationMenu />', () => {
       const requestFullScreenSpy: () => Promise<void> = vi.fn(() =>
         Promise.reject(new Error(''))
       );
-      const { useEmulatorContext: originalEmulator } = await vi.importActual<
-        typeof contextHooks
-      >('../../hooks/context.tsx');
+      const {
+        useEmulatorContext: originalEmulator,
+        useRunningContext: originalRunning
+      } = await vi.importActual<typeof contextHooks>('../../hooks/context.tsx');
 
       vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
         ...originalEmulator(),
-        isEmulatorRunning: true,
         canvas: {
           requestFullscreen: requestFullScreenSpy
         } as HTMLCanvasElement
+      }));
+
+      vi.spyOn(contextHooks, 'useRunningContext').mockImplementation(() => ({
+        ...originalRunning(),
+        isRunning: true
       }));
 
       const toastErrorSpy = vi.spyOn(toast.default, 'error');
@@ -379,7 +401,7 @@ describe('<NavigationMenu />', () => {
         const {
           useModalContext: originalModal,
           useAuthContext: originalAuth,
-          useEmulatorContext: originalEmulator
+          useRunningContext: originalRunning
         } = await vi.importActual<typeof contextHooks>(
           '../../hooks/context.tsx'
         );
@@ -395,9 +417,9 @@ describe('<NavigationMenu />', () => {
           isAuthenticated: () => true
         }));
 
-        vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
-          ...originalEmulator(),
-          isEmulatorRunning: true
+        vi.spyOn(contextHooks, 'useRunningContext').mockImplementation(() => ({
+          ...originalRunning(),
+          isRunning: true
         }));
 
         renderWithContext(<NavigationMenu />);

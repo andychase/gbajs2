@@ -59,7 +59,7 @@ export type GBAEmulator = {
   run: (romPath: string) => boolean;
   screenShot: (callback: () => void) => void;
   setCurrentGameName: (gameName: string | undefined) => void;
-  setFastForward: (mode: number, value: number) => void;
+  setFastForwardMultiplier: (multiplier: number) => void;
   setVolume: (volumePercent: number) => void;
   simulateKeyDown: (keyId: string) => void;
   simulateKeyUp: (keyId: string) => void;
@@ -225,8 +225,8 @@ export const mGBAEmulator = (mGBA: mGBAEmulatorTypeDef): GBAEmulator => {
     disableKeyboardInput: () => mGBA.toggleInput(false),
     simulateKeyDown: mGBA.buttonPress,
     simulateKeyUp: mGBA.buttonUnpress,
-    setFastForward: mGBA.setMainLoopTiming,
-    isFastForwardEnabled: () => mGBA.getMainLoopTimingMode() < 1,
+    setFastForwardMultiplier: mGBA.setFastForwardMultiplier,
+    isFastForwardEnabled: () => mGBA.getFastForwardMultiplier() > 1,
     run: mGBA.loadGame,
     getCurrentRom: () =>
       mGBA.gameName ? mGBA.FS.readFile(mGBA.gameName) : null,

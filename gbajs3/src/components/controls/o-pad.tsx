@@ -8,7 +8,11 @@ import {
 import Draggable from 'react-draggable';
 import { styled } from 'styled-components';
 
-import { useEmulatorContext, useLayoutContext } from '../../hooks/context.tsx';
+import {
+  useDragContext,
+  useEmulatorContext,
+  useLayoutContext
+} from '../../hooks/context.tsx';
 
 import type { Position } from 'react-rnd';
 
@@ -121,7 +125,8 @@ const RightArrow = styled(DirectionArrow)`
 `;
 
 export const OPad = ({ initialPosition }: OPadProps) => {
-  const { emulator, areItemsDraggable } = useEmulatorContext();
+  const { emulator } = useEmulatorContext();
+  const { areItemsDraggable } = useDragContext();
   const { layouts, setLayout } = useLayoutContext();
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isControlled, setIsControlled] = useState(true);

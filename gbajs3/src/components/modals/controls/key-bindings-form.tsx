@@ -3,8 +3,11 @@ import { useLocalStorage } from '@uidotdev/usehooks';
 import { Controller, useForm } from 'react-hook-form';
 import { styled } from 'styled-components';
 
-import { emulatorKeyBindingsLocalStorageKey } from '../../../context/emulator/consts.tsx';
-import { useEmulatorContext } from '../../../hooks/context.tsx';
+import { emulatorKeyBindingsLocalStorageKey } from '../../../context/emulator/consts.ts';
+import {
+  useEmulatorContext,
+  useRunningContext
+} from '../../../hooks/context.tsx';
 
 import type { KeyBinding } from '../../../emulator/mgba/mgba-emulator.tsx';
 
@@ -23,7 +26,8 @@ const StyledForm = styled.form`
 `;
 
 export const KeyBindingsForm = ({ id }: KeyBindingsFormProps) => {
-  const { emulator, isEmulatorRunning } = useEmulatorContext();
+  const { emulator } = useEmulatorContext();
+  const { isRunning } = useRunningContext();
   const {
     handleSubmit,
     setValue,
@@ -42,7 +46,7 @@ export const KeyBindingsForm = ({ id }: KeyBindingsFormProps) => {
       .filter(([, v]) => !!v)
       .map(([, k]) => k);
 
-    if (isEmulatorRunning) emulator?.remapKeyBindings(keyBindings);
+    if (isRunning) emulator?.remapKeyBindings(keyBindings);
 
     setCurrentKeyBindings(keyBindings);
   };

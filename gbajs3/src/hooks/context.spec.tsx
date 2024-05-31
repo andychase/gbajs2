@@ -3,12 +3,18 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
   useAuthContext,
+  useDragContext,
   useEmulatorContext,
   useLayoutContext,
-  useModalContext
+  useModalContext,
+  useResizeContext,
+  useRunningContext
 } from './context.tsx';
 import { AuthContext } from '../context/auth/auth.tsx';
+import { DragContext } from '../context/emulator/drag.tsx';
 import { EmulatorContext } from '../context/emulator/emulator.tsx';
+import { ResizeContext } from '../context/emulator/resize.tsx';
+import { RunningContext } from '../context/emulator/running.tsx';
 import { LayoutContext } from '../context/layout/layout.tsx';
 import { ModalContext } from '../context/modal/modal.tsx';
 
@@ -21,9 +27,12 @@ describe('useContext hooks', () => {
 
   const contextHooks = [
     [useAuthContext, AuthContext.displayName],
-    [useEmulatorContext, EmulatorContext.displayName],
     [useLayoutContext, LayoutContext.displayName],
-    [useModalContext, ModalContext.displayName]
+    [useModalContext, ModalContext.displayName],
+    [useEmulatorContext, EmulatorContext.displayName],
+    [useDragContext, DragContext.displayName],
+    [useResizeContext, ResizeContext.displayName],
+    [useRunningContext, RunningContext.displayName]
   ] as const;
 
   it.each(contextHooks)(

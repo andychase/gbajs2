@@ -10,7 +10,7 @@ import { PwaPrompt } from './components/pwa-prompt/pwa-prompt.tsx';
 import { Screen } from './components/screen/screen.tsx';
 import { ToasterWithDefaults } from './components/toast/toaster.tsx';
 import { AuthProvider } from './context/auth/auth.tsx';
-import { EmulatorProvider } from './context/emulator/emulator.tsx';
+import { EmulatorContextProvider } from './context/emulator/emulator-context-provider.tsx';
 import { LayoutProvider } from './context/layout/layout.tsx';
 import { ModalProvider } from './context/modal/modal.tsx';
 import { GbaDarkTheme } from './context/theme/theme.tsx';
@@ -22,7 +22,7 @@ export const App = () => {
       <ToasterWithDefaults />
       <PwaPrompt />
       <AuthProvider>
-        <EmulatorProvider>
+        <EmulatorContextProvider>
           <LayoutProvider>
             <ModalProvider>
               <NavigationMenu />
@@ -32,7 +32,7 @@ export const App = () => {
               <ModalContainer />
             </ModalProvider>
           </LayoutProvider>
-        </EmulatorProvider>
+        </EmulatorContextProvider>
       </AuthProvider>
     </ThemeProvider>
   );

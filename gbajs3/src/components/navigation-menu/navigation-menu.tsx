@@ -31,8 +31,10 @@ import { NavLeaf } from './nav-leaf.tsx';
 import {
   useEmulatorContext,
   useAuthContext,
-  useModalContext
+  useModalContext,
+  useRunningContext
 } from '../../hooks/context.tsx';
+import { useQuickReload } from '../../hooks/emulator/use-quick-reload.tsx';
 import { useLogout } from '../../hooks/use-logout.tsx';
 import { AboutModal } from '../modals/about.tsx';
 import { CheatsModal } from '../modals/cheats.tsx';
@@ -144,11 +146,13 @@ export const NavigationMenu = () => {
   const [isExpanded, setIsExpanded] = useState(true);
   const { setModalContent, setIsModalOpen } = useModalContext();
   const { isAuthenticated } = useAuthContext();
-  const { isEmulatorRunning, canvas, emulator } = useEmulatorContext();
+  const { canvas, emulator } = useEmulatorContext();
+  const { isRunning } = useRunningContext();
   const { execute: executeLogout } = useLogout();
   const theme = useTheme();
   const isLargerThanPhone = useMediaQuery(theme.isLargerThanPhone);
   const menuHeaderId = useId();
+  const quickReload = useQuickReload();
 
   const isMenuItemDisabledByAuth = !isAuthenticated();
   const hasApiLocation = !!import.meta.env.VITE_GBA_SERVER_LOCATION;
@@ -182,13 +186,13 @@ export const NavigationMenu = () => {
 
           <NavComponent
             title="Pre Game Actions"
-            $disabled={isEmulatorRunning}
-            $isExpanded={!isEmulatorRunning}
+            $disabled={isRunning}
+            $isExpanded={!isRunning}
             icon={<BiFolderPlus />}
           >
             <NavLeaf
               title="Upload Saves"
-              $disabled={isEmulatorRunning}
+              $disabled={isRunning}
               icon={<BiCloudUpload />}
               onClick={() => {
                 setModalContent(<UploadSavesModal />);
@@ -197,7 +201,7 @@ export const NavigationMenu = () => {
             />
             <NavLeaf
               title="Upload Cheats"
-              $disabled={isEmulatorRunning}
+              $disabled={isRunning}
               icon={<BiCloudUpload />}
               onClick={() => {
                 setModalContent(<UploadCheatsModal />);
@@ -206,7 +210,7 @@ export const NavigationMenu = () => {
             />
             <NavLeaf
               title="Upload Rom"
-              $disabled={isEmulatorRunning}
+              $disabled={isRunning}
               icon={<BiUpload />}
               onClick={() => {
                 setModalContent(<UploadRomModal />);
@@ -215,7 +219,7 @@ export const NavigationMenu = () => {
             />
             <NavLeaf
               title="Load Local Rom"
-              $disabled={isEmulatorRunning}
+              $disabled={isRunning}
               icon={<BiUpload />}
               onClick={() => {
                 setModalContent(<LoadLocalRomModal />);
@@ -226,13 +230,13 @@ export const NavigationMenu = () => {
 
           <NavComponent
             title="In Game Actions"
-            $disabled={!isEmulatorRunning}
-            $isExpanded={isEmulatorRunning}
+            $disabled={!isRunning}
+            $isExpanded={isRunning}
             icon={<BiGame />}
           >
             <NavLeaf
               title="Screenshot"
-              $disabled={!isEmulatorRunning}
+              $disabled={!isRunning}
               icon={<BiScreenshot />}
               onClick={() => {
                 if (!canvas) return;
@@ -259,7 +263,7 @@ export const NavigationMenu = () => {
             />
             <NavLeaf
               title="Full Screen"
-              $disabled={!isEmulatorRunning}
+              $disabled={!isRunning}
               icon={<BiFullscreen />}
               onClick={() => {
                 canvas?.requestFullscreen().catch(() => {
@@ -269,7 +273,7 @@ export const NavigationMenu = () => {
             />
             <NavLeaf
               title="Download Save"
-              $disabled={!isEmulatorRunning}
+              $disabled={!isRunning}
               icon={<BiCloudDownload />}
               onClick={() => {
                 setModalContent(<DownloadSaveModal />);
@@ -278,13 +282,13 @@ export const NavigationMenu = () => {
             />
             <NavLeaf
               title="Quick Reload"
-              $disabled={!isEmulatorRunning}
+              $disabled={!isRunning}
               icon={<BiRedo />}
-              onClick={emulator?.quickReload}
+              onClick={quickReload}
             />
             <NavLeaf
               title="Manage Save States"
-              $disabled={!isEmulatorRunning}
+              $disabled={!isRunning}
               icon={<BiBookmarks />}
               onClick={() => {
                 setModalContent(<SaveStatesModal />);
@@ -293,7 +297,7 @@ export const NavigationMenu = () => {
             />
             <NavLeaf
               title="Manage Cheats"
-              $disabled={!isEmulatorRunning}
+              $disabled={!isRunning}
               icon={<BiEdit />}
               onClick={() => {
                 setModalContent(<CheatsModal />);
@@ -361,7 +365,7 @@ export const NavigationMenu = () => {
             />
             <NavLeaf
               title="Send Save to Server"
-              $disabled={isMenuItemDisabledByAuth || !isEmulatorRunning}
+              $disabled={isMenuItemDisabledByAuth || !isRunning}
               icon={<BiCloudUpload />}
               onClick={() => {
                 setModalContent(<UploadSaveToServerModal />);
@@ -370,7 +374,7 @@ export const NavigationMenu = () => {
             />
             <NavLeaf
               title="Send Rom to Server"
-              $disabled={isMenuItemDisabledByAuth || !isEmulatorRunning}
+              $disabled={isMenuItemDisabledByAuth || !isRunning}
               icon={<BiCloudUpload />}
               onClick={() => {
                 setModalContent(<UploadRomToServerModal />);

@@ -21,8 +21,10 @@ import {
   useEmulatorContext,
   useLayoutContext,
   useAuthContext,
-  useModalContext
+  useModalContext,
+  useRunningContext
 } from '../../hooks/context.tsx';
+import { useQuickReload } from '../../hooks/emulator/use-quick-reload.tsx';
 import { UploadSaveToServerModal } from '../modals/upload-save-to-server.tsx';
 
 import type { AreVirtualControlsEnabledProps } from '../modals/controls/virtual-controls-form.tsx';
@@ -53,11 +55,13 @@ export const VirtualControls = () => {
   const theme = useTheme();
   const isLargerThanPhone = useMediaQuery(theme.isLargerThanPhone);
   const isMobileWithUrlBar = useMediaQuery(theme.isMobileWithUrlBar);
-  const { emulator, isEmulatorRunning } = useEmulatorContext();
+  const { emulator } = useEmulatorContext();
+  const { isRunning } = useRunningContext();
   const { isAuthenticated } = useAuthContext();
   const { setModalContent, setIsModalOpen } = useModalContext();
   const { layouts } = useLayoutContext();
   const virtualControlToastId = useId();
+  const quickReload = useQuickReload();
   const [currentSaveStateSlot] = useLocalStorage(
     saveStateSlotLocalStorageKey,
     0
@@ -221,8 +225,8 @@ export const VirtualControls = () => {
         left: '10px'
       },
       largerThanPhone: {
-        top: `calc(${verticalStartPos}px - 55px)`,
-        left: `calc(${horizontalStartPos}px + 475px)`
+        top: `calc(${verticalStartPos}px + 10px)`,
+        left: `calc(${horizontalStartPos}px + 450px)`
       }
     }
   };
@@ -315,7 +319,7 @@ export const VirtualControls = () => {
     {
       children: <BiRefresh />,
       onClick: () => {
-        emulator?.quickReload();
+        quickReload();
 
         if (!emulator?.getCurrentGameName() && areNotificationsEnabled)
           toast.error('Load a game to quick reload', {
@@ -330,7 +334,7 @@ export const VirtualControls = () => {
     {
       children: <BiSolidCloudUpload />,
       onClick: () => {
-        if (isAuthenticated() && isEmulatorRunning) {
+        if (isAuthenticated() && isRunning) {
           setModalContent(<UploadSaveToServerModal />);
           setIsModalOpen(true);
         } else if (areNotificationsEnabled) {

@@ -21,6 +21,7 @@ declare namespace mGBA {
     buttonUnpress(name: string): void;
     FSInit(): Promise<void>;
     FSSync(): Promise<void>;
+    getFastForwardMultiplier(): number;
     getMainLoopTimingMode(): number;
     getMainLoopTimingValue(): number;
     getSave(): Uint8Array;
@@ -36,6 +37,7 @@ declare namespace mGBA {
     resumeGame(): void;
     saveState(slot: number): boolean;
     screenShot(callback: () => void): void;
+    setFastForwardMultiplier(multiplier: number): void;
     setMainLoopTiming(mode: number, value: number): void;
     setVolume(percent: number): void;
     toggleInput(enabled: boolean): void;

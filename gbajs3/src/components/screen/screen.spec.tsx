@@ -112,13 +112,11 @@ describe('<Screen />', () => {
 
   it('sets layout on drag', async () => {
     const setLayoutSpy = vi.fn();
-    const {
-      useEmulatorContext: originalEmulator,
-      useLayoutContext: originalLayout
-    } = await vi.importActual<typeof contextHooks>('../../hooks/context.tsx');
+    const { useLayoutContext: originalLayout, useDragContext: originalDrag } =
+      await vi.importActual<typeof contextHooks>('../../hooks/context.tsx');
 
-    vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
-      ...originalEmulator(),
+    vi.spyOn(contextHooks, 'useDragContext').mockImplementation(() => ({
+      ...originalDrag(),
       areItemsDraggable: true
     }));
 
@@ -148,12 +146,12 @@ describe('<Screen />', () => {
   it('sets layout on resize', async () => {
     const setLayoutSpy = vi.fn();
     const {
-      useEmulatorContext: originalEmulator,
-      useLayoutContext: originalLayout
+      useLayoutContext: originalLayout,
+      useResizeContext: originalResize
     } = await vi.importActual<typeof contextHooks>('../../hooks/context.tsx');
 
-    vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
-      ...originalEmulator(),
+    vi.spyOn(contextHooks, 'useResizeContext').mockImplementation(() => ({
+      ...originalResize(),
       areItemsResizable: true
     }));
 

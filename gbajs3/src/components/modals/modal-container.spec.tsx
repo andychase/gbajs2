@@ -9,6 +9,16 @@ import * as contextHooks from '../../hooks/context.tsx';
 
 import type { GBAEmulator } from '../../emulator/mgba/mgba-emulator.tsx';
 
+const DismissModalButton = () => {
+  const { setIsModalOpen } = contextHooks.useModalContext();
+  return (
+    <button
+      data-testid="dismiss-modal-button"
+      onClick={() => setIsModalOpen((prevState) => !prevState)}
+    />
+  );
+};
+
 describe('<ModalContainer />', () => {
   beforeAll(() => {
     ReactModal.setAppElement(document.createElement('div'));
@@ -101,17 +111,9 @@ describe('<ModalContainer />', () => {
 
   it('enables keyboard input after close', async () => {
     const enableKeyboardInputSpy: () => void = vi.fn();
-    const {
-      useModalContext: originalModal,
-      useEmulatorContext: originalEmulator
-    } = await vi.importActual<typeof contextHooks>('../../hooks/context.tsx');
-
-    // mock once so the component re-renders with false for isModalOpen
-    vi.spyOn(contextHooks, 'useModalContext').mockImplementationOnce(() => ({
-      ...originalModal(),
-      isModalOpen: true,
-      modalContent: <p>Some modal content</p>
-    }));
+    const { useEmulatorContext: originalEmulator } = await vi.importActual<
+      typeof contextHooks
+    >('../../hooks/context.tsx');
 
     vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
       ...originalEmulator(),
@@ -120,7 +122,15 @@ describe('<ModalContainer />', () => {
       } as GBAEmulator
     }));
 
-    renderWithContext(<ModalContainer />);
+    renderWithContext(
+      <>
+        <ModalContainer />
+        <DismissModalButton />
+      </>
+    );
+    // open and close the modal using isOpen prop
+    await userEvent.click(screen.getByTestId('dismiss-modal-button'));
+    await userEvent.click(screen.getByTestId('dismiss-modal-button'));
 
     await waitFor(() => expect(enableKeyboardInputSpy).toHaveBeenCalledOnce());
   });

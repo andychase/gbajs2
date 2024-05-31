@@ -17,6 +17,7 @@ import { ModalBody } from './modal-body.tsx';
 import { ModalFooter } from './modal-footer.tsx';
 import { ModalHeader } from './modal-header.tsx';
 import { useEmulatorContext, useModalContext } from '../../hooks/context.tsx';
+import { useRunGame } from '../../hooks/emulator/use-run-game.tsx';
 import { useLoadExternalRom } from '../../hooks/use-load-external-rom.tsx';
 import {
   EmbeddedProductTour,
@@ -117,12 +118,13 @@ export const UploadRomModal = () => {
     execute: executeLoadExternalRom
   } = useLoadExternalRom();
   const uploadRomFormId = useId();
+  const runGame = useRunGame();
 
   useEffect(() => {
     if (!isExternalRomLoading && externalRomFile && currentRomURL) {
       const runCallback = () => {
-        const hasSucceeded = emulator?.run(
-          emulator.filePaths().gamePath + '/' + externalRomFile.name
+        const hasSucceeded = runGame(
+          emulator?.filePaths().gamePath + '/' + externalRomFile.name
         );
         if (hasSucceeded) {
           setIsModalOpen(false);
@@ -139,7 +141,8 @@ export const UploadRomModal = () => {
     externalRomFile,
     isExternalRomLoading,
     reset,
-    setIsModalOpen
+    setIsModalOpen,
+    runGame
   ]);
 
   const onDrop = useCallback(
@@ -163,8 +166,8 @@ export const UploadRomModal = () => {
     }
 
     const runCallback = () => {
-      const hasSucceeded = emulator?.run(
-        emulator.filePaths().gamePath + '/' + romFile.name
+      const hasSucceeded = runGame(
+        emulator?.filePaths().gamePath + '/' + romFile.name
       );
       if (hasSucceeded) {
         setIsModalOpen(false);
