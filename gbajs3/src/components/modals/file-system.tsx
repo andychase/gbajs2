@@ -2,9 +2,9 @@ import { Button, IconButton } from '@mui/material';
 import { alpha, styled as muiStyled } from '@mui/material/styles';
 import {
   SimpleTreeView,
-  TreeItem,
+  TreeItem2,
   treeItemClasses,
-  type TreeItemProps
+  type TreeItem2Props
 } from '@mui/x-tree-view';
 import { useCallback, useId, useState } from 'react';
 import { BiCloudDownload, BiTrash } from 'react-icons/bi';
@@ -34,8 +34,8 @@ type EmulatorFSProps = {
   downloadFile: (path: string) => void;
 };
 
-const StyledTreeItem = muiStyled((props: TreeItemProps) => (
-  <TreeItem {...props} />
+const StyledTreeItem = muiStyled((props: TreeItem2Props) => (
+  <TreeItem2 {...props} />
 ))(({ theme }) => ({
   marginTop: 5,
   // note: using mui theme here
