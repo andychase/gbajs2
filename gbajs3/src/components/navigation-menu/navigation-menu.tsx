@@ -70,6 +70,7 @@ const NavigationMenuWrapper = styled.div<ExpandableComponentProps>`
   text-align: left;
   left: 0;
   top: 0;
+  touch-action: none;
 
   ${({ $isExpanded = false }) =>
     !$isExpanded &&

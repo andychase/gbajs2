@@ -17,6 +17,7 @@ const modalStyles = {
     padding: '0',
     maxHeight: '90dvh',
     display: 'flex',
+    touchAction: 'none',
     flexDirection: 'column' as const,
     userSelect: 'text' as const
   }
