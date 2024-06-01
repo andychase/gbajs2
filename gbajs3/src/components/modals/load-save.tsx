@@ -113,7 +113,7 @@ export const LoadSaveModal = () => {
   const saveListId = useId();
   const {
     data: saveList,
-    isLoading: saveListloading,
+    isLoading: saveListLoading,
     error: saveListError
   } = useListSaves({ loadOnMount: true });
   const {
@@ -126,12 +126,14 @@ export const LoadSaveModal = () => {
     null
   );
 
+  const shouldUploadSave = !saveLoading && !!saveFile && !!currentSaveLoading;
+
   useEffect(() => {
-    if (!saveLoading && saveFile && currentSaveLoading) {
+    if (shouldUploadSave) {
       emulator?.uploadSaveOrSaveState(saveFile);
       setCurrentSaveLoading(null);
     }
-  }, [emulator, saveLoading, saveFile, currentSaveLoading]);
+  }, [emulator, shouldUploadSave, saveFile]);
 
   const LoadingIndicator = () => (
     <PacmanLoader
@@ -159,7 +161,7 @@ export const LoadSaveModal = () => {
     <>
       <ModalHeader title="Load Save" />
       <ModalBody>
-        {saveListloading ? (
+        {saveListLoading ? (
           <LoadingIndicator />
         ) : (
           <SaveLoadingIndicator
@@ -212,7 +214,7 @@ export const LoadSaveModal = () => {
       </ModalFooter>
       <EmbeddedProductTour
         skipRenderCondition={
-          saveLoading || saveListloading || !!saveListError || !!saveLoadError
+          saveLoading || saveListLoading || !!saveListError || !!saveLoadError
         }
         steps={tourSteps}
         completedProductTourStepName="hasCompletedLoadSaveTour"

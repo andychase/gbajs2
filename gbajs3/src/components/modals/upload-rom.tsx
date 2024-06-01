@@ -120,8 +120,11 @@ export const UploadRomModal = () => {
   const uploadRomFormId = useId();
   const runGame = useRunGame();
 
+  const shouldUploadExternalRom =
+    !isExternalRomLoading && !!externalRomFile && !!currentRomURL;
+
   useEffect(() => {
-    if (!isExternalRomLoading && externalRomFile && currentRomURL) {
+    if (shouldUploadExternalRom) {
       const runCallback = () => {
         const hasSucceeded = runGame(
           emulator?.filePaths().gamePath + '/' + externalRomFile.name
@@ -136,10 +139,9 @@ export const UploadRomModal = () => {
       setHasCompletedUpload(true);
     }
   }, [
-    currentRomURL,
-    emulator,
+    shouldUploadExternalRom,
     externalRomFile,
-    isExternalRomLoading,
+    emulator,
     reset,
     setIsModalOpen,
     runGame

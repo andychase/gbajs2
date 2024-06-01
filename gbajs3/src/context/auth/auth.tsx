@@ -44,13 +44,15 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     clearError: refreshClearError
   } = useRefreshAccessToken({ loadOnMount: hasApiLocation });
 
+  const shouldSetAccessToken = !refreshLoading && !!accessTokenResp;
+
   // assign token to context
   useEffect(() => {
-    if (!refreshLoading && accessTokenResp) {
+    if (shouldSetAccessToken) {
       setAccessToken(accessTokenResp);
       setAccessTokenSource('refresh');
     }
-  }, [refreshLoading, accessTokenResp, setAccessToken]);
+  }, [shouldSetAccessToken, accessTokenResp]);
 
   // convenience callback to determine if token is expired
   const isAuthenticated = useCallback(() => {
@@ -65,17 +67,16 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     return false;
   }, [accessToken]);
 
+  const shouldClearRefreshTokenError =
+    isAuthenticated() && !accessTokenResp && accessTokenSource !== 'refresh';
+
   useEffect(() => {
     // if access token has changed from login, clear refresh errors.
     // resume attempts to periodically refresh the token
-    if (
-      isAuthenticated() &&
-      !accessTokenResp &&
-      accessTokenSource !== 'refresh'
-    ) {
+    if (shouldClearRefreshTokenError) {
       refreshClearError();
     }
-  }, [accessTokenSource, accessTokenResp, isAuthenticated, refreshClearError]);
+  }, [shouldClearRefreshTokenError, refreshClearError]);
 
   // refresh access token every 4 minutes
   useInterval(

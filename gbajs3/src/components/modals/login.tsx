@@ -43,7 +43,6 @@ export const LoginModal = () => {
     isLoading: loginLoading,
     error: loginError
   } = useLogin();
-
   const {
     register,
     reset,
@@ -51,16 +50,17 @@ export const LoginModal = () => {
     formState: { errors }
   } = useForm<InputProps>();
 
+  const shouldSetAccessToken = !loginLoading && !loginError && !!accessToken;
+
   useEffect(() => {
-    if (!loginLoading && !loginError && accessToken) {
+    if (shouldSetAccessToken) {
       setAccessToken(accessToken);
       setAccessTokenSource('login');
       setIsModalOpen(false);
     }
   }, [
+    shouldSetAccessToken,
     accessToken,
-    loginLoading,
-    loginError,
     setAccessToken,
     setAccessTokenSource,
     setIsModalOpen
