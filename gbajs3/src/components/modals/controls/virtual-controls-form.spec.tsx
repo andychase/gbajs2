@@ -9,7 +9,9 @@ import { virtualControlsLocalStorageKey } from '../../controls/consts.tsx';
 
 describe('<VirtualControlsForm />', () => {
   it('renders form with required fields', () => {
-    renderWithContext(<VirtualControlsForm id="testId" />);
+    renderWithContext(
+      <VirtualControlsForm id="testId" onAfterSubmit={vi.fn()} />
+    );
 
     expect(
       screen.getByRole('form', { name: 'Virtual Controls Form' })
@@ -23,7 +25,9 @@ describe('<VirtualControlsForm />', () => {
   });
 
   it('renders form with provided id', () => {
-    renderWithContext(<VirtualControlsForm id="testId" />);
+    renderWithContext(
+      <VirtualControlsForm id="testId" onAfterSubmit={vi.fn()} />
+    );
 
     expect(
       screen.getByRole('form', { name: 'Virtual Controls Form' })
@@ -32,10 +36,11 @@ describe('<VirtualControlsForm />', () => {
 
   it('submits default values with external button', async () => {
     const setItemSpy = vi.spyOn(Storage.prototype, 'setItem');
+    const onAfterSubmitSpy = vi.fn();
 
     renderWithContext(
       <>
-        <VirtualControlsForm id="testId" />
+        <VirtualControlsForm id="testId" onAfterSubmit={onAfterSubmitSpy} />
         <button form="testId" type="submit">
           submit
         </button>
@@ -52,14 +57,16 @@ describe('<VirtualControlsForm />', () => {
       virtualControlsLocalStorageKey,
       '{"OpadAndButtons":true,"SaveState":true,"LoadState":true,"QuickReload":true,"SendSaveToServer":true,"NotificationsEnabled":true}'
     );
+    expect(onAfterSubmitSpy).toHaveBeenCalledOnce();
   });
 
   it('form values can be changed and properly persisted', async () => {
     const setItemSpy = vi.spyOn(Storage.prototype, 'setItem');
+    const onAfterSubmitSpy = vi.fn();
 
     renderWithContext(
       <>
-        <VirtualControlsForm id="testId" />
+        <VirtualControlsForm id="testId" onAfterSubmit={onAfterSubmitSpy} />
         <button form="testId" type="submit">
           submit
         </button>
@@ -84,6 +91,7 @@ describe('<VirtualControlsForm />', () => {
       virtualControlsLocalStorageKey,
       '{"OpadAndButtons":false,"SaveState":false,"LoadState":false,"QuickReload":false,"SendSaveToServer":false,"NotificationsEnabled":false}'
     );
+    expect(onAfterSubmitSpy).toHaveBeenCalledOnce();
   });
 
   it('virtual controls are true by default on mobile resolutions', () => {
@@ -98,7 +106,9 @@ describe('<VirtualControlsForm />', () => {
       dispatchEvent: () => true
     }));
 
-    renderWithContext(<VirtualControlsForm id="testId" />);
+    renderWithContext(
+      <VirtualControlsForm id="testId" onAfterSubmit={vi.fn()} />
+    );
 
     expect(screen.getByLabelText('Virtual D-pad/Buttons')).toBeChecked();
     expect(screen.getByLabelText('Save State')).toBeChecked();
@@ -119,7 +129,9 @@ describe('<VirtualControlsForm />', () => {
       dispatchEvent: () => true
     }));
 
-    renderWithContext(<VirtualControlsForm id="testId" />);
+    renderWithContext(
+      <VirtualControlsForm id="testId" onAfterSubmit={vi.fn()} />
+    );
 
     expect(screen.getByLabelText('Virtual D-pad/Buttons')).not.toBeChecked();
     expect(screen.getByLabelText('Save State')).not.toBeChecked();
@@ -134,7 +146,9 @@ describe('<VirtualControlsForm />', () => {
       '{"OpadAndButtons":false,"SaveState":true,"LoadState":true,"QuickReload":true,"SendSaveToServer":true,"NotificationsEnabled":false}'
     );
 
-    renderWithContext(<VirtualControlsForm id="testId" />);
+    renderWithContext(
+      <VirtualControlsForm id="testId" onAfterSubmit={vi.fn()} />
+    );
 
     expect(screen.getByLabelText('Virtual D-pad/Buttons')).not.toBeChecked();
     expect(screen.getByLabelText('Save State')).toBeChecked();

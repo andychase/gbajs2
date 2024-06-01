@@ -15,6 +15,7 @@ export const GbaDarkTheme: DefaultTheme = {
   arcticAirBlue: '#cad8e5',
   blackRussian: '#1a202c',
   blueCharcoal: '#212529',
+  checkMarkGreen: '#7ac142',
   darkCharcoal: '#333',
   darkGrayBlue: '#495057',
   disabledGray: '#6c757d',

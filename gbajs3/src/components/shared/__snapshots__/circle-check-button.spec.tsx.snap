@@ -1,0 +1,102 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`<CircleCheckButton /> > matches snapshot when clicked 1`] = `
+<button
+  class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary css-sghohy-MuiButtonBase-root-MuiButton-root"
+  tabindex="0"
+  type="button"
+>
+  <span
+    class=""
+  >
+    Submit
+  </span>
+  <span
+    class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+  />
+</button>
+`;
+
+exports[`<CircleCheckButton /> > matches snapshot when clicked 2`] = `
+.c0 {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 50%;
+  stroke-width: 5;
+  stroke-miterlimit: 10;
+  animation: jDLghl 0.2s ease-in-out 0.2s forwards,dcldXz 0.12s ease-in-out 0.45s both;
+}
+
+.c1 {
+  stroke-dasharray: 166;
+  stroke-dashoffset: 166;
+  stroke-width: 5;
+  stroke-miterlimit: 10;
+  fill: none;
+  animation: kscbJG 0.3s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+}
+
+.c2 {
+  transform-origin: 50% 50%;
+  stroke-dasharray: 48;
+  stroke-dashoffset: 48;
+  animation: kscbJG 0.15s cubic-bezier(0.65, 0, 0.45, 1) 0.4s forwards;
+}
+
+.c3 {
+  visibility: hidden;
+}
+
+<button
+  class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary css-sghohy-MuiButtonBase-root-MuiButton-root"
+  tabindex="0"
+  type="button"
+>
+  <svg
+    aria-labelledby=":r0:"
+    class="c0"
+    role="graphics-symbol"
+    viewBox="0 0 52 52"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <title
+      id=":r0:"
+    >
+      Circle Check
+    </title>
+    <circle
+      class="c1"
+      cx="26"
+      cy="26"
+      fill="none"
+      r="25"
+    />
+    <path
+      class="c2"
+      d="M14.1 27.2l7.1 7.2 16.7-16.8"
+      fill="none"
+    />
+  </svg>
+  <span
+    class="c3"
+  >
+    Submit
+  </span>
+  <span
+    class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+  >
+    <span
+      class="css-y4cjyz-MuiTouchRipple-ripple MuiTouchRipple-ripple MuiTouchRipple-rippleVisible"
+      style="width: 2.8284271247461903px; height: 2.8284271247461903px; top: -1.4142135623730951px; left: -1.4142135623730951px;"
+    >
+      <span
+        class="MuiTouchRipple-child MuiTouchRipple-childLeaving"
+      />
+    </span>
+  </span>
+</button>
+`;

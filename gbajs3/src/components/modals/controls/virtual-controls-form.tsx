@@ -9,6 +9,7 @@ import { ManagedSwitch } from '../../shared/managed-switch.tsx';
 
 type VirtualControlsFormProps = {
   id: string;
+  onAfterSubmit: () => void;
 };
 
 export type AreVirtualControlsEnabledProps = {
@@ -27,7 +28,10 @@ const StyledForm = styled.form`
   flex-direction: column;
 `;
 
-export const VirtualControlsForm = ({ id }: VirtualControlsFormProps) => {
+export const VirtualControlsForm = ({
+  id,
+  onAfterSubmit
+}: VirtualControlsFormProps) => {
   const [areVirtualControlsEnabled, setAreVirtualControlsEnabled] =
     useLocalStorage<AreVirtualControlsEnabledProps | undefined>(
       virtualControlsLocalStorageKey
@@ -61,6 +65,7 @@ export const VirtualControlsForm = ({ id }: VirtualControlsFormProps) => {
       ...prevState,
       ...formData
     }));
+    onAfterSubmit();
   };
 
   return (

@@ -23,6 +23,7 @@ import {
   PlusSquare,
   MinusSquare
 } from '../shared/action-box-icons.tsx';
+import { CircleCheckButton } from '../shared/circle-check-button.tsx';
 
 import type { FileNode } from '../../emulator/mgba/mgba-emulator.tsx';
 
@@ -210,13 +211,11 @@ export const FileSystemModal = () => {
         />
       </ModalBody>
       <ModalFooter>
-        <Button
+        <CircleCheckButton
+          copy="Save File System"
           id={`${baseId}--save-file-system-button`}
-          variant="contained"
           onClick={emulator?.fsSync}
-        >
-          Save File System
-        </Button>
+        />
         <Button variant="outlined" onClick={() => setIsModalOpen(false)}>
           Close
         </Button>

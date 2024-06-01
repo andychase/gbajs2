@@ -13,6 +13,7 @@ import type { KeyBinding } from '../../../emulator/mgba/mgba-emulator.tsx';
 
 type KeyBindingsFormProps = {
   id: string;
+  onAfterSubmit: () => void;
 };
 
 type KeyBindingInputProps = {
@@ -25,7 +26,10 @@ const StyledForm = styled.form`
   gap: 10px;
 `;
 
-export const KeyBindingsForm = ({ id }: KeyBindingsFormProps) => {
+export const KeyBindingsForm = ({
+  id,
+  onAfterSubmit
+}: KeyBindingsFormProps) => {
   const { emulator } = useEmulatorContext();
   const { isRunning } = useRunningContext();
   const {
@@ -49,6 +53,7 @@ export const KeyBindingsForm = ({ id }: KeyBindingsFormProps) => {
     if (isRunning) emulator?.remapKeyBindings(keyBindings);
 
     setCurrentKeyBindings(keyBindings);
+    onAfterSubmit();
   };
 
   const renderedBindings = currentKeyBindings ?? defaultKeyBindings;

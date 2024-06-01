@@ -13,6 +13,7 @@ import {
   EmbeddedProductTour,
   type TourSteps
 } from '../product-tour/embedded-product-tour.tsx';
+import { CircleCheckButton } from '../shared/circle-check-button.tsx';
 import { ManagedCheckbox } from '../shared/managed-checkbox.tsx';
 
 type OptionallyHiddenProps = {
@@ -105,7 +106,7 @@ export const CheatsModal = () => {
     handleSubmit,
     watch,
     setValue,
-    formState: { errors }
+    formState: { errors, isSubmitSuccessful }
   } = useForm({
     defaultValues: {
       rawCheats: rawCheats,
@@ -313,14 +314,13 @@ export const CheatsModal = () => {
         </form>
       </ModalBody>
       <ModalFooter>
-        <Button
-          id={`${baseId}--submit-button`}
+        <CircleCheckButton
+          copy="Submit"
           form={`${baseId}--cheats-form`}
+          id={`${baseId}--submit-button`}
+          showSuccess={isSubmitSuccessful}
           type="submit"
-          variant="contained"
-        >
-          Submit
-        </Button>
+        />
         <Button
           id={`${baseId}--toggle-raw-cheats`}
           color="info"

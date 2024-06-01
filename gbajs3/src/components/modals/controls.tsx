@@ -12,6 +12,7 @@ import {
   EmbeddedProductTour,
   type TourSteps
 } from '../product-tour/embedded-product-tour.tsx';
+import { CircleCheckButton } from '../shared/circle-check-button.tsx';
 
 type TabPanelProps = {
   children: ReactNode;
@@ -24,6 +25,7 @@ type ControlTabsProps = {
   virtualControlsFormId: string;
   keyBindingsFormId: string;
   resetPositionsButtonId: string;
+  setIsSuccessfulSubmit: () => void;
 };
 
 const TabsWithBorder = styled(Tabs)`
@@ -59,7 +61,8 @@ const ControlTabs = ({
   setFormId,
   virtualControlsFormId,
   keyBindingsFormId,
-  resetPositionsButtonId
+  resetPositionsButtonId,
+  setIsSuccessfulSubmit
 }: ControlTabsProps) => {
   const { clearLayouts } = useLayoutContext();
   const [value, setValue] = useState(0);
@@ -80,7 +83,10 @@ const ControlTabs = ({
         <Tab label="Key Bindings" {...a11yProps(1)} />
       </TabsWithBorder>
       <TabPanel value={value} index={0}>
-        <VirtualControlsForm id={virtualControlsFormId} />
+        <VirtualControlsForm
+          id={virtualControlsFormId}
+          onAfterSubmit={setIsSuccessfulSubmit}
+        />
         <Button
           id={resetPositionsButtonId}
           sx={{ marginTop: '10px' }}
@@ -90,7 +96,10 @@ const ControlTabs = ({
         </Button>
       </TabPanel>
       <TabPanel value={value} index={1}>
-        <KeyBindingsForm id={keyBindingsFormId} />
+        <KeyBindingsForm
+          id={keyBindingsFormId}
+          onAfterSubmit={setIsSuccessfulSubmit}
+        />
       </TabPanel>
     </>
   );
@@ -102,6 +111,7 @@ export const ControlsModal = () => {
   const [formId, setFormId] = useState<string>(
     `${baseId}--virtual-controls-form`
   );
+  const [isSuccessfulSubmit, setIsSuccessfulSubmit] = useState<boolean>(false);
 
   const tourSteps: TourSteps = [
     {
@@ -167,17 +177,17 @@ export const ControlsModal = () => {
           virtualControlsFormId={`${baseId}--virtual-controls-form`}
           keyBindingsFormId={`${baseId}--key-bindings-form`}
           resetPositionsButtonId={`${baseId}--reset-positions-button`}
+          setIsSuccessfulSubmit={() => setIsSuccessfulSubmit(true)}
         />
       </ModalBody>
       <ModalFooter>
-        <Button
-          id={`${baseId}--save-changes-button`}
+        <CircleCheckButton
+          copy="Save Changes"
           form={formId}
+          id={`${baseId}--save-changes-button`}
           type="submit"
-          variant="contained"
-        >
-          Save Changes
-        </Button>
+          showSuccess={isSuccessfulSubmit}
+        />
         <Button variant="outlined" onClick={() => setIsModalOpen(false)}>
           Close
         </Button>

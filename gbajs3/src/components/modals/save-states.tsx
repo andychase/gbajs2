@@ -14,6 +14,7 @@ import {
   EmbeddedProductTour,
   type TourSteps
 } from '../product-tour/embedded-product-tour.tsx';
+import { CircleCheckButton } from '../shared/circle-check-button.tsx';
 import { ErrorWithIcon } from '../shared/error-with-icon.tsx';
 import { CenteredText } from '../shared/styled.tsx';
 
@@ -104,7 +105,7 @@ export const SaveStatesModal = () => {
     register,
     handleSubmit,
     setValue,
-    formState: { errors }
+    formState: { errors, isSubmitSuccessful }
   } = useForm<InputProps>({
     defaultValues: {
       saveStateSlot: currentSlot
@@ -187,9 +188,13 @@ export const SaveStatesModal = () => {
               valueAsNumber: true
             })}
           />
-          <Button type="submit" variant="outlined" size="small">
-            Update Slot
-          </Button>
+          <CircleCheckButton
+            copy="Update Slot"
+            showSuccess={isSubmitSuccessful}
+            size="small"
+            type="submit"
+            sx={{ maxHeight: '40px' }}
+          />
         </StyledForm>
 
         <SaveStatesList id={`${baseId}--save-state-list`}>

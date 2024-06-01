@@ -14,13 +14,13 @@ import type {
 
 describe('<KeyBindingsForm />', () => {
   it('renders if emulator is null', () => {
-    renderWithContext(<KeyBindingsForm id="testId" />);
+    renderWithContext(<KeyBindingsForm id="testId" onAfterSubmit={vi.fn()} />);
 
     expect(screen.getByRole('form', { name: 'Key Bindings Form' }));
   });
 
   it('renders form with provided id', () => {
-    renderWithContext(<KeyBindingsForm id="testId" />);
+    renderWithContext(<KeyBindingsForm id="testId" onAfterSubmit={vi.fn()} />);
 
     expect(
       screen.getByRole('form', { name: 'Key Bindings Form' })
@@ -42,7 +42,7 @@ describe('<KeyBindingsForm />', () => {
       } as GBAEmulator
     }));
 
-    renderWithContext(<KeyBindingsForm id="testId" />);
+    renderWithContext(<KeyBindingsForm id="testId" onAfterSubmit={vi.fn()} />);
 
     expect(screen.getByLabelText('A')).toBeInTheDocument();
     expect(screen.getByDisplayValue('X')).toBeInTheDocument();
@@ -53,6 +53,7 @@ describe('<KeyBindingsForm />', () => {
 
   it('renders form validation errors', async () => {
     const errorPostfix = ' is reserved for accessibility requirements';
+    const onAfterSubmitSpy = vi.fn();
     const { useEmulatorContext: original } = await vi.importActual<
       typeof contextHooks
     >('../../../hooks/context.tsx');
@@ -70,7 +71,7 @@ describe('<KeyBindingsForm />', () => {
 
     renderWithContext(
       <>
-        <KeyBindingsForm id="testId" />{' '}
+        <KeyBindingsForm id="testId" onAfterSubmit={onAfterSubmitSpy} />
         <button form="testId" type="submit">
           submit
         </button>
@@ -85,11 +86,13 @@ describe('<KeyBindingsForm />', () => {
 
     expect(screen.getByText('Space' + errorPostfix)).toBeVisible();
     expect(screen.getByText('Tab' + errorPostfix)).toBeVisible();
+    expect(onAfterSubmitSpy).not.toHaveBeenCalled();
   });
 
   it('form values can be changed and properly persisted', async () => {
     const setItemSpy = vi.spyOn(Storage.prototype, 'setItem');
     const remapBindingsSpy: (keyBindings: KeyBinding[]) => void = vi.fn();
+    const onAfterSubmitSpy = vi.fn();
     const {
       useEmulatorContext: originalEmulator,
       useRunningContext: originalRunning
@@ -116,7 +119,7 @@ describe('<KeyBindingsForm />', () => {
 
     renderWithContext(
       <>
-        <KeyBindingsForm id="testId" />{' '}
+        <KeyBindingsForm id="testId" onAfterSubmit={onAfterSubmitSpy} />
         <button form="testId" type="submit">
           submit
         </button>
@@ -138,6 +141,7 @@ describe('<KeyBindingsForm />', () => {
       { gbaInput: 'A', key: 'T', location: 0 },
       { gbaInput: 'B', key: 'Delete', location: 0 }
     ]);
+    expect(onAfterSubmitSpy).toHaveBeenCalledOnce();
   });
 
   it('does not accept tab keys', async () => {
@@ -154,7 +158,7 @@ describe('<KeyBindingsForm />', () => {
 
     renderWithContext(
       <>
-        <KeyBindingsForm id="testId" />
+        <KeyBindingsForm id="testId" onAfterSubmit={vi.fn()} />
       </>
     );
 
@@ -169,7 +173,7 @@ describe('<KeyBindingsForm />', () => {
       '[{ "gbaInput": "L", "key": "A", "location": 0 },{ "gbaInput": "R", "key": "S", "location": 0 }]'
     );
 
-    renderWithContext(<KeyBindingsForm id="testId" />);
+    renderWithContext(<KeyBindingsForm id="testId" onAfterSubmit={vi.fn()} />);
 
     expect(screen.getByLabelText('L')).toBeInTheDocument();
     expect(screen.getByDisplayValue('A')).toBeInTheDocument();

@@ -11,6 +11,7 @@ declare module 'styled-components' {
     arcticAirBlue: string;
     blackRussian: string;
     blueCharcoal: string;
+    checkMarkGreen: string;
     darkCharcoal: string;
     darkGrayBlue: string;
     disabledGray: string;
