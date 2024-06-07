@@ -325,13 +325,13 @@ export const ControlPanel = () => {
           controls, and control panel.
         </p>
       ),
-      placement: 'right',
+      placement: isLargerThanPhone ? 'auto' : 'right',
       placementBeacon: 'bottom',
       target: `#${CSS.escape(`${controlPanelId}--drag`)}`
     },
     {
       content: <p>Use this button to resize the screen and control panel.</p>,
-      placement: 'right',
+      placement: isLargerThanPhone ? 'auto' : 'right',
       placementBeacon: 'bottom',
       target: `#${CSS.escape(`${controlPanelId}--resize`)}`
     },
@@ -354,6 +354,7 @@ export const ControlPanel = () => {
           <p>Your fast forward setting will be saved between refreshes!</p>
         </>
       ),
+      placement: isLargerThanPhone ? 'auto' : 'right',
       placementBeacon: 'bottom',
       target: `#${CSS.escape(`${controlPanelId}--fast-forward`)}`
     }
