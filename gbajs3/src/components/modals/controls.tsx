@@ -25,7 +25,7 @@ type ControlTabsProps = {
   virtualControlsFormId: string;
   keyBindingsFormId: string;
   resetPositionsButtonId: string;
-  setIsSuccessfulSubmit: () => void;
+  setIsSuccessfulSubmit: (successfulSubmit: boolean) => void;
 };
 
 const TabsWithBorder = styled(Tabs)`
@@ -67,16 +67,19 @@ const ControlTabs = ({
   const { clearLayouts } = useLayoutContext();
   const [value, setValue] = useState(0);
 
-  const handleChange = (_: React.SyntheticEvent, newValue: number) => {
+  const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
     setFormId(newValue === 0 ? virtualControlsFormId : keyBindingsFormId);
+    setIsSuccessfulSubmit(false);
   };
+
+  const onAfterSubmit = () => setIsSuccessfulSubmit(true);
 
   return (
     <>
       <TabsWithBorder
         value={value}
-        onChange={handleChange}
+        onChange={handleTabChange}
         aria-label="Control tabs"
       >
         <Tab label="Virtual Controls" {...a11yProps(0)} />
@@ -85,7 +88,7 @@ const ControlTabs = ({
       <TabPanel value={value} index={0}>
         <VirtualControlsForm
           id={virtualControlsFormId}
-          onAfterSubmit={setIsSuccessfulSubmit}
+          onAfterSubmit={onAfterSubmit}
         />
         <Button
           id={resetPositionsButtonId}
@@ -96,10 +99,7 @@ const ControlTabs = ({
         </Button>
       </TabPanel>
       <TabPanel value={value} index={1}>
-        <KeyBindingsForm
-          id={keyBindingsFormId}
-          onAfterSubmit={setIsSuccessfulSubmit}
-        />
+        <KeyBindingsForm id={keyBindingsFormId} onAfterSubmit={onAfterSubmit} />
       </TabPanel>
     </>
   );
@@ -177,7 +177,7 @@ export const ControlsModal = () => {
           virtualControlsFormId={`${baseId}--virtual-controls-form`}
           keyBindingsFormId={`${baseId}--key-bindings-form`}
           resetPositionsButtonId={`${baseId}--reset-positions-button`}
-          setIsSuccessfulSubmit={() => setIsSuccessfulSubmit(true)}
+          setIsSuccessfulSubmit={setIsSuccessfulSubmit}
         />
       </ModalBody>
       <ModalFooter>
