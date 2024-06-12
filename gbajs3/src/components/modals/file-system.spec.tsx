@@ -146,7 +146,7 @@ describe('<FileSystemModal />', () => {
   });
 
   it('downloads file from the tree', async () => {
-    const getFileSpy: (p: string) => void = vi.fn(() =>
+    const getFileSpy: (p: string) => Uint8Array = vi.fn(() =>
       new TextEncoder().encode('Some state file contents')
     );
     const { useEmulatorContext: original } = await vi.importActual<

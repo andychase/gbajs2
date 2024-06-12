@@ -7,6 +7,7 @@ declare namespace mGBA {
     gamePath: string;
     savePath: string;
     saveStatePath: string;
+    screenshotsPath: string;
   }
 
   // see: https://developer.mozilla.org/en-US/docs/Web/API/BaseAudioContext/state
@@ -36,7 +37,7 @@ declare namespace mGBA {
     quitMgba(): void;
     resumeGame(): void;
     saveState(slot: number): boolean;
-    screenShot(callback: () => void): void;
+    screenshot(fileName?: string): boolean;
     setFastForwardMultiplier(multiplier: number): void;
     setMainLoopTiming(mode: number, value: number): void;
     setVolume(percent: number): void;

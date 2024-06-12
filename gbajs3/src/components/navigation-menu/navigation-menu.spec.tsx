@@ -28,10 +28,6 @@ import { UploadSavesModal } from '../modals/upload-saves.tsx';
 
 import type { GBAEmulator } from '../../emulator/mgba/mgba-emulator.tsx';
 
-vi.mock('modern-screenshot', () => ({
-  domToPng: () => Promise.resolve('dataurl')
-}));
-
 describe('<NavigationMenu />', () => {
   it('renders menu and dismiss buttons', () => {
     renderWithContext(<NavigationMenu />);
@@ -187,8 +183,8 @@ describe('<NavigationMenu />', () => {
       expect(quickReloadSpy).toHaveBeenCalledOnce();
     });
 
-    it('Screenshot calls emulator screenshot and downloads file', async () => {
-      const screenShotSpy: (cb: () => void) => void = vi.fn((cb) => cb());
+    it('Screenshot calls emulator screenshot and toasts on success', async () => {
+      const screenshotSpy: (fileName: string) => boolean = vi.fn(() => true);
       const {
         useEmulatorContext: originalEmulator,
         useRunningContext: originalRunning
@@ -197,7 +193,7 @@ describe('<NavigationMenu />', () => {
       vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
         ...originalEmulator(),
         emulator: {
-          screenShot: screenShotSpy,
+          screenshot: screenshotSpy,
           getCurrentGameName: () => '/some_rom.gba'
         } as GBAEmulator,
         canvas: {} as HTMLCanvasElement
@@ -208,10 +204,7 @@ describe('<NavigationMenu />', () => {
         isRunning: true
       }));
 
-      const anchorClickSpy = vi
-        .spyOn(HTMLAnchorElement.prototype, 'click')
-        .mockReturnValue();
-      const anchorRemoveSpy = vi.spyOn(HTMLAnchorElement.prototype, 'remove');
+      const toastSuccessSpy = vi.spyOn(toast.default, 'success');
 
       renderWithContext(<NavigationMenu />);
 
@@ -221,12 +214,13 @@ describe('<NavigationMenu />', () => {
 
       await userEvent.click(menuNode);
 
-      expect(screenShotSpy).toHaveBeenCalledOnce();
-      expect(anchorClickSpy).toHaveBeenCalledOnce();
-      expect(anchorRemoveSpy).toHaveBeenCalledOnce();
+      expect(screenshotSpy).toHaveBeenCalledOnce();
+      expect(toastSuccessSpy).toHaveBeenCalledWith(
+        'Screenshot saved successfully'
+      );
     });
 
-    it('Screenshot toasts on exception', async () => {
+    it('Screenshot calls emulator screenshot and toasts on failure', async () => {
       const {
         useEmulatorContext: originalEmulator,
         useRunningContext: originalRunning
@@ -235,7 +229,7 @@ describe('<NavigationMenu />', () => {
       vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
         ...originalEmulator(),
         emulator: {
-          screenShot: (cb) => cb()
+          screenshot: () => false
           // missing getCurrentGameName
         } as GBAEmulator,
         canvas: {} as HTMLCanvasElement

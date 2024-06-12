@@ -11,18 +11,28 @@ import type { GBAEmulator } from '../../emulator/mgba/mgba-emulator.tsx';
 describe('useQuitGame hook', () => {
   it('quits game if the emulator exists', async () => {
     const emulatorQuitGameSpy: () => void = vi.fn();
-    const screenShotSpy: (cb: () => void) => void = vi.fn((cb) => cb());
+    const screenshotSpy: (fileName?: string) => boolean = vi.fn(() => true);
+    const getFileSpy: (p: string) => Uint8Array = vi.fn(() =>
+      new TextEncoder().encode('Some screenshot file contents')
+    );
+    const deleteFileSpy: (filePath: string) => void = vi.fn();
     const setIsRunningSpy = vi.fn();
     const fadeCanvasSpy = vi.fn();
     const testCanvas = {} as HTMLCanvasElement;
+    const emu = {
+      quitGame: emulatorQuitGameSpy,
+      screenshot: screenshotSpy,
+      filePaths: () => ({
+        screenshotsPath: '/screenshots'
+      }),
+      getFile: getFileSpy,
+      deleteFile: deleteFileSpy
+    } as GBAEmulator;
 
     vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
       setCanvas: vi.fn(),
       canvas: testCanvas,
-      emulator: {
-        quitGame: emulatorQuitGameSpy,
-        screenShot: screenShotSpy
-      } as GBAEmulator
+      emulator: emu
     }));
 
     vi.spyOn(contextHooks, 'useRunningContext').mockImplementation(() => ({
@@ -39,14 +49,25 @@ describe('useQuitGame hook', () => {
     });
 
     expect(fadeCanvasSpy).toHaveBeenCalledOnce();
-    expect(fadeCanvasSpy).toHaveBeenCalledWith(testCanvas, screenShotSpy);
+    // blob is not implemented, but we can check the type
+    expect(fadeCanvasSpy).toHaveBeenCalledWith(testCanvas, new Blob());
+
+    expect(screenshotSpy).toHaveBeenCalledOnce();
+    expect(screenshotSpy).toHaveBeenCalledWith('fade-copy.png');
+
+    expect(getFileSpy).toHaveBeenCalledOnce();
+    expect(getFileSpy).toHaveBeenCalledWith('/screenshots/fade-copy.png');
+
+    expect(deleteFileSpy).toHaveBeenCalledOnce();
+    expect(deleteFileSpy).toHaveBeenCalledWith('/screenshots/fade-copy.png');
 
     expect(emulatorQuitGameSpy).toHaveBeenCalledOnce();
+
     expect(setIsRunningSpy).toHaveBeenCalledOnce();
     expect(setIsRunningSpy).toHaveBeenCalledWith(false);
   });
 
-  it('sets running to false if there is no emulator', () => {
+  it('sets running to false if emulator is not running', () => {
     const setIsRunningSpy = vi.fn();
     const fadeCanvasSpy = vi.fn();
 
@@ -57,7 +78,7 @@ describe('useQuitGame hook', () => {
     }));
 
     vi.spyOn(contextHooks, 'useRunningContext').mockImplementation(() => ({
-      isRunning: true,
+      isRunning: false,
       setIsRunning: setIsRunningSpy
     }));
 

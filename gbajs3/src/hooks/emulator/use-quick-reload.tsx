@@ -13,7 +13,7 @@ export const useQuickReload = () => {
     emulatorGameNameLocalStorageKey
   );
 
-  const run = useCallback(() => {
+  const quickReload = useCallback(() => {
     if (isRunning) {
       emulator?.quickReload();
     } else if (emulator?.getCurrentGameName()) {
@@ -27,5 +27,5 @@ export const useQuickReload = () => {
     }
   }, [emulator, isRunning, setIsRunning, runGame, storedGameName]);
 
-  return run;
+  return quickReload;
 };

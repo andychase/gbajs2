@@ -1,5 +1,3 @@
-import { domToCanvas } from 'modern-screenshot';
-
 // uses a webgl canvas context,
 // clears the canvas to all black immediately
 const clearWebGlCanvas = (canvas: HTMLCanvasElement) => {
@@ -56,39 +54,40 @@ const lcdFade2d = (canvas: HTMLCanvasElement) => {
   }, drawIntervalTimeout);
 };
 
-// takes in a canvas ref, and a func to render to ensure our canvas has content.
-// copies the canvas given to a new 2d canvas under the same parent,
-// then lcd fades the copied canvas before clearing the original canvas
+// fadeCanvas takes in a canvas ref, and a blob representing the last frame rendered.
+// It copies the screenshot frame to a new 2d canvas under the same parent,
+// then lcd fades the copied canvas and clears the original canvas
 export const fadeCanvas = (
   canvas: HTMLCanvasElement | null,
-  renderFunc: (callback: () => void) => void
+  screenshot: Blob | null
 ) => {
-  if (!canvas) return;
+  if (!canvas || !screenshot) return;
 
-  renderFunc(() =>
-    domToCanvas(canvas, {
-      width: canvas.width,
-      height: canvas.height
-    })
-      .then((copyCanvas) => {
-        copyCanvas.style.width = `${canvas.clientWidth}px`;
-        copyCanvas.style.height = `${canvas.clientHeight}px`;
-        copyCanvas.style.backgroundColor = 'black';
-        copyCanvas.style.imageRendering = 'pixelated';
-        copyCanvas.style.position = 'absolute';
-        copyCanvas.style.top = '0';
-        copyCanvas.style.left = '0';
-        copyCanvas.style.right = '0';
-        copyCanvas.style.margin = '0 auto';
-        copyCanvas.style.objectFit = 'contain';
-        canvas.parentElement?.appendChild(copyCanvas);
+  const copyCanvas = document.createElement('canvas');
+  const context = copyCanvas.getContext('2d');
+  const url = URL.createObjectURL(screenshot);
 
-        lcdFade2d(copyCanvas);
-        clearWebGlCanvas(canvas);
-        // if necessary additionally clear 2d canvas
-      })
-      .catch((e) => {
-        console.error(`screen to canvas has failed: ${e}`);
-      })
-  );
+  copyCanvas.className = canvas.className;
+  copyCanvas.height = canvas.height;
+  copyCanvas.width = canvas.width;
+  copyCanvas.style.backgroundColor = canvas.style.backgroundColor;
+  copyCanvas.style.height = `${canvas.clientHeight}px`;
+  copyCanvas.style.imageRendering = canvas.style.imageRendering;
+  copyCanvas.style.margin = canvas.style.margin;
+  copyCanvas.style.objectFit = canvas.style.objectFit;
+  copyCanvas.style.width = `${canvas.clientWidth}px`;
+  copyCanvas.style.position = 'absolute';
+  copyCanvas.style.top = '0';
+  copyCanvas.style.left = '0';
+  copyCanvas.style.right = '0';
+
+  const fadeImage = new Image();
+  fadeImage.onload = () => {
+    context?.drawImage(fadeImage, 0, 0);
+    canvas.parentElement?.appendChild(copyCanvas);
+
+    clearWebGlCanvas(canvas);
+    lcdFade2d(copyCanvas);
+  };
+  fadeImage.src = url;
 };

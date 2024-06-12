@@ -57,7 +57,7 @@ export type GBAEmulator = {
   remapKeyBindings: (keyBindings: KeyBinding[]) => void;
   resume: () => void;
   run: (romPath: string) => boolean;
-  screenShot: (callback: () => void) => void;
+  screenshot: (fileName?: string) => boolean;
   setCurrentGameName: (gameName: string | undefined) => void;
   setFastForwardMultiplier: (multiplier: number) => void;
   setVolume: (volumePercent: number) => void;
@@ -261,7 +261,7 @@ export const mGBAEmulator = (mGBA: mGBAEmulatorTypeDef): GBAEmulator => {
     },
     getCurrentCheatsFileName: () =>
       filepathToFileName(mGBA.gameName, '.cheats'),
-    screenShot: mGBA.screenShot,
+    screenshot: mGBA.screenshot,
     remapKeyBindings: (keyBindings) =>
       keyBindings.forEach((keyBinding) =>
         mGBA.bindKey(handleKeyBindingEdgeCases(keyBinding), keyBinding.gbaInput)

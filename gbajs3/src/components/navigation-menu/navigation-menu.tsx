@@ -1,5 +1,4 @@
 import { useMediaQuery } from '@mui/material';
-import { domToPng } from 'modern-screenshot';
 import { useId, useState } from 'react';
 import toast from 'react-hot-toast';
 import {
@@ -240,26 +239,9 @@ export const NavigationMenu = () => {
               $disabled={!isRunning}
               icon={<BiScreenshot />}
               onClick={() => {
-                if (!canvas) return;
-
-                emulator?.screenShot(() =>
-                  domToPng(canvas)
-                    .then((dataUrl) => {
-                      const link = document.createElement('a');
-                      const gameName = emulator?.getCurrentGameName();
-                      const screenshotName =
-                        gameName?.substring(0, gameName?.lastIndexOf('.')) ??
-                        'screenshot.png';
-
-                      link.download = screenshotName;
-                      link.href = dataUrl;
-                      link.click();
-                      link.remove();
-                    })
-                    .catch(() => {
-                      toast.error('Screenshot has failed');
-                    })
-                );
+                emulator?.screenshot()
+                  ? toast.success('Screenshot saved successfully')
+                  : toast.error('Screenshot has failed');
               }}
             />
             <NavLeaf
