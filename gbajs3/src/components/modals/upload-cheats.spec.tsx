@@ -1,4 +1,4 @@
-import { fireEvent, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
@@ -10,18 +10,6 @@ import { productTourLocalStorageKey } from '../product-tour/consts.tsx';
 import type { GBAEmulator } from '../../emulator/mgba/mgba-emulator.tsx';
 
 describe('<UploadCheatsModal />', () => {
-  it('clicks file input when form is clicked', async () => {
-    const inputClickSpy = vi.spyOn(HTMLInputElement.prototype, 'click');
-
-    renderWithContext(<UploadCheatsModal />);
-
-    await userEvent.click(
-      screen.getByRole('presentation', { name: 'Upload Cheats' })
-    );
-
-    expect(inputClickSpy).toHaveBeenCalledOnce();
-  });
-
   it('uploads file', async () => {
     const uploadCheatsSpy: (file: File, cb?: () => void) => void = vi.fn(
       (_file, cb) => cb && cb()
@@ -42,13 +30,13 @@ describe('<UploadCheatsModal />', () => {
 
     renderWithContext(<UploadCheatsModal />);
 
-    const cheatsInput = screen.getByTestId('cheatfiles-hidden-input');
+    const cheatsInput = screen.getByTestId('hidden-file-input');
 
     expect(cheatsInput).toBeInTheDocument();
 
     await userEvent.upload(cheatsInput, testCheatFile);
 
-    expect(screen.getByText('Files to upload:')).toBeVisible();
+    expect(screen.getByText('File to upload:')).toBeVisible();
     expect(screen.getByText('rom1.cheats')).toBeVisible();
 
     await userEvent.click(screen.getByRole('button', { name: 'Upload' }));
@@ -57,7 +45,7 @@ describe('<UploadCheatsModal />', () => {
     expect(uploadCheatsSpy).toHaveBeenCalledWith(testCheatFile);
 
     expect(screen.getByText('Upload complete!')).toBeVisible();
-    expect(screen.queryByText('Files to upload:')).not.toBeInTheDocument();
+    expect(screen.queryByText('File to upload:')).not.toBeInTheDocument();
     expect(screen.queryByText('rom1.cheats')).not.toBeInTheDocument();
   });
 
@@ -84,124 +72,13 @@ describe('<UploadCheatsModal />', () => {
 
     renderWithContext(<UploadCheatsModal />);
 
-    const cheatsInput = screen.getByTestId('cheatfiles-hidden-input');
+    const cheatsInput = screen.getByTestId('hidden-file-input');
 
     expect(cheatsInput).toBeInTheDocument();
 
     await userEvent.upload(cheatsInput, testCheatFiles);
 
     expect(screen.getByText('Files to upload:')).toBeVisible();
-    expect(screen.getByText('rom1.cheats')).toBeVisible();
-    expect(screen.getByText('rom2.cheats')).toBeVisible();
-
-    await userEvent.click(screen.getByRole('button', { name: 'Upload' }));
-
-    expect(uploadCheatsSpy).toHaveBeenCalledTimes(2);
-    expect(uploadCheatsSpy).toHaveBeenCalledWith(testCheatFiles[0]);
-    expect(uploadCheatsSpy).toHaveBeenCalledWith(testCheatFiles[1]);
-
-    expect(screen.getByText('Upload complete!')).toBeVisible();
-    expect(screen.queryByText('Files to upload:')).not.toBeInTheDocument();
-    expect(screen.queryByText('rom1.cheats')).not.toBeInTheDocument();
-    expect(screen.queryByText('rom2.cheats')).not.toBeInTheDocument();
-  });
-
-  it('uploads file with drag and drop', async () => {
-    const uploadCheatsSpy: (file: File, cb?: () => void) => void = vi.fn(
-      (_file, cb) => cb && cb()
-    );
-
-    const { useEmulatorContext: originalEmulator } = await vi.importActual<
-      typeof contextHooks
-    >('../../hooks/context.tsx');
-
-    vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
-      ...originalEmulator(),
-      emulator: {
-        uploadCheats: uploadCheatsSpy
-      } as GBAEmulator
-    }));
-
-    const testCheatFiles = [
-      new File(['Some cheat file contents'], 'rom1.cheats')
-    ];
-    const data = {
-      dataTransfer: {
-        testCheatFiles,
-        items: testCheatFiles.map((file) => ({
-          kind: 'file',
-          type: file.type,
-          getAsFile: () => file
-        })),
-        types: ['Files']
-      }
-    };
-
-    renderWithContext(<UploadCheatsModal />);
-
-    const uploadCheatsForm = screen.getByRole('presentation', {
-      name: 'Upload Cheats'
-    });
-
-    fireEvent.dragEnter(uploadCheatsForm, data);
-    fireEvent.drop(uploadCheatsForm, data);
-
-    expect(await screen.findByText('Files to upload:')).toBeVisible();
-    expect(screen.getByText('rom1.cheats')).toBeVisible();
-
-    await userEvent.click(screen.getByRole('button', { name: 'Upload' }));
-
-    expect(uploadCheatsSpy).toHaveBeenCalledOnce();
-    expect(uploadCheatsSpy).toHaveBeenCalledWith(testCheatFiles[0]);
-
-    expect(screen.getByText('Upload complete!')).toBeVisible();
-    expect(screen.queryByText('Files to upload:')).not.toBeInTheDocument();
-    expect(screen.queryByText('rom1.cheats')).not.toBeInTheDocument();
-  });
-
-  it('uploads multiple files with drag and drop', async () => {
-    const uploadCheatsSpy: (file: File, cb?: () => void) => void = vi.fn(
-      (_file, cb) => cb && cb()
-    );
-
-    const { useEmulatorContext: originalEmulator } = await vi.importActual<
-      typeof contextHooks
-    >('../../hooks/context.tsx');
-
-    vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
-      ...originalEmulator(),
-      emulator: {
-        uploadCheats: uploadCheatsSpy
-      } as GBAEmulator
-    }));
-
-    const testCheatFiles = [
-      new File(['Some cheat file contents 1'], 'rom1.cheats'),
-      new File(['Some cheat file contents 2'], 'rom2.cheats')
-    ];
-
-    const data = {
-      dataTransfer: {
-        testCheatFiles,
-        items: testCheatFiles.map((file) => ({
-          kind: 'file',
-          type: file.type,
-          getAsFile: () => file
-        })),
-        types: ['Files']
-      }
-    };
-
-    renderWithContext(<UploadCheatsModal />);
-
-    const uploadCheatsForm = screen.getByRole('presentation', {
-      name: 'Upload Cheats'
-    });
-
-    fireEvent.dragEnter(uploadCheatsForm, data);
-    fireEvent.drop(uploadCheatsForm, data);
-
-    expect(await screen.findByText('Files to upload:')).toBeVisible();
     expect(screen.getByText('rom1.cheats')).toBeVisible();
     expect(screen.getByText('rom2.cheats')).toBeVisible();
 
@@ -225,35 +102,6 @@ describe('<UploadCheatsModal />', () => {
     expect(
       screen.getByText(/At least one .cheats file is required/)
     ).toBeVisible();
-  });
-
-  it.each([
-    ['rom1.cheats', false],
-    ['rom1.sav', true],
-    ['', true]
-  ])('validates input file name: %s', async (fileName, expectError) => {
-    const testRom = new File(['Some cheat file contents'], fileName);
-
-    renderWithContext(<UploadCheatsModal />);
-
-    const cheatsInput = screen.getByTestId('cheatfiles-hidden-input');
-
-    expect(cheatsInput).toBeInTheDocument();
-
-    await userEvent.upload(cheatsInput, testRom);
-
-    expect(await screen.findByText('Files to upload:')).toBeVisible();
-    if (fileName) expect(screen.getByText(fileName)).toBeVisible();
-
-    if (expectError) {
-      expect(
-        screen.getByText(/At least one .cheats file is required/)
-      ).toBeVisible();
-    } else {
-      expect(
-        screen.queryByText(/At least one .cheats file is required/)
-      ).not.toBeInTheDocument();
-    }
   });
 
   it('closes modal using the close button', async () => {

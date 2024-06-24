@@ -1,9 +1,6 @@
 import { Button } from '@mui/material';
-import { useCallback, useId, useRef, useState } from 'react';
-import { useDropzone } from 'react-dropzone';
-import { useForm, type SubmitHandler } from 'react-hook-form';
-import { BiCloudUpload } from 'react-icons/bi';
-import { styled } from 'styled-components';
+import { useCallback, useId } from 'react';
+import { Controller, useForm, type SubmitHandler } from 'react-hook-form';
 
 import { ModalBody } from './modal-body.tsx';
 import { ModalFooter } from './modal-footer.tsx';
@@ -13,80 +10,39 @@ import {
   EmbeddedProductTour,
   type TourSteps
 } from '../product-tour/embedded-product-tour.tsx';
+import { CircleCheckButton } from '../shared/circle-check-button.tsx';
+import { DragAndDropInput } from '../shared/drag-and-drop-input.tsx';
 import { CenteredTextContainer } from '../shared/styled.tsx';
 
 type InputProps = {
   cheatFiles: File[];
 };
 
-type FormProps = {
-  $isDragActive?: boolean;
-};
-
-const StyledForm = styled.form<FormProps>`
-  cursor: pointer;
-  border-color: ${({ theme }) => theme.blackRussian};
-  background-color: ${({ $isDragActive = false, theme }) =>
-    $isDragActive ? theme.arcticAirBlue : theme.aliceBlue2};
-  border-width: 1px;
-  border-style: dashed;
-  padding: 0.5rem;
-  text-align: center;
-`;
-
-const HiddenInput = styled.input`
-  display: none;
-`;
-
-const BiCloudUploadLarge = styled(BiCloudUpload)`
-  height: 60px;
-  width: auto;
-`;
+const validFileExtensions = ['.cheats'];
 
 export const UploadCheatsModal = () => {
   const { setIsModalOpen } = useModalContext();
   const { emulator } = useEmulatorContext();
   const {
-    register,
     reset,
     handleSubmit,
     setValue,
-    formState: { errors },
-    watch
+    formState: { isSubmitSuccessful },
+    control
   } = useForm<InputProps>();
-  const [hasCompletedUpload, setHasCompletedUpload] = useState(false);
-  const hiddenInputRef = useRef<HTMLInputElement>(null);
   const cheatsFormId = useId();
 
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
+      reset();
       setValue('cheatFiles', acceptedFiles, { shouldValidate: true });
-      setHasCompletedUpload(false);
     },
-    [setValue]
+    [reset, setValue]
   );
-
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop,
-    multiple: true
-  });
 
   const onSubmit: SubmitHandler<InputProps> = ({ cheatFiles }) => {
     cheatFiles.forEach((cheatFiles) => emulator?.uploadCheats(cheatFiles));
     reset();
-    setHasCompletedUpload(true);
-  };
-
-  const triggerFileInputOnClick = () => {
-    if (hiddenInputRef.current) hiddenInputRef.current.click();
-  };
-
-  const files = watch('cheatFiles');
-
-  const validateFileNames = (cheatFiles: File[]) => {
-    return cheatFiles.every(
-      (cheatFile: File) => cheatFile.name.split('.').pop() === 'cheats'
-    );
   };
 
   const tourSteps: TourSteps = [
@@ -104,7 +60,7 @@ export const UploadCheatsModal = () => {
           <p>You may drop or select multiple files!</p>
         </>
       ),
-      target: `#${CSS.escape(cheatsFormId)}`
+      target: `#${CSS.escape(`${cheatsFormId}--drag-and-drop`)}`
     }
   ];
 
@@ -112,61 +68,53 @@ export const UploadCheatsModal = () => {
     <>
       <ModalHeader title="Upload Cheats" />
       <ModalBody>
-        <StyledForm
-          {...getRootProps({
-            id: cheatsFormId,
-            onSubmit: handleSubmit(onSubmit),
-            $isDragActive: isDragActive,
-            onClick: triggerFileInputOnClick,
-            'aria-label': 'Upload Cheats'
-          })}
+        <form
+          id={cheatsFormId}
+          aria-label="Upload Cheats Form"
+          onSubmit={handleSubmit(onSubmit)}
         >
-          <HiddenInput
-            {...getInputProps({
-              ...register('cheatFiles', {
-                validate: (cheatsList) =>
-                  (cheatsList?.length > 0 && validateFileNames(cheatsList)) ||
-                  'At least one .cheats file is required'
-              }),
-              ref: hiddenInputRef,
-              'data-testid': 'cheatfiles-hidden-input'
-            })}
+          <Controller
+            control={control}
+            name="cheatFiles"
+            rules={{
+              validate: (cheatFiles) =>
+                cheatFiles?.length > 0 ||
+                'At least one .cheats file is required'
+            }}
+            render={({ field: { name, value }, fieldState: { error } }) => (
+              <DragAndDropInput
+                ariaLabel="Upload Cheats"
+                id={`${cheatsFormId}--drag-and-drop`}
+                onDrop={onDrop}
+                name={name}
+                validFileExtensions={validFileExtensions}
+                error={error?.message}
+                hideAcceptedFiles={!value?.length}
+                hideErrors={isSubmitSuccessful}
+                multiple
+              >
+                <p>
+                  Drag and drop cheat files here,
+                  <br />
+                  or click to upload files
+                </p>
+              </DragAndDropInput>
+            )}
           />
-          <BiCloudUploadLarge />
-          <p>
-            Drag and drop cheat files here,
-            <br /> or click to upload files
-          </p>
-          {errors.cheatFiles && (
-            <p>
-              Cheat files are invalid: <br /> - {errors.cheatFiles.message}
-            </p>
-          )}
-        </StyledForm>
-        <div>
-          {!!files?.length && (
-            <CenteredTextContainer>
-              <p>Files to upload:</p>
-              {files.map((file) => {
-                return (
-                  <div key={file.name}>
-                    <p>{file.name}</p>
-                  </div>
-                );
-              })}
-            </CenteredTextContainer>
-          )}
-          {hasCompletedUpload && (
+          {isSubmitSuccessful && (
             <CenteredTextContainer>
               <p>Upload complete!</p>
             </CenteredTextContainer>
           )}
-        </div>
+        </form>
       </ModalBody>
       <ModalFooter>
-        <Button form={cheatsFormId} type="submit" variant="contained">
-          Upload
-        </Button>
+        <CircleCheckButton
+          copy="Upload"
+          form={cheatsFormId}
+          showSuccess={isSubmitSuccessful}
+          type="submit"
+        />
         <Button variant="outlined" onClick={() => setIsModalOpen(false)}>
           Close
         </Button>

@@ -1,8 +1,4 @@
-import {
-  fireEvent,
-  screen,
-  waitForElementToBeRemoved
-} from '@testing-library/react';
+import { screen, waitForElementToBeRemoved } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
@@ -16,18 +12,6 @@ import { productTourLocalStorageKey } from '../product-tour/consts.tsx';
 import type { GBAEmulator } from '../../emulator/mgba/mgba-emulator.tsx';
 
 describe('<UploadRomModal />', () => {
-  it('clicks file input when drag and drop is clicked', async () => {
-    const inputClickSpy = vi.spyOn(HTMLInputElement.prototype, 'click');
-
-    renderWithContext(<UploadRomModal />);
-
-    await userEvent.click(
-      screen.getByRole('presentation', { name: 'Upload Rom' })
-    );
-
-    expect(inputClickSpy).toHaveBeenCalledOnce();
-  });
-
   it('uploads file and closes modal', async () => {
     const setIsModalOpenSpy = vi.fn();
     const uploadRomSpy: (file: File, cb?: () => void) => void = vi.fn(
@@ -61,7 +45,7 @@ describe('<UploadRomModal />', () => {
 
     renderWithContext(<UploadRomModal />);
 
-    const romInput = screen.getByTestId('romfile-hidden-input');
+    const romInput = screen.getByTestId('hidden-file-input');
 
     expect(romInput).toBeInTheDocument();
 
@@ -77,77 +61,6 @@ describe('<UploadRomModal />', () => {
     expect(runGameSpy).toHaveBeenCalledOnce();
     expect(runGameSpy).toHaveBeenCalledWith('/games/rom1.gba');
     expect(setIsModalOpenSpy).toHaveBeenCalledWith(false);
-
-    expect(screen.getByText('Upload complete!')).toBeVisible();
-    expect(screen.queryByText('File to upload:')).not.toBeInTheDocument();
-    expect(screen.queryByText('rom1.gba')).not.toBeInTheDocument();
-  });
-
-  it('uploads file with drag and drop', async () => {
-    const setIsModalOpenSpy = vi.fn();
-    const uploadRomSpy: (file: File, cb?: () => void) => void = vi.fn(
-      (_file, cb) => cb && cb()
-    );
-    const runGameSpy = vi.fn(() => true);
-
-    const {
-      useEmulatorContext: originalEmulator,
-      useModalContext: originalModal
-    } = await vi.importActual<typeof contextHooks>('../../hooks/context.tsx');
-
-    vi.spyOn(contextHooks, 'useModalContext').mockImplementation(() => ({
-      ...originalModal(),
-      setIsModalOpen: setIsModalOpenSpy
-    }));
-
-    vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
-      ...originalEmulator(),
-      emulator: {
-        uploadRom: uploadRomSpy,
-        filePaths: () => ({
-          gamePath: '/games'
-        })
-      } as GBAEmulator
-    }));
-
-    vi.spyOn(runGameHooks, 'useRunGame').mockReturnValue(runGameSpy);
-
-    const testRoms = [new File(['Some rom file contents'], 'rom1.gba')];
-    const data = {
-      dataTransfer: {
-        testRoms,
-        items: testRoms.map((file) => ({
-          kind: 'file',
-          type: file.type,
-          getAsFile: () => file
-        })),
-        types: ['Files']
-      }
-    };
-
-    renderWithContext(<UploadRomModal />);
-
-    const uploadRomForm = screen.getByRole('presentation', {
-      name: 'Upload Rom'
-    });
-
-    fireEvent.dragEnter(uploadRomForm, data);
-    fireEvent.drop(uploadRomForm, data);
-
-    expect(await screen.findByText('File to upload:')).toBeVisible();
-    expect(screen.getByText('rom1.gba')).toBeVisible();
-
-    await userEvent.click(screen.getByRole('button', { name: 'Upload' }));
-
-    expect(uploadRomSpy).toHaveBeenCalledWith(testRoms[0], expect.anything());
-
-    expect(runGameSpy).toHaveBeenCalledOnce();
-    expect(runGameSpy).toHaveBeenCalledWith('/games/rom1.gba');
-    expect(setIsModalOpenSpy).toHaveBeenCalledWith(false);
-
-    expect(screen.getByText('Upload complete!')).toBeVisible();
-    expect(screen.queryByText('File to upload:')).not.toBeInTheDocument();
-    expect(screen.queryByText('rom1.gba')).not.toBeInTheDocument();
   });
 
   it('uploads rom from external url', async () => {
@@ -183,7 +96,7 @@ describe('<UploadRomModal />', () => {
 
     renderWithContext(<UploadRomModal />);
 
-    const uploadRomFromURLInput = screen.getByLabelText('Rom URL');
+    const uploadRomFromURLInput = screen.getByLabelText('Upload from a URL');
 
     await userEvent.type(
       uploadRomFromURLInput,
@@ -205,8 +118,6 @@ describe('<UploadRomModal />', () => {
     expect(runGameSpy).toHaveBeenCalledOnce();
     expect(runGameSpy).toHaveBeenCalledWith('/games/good_rom.gba');
     expect(setIsModalOpenSpy).toHaveBeenCalledWith(false);
-
-    expect(await screen.findByText('Upload complete!')).toBeVisible();
   });
 
   it('renders external rom error', async () => {
@@ -232,7 +143,7 @@ describe('<UploadRomModal />', () => {
 
     renderWithContext(<UploadRomModal />);
 
-    const uploadRomFromURLInput = screen.getByLabelText('Rom URL');
+    const uploadRomFromURLInput = screen.getByLabelText('Upload from a URL');
 
     await userEvent.type(
       uploadRomFromURLInput,
@@ -262,43 +173,7 @@ describe('<UploadRomModal />', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Upload' }));
 
-    expect(
-      screen.getByText(/One .gba, .gbc, .gb, .zip, or .7z file is required/)
-    ).toBeVisible();
-  });
-
-  it.each([
-    ['rom1.gba', false],
-    ['rom1.gbc', false],
-    ['rom1 (1).gb', false],
-    ['rom1.zip', false],
-    ['rom1.7z', false],
-    ['rom1.sav', true],
-    ['rom1', true],
-    ['', true]
-  ])('validates input file name: %s', async (fileName, expectError) => {
-    const testRom = new File(['Some rom file contents'], fileName);
-
-    renderWithContext(<UploadRomModal />);
-
-    const romInput = screen.getByTestId('romfile-hidden-input');
-
-    expect(romInput).toBeInTheDocument();
-
-    await userEvent.upload(romInput, testRom);
-
-    expect(await screen.findByText('File to upload:')).toBeVisible();
-    if (fileName) expect(screen.getByText(fileName)).toBeVisible();
-
-    if (expectError) {
-      expect(
-        screen.getByText(/One .gba, .gbc, .gb, .zip, or .7z file is required/)
-      ).toBeVisible();
-    } else {
-      expect(
-        screen.queryByText(/One .gba, .gbc, .gb, .zip, or .7z file is required/)
-      ).not.toBeInTheDocument();
-    }
+    expect(screen.getByText(/A rom file or URL is required/)).toBeVisible();
   });
 
   it('closes modal using the close button', async () => {

@@ -1,15 +1,7 @@
-import { Button, TextField } from '@mui/material';
-import {
-  useCallback,
-  useEffect,
-  useId,
-  useRef,
-  useState,
-  type ReactNode
-} from 'react';
-import { useDropzone } from 'react-dropzone';
-import { useForm, type SubmitHandler } from 'react-hook-form';
-import { BiCloudUpload, BiError } from 'react-icons/bi';
+import { Button, Divider, TextField } from '@mui/material';
+import { useCallback, useEffect, useId, useState, type ReactNode } from 'react';
+import { useForm, Controller, type SubmitHandler } from 'react-hook-form';
+import { BiError } from 'react-icons/bi';
 import { PacmanLoader } from 'react-spinners';
 import { styled, useTheme } from 'styled-components';
 
@@ -23,44 +15,20 @@ import {
   EmbeddedProductTour,
   type TourSteps
 } from '../product-tour/embedded-product-tour.tsx';
+import { DragAndDropInput } from '../shared/drag-and-drop-input.tsx';
 import { ErrorWithIcon } from '../shared/error-with-icon.tsx';
-import { CenteredTextContainer } from '../shared/styled.tsx';
 
 type InputProps = {
   romFile: File;
   romURL: string;
 };
 
-type StyledDragAndDropProps = {
-  $isDragActive?: boolean;
-};
-
 type RomLoadingIndicatorProps = {
   isLoading: boolean;
   currentRomURL: string | null;
-  children: ReactNode[];
+  children: ReactNode;
   indicator: ReactNode;
 };
-
-const StyledDragAndDrop = styled.div<StyledDragAndDropProps>`
-  cursor: pointer;
-  border-color: ${({ theme }) => theme.blackRussian};
-  background-color: ${({ $isDragActive = false, theme }) =>
-    $isDragActive ? theme.arcticAirBlue : theme.aliceBlue2};
-  border-width: 1px;
-  border-style: dashed;
-  padding: 0.5rem;
-  text-align: center;
-`;
-
-const HiddenInput = styled.input`
-  display: none;
-`;
-
-const BiCloudUploadLarge = styled(BiCloudUpload)`
-  height: 60px;
-  width: auto;
-`;
 
 const RomLoadingContainer = styled.div`
   display: flex;
@@ -75,6 +43,8 @@ const URLDisplay = styled.p`
   word-wrap: break-word;
   max-width: 100%;
 `;
+
+const validFileExtensions = ['.gba', '.gbc', '.gb', '.zip', '.7z'];
 
 const RomLoadingIndicator = ({
   isLoading,
@@ -102,15 +72,14 @@ export const UploadRomModal = () => {
   const { emulator } = useEmulatorContext();
   const {
     register,
-    reset,
     handleSubmit,
     setValue,
+    reset,
     formState: { errors },
-    watch
+    watch,
+    control
   } = useForm<InputProps>();
-  const [hasCompletedUpload, setHasCompletedUpload] = useState(false);
   const [currentRomURL, setCurrentRomURL] = useState<string | null>(null);
-  const hiddenInputRef = useRef<HTMLInputElement>(null);
   const {
     data: externalRomFile,
     isLoading: isExternalRomLoading,
@@ -135,30 +104,22 @@ export const UploadRomModal = () => {
       };
       emulator?.uploadRom(externalRomFile, runCallback);
       setCurrentRomURL(null);
-      reset();
-      setHasCompletedUpload(true);
     }
   }, [
     shouldUploadExternalRom,
     externalRomFile,
     emulator,
-    reset,
     setIsModalOpen,
     runGame
   ]);
 
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
+      reset();
       setValue('romFile', acceptedFiles[0], { shouldValidate: true });
-      setHasCompletedUpload(false);
     },
-    [setValue]
+    [reset, setValue]
   );
-
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop,
-    multiple: false
-  });
 
   const onSubmit: SubmitHandler<InputProps> = async ({ romFile, romURL }) => {
     if (romURL) {
@@ -176,20 +137,9 @@ export const UploadRomModal = () => {
       }
     };
     emulator?.uploadRom(romFile, runCallback);
-    reset();
-    setHasCompletedUpload(true);
   };
 
-  const triggerFileInputOnClick = () => {
-    if (hiddenInputRef.current) hiddenInputRef.current.click();
-  };
-
-  const file = watch('romFile');
-
-  const validFileExtensions = ['gba', 'gbc', 'gb', 'zip', '7z'];
-
-  const validateFileName = (rom: File) =>
-    validFileExtensions.includes(rom.name.split('.').pop() ?? '');
+  const isRomFileSet = !!watch('romFile');
 
   const tourSteps: TourSteps = [
     {
@@ -201,7 +151,7 @@ export const UploadRomModal = () => {
           </p>
           <p>
             Rom files should have an extension of:{' '}
-            {validFileExtensions.map((ext) => `'.${ext}'`).join(', ')}.
+            {validFileExtensions.map((ext) => `'${ext}'`).join(', ')}.
           </p>
           <p>
             You may drop or select one rom at a time, once uploaded your game
@@ -238,82 +188,75 @@ export const UploadRomModal = () => {
             aria-label="Upload Rom Form"
             onSubmit={handleSubmit(onSubmit)}
           >
-            <StyledDragAndDrop
-              {...getRootProps({
-                id: `${uploadRomFormId}--drag-and-drop`,
-                $isDragActive: isDragActive,
-                onClick: triggerFileInputOnClick,
-                'aria-label': 'Upload Rom'
-              })}
-            >
-              <HiddenInput
-                {...getInputProps({
-                  ...register('romFile', {
-                    validate: (rom, formValues) =>
-                      !!formValues.romURL ||
-                      (!!rom && validateFileName(rom)) ||
-                      'One .gba, .gbc, .gb, .zip, or .7z file is required'
-                  }),
-                  ref: hiddenInputRef,
-                  'data-testid': 'romfile-hidden-input'
-                })}
-              />
-              <BiCloudUploadLarge />
-              <p>
-                Drag and drop a rom or zipped rom file here, or click to upload
-                a file
-              </p>
-              {file instanceof File && !!file && (
-                <CenteredTextContainer>
-                  <p>File to upload:</p>
-                  <p>{file.name}</p>
-                </CenteredTextContainer>
+            <Controller
+              control={control}
+              name="romFile"
+              rules={{
+                validate: (rom, formValues) =>
+                  !!formValues.romURL ||
+                  !!rom ||
+                  'A rom file or URL is required'
+              }}
+              render={({ field: { name }, fieldState: { error } }) => (
+                <DragAndDropInput
+                  ariaLabel="Upload Rom"
+                  id={`${uploadRomFormId}--drag-and-drop`}
+                  onDrop={onDrop}
+                  name={name}
+                  validFileExtensions={validFileExtensions}
+                  hideErrors={!!error}
+                >
+                  <p>
+                    Drag and drop a rom or zipped rom file here, or click to
+                    upload a file
+                  </p>
+                </DragAndDropInput>
               )}
-              {errors.romFile && (
-                <p>
-                  Rom file is invalid: <br /> - {errors.romFile.message}
-                </p>
-              )}
-            </StyledDragAndDrop>
-            <p>Or upload from a URL:</p>
-            <TextField
-              id={`${uploadRomFormId}--rom-url`}
-              error={!!errors?.romURL}
-              label="Rom URL"
-              size="small"
-              autoComplete="romURL"
-              variant="filled"
-              helperText={errors?.romURL?.message}
-              aria-label="Upload Rom From URL"
-              fullWidth
-              {...register('romURL', {
-                validate: (romURL, formValues) => {
-                  if (!romURL) return true;
-
-                  if (formValues.romFile)
-                    return 'Cannot specify both a file and a URL';
-
-                  try {
-                    new URL(romURL);
-                    return true;
-                  } catch (err) {
-                    return 'Invalid URL';
-                  }
-                }
-              })}
             />
-            {!!externalRomLoadError && (
+            {!isRomFileSet && (
+              <>
+                <Divider sx={{ padding: '10px 0' }}>or</Divider>
+                <TextField
+                  id={`${uploadRomFormId}--rom-url`}
+                  error={!!errors?.romURL}
+                  label="Upload from a URL"
+                  size="small"
+                  autoComplete="romURL"
+                  variant="filled"
+                  helperText={errors?.romURL?.message}
+                  aria-label="Upload Rom From URL"
+                  fullWidth
+                  {...register('romURL', {
+                    validate: (romURL, formValues) => {
+                      if (!romURL) return true;
+
+                      if (formValues.romFile)
+                        return 'Cannot specify both a file and a URL';
+
+                      try {
+                        new URL(romURL);
+                        return true;
+                      } catch (err) {
+                        return 'Invalid URL';
+                      }
+                    }
+                  })}
+                />
+                {!!externalRomLoadError && (
+                  <ErrorWithIcon
+                    icon={<BiError style={{ color: theme.errorRed }} />}
+                    text="Loading rom from URL has failed"
+                  />
+                )}
+              </>
+            )}
+            {errors.romFile?.message && (
               <ErrorWithIcon
                 icon={<BiError style={{ color: theme.errorRed }} />}
-                text="Loading rom from URL has failed"
+                text={errors.romFile.message}
               />
             )}
           </form>
-          {hasCompletedUpload && (
-            <CenteredTextContainer>
-              <p>Upload complete!</p>
-            </CenteredTextContainer>
-          )}
         </RomLoadingIndicator>
       </ModalBody>
       <ModalFooter>
