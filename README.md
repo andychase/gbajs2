@@ -68,54 +68,70 @@ Do not attempt to log into the server unless you are the server owner or an appr
 * Local builds require [docker](https://www.docker.com)
 
 * From the project root, navigate to the `docker` directory:
-```
-cd ./docker
-```
+    ```
+    cd ./docker;
+    ```
 
 * Copy the `.env.example` for local builds:
-```
-cp .env.example .env
-```
+    ```
+    cp .env.example .env;
+    ```
 
 * This will generate a `.env` file of the format:
-```
-# gbajs3
-ROM_PATH=./<local-server-rom-path>/
-SAVE_PATH=./<local-server-save-path>/
-CLIENT_HOST=https://<your-client-location>
-CERT_LOC=./<path to your certificate>
-KEY_LOC=./<path to your key>
+    ```
+    # gbajs3
+    ROM_PATH=./<local server rom path>/
+    SAVE_PATH=./<local server save path>/
+    CLIENT_HOST=https://<your client location>
+    CERT_DIR=./<path to your certificate root directory>
+    CERT_LOC=./<path to your certificate>
+    KEY_LOC=./<path to your key>
 
-# admin
-ADMIN_APP_ID=<your unique alphanumeric app id>
+    # admin
+    ADMIN_APP_ID=<your unique alphanumeric app id>
 
-# postgres
-PG_DB_HOST=<database host>
-PG_DB_USER=<databse user>
-PG_DB_PASSWORD=<databse user password>
-GBAJS_DB_NAME=<your gbajs3 database name, default `gbajs3`>
-ADMIN_DB_NAME=<your goadmin database name, default `goadmin`>
-PG_DB_PORT=<postgres db port, default 5432>
-PG_SSL_MODE=<pg ssl mode>
-PG_DATA_LOCATION=./<path to postgres persistent mount point>
-```
+    # postgres
+    PG_DB_HOST=<database host>
+    PG_DB_USER=<databse user>
+    PG_DB_PASSWORD=<databse user password>
+    GBAJS_DB_NAME=<your gbajs3 database name, default `gbajs3`>
+    ADMIN_DB_NAME=<your goadmin database name, default `goadmin`>
+    PG_DB_PORT=<postgres db port, default 5432>
+    PG_SSL_MODE=<pg ssl mode>
+    PG_DATA_LOCATION=./<path to postgres persistent bind mount point>
+    ```
 
-* Source this env file to get easy access to the default certificate paths:
-```
-source ./.env
-```
+    Leaving all default values in place will work for local development.
+
+* Source this env file to get easy access to the default paths:
+    ```
+    source ./.env;
+    ```
+
+* Create configuration paths if they don't yet exist:
+    ```
+    mkdir $ROM_PATH;
+    mkdir $SAVE_PATH;
+    mkdir $CERT_DIR;
+    ```
+
+    The database mount directory will be created by the container with the correct permissions for your user.
 
 * Generate test SSL certificates using your desired mechanism and move them to the default locations:
 
-Ex. [openssl](https://formulae.brew.sh/formula/openssl@1.1)
-```
-openssl req -x509 -sha256 -nodes -days 365 -newkey rsa:2048 -keyout $KEY_LOC -out $CERT_LOC
-```
+    Ex. [openssl](https://formulae.brew.sh/formula/openssl@1.1)
+    ```
+    openssl req -x509 -sha256 -nodes -days 365 -newkey rsa:2048 -keyout $KEY_LOC -out $CERT_LOC;
+    ``` 
+
+* If your developing on a mac, you will need to share the bind mount location(s) manually, and ensure they have the correct permissions
+
+    These settings are located in `Settings -> Resources -> File Sharing`
 
 * Build and run the docker containers:
-```
-docker compose up --build
-``` 
+    ```
+    docker compose up --build;
+    ``` 
 
 * Once docker has created the containers, the web server will be available at https://localhost
 
