@@ -25,17 +25,21 @@ func GetUsersTable(ctx *context.Context) table.Table {
 	info.SetTable("users").SetTitle("gbajs3 users").SetDescription("gbajs3 users")
 
 	formList := users.GetForm()
-	formList.AddField("Username", "username", db.Text, form.Text)
-	formList.AddField("Password", "password", db.Text, form.Password).
-		FieldHideWhenUpdate()
-	formList.AddField("Password Confirm", "password_confirm", db.Text, form.Password).
-		FieldHideWhenUpdate()
+	formList.AddField("Username", "username", db.Text, form.Text).FieldMust()
+	formList.AddField("Password", "password", db.Text, form.Password)
+	formList.AddField("Password Confirm", "password_confirm", db.Text, form.Password)
+	// pass_has is is a pass through only field
+	formList.AddField("pass_hash", "pass_hash", db.Binary, form.Text).FieldHide()
 
 	formList.SetTable("users").SetTitle("gbajs3 users").SetDescription("gbajs3 users")
 
 	formList.SetPostValidator(func(values form2.Values) error {
-		if values.IsEmpty("username", "password", "password_confirm") {
-			return errors.New("username and password can not be empty")
+		if values.IsEmpty("username") {
+			return errors.New("username cannot be empty")
+		}
+
+		if values.IsInsertPost() && values.IsEmpty("password", "password_confirm") {
+			return errors.New("password cannot be empty")
 		}
 
 		password := values.Get("password")
@@ -49,9 +53,10 @@ func GetUsersTable(ctx *context.Context) table.Table {
 
 	formList.SetPreProcessFn(func(values form2.Values) form2.Values {
 		password := values.Get("password")
-		pass_hash := encodePassword([]byte(password))
-
-		values.Add("pass_hash", pass_hash)
+		if password != "" {
+			pass_hash := encodePassword([]byte(password))
+			values.Add("pass_hash", pass_hash)
+		}
 
 		return values
 	})
