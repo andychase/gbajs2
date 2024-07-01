@@ -1,7 +1,7 @@
 # first stage - builder
 FROM golang:alpine as builder
 WORKDIR /app/
-COPY ./server/auth /app/
+COPY . /app/
 ENV GO111MODULE=on
 RUN go mod download
 RUN CGO_ENABLED=0 GOOS=linux go build -a -ldflags '-w -s' -o authserver

@@ -1,10 +1,8 @@
-/**/*.md
-/**/.prettierrc
-/**/Dockerfile
 /**/docker-compose.yaml
 /**/docker-compose.yml
-/**/nginx.conf
-/**/docker/server/auth/**/*
-/**/docker/server/admin/**/*
+/**/Dockerfile
 /**/mgba.js
 /**/mgba.wasm
+/**/nginx.conf
+/admin/**/*
+/auth/**/*

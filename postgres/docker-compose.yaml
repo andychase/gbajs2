@@ -1,0 +1,24 @@
+services:
+    gba-postgres:
+        image: gba-postgres
+        logging:
+            options:
+                max-size: '20m'
+                max-file: '3'
+            driver: json-file
+        build:
+            context: ${SERVICE_POSTGRES:-.}
+            args:
+                PG_DB_USER: ${PG_DB_USER}
+        environment:
+            POSTGRES_USER: ${PG_DB_USER}
+            POSTGRES_PASSWORD: ${PG_DB_PASSWORD}
+            POSTGRES_DB: ${ADMIN_DB_NAME} # todo reevaluate if this is needed
+        command: postgres
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -q -U ${PG_DB_USER} -d ${ADMIN_DB_NAME} -h ${PG_DB_HOST}"]
+            interval: 10s
+            timeout: 5s
+            retries: 12
+        volumes:
+            - ${PG_DATA_LOCATION}:/var/lib/postgresql/data

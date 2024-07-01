@@ -1,0 +1,23 @@
+services:
+    gba-auth-server:
+        image: gba-auth-server
+        logging:
+            options:
+                max-size: '20m'
+                max-file: '3'
+            driver: json-file
+        build:
+            context: ${SERVICE_AUTH:-.}
+        environment:
+            - CLIENT_HOST=${CLIENT_HOST}
+            - PG_DB_HOST=${PG_DB_HOST}
+            - PG_DB_USER=${PG_DB_USER}
+            - PG_DB_PASSWORD=${PG_DB_PASSWORD}
+            - PG_DB_NAME=${GBAJS_DB_NAME}
+            - PG_DB_PORT=${PG_DB_PORT}
+            - PG_SSL_MODE=${PG_SSL_MODE}
+        volumes:
+            - ${ROM_PATH}:/app/data/local_roms
+            - ${SAVE_PATH}:/app/data/local_saves
+            - ${CERT_LOC}:/app/certs/fullchain.pem
+            - ${KEY_LOC}:/app/certs/privkey.pem

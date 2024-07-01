@@ -1,0 +1,23 @@
+services:
+    gba-admin-server:
+        image: gba-admin-server
+        logging:
+            options:
+                max-size: '20m'
+                max-file: '3'
+            driver: json-file
+        build:
+            context: ${SERVICE_ADMIN:-.}
+        environment:
+            - CLIENT_HOST=${CLIENT_HOST}
+            - APP_ID=${ADMIN_APP_ID}
+            - PG_DB_HOST=${PG_DB_HOST}
+            - PG_DB_USER=${PG_DB_USER}
+            - PG_DB_PASSWORD=${PG_DB_PASSWORD}
+            - GBAJS_DB_NAME=${GBAJS_DB_NAME}
+            - ADMIN_DB_NAME=${ADMIN_DB_NAME}
+            - PG_DB_PORT=${PG_DB_PORT}
+            - PG_SSL_MODE=${PG_SSL_MODE}
+        volumes:
+            - ${CERT_LOC}:/app/certs/fullchain.pem
+            - ${KEY_LOC}:/app/certs/privkey.pem

@@ -1,0 +1,13 @@
+services:
+    gba-auth-server:
+        depends_on:
+            gba-postgres:
+                condition: service_healthy
+    gba-admin-server:
+        depends_on:
+            gba-postgres:
+                condition: service_healthy
+    gba-webserver:
+        depends_on:
+            - gba-auth-server
+            - gba-admin-server

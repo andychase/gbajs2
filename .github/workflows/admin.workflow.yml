@@ -8,13 +8,13 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./docker/server/admin
+        working-directory: admin
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          sparse-checkout: docker/server/admin
+          sparse-checkout: admin
           sparse-checkout-cone-mode: false
 
       - name: Setup Go
@@ -22,7 +22,7 @@ jobs:
         with:
           go-version: 'stable'
           check-latest: true
-          cache-dependency-path: docker/server/admin/go.sum
+          cache-dependency-path: admin/go.sum
 
       - name: Format
         run: if [ "$(gofmt -s -l . | wc -l)" -gt 0 ]; then exit 1; fi

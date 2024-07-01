@@ -1,5 +1,4 @@
-gbajs3 -- A Browser Based Game Boy Advance Emulator
-======
+# gbajs3 -- A Browser Based Game Boy Advance Emulator
 
 This project is a Game Boy Advance emulator that is freely licensed and works in any modern browser without plugins.
 
@@ -9,144 +8,127 @@ This project was driven specifically by a need to play modern GBA rom hacks outs
 
 Use it online! <https://gba.nicholas-vancise.dev>
 
-Note: legacy features are still available in the [v1 link](https://gba.nicholas-vancise.dev/v1/), you may need to clear your cookies to use v1.
-
 Do not attempt to log into the server unless you are the server owner or an approved user, your IP may be banned.
 
 ## New Feature List
-* Golang server for logged-in user support
-* Nginx server for gbajs3 content
-* Fast Forward
-* Re-mappable Keyboard Bindings
-* Virtual Controls (Desktop/Mobile)
-* Movable desktop canvas and controls
-* Mobile UI support
-* Offline PWA Support
-* ~~Functional Surface-level ASM debugger (gbajs only)~~ (available in legacy v1)
-* Save state support
-* Cheat code support
-* Core Support
-    * mGBA support (wasm based)
-    * ~~gbajs support (pure javascript)~~ (available in legacy v1)
-* Admin UI
-* Postgres support
-* Persistent file system utilizing IndexedDB
-* Interactive Product Tour
+
+- Golang server for logged-in user support
+- Nginx server for gbajs3 content
+- Fast Forward
+- Re-mappable Keyboard Bindings
+- Virtual Controls (Desktop/Mobile)
+- Movable desktop canvas and controls
+- Mobile UI support
+- Offline PWA Support
+- Save state support
+- Cheat code support
+- Core Support
+  - mGBA support (wasm based)
+- Admin UI
+- Postgres support
+- Persistent file system utilizing IndexedDB
+- Interactive Product Tour
 
 ## Existing Feature List
+
 - Both cores support realtime clock
 - For additional mGBA features and information:
-    - [compatibility list](https://wiki.gbatemp.net/wiki/MGBA)
-    - [mGBA wasm fork Readme](https://github.com/thenick775/mgba/tree/feature/wasm)
-    - [official mGBA Readme](https://github.com/mgba-emu/mgba)
-- ~~For additional gbajs2 features and information:~~ (available in legacy v1)
-    - ~~[Compatibility](https://github.com/andychase/gbajs2/wiki/Compatibility-List)~~
-    - ~~[Emulator features](https://github.com/andychase/gbajs2)~~
+  - [compatibility list](https://wiki.gbatemp.net/wiki/MGBA)
+  - [mGBA wasm fork Readme](https://github.com/thenick775/mgba/tree/feature/wasm)
+  - [official mGBA Readme](https://github.com/mgba-emu/mgba)
 
 ## To Do
-* Debugger enhancements
-* Server enhancements
-    - request an account feature suite
-    - s3 backed file storage
-* SkyEmu secondary core (tentative)
+
+- Debugger enhancements
+- Server enhancements
+  - request an account feature suite
+  - s3 backed file storage
+- SkyEmu secondary core (tentative)
 
 ## Sample Screenshots
 
-* Example Desktop
+- Example Desktop
 
 <img src="./readme-graphics/gbajs3-desktop-v3.png">
 
-* Example Mobile
+- Example Mobile
 
 <img src="./readme-graphics/gbajs3-mobile-portrait-v3.png" width="400px">
 
-* Example Admin
+- Example Admin
 
 <img src="./readme-graphics/admin-desktop.png">
 
 ## Getting Started
-* Local builds require [docker](https://www.docker.com)
 
-* From the project root, navigate to the `docker` directory:
-    ```
-    cd ./docker;
-    ```
+- Local builds require [docker](https://www.docker.com)
 
-* Copy the `.env.example` for local builds:
-    ```
-    cp .env.example .env;
-    ```
+- Run the bootstrap script and follow the interactive prompts:
 
-* This will generate a `.env` file of the format:
-    ```
-    # gbajs3
-    ROM_PATH=./<local server rom path>/
-    SAVE_PATH=./<local server save path>/
-    CLIENT_HOST=https://<your client location>
-    CERT_DIR=./<path to your certificate root directory>
-    CERT_LOC=./<path to your certificate>
-    KEY_LOC=./<path to your key>
+  ```
+  ./bin/boostrap.sh;
+  ```
 
-    # admin
-    ADMIN_APP_ID=<your unique alphanumeric app id>
+- The bootstrap script will do the following:
 
-    # postgres
-    PG_DB_HOST=<database host>
-    PG_DB_USER=<databse user>
-    PG_DB_PASSWORD=<databse user password>
-    GBAJS_DB_NAME=<your gbajs3 database name, default `gbajs3`>
-    ADMIN_DB_NAME=<your goadmin database name, default `goadmin`>
-    PG_DB_PORT=<postgres db port, default 5432>
-    PG_SSL_MODE=<pg ssl mode>
-    PG_DATA_LOCATION=./<path to postgres persistent bind mount point>
-    ```
+  - copy env files from the examples in all directories
+  - create default local directories
+    - note: the database mount directory will be created by the container with the correct permissions
+  - generate a local test ssl certificate pair
 
-    Leaving all default values in place will work for local development.
+- This script will generate a top level `.env` file of the following format merging all service specific env files:
 
-* Source this env file to get easy access to the default paths:
-    ```
-    source ./.env;
-    ```
+  ```
+  # gbajs3
+  ROM_PATH=./<local server rom path>/
+  SAVE_PATH=./<local server save path>/
+  CLIENT_HOST=https://<your client location>
+  CERT_DIR=./<path to your certificate root directory>
+  CERT_LOC=./<path to your certificate>
+  KEY_LOC=./<path to your key>
 
-* Create configuration paths if they don't yet exist:
-    ```
-    mkdir $ROM_PATH;
-    mkdir $SAVE_PATH;
-    mkdir $CERT_DIR;
-    ```
+  # admin
+  ADMIN_APP_ID=<your unique alphanumeric app id>
 
-    The database mount directory will be created by the container with the correct permissions for your user.
+  # postgres
+  PG_DB_HOST=<database host>
+  PG_DB_USER=<database user>
+  PG_DB_PASSWORD=<database user password>
+  GBAJS_DB_NAME=<your gbajs3 database name, default `gbajs3`>
+  ADMIN_DB_NAME=<your goadmin database name, default `goadmin`>
+  PG_DB_PORT=<postgres db port, default 5432>
+  PG_SSL_MODE=<pg ssl mode>
+  PG_DATA_LOCATION=./<path to postgres persistent bind mount point>
+  ```
 
-* Generate test SSL certificates using your desired mechanism and move them to the default locations:
+  Leaving all default values in place will work for local development.
 
-    Ex. [openssl](https://formulae.brew.sh/formula/openssl@1.1)
-    ```
-    openssl req -x509 -sha256 -nodes -days 365 -newkey rsa:2048 -keyout $KEY_LOC -out $CERT_LOC;
-    ``` 
+- If your developing on a mac, you will need to share the bind mount location(s) manually, and ensure they have the correct permissions
 
-* If your developing on a mac, you will need to share the bind mount location(s) manually, and ensure they have the correct permissions
+  These settings are located in `Settings -> Resources -> File Sharing`
 
-    These settings are located in `Settings -> Resources -> File Sharing`
+- Build and run the docker containers:
 
-* Build and run the docker containers:
-    ```
-    docker compose up --build;
-    ``` 
+  ```
+  docker compose up;
+  ```
 
-* Once docker has created the containers, the web server will be available at https://localhost
+- Once docker has created the containers, the web server will be available at https://localhost
 
-* The Admin UI can be found at https://localhost/admin
-    * The default password for all admin users is `admin`, **please log in to the admin portal and change the default passwords immediately**
+- The Admin UI can be found at https://localhost/admin
 
-* Golang api swagger UI can be found at https://localhost/api/documentation/
+  - The default password for all admin users is `admin`, **please log in to the admin portal and change the default passwords immediately**
 
-* To run each service individually without docker, see the nested READMEs under `./docker/server/`
+- Golang api swagger UI can be found at https://localhost/api/documentation/
+
+- To run each service individually, with or without docker, see the nested READMEs under each top level service directory
 
 ## Contributing
 
 Feel free to open discussions, issues, and pull requests. Contributions are welcome!
 
 ## License
+
 Original work by Endrift. Repo: (Archived / No longer maintained)
 https://github.com/endrift/gbajs
 Copyright © 2012 – 2013, Jeffrey Pfau
@@ -157,7 +139,7 @@ mGBA is Copyright © 2013 – 2018 Jeffrey Pfau. It is distributed under the [Mo
 
 Original work by andychase. Repo: (gbajs2 base)
 https://github.com/andychase/gbajs2
-Copyright © 2020, Andrew Chase 
+Copyright © 2020, Andrew Chase
 
 Copyright © 2022 - 2023, Nicholas VanCise
 
@@ -166,10 +148,10 @@ All rights reserved.
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
 
-* Redistributions of source code must retain the above copyright notice, this
+- Redistributions of source code must retain the above copyright notice, this
   list of conditions and the following disclaimer.
 
-* Redistributions in binary form must reproduce the above copyright notice,
+- Redistributions in binary form must reproduce the above copyright notice,
   this list of conditions and the following disclaimer in the documentation
   and/or other materials provided with the distribution.
 

@@ -22,9 +22,9 @@ jobs:
         with:
           filters: |
             admin:
-              - 'docker/server/admin/**'
+              - 'admin/**'
             auth:
-              - 'docker/server/auth/**'
+              - 'auth/**'
             gbajs3:
               - 'gbajs3/**'
 

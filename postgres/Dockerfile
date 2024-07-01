@@ -3,8 +3,8 @@ FROM postgres:15.2-alpine
 # copy the initialization script to the container,
 # this will create the go-admin db structure as
 # well as initialize gbajs3 specific content
-COPY ./server/postgres/init_admin_db.sql /docker-entrypoint-initdb.d/
-COPY ./server/postgres/init_gbajs3_db.sql /docker-entrypoint-initdb.d/
+COPY ./init_admin_db.sql /docker-entrypoint-initdb.d/
+COPY ./init_gbajs3_db.sql /docker-entrypoint-initdb.d/
 
 # replace env vars (sql)
 ARG PG_DB_USER

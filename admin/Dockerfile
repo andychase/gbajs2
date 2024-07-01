@@ -1,7 +1,7 @@
 # first stage - builder
 FROM golang:alpine as builder
 WORKDIR /app/
-COPY ./server/admin /app/
+COPY . /app/
 RUN apk update && apk add make
 ENV GO111MODULE=on
 RUN go mod download
