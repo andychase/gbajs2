@@ -42,7 +42,7 @@ type KeyState = {
   RIGHT?: number;
 };
 
-const BackgroundContainer = styled.div<BackgroundContainerProps>`
+const BackgroundContainer = styled.section<BackgroundContainerProps>`
   position: absolute;
   background-color: red;
   border-radius: 50%;
