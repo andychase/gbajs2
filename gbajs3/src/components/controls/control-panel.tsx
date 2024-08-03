@@ -263,10 +263,12 @@ export const ControlPanel = () => {
   const isControlled = !!layouts?.controlPanel?.size || isResizing;
 
   const togglePlay = () => {
-    if (isRunning) {
-      isPaused ? emulator?.resume() : emulator?.pause();
-      setIsPaused((prevState) => !prevState);
-    }
+    if (!isRunning) return;
+
+    if (isPaused) emulator?.resume();
+    else emulator?.pause();
+
+    setIsPaused((prevState) => !prevState);
   };
 
   const setVolume = (volumePercent: number) => {

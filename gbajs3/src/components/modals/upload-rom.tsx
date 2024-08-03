@@ -236,7 +236,7 @@ export const UploadRomModal = () => {
                       try {
                         new URL(romURL);
                         return true;
-                      } catch (err) {
+                      } catch {
                         return 'Invalid URL';
                       }
                     }

@@ -239,9 +239,9 @@ export const NavigationMenu = () => {
               $disabled={!isRunning}
               icon={<BiScreenshot />}
               onClick={() => {
-                emulator?.screenshot()
-                  ? toast.success('Screenshot saved successfully')
-                  : toast.error('Screenshot has failed');
+                if (emulator?.screenshot())
+                  toast.success('Screenshot saved successfully');
+                else toast.error('Screenshot has failed');
               }}
             />
             <NavLeaf
