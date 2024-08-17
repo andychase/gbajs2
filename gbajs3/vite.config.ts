@@ -119,6 +119,7 @@ export default defineConfig({
     setupFiles: ['./test/setup.ts', 'jest-styled-components'],
     coverage: {
       provider: 'v8',
+      include: ['src'],
       exclude: [
         'test/**',
         'src/emulator/mgba/wasm/**',
