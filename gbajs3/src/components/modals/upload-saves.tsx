@@ -56,6 +56,7 @@ export const UploadSavesModal = () => {
             Use this area to drag and drop your save or save state files, or
             click to select files.
           </p>
+          <p>The name of your files must match the name of your rom.</p>
           <p>
             Save and save state files should have an extension '.sav' or start
             with '.ss'.

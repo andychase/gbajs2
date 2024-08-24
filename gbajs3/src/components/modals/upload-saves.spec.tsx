@@ -148,6 +148,11 @@ describe('<UploadSavesModal />', () => {
     ).toBeInTheDocument();
     expect(
       await screen.findByText(
+        'The name of your files must match the name of your rom.'
+      )
+    ).toBeInTheDocument();
+    expect(
+      await screen.findByText(
         "Save and save state files should have an extension '.sav' or start with '.ss'."
       )
     ).toBeInTheDocument();
@@ -163,6 +168,11 @@ describe('<UploadSavesModal />', () => {
     expect(
       screen.getByText(
         'Use this area to drag and drop your save or save state files, or click to select files.'
+      )
+    ).toBeVisible();
+    expect(
+      await screen.findByText(
+        'The name of your files must match the name of your rom.'
       )
     ).toBeVisible();
     expect(
