@@ -76,7 +76,7 @@ Do not attempt to log into the server unless you are the server owner or an appr
     - note: the database mount directory will be created by the container with the correct permissions
   - generate a local test ssl certificate pair
 
-- This script will generate a top level `.env` file of the following format merging all service specific env files:
+- This script will also generate a top level `.env` file of the following format, merging all service specific env files and additional docker config:
 
   ```
   # gbajs3
@@ -99,6 +99,14 @@ Do not attempt to log into the server unless you are the server owner or an appr
   PG_DB_PORT=<postgres db port, default 5432>
   PG_SSL_MODE=<pg ssl mode>
   PG_DATA_LOCATION=./<path to postgres persistent bind mount point>
+
+  # compose for merging yaml definitions
+  COMPOSE_FILE_SEPARATOR=:
+  COMPOSE_FILE=<colon separated list of compose files to merge>
+  SERVICE_POSTGRES=<relative path of postgres service>
+  SERVICE_GBAJS3=<relative path of gbajs3 service>
+  SERVICE_AUTH=<relative path of auth service>
+  SERVICE_ADMIN=<relative path of admin service>
   ```
 
   Leaving all default values in place will work for local development.
