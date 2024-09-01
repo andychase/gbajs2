@@ -1,5 +1,6 @@
 /// <reference types="vitest" />
 import { defineConfig } from 'vite';
+import { coverageConfigDefaults } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 import { visualizer } from 'rollup-plugin-visualizer';
@@ -121,6 +122,7 @@ export default defineConfig({
       provider: 'v8',
       include: ['src'],
       exclude: [
+        ...coverageConfigDefaults.exclude,
         'test/**',
         'src/emulator/mgba/wasm/**',
         '**/*.d.ts',
