@@ -3,7 +3,7 @@
 exports[`close: matches snapshot 1`] = `
 <svg
   aria-hidden="true"
-  class="MuiSvgIcon-root MuiSvgIcon-fontSizeInherit close css-1vooibu-MuiSvgIcon-root"
+  class="MuiSvgIcon-root MuiSvgIcon-fontSizeInherit close css-1lzspe0-MuiSvgIcon-root"
   data-testid="action-box:close"
   focusable="false"
   style="width: 14px; height: 14px;"
@@ -18,7 +18,7 @@ exports[`close: matches snapshot 1`] = `
 exports[`minus: matches snapshot 1`] = `
 <svg
   aria-hidden="true"
-  class="MuiSvgIcon-root MuiSvgIcon-fontSizeInherit minus css-1vooibu-MuiSvgIcon-root"
+  class="MuiSvgIcon-root MuiSvgIcon-fontSizeInherit minus css-1lzspe0-MuiSvgIcon-root"
   data-testid="action-box:minus"
   focusable="false"
   style="width: 14px; height: 14px;"
@@ -33,7 +33,7 @@ exports[`minus: matches snapshot 1`] = `
 exports[`plus: matches snapshot 1`] = `
 <svg
   aria-hidden="true"
-  class="MuiSvgIcon-root MuiSvgIcon-fontSizeInherit plus css-1vooibu-MuiSvgIcon-root"
+  class="MuiSvgIcon-root MuiSvgIcon-fontSizeInherit plus css-1lzspe0-MuiSvgIcon-root"
   data-testid="action-box:plus"
   focusable="false"
   style="width: 14px; height: 14px;"

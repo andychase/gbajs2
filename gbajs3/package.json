@@ -15,7 +15,7 @@
   "dependencies": {
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
-    "@mui/material": "^5.13.6",
+    "@mui/material": "^6.0.2",
     "@mui/x-tree-view": "^7.0.0",
     "@uidotdev/usehooks": "^2.4.1",
     "jwt-decode": "^4.0.0",
@@ -57,7 +57,7 @@
     "eslint-plugin-styled-components-a11y": "^2.1.31",
     "eslint-plugin-testing-library": "^6.2.0",
     "jest-styled-components": "^7.2.0",
-    "jsdom": "^24.0.0",
+    "jsdom": "^25.0.0",
     "msw": "^2.0.14",
     "rollup-plugin-visualizer": "^5.9.2",
     "typescript": "^5.1.3",
