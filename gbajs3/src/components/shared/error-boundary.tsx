@@ -97,7 +97,7 @@ const fallbackRender = ({
             Font by NACreative
           </AttributionLink>
         </ImageWrapper>
-        <pre style={{ color: 'red' }}>{error.message}</pre>
+        <p style={{ color: 'red' }}>{error.message}</p>
         <p>
           Please use the buttons below to copy the stack trace and create an
           issue, this helps a lot with error reporting!
