@@ -1,4 +1,5 @@
 import type {
+  coreCallbacks,
   filePaths,
   mGBAEmulator as mGBAEmulatorTypeDef
 } from './wasm/mgba.js';
@@ -26,6 +27,7 @@ export type ParsedCheats = {
 };
 
 export type GBAEmulator = {
+  addCoreCallbacks: (coreCallbacks: coreCallbacks) => void;
   autoLoadCheats: () => boolean;
   createSaveState: (slot: number) => boolean;
   defaultKeyBindings: () => KeyBinding[];
@@ -193,6 +195,7 @@ export const mGBAEmulator = (mGBA: mGBAEmulatorTypeDef): GBAEmulator => {
   };
 
   return {
+    addCoreCallbacks: mGBA.addCoreCallbacks,
     autoLoadCheats: mGBA.autoLoadCheats,
     createSaveState: mGBA.saveState,
     // note: this solution will not be accurate for all keyboard types

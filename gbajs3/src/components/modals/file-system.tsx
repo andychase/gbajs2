@@ -1,15 +1,9 @@
-import { Button, IconButton } from '@mui/material';
-import { alpha, styled as muiStyled } from '@mui/material/styles';
-import {
-  SimpleTreeView,
-  TreeItem2,
-  treeItemClasses,
-  type TreeItem2Props
-} from '@mui/x-tree-view';
+import { Button } from '@mui/material';
 import { useCallback, useId, useState } from 'react';
-import { BiCloudDownload, BiTrash } from 'react-icons/bi';
 import { styled } from 'styled-components';
 
+import { EmulatorFileSystem } from './file-system/emulator-file-system.tsx';
+import { FileSystemOptionsForm } from './file-system/file-system-options-form.tsx';
 import { ModalBody } from './modal-body.tsx';
 import { ModalFooter } from './modal-footer.tsx';
 import { ModalHeader } from './modal-header.tsx';
@@ -18,126 +12,15 @@ import {
   EmbeddedProductTour,
   type TourSteps
 } from '../product-tour/embedded-product-tour.tsx';
-import {
-  CloseSquare,
-  PlusSquare,
-  MinusSquare
-} from '../shared/action-box-icons.tsx';
 import { CircleCheckButton } from '../shared/circle-check-button.tsx';
 
 import type { FileNode } from '../../emulator/mgba/mgba-emulator.tsx';
 
-type EmulatorFSProps = {
-  id: string;
-  allFiles?: FileNode;
-  deleteFile: (path: string) => void;
-  downloadFile: (path: string) => void;
-};
-
-const StyledTreeItem = muiStyled((props: TreeItem2Props) => (
-  <TreeItem2 {...props} />
-))(({ theme }) => ({
-  marginTop: 5,
-  // note: using mui theme here
-  [`& .${treeItemClasses.iconContainer}`]: {
-    '& .close': {
-      opacity: 0.3
-    }
-  },
-  [`& .${treeItemClasses.groupTransition}`]: {
-    marginLeft: 15,
-    paddingLeft: 10,
-    borderLeft: `1px dashed ${alpha(theme.palette.text.primary, 0.4)}`
-  },
-  [`& .${treeItemClasses.content}`]: {
-    width: 'auto',
-    alignItems: 'baseline'
-  }
-}));
-
-const LeafLabelWrapper = styled.div`
+const FlexModalBody = styled(ModalBody)`
   display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  align-items: center;
-  justify-content: space-between;
-
-  > p {
-    margin: 0;
-    word-wrap: break-word;
-    max-width: 100%;
-  }
+  flex-direction: column;
+  gap: 1em;
 `;
-
-const IconSeparator = styled.div`
-  display: flex;
-  gap: 15px;
-`;
-
-const EmulatorFS = ({
-  id,
-  allFiles,
-  deleteFile,
-  downloadFile
-}: EmulatorFSProps) => {
-  if (!allFiles) return null;
-
-  const renderTree = (node: FileNode) => {
-    const nodeName = node.path.split('/').pop();
-
-    const leafLabelNode = (
-      <LeafLabelWrapper>
-        <p>{nodeName}</p>
-        <IconSeparator>
-          <IconButton
-            aria-label={`Download ${nodeName}`}
-            sx={{ padding: 0, margin: 0 }}
-            onClick={() => downloadFile(node.path)}
-          >
-            <BiCloudDownload />
-          </IconButton>
-          <IconButton
-            aria-label={`Delete ${nodeName}`}
-            sx={{ padding: 0 }}
-            onClick={() => deleteFile(node.path)}
-          >
-            <BiTrash />
-          </IconButton>
-        </IconSeparator>
-      </LeafLabelWrapper>
-    );
-
-    return (
-      <StyledTreeItem
-        key={node.path}
-        itemId={node.path}
-        label={node.isDir ? nodeName : leafLabelNode}
-      >
-        {node.isDir && !!node.children
-          ? node.children.map((node) => {
-              return renderTree(node);
-            })
-          : null}
-      </StyledTreeItem>
-    );
-  };
-
-  return (
-    <SimpleTreeView
-      id={id}
-      aria-label="File System"
-      defaultExpandedItems={[allFiles.path]}
-      slots={{
-        collapseIcon: MinusSquare,
-        endIcon: CloseSquare,
-        expandIcon: PlusSquare
-      }}
-      sx={{ minHeight: 264 }}
-    >
-      {renderTree(allFiles)}
-    </SimpleTreeView>
-  );
-};
 
 export const FileSystemModal = () => {
   const { setIsModalOpen } = useModalContext();
@@ -186,7 +69,16 @@ export const FileSystemModal = () => {
           </p>
         </>
       ),
-      target: `#${CSS.escape(`${baseId}--emulator-fs`)}`
+      target: `#${CSS.escape(`${baseId}--emulator-file-system`)}`
+    },
+    {
+      content: (
+        <p>
+          Click the <i>Options</i> label to adjust and save settings related to
+          the file system.
+        </p>
+      ),
+      target: `#${CSS.escape(`${baseId}--file-system-options`)}`
     },
     {
       content: (
@@ -202,14 +94,15 @@ export const FileSystemModal = () => {
   return (
     <>
       <ModalHeader title="File System" />
-      <ModalBody>
-        <EmulatorFS
-          id={`${baseId}--emulator-fs`}
+      <FlexModalBody>
+        <EmulatorFileSystem
+          id={`${baseId}--emulator-file-system`}
           allFiles={renderedFiles}
           deleteFile={deleteFile}
           downloadFile={downloadFile}
         />
-      </ModalBody>
+        <FileSystemOptionsForm id={`${baseId}--file-system-options`} />
+      </FlexModalBody>
       <ModalFooter>
         <CircleCheckButton
           copy="Save File System"

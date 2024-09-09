@@ -18,43 +18,11 @@ describe('<FileSystemModal />', () => {
     isDir: true,
     children: [
       {
-        path: '/data/cheats',
-        isDir: true,
-        children: []
-      },
-      {
         path: '/data/games',
         isDir: true,
         children: [
           {
             path: '/data/games/rom1.gba',
-            isDir: false,
-            children: []
-          },
-          {
-            path: '/data/games/rom2.gba',
-            isDir: false,
-            children: []
-          }
-        ]
-      },
-      {
-        path: '/data/saves',
-        isDir: true,
-        children: [
-          {
-            path: '/data/saves/rom1.sav',
-            isDir: false,
-            children: []
-          }
-        ]
-      },
-      {
-        path: '/data/states',
-        isDir: true,
-        children: [
-          {
-            path: '/data/states/rom1.ss1',
             isDir: false,
             children: []
           }
@@ -63,7 +31,7 @@ describe('<FileSystemModal />', () => {
     ]
   };
 
-  it('renders file system tree', async () => {
+  it('renders main sections', async () => {
     const { useEmulatorContext: original } = await vi.importActual<
       typeof contextHooks
     >('../../hooks/context.tsx');
@@ -79,41 +47,15 @@ describe('<FileSystemModal />', () => {
 
     renderWithContext(<FileSystemModal />);
 
-    const assertFileTree = (
-      fileNode: FileNode,
-      stopDepth?: number,
-      acc = 0
-    ) => {
-      const renderedPath = fileNode.path.split('/').pop() ?? 'invalid_path';
-
-      if (stopDepth && acc > stopDepth) {
-        expect(screen.queryByText(renderedPath)).not.toBeInTheDocument();
-      } else {
-        expect(screen.getByText(renderedPath)).toBeVisible();
-      }
-
-      /* see: https://github.com/testing-library/eslint-plugin-testing-library/issues/683 */
-      /* eslint-disable testing-library/no-node-access */
-      if (fileNode.children?.length) {
-        fileNode.children.forEach((child) =>
-          assertFileTree(child, stopDepth, acc + 1)
-        );
-      }
-      /* eslint-enable testing-library/no-node-access */
-    };
-
-    // first node should be expanded by default, renders children
-    assertFileTree(defaultFSData, 1);
-
-    // expand default directories
-    // eslint-disable-next-line testing-library/no-node-access
-    for (const child of defaultFSData.children ?? []) {
-      const childPath = child.path.split('/').pop() ?? 'invalid_path';
-      await userEvent.click(screen.getByText(childPath));
-    }
-
-    // renders all default nodes
-    assertFileTree(defaultFSData);
+    // emulator file system
+    expect(screen.getByLabelText('File System')).toBeVisible();
+    // file system options
+    expect(screen.getByRole('button', { name: 'Options' })).toBeVisible();
+    // action buttons
+    expect(
+      screen.getByRole('button', { name: 'Save File System' })
+    ).toBeVisible();
+    expect(screen.getByText('Close', { selector: 'button' })).toBeVisible();
   });
 
   it('deletes file from the tree', async () => {
@@ -173,11 +115,11 @@ describe('<FileSystemModal />', () => {
 
     renderWithContext(<FileSystemModal />);
 
-    await userEvent.click(screen.getByText('states'));
-    await userEvent.click(screen.getByLabelText('Download rom1.ss1'));
+    await userEvent.click(screen.getByText('games'));
+    await userEvent.click(screen.getByLabelText('Download rom1.gba'));
 
     expect(getFileSpy).toHaveBeenCalledOnce();
-    expect(getFileSpy).toHaveBeenCalledWith('/data/states/rom1.ss1');
+    expect(getFileSpy).toHaveBeenCalledWith('/data/games/rom1.gba');
 
     expect(URL.createObjectURL).toHaveBeenCalledWith(expect.anything());
     expect(anchorClickSpy).toHaveBeenCalledOnce();
@@ -273,6 +215,18 @@ describe('<FileSystemModal />', () => {
     expect(
       screen.getByText(
         'Use this area to view your current file tree, download files, and delete files from the tree.'
+      )
+    ).toBeVisible();
+
+    // advance tour
+    await userEvent.click(screen.getByRole('button', { name: /Next/ }));
+
+    expect(
+      screen.getByText(
+        (_, element) =>
+          element?.nodeName === 'P' &&
+          element?.textContent ===
+            'Click the Options label to adjust and save settings related to the file system.'
       )
     ).toBeVisible();
 

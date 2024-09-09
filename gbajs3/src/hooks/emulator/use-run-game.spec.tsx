@@ -6,10 +6,13 @@ import { renderHookWithContext } from '../../../test/render-hook-with-context.ts
 import {
   emulatorGameNameLocalStorageKey,
   emulatorFFMultiplierLocalStorageKey,
-  emulatorKeyBindingsLocalStorageKey
+  emulatorKeyBindingsLocalStorageKey,
+  emulatorCoreCallbacksLocalStorageKey
 } from '../../context/emulator/consts.ts';
 import * as contextHooks from '../../hooks/context.tsx';
+import * as addCallbacksHooks from '../../hooks/emulator/use-add-callbacks.tsx';
 
+import type { CoreCallbackOptions } from './use-add-callbacks.tsx';
 import type {
   GBAEmulator,
   KeyBinding
@@ -28,6 +31,11 @@ describe('useRunGame hook', () => {
         run: emulatorRunSpy,
         setVolume: emulatorSetVolumeSpy
       } as GBAEmulator
+    }));
+
+    vi.spyOn(addCallbacksHooks, 'useAddCallbacks').mockImplementation(() => ({
+      addCallbacks: vi.fn(),
+      addCallbacksAndSaveSettings: vi.fn()
     }));
 
     vi.spyOn(contextHooks, 'useRunningContext').mockImplementation(() => ({
@@ -60,13 +68,17 @@ describe('useRunGame hook', () => {
     expect(emulatorSetVolumeSpy).toHaveBeenCalledWith(1);
   });
 
-  it('sets keybindings and fast forward from storage on success', () => {
+  it('sets keybindings, fast forward, and callbacks from storage on success', () => {
     localStorage.setItem(
       emulatorKeyBindingsLocalStorageKey,
       '"some set of keybindings"'
     );
 
     localStorage.setItem(emulatorFFMultiplierLocalStorageKey, '2');
+    localStorage.setItem(
+      emulatorCoreCallbacksLocalStorageKey,
+      '{"saveFileSystemOnInGameSave": true}'
+    );
 
     const setIsRunningSpy = vi.fn();
     const emulatorRunSpy: (romPath: string) => boolean = vi.fn(() => true);
@@ -74,6 +86,7 @@ describe('useRunGame hook', () => {
       vi.fn();
     const emulatorSetFastForwardMultiplierSpy: (multiplier: number) => void =
       vi.fn();
+    const addCallbacksSpy: (f: CoreCallbackOptions) => void = vi.fn();
 
     vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
       setCanvas: vi.fn(),
@@ -85,6 +98,11 @@ describe('useRunGame hook', () => {
         remapKeyBindings: emulatorRemapKeyBindingsSpy,
         setFastForwardMultiplier: emulatorSetFastForwardMultiplierSpy
       } as GBAEmulator
+    }));
+
+    vi.spyOn(addCallbacksHooks, 'useAddCallbacks').mockImplementation(() => ({
+      addCallbacks: addCallbacksSpy,
+      addCallbacksAndSaveSettings: vi.fn()
     }));
 
     vi.spyOn(contextHooks, 'useRunningContext').mockImplementation(() => ({
@@ -105,5 +123,10 @@ describe('useRunGame hook', () => {
 
     expect(emulatorSetFastForwardMultiplierSpy).toHaveBeenCalledOnce();
     expect(emulatorSetFastForwardMultiplierSpy).toHaveBeenCalledWith(2);
+
+    expect(addCallbacksSpy).toHaveBeenCalledOnce();
+    expect(addCallbacksSpy).toHaveBeenCalledWith({
+      saveFileSystemOnInGameSave: true
+    });
   });
 });
