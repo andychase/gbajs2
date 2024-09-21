@@ -30,6 +30,7 @@ const steps: Step[] = [
       next: <strong aria-label="Skip">Yes</strong>
     },
     placement: 'center',
+    showSkipButton: true,
     target: 'body'
   },
   {
@@ -57,14 +58,12 @@ const steps: Step[] = [
         </StyledUl>
       </>
     ),
-    locale: { skip: <strong aria-label="Skip">Skip</strong> },
     placement: 'auto',
     spotlightPadding: 40,
     target: '#menu-wrapper'
   },
   {
     content: <p>Use the hamburger button to show and hide the menu</p>,
-    locale: { skip: <strong aria-label="Skip">Skip</strong> },
     placement: 'right',
     spotlightPadding: 10,
     target: '#menu-btn'
@@ -79,7 +78,6 @@ const steps: Step[] = [
         <p>Watch for the red beacons, tap them to continue your tour!</p>
       </>
     ),
-    locale: { skip: <strong aria-label="Skip">Skip</strong> },
     placement: 'center',
     target: 'body'
   }
@@ -99,7 +97,6 @@ export const ProductTourIntro = () => {
       hideCloseButton
       disableScrolling
       showProgress
-      showSkipButton
       steps={steps}
       styles={{
         options: {
