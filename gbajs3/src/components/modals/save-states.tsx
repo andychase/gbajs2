@@ -2,7 +2,7 @@ import { Button, IconButton, TextField } from '@mui/material';
 import { useLocalStorage } from '@uidotdev/usehooks';
 import { useCallback, useEffect, useId, useState } from 'react';
 import { useForm, type SubmitHandler } from 'react-hook-form';
-import { BiError, BiPlus, BiTrash } from 'react-icons/bi';
+import { BiError, BiTrash } from 'react-icons/bi';
 import { styled, useTheme } from 'styled-components';
 
 import { ModalBody } from './modal-body.tsx';
@@ -16,7 +16,7 @@ import {
 } from '../product-tour/embedded-product-tour.tsx';
 import { CircleCheckButton } from '../shared/circle-check-button.tsx';
 import { ErrorWithIcon } from '../shared/error-with-icon.tsx';
-import { CenteredText } from '../shared/styled.tsx';
+import { CenteredText, StyledBiPlus } from '../shared/styled.tsx';
 
 type InputProps = {
   saveStateSlot: number;
@@ -67,11 +67,6 @@ const SaveStatesList = styled.ul`
   & > ${StyledLi}:not(:first-child) {
     border-top-width: 0;
   }
-`;
-
-const StyledBiPlus = styled(BiPlus)`
-  width: 25px;
-  height: 25px;
 `;
 
 const StyledCiCircleRemove = styled(BiTrash)`

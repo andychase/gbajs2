@@ -1,3 +1,4 @@
+import { BiPlus } from 'react-icons/bi';
 import { styled } from 'styled-components';
 
 export const CenteredTextContainer = styled.div`
@@ -34,4 +35,9 @@ export const FooterWrapper = styled.div`
   justify-content: flex-end;
   border-top: 1px solid ${({ theme }) => theme.pattensBlue};
   padding: 1rem 1rem;
+`;
+
+export const StyledBiPlus = styled(BiPlus)`
+  width: 25px;
+  height: 25px;
 `;

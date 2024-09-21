@@ -1,15 +1,7 @@
 import { useLocalStorage } from '@uidotdev/usehooks';
 import { useCallback, useMemo } from 'react';
 
-type Layout = {
-  position?: { x: number; y: number };
-  size?: { width: string | number; height: string | number };
-  initialBounds?: DOMRect;
-};
-
-type Layouts = {
-  [key: string]: Layout;
-};
+import type { Layouts } from '../context/layout/layout';
 
 const layoutLocalStorageKey = 'componentLayouts';
 

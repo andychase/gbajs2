@@ -166,6 +166,7 @@ describe('<ControlPanel />', () => {
     const testLayout = {
       clearLayouts: vi.fn(),
       setLayout: setLayoutSpy,
+      setLayouts: vi.fn(),
       hasSetLayout: true,
       layouts: { screen: { initialBounds: new DOMRect() } }
     };

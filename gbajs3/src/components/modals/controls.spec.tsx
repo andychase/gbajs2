@@ -16,6 +16,9 @@ describe('<ControlsModal />', () => {
       screen.getByRole('tab', { name: 'Virtual Controls', selected: true })
     ).toBeVisible();
     expect(
+      screen.getByRole('tab', { name: 'Profiles', selected: false })
+    ).toBeVisible();
+    expect(
       screen.getByRole('tab', { name: 'Key Bindings', selected: false })
     ).toBeVisible();
 
@@ -27,11 +30,33 @@ describe('<ControlsModal />', () => {
       screen.getByRole('button', { name: 'Save Changes' }).getAttribute('form')
     );
 
+    // select control profiles
+    await userEvent.click(screen.getByRole('tab', { name: 'Profiles' }));
+
+    expect(
+      screen.getByRole('tab', { name: 'Profiles', selected: true })
+    ).toBeVisible();
+    expect(
+      screen.getByRole('tab', { name: 'Key Bindings', selected: false })
+    ).toBeVisible();
+    expect(
+      screen.getByRole('tab', { name: 'Virtual Controls', selected: false })
+    ).toBeVisible();
+
+    expect(screen.getByRole('list', { name: 'Profiles List' })).toBeVisible();
+    // note: save changes button is not shown on control profiles tab
+    expect(
+      screen.queryByRole('button', { name: 'Save Changes' })
+    ).not.toBeInTheDocument();
+
     // select key bindings form
     await userEvent.click(screen.getByRole('tab', { name: 'Key Bindings' }));
 
     expect(
       screen.getByRole('tab', { name: 'Key Bindings', selected: true })
+    ).toBeVisible();
+    expect(
+      screen.getByRole('tab', { name: 'Profiles', selected: false })
     ).toBeVisible();
     expect(
       screen.getByRole('tab', { name: 'Virtual Controls', selected: false })
@@ -54,14 +79,17 @@ describe('<ControlsModal />', () => {
       screen.getByRole('tab', { name: 'Virtual Controls', selected: true })
     ).toBeVisible();
     expect(
+      screen.getByRole('tab', { name: 'Profiles', selected: false })
+    ).toBeVisible();
+    expect(
       screen.getByRole('tab', { name: 'Key Bindings', selected: false })
     ).toBeVisible();
 
-    const virtualControlsFormRenavigate = screen.getByRole('form', {
+    const virtualControlsFormReNavigate = screen.getByRole('form', {
       name: 'Virtual Controls Form'
     });
-    expect(virtualControlsFormRenavigate).toBeVisible();
-    expect(virtualControlsFormRenavigate.id).toEqual(
+    expect(virtualControlsFormReNavigate).toBeVisible();
+    expect(virtualControlsFormReNavigate.id).toEqual(
       screen.getByRole('button', { name: 'Save Changes' }).getAttribute('form')
     );
   });

@@ -1,7 +1,6 @@
 import { Button, IconButton, TextField, useMediaQuery } from '@mui/material';
 import { useCallback, useId, useMemo, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
-import { BiPlus } from 'react-icons/bi';
 import { CiSquareRemove } from 'react-icons/ci';
 import { styled, useTheme } from 'styled-components';
 
@@ -15,6 +14,7 @@ import {
 } from '../product-tour/embedded-product-tour.tsx';
 import { CircleCheckButton } from '../shared/circle-check-button.tsx';
 import { ManagedCheckbox } from '../shared/managed-checkbox.tsx';
+import { StyledBiPlus } from '../shared/styled.tsx';
 
 type OptionallyHiddenProps = {
   $shouldHide: boolean;
@@ -52,11 +52,6 @@ const Cheat = styled.li`
 const StyledCiSquareRemove = styled(CiSquareRemove)`
   min-height: 40px;
   min-width: 40px;
-`;
-
-const StyledBiPlus = styled(BiPlus)`
-  width: 25px;
-  height: 25px;
 `;
 
 const CheatsFormSeparator = styled.div<CheatsFormSeparatorProps>`
