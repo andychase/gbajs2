@@ -34,3 +34,8 @@ body {
   background-color: #212529;
   font-family: 'Calibri', 'Verdana', sans-serif;
 }
+
+html,
+body {
+  overscroll-behavior: none;
+}
