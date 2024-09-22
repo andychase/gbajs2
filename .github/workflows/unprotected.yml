@@ -10,13 +10,21 @@ jobs:
   change-detect:
     runs-on: ubuntu-latest
     permissions:
+      actions: write
+      contents: read
       pull-requests: read
     outputs:
       admin: ${{ steps.filter.outputs.admin }}
       auth: ${{ steps.filter.outputs.auth }}
       gbajs3: ${{ steps.filter.outputs.gbajs3 }}
+      duplicate_check: ${{ steps.skip_check.outputs.should_skip }}
     steps:
       - uses: actions/checkout@v4
+      - id: skip_check
+        uses: fkirc/skip-duplicate-actions@v5
+        with:
+          concurrent_skipping: 'same_content_newer'
+          cancel_others: 'true'
       - uses: dorny/paths-filter@v3
         id: filter
         with:
@@ -30,15 +38,15 @@ jobs:
 
   admin:
     needs: change-detect
-    if: needs.change-detect.outputs.admin == 'true'
+    if: needs.change-detect.outputs.admin == 'true' && needs.change-detect.outputs.duplicate_check != 'true'
     uses: ./.github/workflows/admin.workflow.yml
 
   auth:
     needs: change-detect
-    if: needs.change-detect.outputs.auth == 'true'
+    if: needs.change-detect.outputs.auth == 'true' && needs.change-detect.outputs.duplicate_check != 'true'
     uses: ./.github/workflows/auth.workflow.yml
 
   gbajs3:
     needs: change-detect
-    if: needs.change-detect.outputs.gbajs3 == 'true'
+    if: needs.change-detect.outputs.gbajs3 == 'true' && needs.change-detect.outputs.duplicate_check != 'true'
     uses: ./.github/workflows/gbajs3.workflow.yml
