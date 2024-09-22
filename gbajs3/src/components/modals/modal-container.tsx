@@ -19,7 +19,8 @@ const modalStyles = {
     display: 'flex',
     touchAction: 'none',
     flexDirection: 'column' as const,
-    userSelect: 'text' as const
+    userSelect: 'text' as const,
+    WebkitUserSelect: 'text' as const
   }
 };
 
