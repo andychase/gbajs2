@@ -1,9 +1,8 @@
 import { Button, Divider, TextField } from '@mui/material';
-import { useCallback, useEffect, useId, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useId, useState } from 'react';
 import { useForm, Controller, type SubmitHandler } from 'react-hook-form';
 import { BiError } from 'react-icons/bi';
-import { PacmanLoader } from 'react-spinners';
-import { styled, useTheme } from 'styled-components';
+import { useTheme } from 'styled-components';
 
 import { ModalBody } from './modal-body.tsx';
 import { ModalFooter } from './modal-footer.tsx';
@@ -17,54 +16,17 @@ import {
 } from '../product-tour/embedded-product-tour.tsx';
 import { DragAndDropInput } from '../shared/drag-and-drop-input.tsx';
 import { ErrorWithIcon } from '../shared/error-with-icon.tsx';
+import {
+  LoadingIndicator,
+  PacmanIndicator
+} from '../shared/loading-indicator.tsx';
 
 type InputProps = {
   romFile: File;
   romURL: string;
 };
 
-type RomLoadingIndicatorProps = {
-  isLoading: boolean;
-  currentRomURL: string | null;
-  children: ReactNode;
-  indicator: ReactNode;
-};
-
-const RomLoadingContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  text-align: center;
-  align-items: center;
-  margin-bottom: 15px;
-`;
-
-const URLDisplay = styled.p`
-  word-wrap: break-word;
-  max-width: 100%;
-`;
-
 const validFileExtensions = ['.gba', '.gbc', '.gb', '.zip', '.7z'];
-
-const RomLoadingIndicator = ({
-  isLoading,
-  currentRomURL,
-  children,
-  indicator
-}: RomLoadingIndicatorProps) => {
-  return isLoading ? (
-    <RomLoadingContainer>
-      <URLDisplay>
-        Loading rom from url:
-        <br />
-        {currentRomURL}
-      </URLDisplay>
-      {indicator}
-    </RomLoadingContainer>
-  ) : (
-    children
-  );
-};
 
 export const UploadRomModal = () => {
   const theme = useTheme();
@@ -173,15 +135,11 @@ export const UploadRomModal = () => {
     <>
       <ModalHeader title="Upload Rom" />
       <ModalBody>
-        <RomLoadingIndicator
+        <LoadingIndicator
           isLoading={isExternalRomLoading}
-          currentRomURL={currentRomURL}
-          indicator={
-            <PacmanLoader
-              color={theme.gbaThemeBlue}
-              cssOverride={{ margin: '0 auto' }}
-            />
-          }
+          currentName={currentRomURL}
+          indicator={<PacmanIndicator />}
+          loadingCopy="Loading rom from url:"
         >
           <form
             id={uploadRomFormId}
@@ -257,7 +215,7 @@ export const UploadRomModal = () => {
               />
             )}
           </form>
-        </RomLoadingIndicator>
+        </LoadingIndicator>
       </ModalBody>
       <ModalFooter>
         <Button form={uploadRomFormId} type="submit" variant="contained">

@@ -2,7 +2,6 @@ import { TextField, Button } from '@mui/material';
 import { useEffect, useId } from 'react';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { BiError } from 'react-icons/bi';
-import { PacmanLoader } from 'react-spinners';
 import { styled, useTheme } from 'styled-components';
 
 import { ModalBody } from './modal-body.tsx';
@@ -15,6 +14,7 @@ import {
   type TourSteps
 } from '../product-tour/embedded-product-tour.tsx';
 import { ErrorWithIcon } from '../shared/error-with-icon.tsx';
+import { PacmanIndicator } from '../shared/loading-indicator.tsx';
 
 type InputProps = {
   username: string;
@@ -88,11 +88,7 @@ export const LoginModal = () => {
       <ModalHeader title="Login" />
       <ModalBody>
         {loginLoading ? (
-          <PacmanLoader
-            data-testid="login-spinner"
-            color={theme.gbaThemeBlue}
-            cssOverride={{ margin: '0 auto' }}
-          />
+          <PacmanIndicator data-testid="login-spinner" />
         ) : (
           <StyledForm
             aria-label="Login Form"

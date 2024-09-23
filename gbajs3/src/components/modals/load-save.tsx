@@ -1,7 +1,6 @@
 import { Button } from '@mui/material';
-import { useEffect, useState, useId, type ReactNode } from 'react';
+import { useEffect, useState, useId } from 'react';
 import { BiError } from 'react-icons/bi';
-import { PacmanLoader } from 'react-spinners';
 import { styled, useTheme } from 'styled-components';
 
 import { ModalBody } from './modal-body.tsx';
@@ -15,14 +14,11 @@ import {
   type TourSteps
 } from '../product-tour/embedded-product-tour.tsx';
 import { ErrorWithIcon } from '../shared/error-with-icon.tsx';
+import {
+  LoadingIndicator,
+  PacmanIndicator
+} from '../shared/loading-indicator.tsx';
 import { CenteredText } from '../shared/styled.tsx';
-
-type SaveLoadingIndicatorProps = {
-  isLoading: boolean;
-  currentLoadingSave: string | null;
-  children: JSX.Element;
-  indicator: ReactNode;
-};
 
 type SaveErrorProps = {
   $withMarginTop?: boolean;
@@ -69,15 +65,6 @@ const SaveList = styled.ul`
   }
 `;
 
-const SaveLoadingContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  text-align: center;
-  align-items: center;
-  margin-bottom: 15px;
-`;
-
 const SaveError = styled(ErrorWithIcon)<SaveErrorProps>`
   ${({ $withMarginTop = false }) =>
     $withMarginTop &&
@@ -85,26 +72,6 @@ const SaveError = styled(ErrorWithIcon)<SaveErrorProps>`
     margin-top: 15px;
     `}
 `;
-
-const SaveLoadingIndicator = ({
-  isLoading,
-  currentLoadingSave,
-  children,
-  indicator
-}: SaveLoadingIndicatorProps) => {
-  return isLoading ? (
-    <SaveLoadingContainer>
-      <p>
-        Loading save:
-        <br />
-        {currentLoadingSave}
-      </p>
-      {indicator}
-    </SaveLoadingContainer>
-  ) : (
-    children
-  );
-};
 
 export const LoadSaveModal = () => {
   const theme = useTheme();
@@ -135,13 +102,6 @@ export const LoadSaveModal = () => {
     }
   }, [emulator, shouldUploadSave, saveFile]);
 
-  const LoadingIndicator = () => (
-    <PacmanLoader
-      color={theme.gbaThemeBlue}
-      cssOverride={{ margin: '0 auto' }}
-    />
-  );
-
   const tourSteps: TourSteps = [
     {
       content: (
@@ -162,12 +122,13 @@ export const LoadSaveModal = () => {
       <ModalHeader title="Load Save" />
       <ModalBody>
         {saveListLoading ? (
-          <LoadingIndicator />
+          <PacmanIndicator />
         ) : (
-          <SaveLoadingIndicator
+          <LoadingIndicator
             isLoading={saveLoading}
-            currentLoadingSave={currentSaveLoading}
-            indicator={<LoadingIndicator />}
+            currentName={currentSaveLoading}
+            indicator={<PacmanIndicator />}
+            loadingCopy="Loading save:"
           >
             <SaveList id={saveListId}>
               {saveList?.map?.((save: string, idx: number) => (
@@ -191,7 +152,7 @@ export const LoadSaveModal = () => {
                 </li>
               )}
             </SaveList>
-          </SaveLoadingIndicator>
+          </LoadingIndicator>
         )}
         {!!saveListError && (
           <SaveError

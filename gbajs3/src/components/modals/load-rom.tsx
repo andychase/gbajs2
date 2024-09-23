@@ -1,7 +1,6 @@
 import { Button } from '@mui/material';
-import { useEffect, useState, useId, type ReactNode } from 'react';
+import { useEffect, useState, useId } from 'react';
 import { BiError } from 'react-icons/bi';
-import { PacmanLoader } from 'react-spinners';
 import { styled, useTheme } from 'styled-components';
 
 import { ModalBody } from './modal-body.tsx';
@@ -16,14 +15,11 @@ import {
   type TourSteps
 } from '../product-tour/embedded-product-tour.tsx';
 import { ErrorWithIcon } from '../shared/error-with-icon.tsx';
+import {
+  LoadingIndicator,
+  PacmanIndicator
+} from '../shared/loading-indicator.tsx';
 import { CenteredText } from '../shared/styled.tsx';
-
-type RomLoadingIndicatorProps = {
-  isLoading: boolean;
-  currentLoadingRom: string | null;
-  children: JSX.Element;
-  indicator: ReactNode;
-};
 
 type RomErrorProps = {
   $withMarginTop?: boolean;
@@ -70,15 +66,6 @@ const RomList = styled.ul`
   }
 `;
 
-const RomLoadingContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  text-align: center;
-  align-items: center;
-  margin-bottom: 15px;
-`;
-
 const RomError = styled(ErrorWithIcon)<RomErrorProps>`
   ${({ $withMarginTop = false }) =>
     $withMarginTop &&
@@ -86,26 +73,6 @@ const RomError = styled(ErrorWithIcon)<RomErrorProps>`
     margin-top: 15px;
     `}
 `;
-
-const RomLoadingIndicator = ({
-  isLoading,
-  currentLoadingRom,
-  children,
-  indicator
-}: RomLoadingIndicatorProps) => {
-  return isLoading ? (
-    <RomLoadingContainer>
-      <p>
-        Loading rom:
-        <br />
-        {currentLoadingRom}
-      </p>
-      {indicator}
-    </RomLoadingContainer>
-  ) : (
-    children
-  );
-};
 
 export const LoadRomModal = () => {
   const theme = useTheme();
@@ -141,13 +108,6 @@ export const LoadRomModal = () => {
     }
   }, [emulator, shouldUploadRom, romFile, runGame]);
 
-  const LoadingIndicator = () => (
-    <PacmanLoader
-      color={theme.gbaThemeBlue}
-      cssOverride={{ margin: '0 auto' }}
-    />
-  );
-
   const tourSteps: TourSteps = [
     {
       content: (
@@ -171,12 +131,13 @@ export const LoadRomModal = () => {
       <ModalHeader title="Load Rom" />
       <ModalBody>
         {romListLoading ? (
-          <LoadingIndicator />
+          <PacmanIndicator />
         ) : (
-          <RomLoadingIndicator
+          <LoadingIndicator
+            currentName={currentRomLoading}
+            indicator={<PacmanIndicator />}
             isLoading={romLoading}
-            currentLoadingRom={currentRomLoading}
-            indicator={<LoadingIndicator />}
+            loadingCopy="Loading rom:"
           >
             <RomList id={romListId}>
               {romList?.map?.((rom: string, idx: number) => (
@@ -200,7 +161,7 @@ export const LoadRomModal = () => {
                 </li>
               )}
             </RomList>
-          </RomLoadingIndicator>
+          </LoadingIndicator>
         )}
         {!!romListError && (
           <RomError

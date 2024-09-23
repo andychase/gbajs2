@@ -1,7 +1,6 @@
 import { Button } from '@mui/material';
 import { useId } from 'react';
 import { BiError } from 'react-icons/bi';
-import { PacmanLoader } from 'react-spinners';
 import { useTheme } from 'styled-components';
 
 import { ModalBody } from './modal-body.tsx';
@@ -14,6 +13,7 @@ import {
   type TourSteps
 } from '../product-tour/embedded-product-tour.tsx';
 import { ErrorWithIcon } from '../shared/error-with-icon.tsx';
+import { PacmanIndicator } from '../shared/loading-indicator.tsx';
 import { CenteredText } from '../shared/styled.tsx';
 
 type DynamicBodyProps = {
@@ -31,17 +31,11 @@ const DynamicBody = ({
   isLoading,
   hasError
 }: DynamicBodyProps) => {
-  const LoadingIndicator = () => (
-    <PacmanLoader
-      data-testid="upload-rom-spinner"
-      color={loadingColor}
-      cssOverride={{ margin: '0 auto' }}
-    />
-  );
-
   let BodyContents = null;
   if (isLoading) {
-    BodyContents = LoadingIndicator;
+    BodyContents = () => (
+      <PacmanIndicator data-testid="upload-rom-spinner" color={loadingColor} />
+    );
   } else if (hasError) {
     BodyContents = () => (
       <ErrorWithIcon
