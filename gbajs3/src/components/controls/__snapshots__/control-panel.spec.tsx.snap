@@ -124,6 +124,7 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
   id=":r2:"
   style="position: absolute; user-select: auto; width: auto; height: auto; display: inline-block; top: 0px; left: 0px; cursor: auto; transform: translate(0px,10px); max-width: 9007199254740991px; max-height: 9007199254740991px; box-sizing: border-box; flex-shrink: 0;"
 >
+  <div />
   <ul
     class="c0"
   >
@@ -615,6 +616,7 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
   id=":r1:"
   style="position: absolute; user-select: auto; height: auto; display: inline-block; top: 0px; left: 0px; cursor: auto; transform: translate(0px,0px); max-width: 9007199254740991px; max-height: 9007199254740991px; box-sizing: border-box; flex-shrink: 0;"
 >
+  <div />
   <ul
     class="c0"
   >
