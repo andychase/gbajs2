@@ -2,7 +2,7 @@ import type {
   coreCallbacks,
   filePaths,
   mGBAEmulator as mGBAEmulatorTypeDef
-} from './wasm/mgba.js';
+} from '@thenick775/mgba-wasm';
 
 interface FsNode extends FS.FSNode {
   mode: number;

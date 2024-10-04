@@ -87,6 +87,9 @@ export default defineConfig({
     }),
     visualizer({ gzipSize: true })
   ],
+  optimizeDeps: {
+    exclude: ['@thenick775/mgba-wasm']
+  },
   build: {
     rollupOptions: {
       output: {
@@ -96,6 +99,11 @@ export default defineConfig({
             if (id.indexOf('@mui') > -1) {
               // vendor mui
               return vendorPrefix + '_@mui';
+            }
+
+            if (id.indexOf('@thenick775/mgba-wasm') > -1) {
+              // vendor mGBA
+              return vendorPrefix + '_mgba-wasm';
             }
 
             if (
