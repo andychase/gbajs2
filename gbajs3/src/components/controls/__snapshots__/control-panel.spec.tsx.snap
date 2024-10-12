@@ -231,7 +231,7 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
     >
       <button
         aria-label="Mute Volume"
-        class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-osi8n4-MuiButtonBase-root-MuiIconButton-root"
+        class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-1k5kb9w-MuiButtonBase-root-MuiIconButton-root"
         tabindex="0"
         type="button"
       >
@@ -251,72 +251,72 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
         </svg>
       </button>
       <span
-        class="MuiSlider-root MuiSlider-colorPrimary MuiSlider-sizeMedium c5 css-vhj176-MuiSlider-root"
+        class="MuiSlider-root MuiSlider-colorPrimary MuiSlider-sizeMedium c5 css-1uesrtc-MuiSlider-root"
       >
         <span
-          class="MuiSlider-rail css-7o8aqz-MuiSlider-rail"
+          class="MuiSlider-rail css-r64h58-MuiSlider-rail"
         />
         <span
-          class="MuiSlider-track css-ttgsjq-MuiSlider-track"
+          class="MuiSlider-track css-xvk2i-MuiSlider-track"
           style="left: 0%; width: 100%;"
         />
         <span
-          class="MuiSlider-mark MuiSlider-markActive css-z5sdnj-MuiSlider-mark"
+          class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
           data-index="0"
           style="left: 0%;"
         />
         <span
-          class="MuiSlider-mark MuiSlider-markActive css-z5sdnj-MuiSlider-mark"
+          class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
           data-index="1"
           style="left: 10%;"
         />
         <span
-          class="MuiSlider-mark MuiSlider-markActive css-z5sdnj-MuiSlider-mark"
+          class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
           data-index="2"
           style="left: 20%;"
         />
         <span
-          class="MuiSlider-mark MuiSlider-markActive css-z5sdnj-MuiSlider-mark"
+          class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
           data-index="3"
           style="left: 30.000000000000004%;"
         />
         <span
-          class="MuiSlider-mark MuiSlider-markActive css-z5sdnj-MuiSlider-mark"
+          class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
           data-index="4"
           style="left: 40%;"
         />
         <span
-          class="MuiSlider-mark MuiSlider-markActive css-z5sdnj-MuiSlider-mark"
+          class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
           data-index="5"
           style="left: 50%;"
         />
         <span
-          class="MuiSlider-mark MuiSlider-markActive css-z5sdnj-MuiSlider-mark"
+          class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
           data-index="6"
           style="left: 60.00000000000001%;"
         />
         <span
-          class="MuiSlider-mark MuiSlider-markActive css-z5sdnj-MuiSlider-mark"
+          class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
           data-index="7"
           style="left: 70%;"
         />
         <span
-          class="MuiSlider-mark MuiSlider-markActive css-z5sdnj-MuiSlider-mark"
+          class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
           data-index="8"
           style="left: 80%;"
         />
         <span
-          class="MuiSlider-mark MuiSlider-markActive css-z5sdnj-MuiSlider-mark"
+          class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
           data-index="9"
           style="left: 90%;"
         />
         <span
-          class="MuiSlider-mark MuiSlider-markActive css-z5sdnj-MuiSlider-mark"
+          class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
           data-index="10"
           style="left: 100%;"
         />
         <span
-          class="MuiSlider-thumb MuiSlider-thumbSizeMedium MuiSlider-thumbColorPrimary MuiSlider-thumb MuiSlider-thumbSizeMedium MuiSlider-thumbColorPrimary css-cp2j25-MuiSlider-thumb"
+          class="MuiSlider-thumb MuiSlider-thumbSizeMedium MuiSlider-thumbColorPrimary MuiSlider-thumb MuiSlider-thumbSizeMedium MuiSlider-thumbColorPrimary css-1xcmt9q-MuiSlider-thumb"
           data-index="0"
           style="left: 100%;"
         >
@@ -336,7 +336,7 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
           />
           <span
             aria-hidden="true"
-            class="MuiSlider-valueLabel css-14gyywz-MuiSlider-valueLabel"
+            class="MuiSlider-valueLabel css-1asissc-MuiSlider-valueLabel"
           >
             <span
               class="MuiSlider-valueLabelCircle"
@@ -352,7 +352,7 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
       </span>
       <button
         aria-label="Max Volume"
-        class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-osi8n4-MuiButtonBase-root-MuiIconButton-root"
+        class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-1k5kb9w-MuiButtonBase-root-MuiIconButton-root"
         tabindex="0"
         type="button"
       >
@@ -381,7 +381,7 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
     >
       <button
         aria-label="Regular Speed"
-        class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-osi8n4-MuiButtonBase-root-MuiIconButton-root"
+        class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-1k5kb9w-MuiButtonBase-root-MuiIconButton-root"
         tabindex="0"
         type="button"
       >
@@ -401,42 +401,42 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
         </svg>
       </button>
       <span
-        class="MuiSlider-root MuiSlider-colorPrimary MuiSlider-sizeMedium c5 css-vhj176-MuiSlider-root"
+        class="MuiSlider-root MuiSlider-colorPrimary MuiSlider-sizeMedium c5 css-1uesrtc-MuiSlider-root"
       >
         <span
-          class="MuiSlider-rail css-7o8aqz-MuiSlider-rail"
+          class="MuiSlider-rail css-r64h58-MuiSlider-rail"
         />
         <span
-          class="MuiSlider-track css-ttgsjq-MuiSlider-track"
+          class="MuiSlider-track css-xvk2i-MuiSlider-track"
           style="left: 0%; width: 0%;"
         />
         <span
-          class="MuiSlider-mark MuiSlider-markActive css-z5sdnj-MuiSlider-mark"
+          class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
           data-index="0"
           style="left: 0%;"
         />
         <span
-          class="MuiSlider-mark css-hzp7sc-MuiSlider-mark"
+          class="MuiSlider-mark css-lq5hqx-MuiSlider-mark"
           data-index="1"
           style="left: 25%;"
         />
         <span
-          class="MuiSlider-mark css-hzp7sc-MuiSlider-mark"
+          class="MuiSlider-mark css-lq5hqx-MuiSlider-mark"
           data-index="2"
           style="left: 50%;"
         />
         <span
-          class="MuiSlider-mark css-hzp7sc-MuiSlider-mark"
+          class="MuiSlider-mark css-lq5hqx-MuiSlider-mark"
           data-index="3"
           style="left: 75%;"
         />
         <span
-          class="MuiSlider-mark css-hzp7sc-MuiSlider-mark"
+          class="MuiSlider-mark css-lq5hqx-MuiSlider-mark"
           data-index="4"
           style="left: 100%;"
         />
         <span
-          class="MuiSlider-thumb MuiSlider-thumbSizeMedium MuiSlider-thumbColorPrimary MuiSlider-thumb MuiSlider-thumbSizeMedium MuiSlider-thumbColorPrimary css-cp2j25-MuiSlider-thumb"
+          class="MuiSlider-thumb MuiSlider-thumbSizeMedium MuiSlider-thumbColorPrimary MuiSlider-thumb MuiSlider-thumbSizeMedium MuiSlider-thumbColorPrimary css-1xcmt9q-MuiSlider-thumb"
           data-index="0"
           style="left: 0%;"
         >
@@ -456,7 +456,7 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
           />
           <span
             aria-hidden="true"
-            class="MuiSlider-valueLabel css-14gyywz-MuiSlider-valueLabel"
+            class="MuiSlider-valueLabel css-1asissc-MuiSlider-valueLabel"
           >
             <span
               class="MuiSlider-valueLabelCircle"
@@ -472,7 +472,7 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
       </span>
       <button
         aria-label="Max Fast Forward"
-        class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-osi8n4-MuiButtonBase-root-MuiIconButton-root"
+        class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-1k5kb9w-MuiButtonBase-root-MuiIconButton-root"
         tabindex="0"
         type="button"
       >
@@ -723,7 +723,7 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
     >
       <button
         aria-label="Mute Volume"
-        class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-osi8n4-MuiButtonBase-root-MuiIconButton-root"
+        class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-1k5kb9w-MuiButtonBase-root-MuiIconButton-root"
         tabindex="0"
         type="button"
       >
@@ -743,72 +743,72 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
         </svg>
       </button>
       <span
-        class="MuiSlider-root MuiSlider-colorPrimary MuiSlider-sizeMedium c5 css-vhj176-MuiSlider-root"
+        class="MuiSlider-root MuiSlider-colorPrimary MuiSlider-sizeMedium c5 css-1uesrtc-MuiSlider-root"
       >
         <span
-          class="MuiSlider-rail css-7o8aqz-MuiSlider-rail"
+          class="MuiSlider-rail css-r64h58-MuiSlider-rail"
         />
         <span
-          class="MuiSlider-track css-ttgsjq-MuiSlider-track"
+          class="MuiSlider-track css-xvk2i-MuiSlider-track"
           style="left: 0%; width: 100%;"
         />
         <span
-          class="MuiSlider-mark MuiSlider-markActive css-z5sdnj-MuiSlider-mark"
+          class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
           data-index="0"
           style="left: 0%;"
         />
         <span
-          class="MuiSlider-mark MuiSlider-markActive css-z5sdnj-MuiSlider-mark"
+          class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
           data-index="1"
           style="left: 10%;"
         />
         <span
-          class="MuiSlider-mark MuiSlider-markActive css-z5sdnj-MuiSlider-mark"
+          class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
           data-index="2"
           style="left: 20%;"
         />
         <span
-          class="MuiSlider-mark MuiSlider-markActive css-z5sdnj-MuiSlider-mark"
+          class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
           data-index="3"
           style="left: 30.000000000000004%;"
         />
         <span
-          class="MuiSlider-mark MuiSlider-markActive css-z5sdnj-MuiSlider-mark"
+          class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
           data-index="4"
           style="left: 40%;"
         />
         <span
-          class="MuiSlider-mark MuiSlider-markActive css-z5sdnj-MuiSlider-mark"
+          class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
           data-index="5"
           style="left: 50%;"
         />
         <span
-          class="MuiSlider-mark MuiSlider-markActive css-z5sdnj-MuiSlider-mark"
+          class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
           data-index="6"
           style="left: 60.00000000000001%;"
         />
         <span
-          class="MuiSlider-mark MuiSlider-markActive css-z5sdnj-MuiSlider-mark"
+          class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
           data-index="7"
           style="left: 70%;"
         />
         <span
-          class="MuiSlider-mark MuiSlider-markActive css-z5sdnj-MuiSlider-mark"
+          class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
           data-index="8"
           style="left: 80%;"
         />
         <span
-          class="MuiSlider-mark MuiSlider-markActive css-z5sdnj-MuiSlider-mark"
+          class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
           data-index="9"
           style="left: 90%;"
         />
         <span
-          class="MuiSlider-mark MuiSlider-markActive css-z5sdnj-MuiSlider-mark"
+          class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
           data-index="10"
           style="left: 100%;"
         />
         <span
-          class="MuiSlider-thumb MuiSlider-thumbSizeMedium MuiSlider-thumbColorPrimary MuiSlider-thumb MuiSlider-thumbSizeMedium MuiSlider-thumbColorPrimary css-cp2j25-MuiSlider-thumb"
+          class="MuiSlider-thumb MuiSlider-thumbSizeMedium MuiSlider-thumbColorPrimary MuiSlider-thumb MuiSlider-thumbSizeMedium MuiSlider-thumbColorPrimary css-1xcmt9q-MuiSlider-thumb"
           data-index="0"
           style="left: 100%;"
         >
@@ -828,7 +828,7 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
           />
           <span
             aria-hidden="true"
-            class="MuiSlider-valueLabel css-14gyywz-MuiSlider-valueLabel"
+            class="MuiSlider-valueLabel css-1asissc-MuiSlider-valueLabel"
           >
             <span
               class="MuiSlider-valueLabelCircle"
@@ -844,7 +844,7 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
       </span>
       <button
         aria-label="Max Volume"
-        class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-osi8n4-MuiButtonBase-root-MuiIconButton-root"
+        class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-1k5kb9w-MuiButtonBase-root-MuiIconButton-root"
         tabindex="0"
         type="button"
       >
@@ -873,7 +873,7 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
     >
       <button
         aria-label="Regular Speed"
-        class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-osi8n4-MuiButtonBase-root-MuiIconButton-root"
+        class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-1k5kb9w-MuiButtonBase-root-MuiIconButton-root"
         tabindex="0"
         type="button"
       >
@@ -893,42 +893,42 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
         </svg>
       </button>
       <span
-        class="MuiSlider-root MuiSlider-colorPrimary MuiSlider-sizeMedium c5 css-vhj176-MuiSlider-root"
+        class="MuiSlider-root MuiSlider-colorPrimary MuiSlider-sizeMedium c5 css-1uesrtc-MuiSlider-root"
       >
         <span
-          class="MuiSlider-rail css-7o8aqz-MuiSlider-rail"
+          class="MuiSlider-rail css-r64h58-MuiSlider-rail"
         />
         <span
-          class="MuiSlider-track css-ttgsjq-MuiSlider-track"
+          class="MuiSlider-track css-xvk2i-MuiSlider-track"
           style="left: 0%; width: 0%;"
         />
         <span
-          class="MuiSlider-mark MuiSlider-markActive css-z5sdnj-MuiSlider-mark"
+          class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
           data-index="0"
           style="left: 0%;"
         />
         <span
-          class="MuiSlider-mark css-hzp7sc-MuiSlider-mark"
+          class="MuiSlider-mark css-lq5hqx-MuiSlider-mark"
           data-index="1"
           style="left: 25%;"
         />
         <span
-          class="MuiSlider-mark css-hzp7sc-MuiSlider-mark"
+          class="MuiSlider-mark css-lq5hqx-MuiSlider-mark"
           data-index="2"
           style="left: 50%;"
         />
         <span
-          class="MuiSlider-mark css-hzp7sc-MuiSlider-mark"
+          class="MuiSlider-mark css-lq5hqx-MuiSlider-mark"
           data-index="3"
           style="left: 75%;"
         />
         <span
-          class="MuiSlider-mark css-hzp7sc-MuiSlider-mark"
+          class="MuiSlider-mark css-lq5hqx-MuiSlider-mark"
           data-index="4"
           style="left: 100%;"
         />
         <span
-          class="MuiSlider-thumb MuiSlider-thumbSizeMedium MuiSlider-thumbColorPrimary MuiSlider-thumb MuiSlider-thumbSizeMedium MuiSlider-thumbColorPrimary css-cp2j25-MuiSlider-thumb"
+          class="MuiSlider-thumb MuiSlider-thumbSizeMedium MuiSlider-thumbColorPrimary MuiSlider-thumb MuiSlider-thumbSizeMedium MuiSlider-thumbColorPrimary css-1xcmt9q-MuiSlider-thumb"
           data-index="0"
           style="left: 0%;"
         >
@@ -948,7 +948,7 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
           />
           <span
             aria-hidden="true"
-            class="MuiSlider-valueLabel css-14gyywz-MuiSlider-valueLabel"
+            class="MuiSlider-valueLabel css-1asissc-MuiSlider-valueLabel"
           >
             <span
               class="MuiSlider-valueLabelCircle"
@@ -964,7 +964,7 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
       </span>
       <button
         aria-label="Max Fast Forward"
-        class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-osi8n4-MuiButtonBase-root-MuiIconButton-root"
+        class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-1k5kb9w-MuiButtonBase-root-MuiIconButton-root"
         tabindex="0"
         type="button"
       >

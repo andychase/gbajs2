@@ -213,7 +213,7 @@ export const mGBAEmulator = (mGBA: mGBAEmulatorTypeDef): GBAEmulator => {
     ],
     loadSaveState: mGBA.loadState,
     listSaveStates: () => mGBA.FS.readdir(paths.saveStatePath),
-    listRoms: () => mGBA.FS.readdir(paths.gamePath),
+    listRoms: mGBA.listRoms,
     setVolume: async (volumePercent) => {
       if (
         mGBA.SDL2.audioContext.state === 'suspended' ||
