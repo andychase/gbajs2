@@ -1,5 +1,5 @@
 # first stage - builder
-FROM golang:alpine as builder
+FROM golang:alpine AS builder
 WORKDIR /app/
 COPY . /app/
 RUN apk update && apk add make

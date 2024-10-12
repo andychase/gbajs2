@@ -1,5 +1,5 @@
 # first stage - builder
-FROM node:20.12.1-alpine3.19 as builder
+FROM node:20.12.1-alpine3.19 AS builder
 WORKDIR /app
 COPY . /app
 
