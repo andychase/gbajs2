@@ -40,9 +40,8 @@ export const useAsyncData = <T, R>({
   );
 
   useEffect(() => {
-    if (loadOnMount && !!fetchFn) {
-      execute();
-    }
+    if (loadOnMount) execute();
+
     // without linter override here we would
     // re-trigger effect on every access token refresh
     // eslint-disable-next-line react-hooks/exhaustive-deps
