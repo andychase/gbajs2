@@ -1,4 +1,4 @@
-import { screen, waitFor } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
@@ -17,20 +17,13 @@ describe('<ControlProfiles />', () => {
     ).toBeVisible();
   });
 
-  it('renders profiles from storage', async () => {
+  it('renders profiles from storage', () => {
     localStorage.setItem(
       virtualControlProfilesLocalStorageKey,
       '[{"id":"testId1","name":"Profile-1","layouts":{"screen":{"initialBounds":{"x":260,"y":15,"width":834,"height":600.09375,"top":15,"right":1094,"bottom":615.09375,"left":260}},"controlPanel":{"initialBounds":{"x":260,"y":620,"width":584,"height":60,"top":620,"right":844,"bottom":680,"left":260}}},"active":true},{"id":"testId2","name":"Profile-2","layouts":{"screen":{"initialBounds":{"x":260,"y":15,"width":834,"height":600.09375,"top":15,"right":1094,"bottom":615.09375,"left":260}},"controlPanel":{"initialBounds":{"x":260,"y":620,"width":584,"height":60,"top":620,"right":844,"bottom":680,"left":260}}},"active":true}]'
     );
 
     renderWithContext(<ControlProfiles id="testId" />);
-
-    // isValid from RHF updates state, but its not visible as we are not editing, we need to wait for it
-    await waitFor(() =>
-      expect(
-        screen.getByRole('button', { name: "Edit Profile-1's name" })
-      ).toHaveAttribute('data-is-valid', 'true')
-    );
 
     expect(screen.getByRole('button', { name: 'Profile-1' })).toBeVisible();
     expect(screen.getByRole('button', { name: 'Profile-2' })).toBeVisible();

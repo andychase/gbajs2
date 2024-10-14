@@ -2,7 +2,6 @@ import { IconButton, TextField } from '@mui/material';
 import { useLocalStorage } from '@uidotdev/usehooks';
 import { nanoid } from 'nanoid';
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
 import { BiTrash, BiEdit, BiSave } from 'react-icons/bi';
 import { styled } from 'styled-components';
 
@@ -36,7 +35,7 @@ type StatefulIconButtonProps = {
 type EditableProfileLoadButtonProps = {
   name: string;
   loadProfile: () => void;
-  onSubmit: ({ name }: { name: string }) => void;
+  onSubmit: (name: string) => void;
 };
 
 const StyledLi = styled.li`
@@ -103,7 +102,7 @@ const LoadProfileButton = styled.button`
   }
 `;
 
-const StyledForm = styled.form`
+const FlexContainer = styled.div`
   display: flex;
   gap: 10px;
 `;
@@ -125,18 +124,16 @@ const EditableProfileLoadButton = ({
   onSubmit
 }: EditableProfileLoadButtonProps) => {
   const [isEditing, setIsEditing] = useState(false);
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isValid }
-  } = useForm<{ name: string }>({
-    defaultValues: {
-      name: name
-    }
-  });
+  const [storedName, setStoredName] = useState(name);
+
+  const submitNameChange = (name?: string) => {
+    if (isEditing && name) onSubmit(name);
+
+    setIsEditing((prevState) => !prevState);
+  };
 
   return (
-    <StyledForm onSubmit={handleSubmit(onSubmit)}>
+    <FlexContainer>
       {isEditing ? (
         <TextField
           variant="standard"
@@ -146,8 +143,9 @@ const EditableProfileLoadButton = ({
               paddingLeft: '8px'
             }
           }}
-          error={!!errors?.name}
-          {...register('name', { required: true })}
+          error={!storedName}
+          value={storedName}
+          onChange={(e) => setStoredName(e.target.value)}
         />
       ) : (
         <LoadProfileButton onClick={loadProfile}>{name}</LoadProfileButton>
@@ -158,10 +156,9 @@ const EditableProfileLoadButton = ({
         falsyIcon={<StyledBiEdit />}
         aria-label={`${isEditing ? 'Save' : 'Edit'} ${name}'s name`}
         type="submit"
-        data-is-valid={isValid}
-        onClick={() => isValid && setIsEditing((prevState) => !prevState)}
+        onClick={() => submitNameChange(storedName)}
       />
-    </StyledForm>
+    </FlexContainer>
   );
 };
 
@@ -212,7 +209,7 @@ export const ControlProfiles = ({ id }: ControlProfilesProps) => {
               <EditableProfileLoadButton
                 name={profile.name}
                 loadProfile={() => setLayouts(profile.layouts)}
-                onSubmit={({ name }) => updateProfile(profile.id, name)}
+                onSubmit={(name) => updateProfile(profile.id, name)}
               />
               <IconButton
                 aria-label={`Delete ${profile.name}`}
