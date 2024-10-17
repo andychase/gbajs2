@@ -231,7 +231,7 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
     >
       <button
         aria-label="Mute Volume"
-        class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-1k5kb9w-MuiButtonBase-root-MuiIconButton-root"
+        class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-1928est-MuiButtonBase-root-MuiIconButton-root"
         tabindex="0"
         type="button"
       >
@@ -352,7 +352,7 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
       </span>
       <button
         aria-label="Max Volume"
-        class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-1k5kb9w-MuiButtonBase-root-MuiIconButton-root"
+        class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-1928est-MuiButtonBase-root-MuiIconButton-root"
         tabindex="0"
         type="button"
       >
@@ -381,7 +381,7 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
     >
       <button
         aria-label="Regular Speed"
-        class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-1k5kb9w-MuiButtonBase-root-MuiIconButton-root"
+        class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-1928est-MuiButtonBase-root-MuiIconButton-root"
         tabindex="0"
         type="button"
       >
@@ -472,7 +472,7 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
       </span>
       <button
         aria-label="Max Fast Forward"
-        class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-1k5kb9w-MuiButtonBase-root-MuiIconButton-root"
+        class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-1928est-MuiButtonBase-root-MuiIconButton-root"
         tabindex="0"
         type="button"
       >
@@ -723,7 +723,7 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
     >
       <button
         aria-label="Mute Volume"
-        class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-1k5kb9w-MuiButtonBase-root-MuiIconButton-root"
+        class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-1928est-MuiButtonBase-root-MuiIconButton-root"
         tabindex="0"
         type="button"
       >
@@ -844,7 +844,7 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
       </span>
       <button
         aria-label="Max Volume"
-        class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-1k5kb9w-MuiButtonBase-root-MuiIconButton-root"
+        class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-1928est-MuiButtonBase-root-MuiIconButton-root"
         tabindex="0"
         type="button"
       >
@@ -873,7 +873,7 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
     >
       <button
         aria-label="Regular Speed"
-        class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-1k5kb9w-MuiButtonBase-root-MuiIconButton-root"
+        class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-1928est-MuiButtonBase-root-MuiIconButton-root"
         tabindex="0"
         type="button"
       >
@@ -964,7 +964,7 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
       </span>
       <button
         aria-label="Max Fast Forward"
-        class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-1k5kb9w-MuiButtonBase-root-MuiIconButton-root"
+        class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-1928est-MuiButtonBase-root-MuiIconButton-root"
         tabindex="0"
         type="button"
       >
