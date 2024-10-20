@@ -28,6 +28,7 @@ Do not attempt to log into the server unless you are the server owner or an appr
 - Postgres support
 - Persistent file system utilizing IndexedDB
 - Interactive Product Tour
+- Load public rom file from query string
 
 ## Existing Feature List
 

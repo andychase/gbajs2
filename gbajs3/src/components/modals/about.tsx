@@ -38,6 +38,13 @@ export const AboutModal = () => {
           </li>
           <li>Enjoy, your game will boot!</li>
         </ul>
+        <p>
+          See the{' '}
+          <a href="https://github.com/thenick775/gbajs3/wiki" target="_blank">
+            WIKI
+          </a>{' '}
+          and tour items for further information!
+        </p>
       </ModalBody>
       <ModalFooter>
         <Button
