@@ -22,11 +22,11 @@ export const App = () => {
       <AppErrorBoundary>
         <ProductTourIntro />
         <ToasterWithDefaults />
-        <PwaPrompt />
         <AuthProvider>
           <EmulatorContextProvider>
             <LayoutProvider>
               <ModalProvider>
+                <PwaPrompt />
                 <NavigationMenu />
                 <Screen />
                 <ControlPanel />

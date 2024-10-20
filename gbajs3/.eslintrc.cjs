@@ -7,7 +7,6 @@ module.exports = {
     'plugin:import/recommended',
     'plugin:jsx-a11y/recommended',
     'plugin:styled-components-a11y/recommended',
-    'plugin:testing-library/react',
     'plugin:jest-dom/recommended'
   ],
   parser: '@typescript-eslint/parser',
@@ -48,5 +47,12 @@ module.exports = {
       'error',
       { testIdPattern: '^([a-z0-9]+-?:?)+$' }
     ]
-  }
+  },
+  overrides: [
+    {
+      // some plugins should only be enabled for test files
+      files: ['**/test/**/*.[jt]s?(x)', '**/?(*.)+(spec|test).[jt]s?(x)'],
+      extends: ['plugin:testing-library/react']
+    }
+  ]
 };

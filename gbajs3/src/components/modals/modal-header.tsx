@@ -6,6 +6,7 @@ import { HeaderWrapper, Header } from '../shared/styled.tsx';
 type ModalHeaderProps = {
   title: string;
   showExitIndicator?: boolean;
+  onClose?: () => void;
 };
 
 const CloseButton = styled.button`
@@ -35,7 +36,8 @@ const CloseButton = styled.button`
 
 export const ModalHeader = ({
   title,
-  showExitIndicator = true
+  showExitIndicator = true,
+  onClose
 }: ModalHeaderProps) => {
   const { setIsModalOpen } = useModalContext();
 
@@ -43,7 +45,13 @@ export const ModalHeader = ({
     <HeaderWrapper>
       <Header id="modalHeader">{title}</Header>
       {showExitIndicator && (
-        <CloseButton aria-label="Close" onClick={() => setIsModalOpen(false)} />
+        <CloseButton
+          aria-label="Close"
+          onClick={() => {
+            setIsModalOpen(false);
+            onClose?.();
+          }}
+        />
       )}
     </HeaderWrapper>
   );

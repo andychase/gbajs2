@@ -38,4 +38,19 @@ describe('<ModalHeader />', () => {
     expect(screen.getByText('Test Modal')).toBeInTheDocument();
     expect(screen.queryByLabelText('Close')).not.toBeInTheDocument();
   });
+
+  it('calls onClose when close button is clicked', async () => {
+    const onCloseSpy = vi.fn();
+
+    renderWithContext(<ModalHeader title="Test Modal" onClose={onCloseSpy} />);
+
+    expect(screen.getByText('Test Modal')).toBeInTheDocument();
+
+    // click the close button
+    const closeButton = screen.getByLabelText('Close');
+    expect(closeButton).toBeInTheDocument();
+    await userEvent.click(closeButton);
+
+    expect(onCloseSpy).toHaveBeenCalledOnce();
+  });
 });
