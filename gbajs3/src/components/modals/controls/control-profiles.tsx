@@ -9,7 +9,7 @@ import { useLayoutContext } from '../../../hooks/context.tsx';
 import { virtualControlProfilesLocalStorageKey } from '../../controls/consts.tsx';
 import { CenteredText, StyledBiPlus } from '../../shared/styled.tsx';
 
-import type { Layouts } from '../../../context/layout/layout.tsx';
+import type { Layouts } from '../../../context/layout/layout-context.tsx';
 import type { IconButtonProps } from '@mui/material';
 import type { ReactNode } from 'react';
 

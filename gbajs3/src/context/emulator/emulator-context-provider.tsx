@@ -1,7 +1,7 @@
-import { DragProvider } from './drag.tsx';
-import { EmulatorProvider } from './emulator.tsx';
-import { ResizeProvider } from './resize.tsx';
-import { RunningProvider } from './running.tsx';
+import { DragProvider } from './providers/drag-provider.tsx';
+import { EmulatorProvider } from './providers/emulator-provider.tsx';
+import { ResizeProvider } from './providers/resize-provider.tsx';
+import { RunningProvider } from './providers/running-provider.tsx';
 
 import type { ReactNode } from 'react';
 

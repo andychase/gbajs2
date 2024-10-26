@@ -1,12 +1,12 @@
 import { useContext, type Context } from 'react';
 
-import { AuthContext } from '../context/auth/auth.tsx';
-import { DragContext } from '../context/emulator/drag.tsx';
-import { EmulatorContext } from '../context/emulator/emulator.tsx';
-import { ResizeContext } from '../context/emulator/resize.tsx';
-import { RunningContext } from '../context/emulator/running.tsx';
-import { LayoutContext } from '../context/layout/layout.tsx';
-import { ModalContext } from '../context/modal/modal.tsx';
+import { AuthContext } from '../context/auth/auth-context.tsx';
+import { DragContext } from '../context/emulator/contexts/drag-context.tsx';
+import { EmulatorContext } from '../context/emulator/contexts/emulator-context.tsx';
+import { ResizeContext } from '../context/emulator/contexts/resize-context.tsx';
+import { RunningContext } from '../context/emulator/contexts/running-context.tsx';
+import { LayoutContext } from '../context/layout/layout-context.tsx';
+import { ModalContext } from '../context/modal/modal-context.tsx';
 
 const useLoadContext = <T,>(context: Context<T>) => {
   const displayName = context.displayName;

@@ -1,7 +1,7 @@
 import { useLocalStorage } from '@uidotdev/usehooks';
 import { useCallback, useMemo } from 'react';
 
-import type { Layouts } from '../context/layout/layout';
+import type { Layouts } from '../context/layout/layout-context.tsx';
 
 const layoutLocalStorageKey = 'componentLayouts';
 

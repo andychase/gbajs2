@@ -10,10 +10,10 @@ import { PwaPrompt } from './components/pwa-prompt/pwa-prompt.tsx';
 import { Screen } from './components/screen/screen.tsx';
 import { AppErrorBoundary } from './components/shared/error-boundary.tsx';
 import { ToasterWithDefaults } from './components/toast/toaster.tsx';
-import { AuthProvider } from './context/auth/auth.tsx';
+import { AuthProvider } from './context/auth/auth-provider.tsx';
 import { EmulatorContextProvider } from './context/emulator/emulator-context-provider.tsx';
-import { LayoutProvider } from './context/layout/layout.tsx';
-import { ModalProvider } from './context/modal/modal.tsx';
+import { LayoutProvider } from './context/layout/layout-provider.tsx';
+import { ModalProvider } from './context/modal/modal-provider.tsx';
 import { GbaDarkTheme } from './context/theme/theme.tsx';
 
 export const App = () => {

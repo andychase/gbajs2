@@ -1,31 +1,15 @@
 import { jwtDecode, type JwtPayload } from 'jwt-decode';
-import {
-  createContext,
-  useState,
-  useEffect,
-  useCallback,
-  type ReactNode,
-  type SetStateAction,
-  type Dispatch
-} from 'react';
+import { useState, useEffect, useCallback, type ReactNode } from 'react';
 import { useInterval } from 'usehooks-ts';
 
+import {
+  AuthContext,
+  type AuthContextProps,
+  type AccessTokenSource
+} from './auth-context.tsx';
 import { useRefreshAccessToken } from '../../hooks/use-refresh.tsx';
 
-type AccessTokenSource = 'refresh' | 'login' | null;
-
-type AuthContextProps = {
-  accessToken: string | null;
-  setAccessToken: Dispatch<SetStateAction<string | null>>;
-  setAccessTokenSource: Dispatch<SetStateAction<AccessTokenSource | null>>;
-  isAuthenticated: () => boolean;
-};
-
 type AuthProviderProps = { children: ReactNode };
-
-export const AuthContext = createContext<AuthContextProps | null>(null);
-
-AuthContext.displayName = 'AuthContext';
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const fourMinutesInMS = 240 * 1000;

@@ -1,30 +1,11 @@
-import { createContext, useCallback, useEffect, type ReactNode } from 'react';
+import { useCallback, useEffect, type ReactNode } from 'react';
 
+import { LayoutContext } from './layout-context.tsx';
 import { useLayouts } from '../../hooks/use-layouts.tsx';
 
-export type Layout = {
-  position?: { x: number; y: number };
-  size?: { width: string | number; height: string | number };
-  initialBounds?: DOMRect;
-};
-
-export type Layouts = {
-  [key: string]: Layout;
-};
-
-type LayoutContextProps = {
-  layouts: Layouts;
-  hasSetLayout: boolean;
-  clearLayouts: () => void;
-  setLayout: (layoutKey: string, layout: Layout) => void;
-  setLayouts: (layouts: Layouts) => void;
-};
+import type { Layout } from './layout-context.tsx';
 
 type LayoutProviderProps = { children: ReactNode };
-
-export const LayoutContext = createContext<LayoutContextProps | null>(null);
-
-LayoutContext.displayName = 'LayoutContext';
 
 export const LayoutProvider = ({ children }: LayoutProviderProps) => {
   const { layouts, setLayouts, hasSetLayout, clearLayouts } = useLayouts();
