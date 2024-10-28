@@ -1,5 +1,19 @@
 # gbajs3 -- A Browser Based Game Boy Advance Emulator
 
+<div>
+  <a href="https://github.com/thenick775/gbajs3/releases">
+    <img alt="GitHub Release" src="https://img.shields.io/github/v/release/thenick775/gbajs3">
+  </a>
+  <a href="https://github.com/thenick775/gbajs3/actions">
+    <img alt="GitHub Actions Workflow Status" src="https://img.shields.io/github/actions/workflow/status/thenick775/gbajs3/protected.yml">
+  </a>
+  <a href="https://github.com/thenick775/gbajs3/wiki">
+    <img alt="WIKI" src="https://img.shields.io/badge/docs-WIKI-blue">
+  </a>
+</div>
+
+<br/>
+
 This project is a Game Boy Advance emulator that is freely licensed and works in any modern browser without plugins.
 
 It began as a re-skin of the [gbajs2](https://github.com/andychase/gbajs2) fork by andychase, but now supports the [mGBA wasm](https://github.com/thenick775/mgba/tree/feature/wasm) core through the use of emscripten, for a feature rich user experience.
