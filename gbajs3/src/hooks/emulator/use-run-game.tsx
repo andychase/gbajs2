@@ -33,7 +33,7 @@ export const useRunGame = () => {
   );
   const [coreCallbackOptions] = useLocalStorage<CoreCallbackOptions>(
     emulatorCoreCallbacksLocalStorageKey,
-    { saveFileSystemOnInGameSave: false, notificationsEnabled: true }
+    { saveFileSystemOnInGameSave: true, notificationsEnabled: true }
   );
   const { addCallbacks } = useAddCallbacks();
 
