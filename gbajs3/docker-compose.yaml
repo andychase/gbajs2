@@ -11,8 +11,8 @@ services:
             args:
                 CLIENT_HOST: ${CLIENT_HOST}
         ports:
-            - "443:443"
-            - "80:80"
+            - 443:443
+            - 80:80
         environment:
             - CLIENT_HOST=${CLIENT_HOST}
         volumes:
