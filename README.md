@@ -164,7 +164,7 @@ Original work by andychase. Repo: (gbajs2 base)
 https://github.com/andychase/gbajs2
 Copyright © 2020, Andrew Chase
 
-Copyright © 2022 - 2023, Nicholas VanCise
+Copyright © 2022 - 2024, Nicholas VanCise
 
 All rights reserved.
 
