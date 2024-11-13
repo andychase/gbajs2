@@ -1,6 +1,6 @@
 services:
     gba-auth-server:
-        image: gba-auth-server
+        image: ${REGISTRY_PREFIX}gba-auth-server
         logging:
             options:
                 max-size: '20m'

@@ -4,6 +4,8 @@
 /**/users.db
 /**/swag
 /**/.env
+/**/.env.swarm
+/**/shepherd-registries
 /**/certs/**
 /**/*.log
 /**/authapi

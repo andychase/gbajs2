@@ -1,6 +1,6 @@
 services:
     gba-admin-server:
-        image: gba-admin-server
+        image: ${REGISTRY_PREFIX}gba-admin-server
         logging:
             options:
                 max-size: '20m'

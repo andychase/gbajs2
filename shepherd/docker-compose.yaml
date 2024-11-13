@@ -1,0 +1,23 @@
+services:
+    shepherd:
+        build: .
+        image: containrrr/shepherd
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+        deploy:
+            placement:
+                constraints:
+                    - node.role == manager
+        environment:
+            - IGNORELIST_SERVICES=gbajs3_shepherd
+            - IMAGE_AUTOCLEAN_LIMIT=1
+            - ROLLBACK_ON_FAILURE=true
+            - WITH_REGISTRY_AUTH=true
+            - REGISTRIES_FILE=/var/run/secrets/shepherd-registries
+            - VERBOSE=true
+        restart: always
+        secrets:
+            - shepherd-registries
+secrets:
+    shepherd-registries:
+        file: ./shepherd/shepherd-registries

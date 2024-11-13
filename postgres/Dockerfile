@@ -1,5 +1,7 @@
 FROM postgres:15.2-alpine
 
+LABEL org.opencontainers.image.source https://github.com/thenick775/gbajs3
+
 # copy the initialization script to the container,
 # this will create the go-admin db structure as
 # well as initialize gbajs3 specific content

@@ -9,6 +9,9 @@ RUN make build
 
 # second stage
 FROM alpine:latest
+
+LABEL org.opencontainers.image.source https://github.com/thenick775/gbajs3
+
 WORKDIR /app/
 COPY --from=builder /app/build/goadmin .
 COPY --from=builder /app/html/ ./html

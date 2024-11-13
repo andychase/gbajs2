@@ -1,6 +1,6 @@
 services:
     gba-postgres:
-        image: gba-postgres
+        image: ${REGISTRY_PREFIX}gba-postgres
         logging:
             options:
                 max-size: '20m'
@@ -13,10 +13,9 @@ services:
         environment:
             POSTGRES_USER: ${PG_DB_USER}
             POSTGRES_PASSWORD: ${PG_DB_PASSWORD}
-            POSTGRES_DB: ${ADMIN_DB_NAME} # todo reevaluate if this is needed
         command: postgres
         healthcheck:
-            test: ["CMD-SHELL", "pg_isready -q -U ${PG_DB_USER} -d ${ADMIN_DB_NAME} -h ${PG_DB_HOST}"]
+            test: ["CMD-SHELL", "pg_isready -q -U ${PG_DB_USER} -h localhost"]
             interval: 10s
             timeout: 5s
             retries: 12

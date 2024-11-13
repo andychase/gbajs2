@@ -10,6 +10,9 @@ if [[ $REPLY == "y" || $REPLY == "Y" ]]; then
     if [ -d "$dir" ]; then
       cp "$dir/.env.example" "$dir/.env" &&
         echo "Copied .env.example to .env in $dir"
+
+      cp "$dir/.env.example.swarm" "$dir/.env.swarm" &&
+        echo "Copied .env.example.swarm to .env.swarm in $dir"
     else
       echo "Directory $dir does not exist."
     fi

@@ -1,6 +1,6 @@
 services:
     gba-webserver:
-        image: gba-webserver
+        image: ${REGISTRY_PREFIX}gba-webserver
         logging:
             options:
                 max-size: '20m'
