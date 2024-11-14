@@ -13,8 +13,8 @@ ARG PG_DB_USER
 RUN sed -i "s;<PG_DB_USER>;${PG_DB_USER};" /docker-entrypoint-initdb.d/init_admin_db.sql && \
 	sed -i "s;<PG_DB_USER>;${PG_DB_USER};" /docker-entrypoint-initdb.d/init_gbajs3_db.sql
 
-RUN chmod +x /docker-entrypoint-initdb.d/init_admin_db.sql
-RUN chmod +x /docker-entrypoint-initdb.d/init_gbajs3_db.sql
+RUN chmod +x /docker-entrypoint-initdb.d/init_admin_db.sql && \
+	chmod +x /docker-entrypoint-initdb.d/init_gbajs3_db.sql
 
 # run the PostgreSQL server
 CMD ["postgres"]
