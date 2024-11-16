@@ -1,5 +1,7 @@
-import { Button } from '@mui/material';
+import { Button, Chip } from '@mui/material';
 import { useLocalStorage } from '@uidotdev/usehooks';
+import { BiCheckCircle } from 'react-icons/bi';
+import { styled } from 'styled-components';
 
 import { ModalBody } from './modal-body.tsx';
 import { ModalFooter } from './modal-footer.tsx';
@@ -9,11 +11,19 @@ import { productTourLocalStorageKey } from '../product-tour/consts.tsx';
 
 import type { CompletedProductTourSteps } from '../product-tour/product-tour-intro.tsx';
 
+const FlexWrapper = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  width: 100%;
+`;
+
 export const AboutModal = () => {
   const { setIsModalOpen } = useModalContext();
   const [, setHasCompletedProductTourSteps] = useLocalStorage<
     CompletedProductTourSteps | undefined
   >(productTourLocalStorageKey);
+  const releaseVersion = import.meta.env.VITE_GBA_RELEASE_VERSION;
 
   return (
     <>
@@ -45,6 +55,19 @@ export const AboutModal = () => {
           </a>{' '}
           and tour items for further information!
         </p>
+        {releaseVersion && (
+          <FlexWrapper>
+            <Chip
+              label={`Version ${releaseVersion}`}
+              component="a"
+              target="_blank"
+              href={`https://github.com/thenick775/gbajs3/releases/tag/${releaseVersion}`}
+              size="small"
+              icon={<BiCheckCircle />}
+              clickable
+            />
+          </FlexWrapper>
+        )}
       </ModalBody>
       <ModalFooter>
         <Button

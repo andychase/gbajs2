@@ -31,6 +31,7 @@ jobs:
           - name: gba-webserver
             directory: ./gbajs3
             build_arg_name: CLIENT_HOST
+            build_with_tag: true
           - name: gba-auth-server
             directory: ./auth
           - name: gba-admin-server
@@ -49,17 +50,18 @@ jobs:
           IMAGE_TAG: ${{ needs.setup.outputs.image_tag }}
           BUILD_ARG_NAME: ${{ matrix.image.build_arg_name }}
           BUILD_ARG_VALUE: ${{ secrets[matrix.image.build_arg_name] || '' }}
+          BUILD_WITH_TAG: ${{ matrix.image.build_with_tag }}
         run: |
+          BUILD_ARG_FLAGS=""
           if [ -n "$BUILD_ARG_NAME" ] && [ -n "$BUILD_ARG_VALUE" ]; then
-            docker build --build-arg $BUILD_ARG_NAME=$BUILD_ARG_VALUE \
+            BUILD_ARG_FLAGS="--build-arg $BUILD_ARG_NAME=$BUILD_ARG_VALUE"
+          if [ "$BUILD_WITH_TAG" = "true" ]; then
+            BUILD_ARG_FLAGS="$BUILD_ARG_FLAGS --build-arg RELEASE_VERSION=$IMAGE_TAG"
+
+          docker build $BUILD_ARG_FLAGS \
               -t ghcr.io/${{ github.actor }}/${REPO_NAME}/${{ matrix.image.name }}:${IMAGE_TAG} \
               -t ghcr.io/${{ github.actor }}/${REPO_NAME}/${{ matrix.image.name }}:latest \
               ${{ matrix.image.directory }}
-          else
-            docker build -t ghcr.io/${{ github.actor }}/${REPO_NAME}/${{ matrix.image.name }}:${IMAGE_TAG} \
-              -t ghcr.io/${{ github.actor }}/${REPO_NAME}/${{ matrix.image.name }}:latest \
-              ${{ matrix.image.directory }}
-          fi
 
       - name: Push
         env:

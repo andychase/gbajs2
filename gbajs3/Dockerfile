@@ -4,10 +4,11 @@ WORKDIR /app
 COPY . /app
 
 ARG CLIENT_HOST
+ARG RELEASE_VERSION
 ENV VITE_GBA_SERVER_LOCATION=${CLIENT_HOST}
+ENV VITE_GBA_RELEASE_VERSION=${RELEASE_VERSION}
 
-RUN npm install
-RUN npm run build
+RUN npm install && npm run build
 
 # second stage, server
 FROM nginx:stable-alpine
