@@ -31,6 +31,14 @@ describe('<AboutModal>', () => {
     expect(setIsModalOpenSpy).toHaveBeenCalledWith(false);
   });
 
+  it('renders with release version if present', () => {
+    vi.stubEnv('VITE_GBA_RELEASE_VERSION', '0.0.0');
+
+    renderWithContext(<AboutModal />);
+
+    expect(screen.getByText('Version 0.0.0')).toBeVisible();
+  });
+
   it('closes modal using the close button', async () => {
     const setIsModalOpenSpy = vi.fn();
     const { useModalContext: original } = await vi.importActual<
