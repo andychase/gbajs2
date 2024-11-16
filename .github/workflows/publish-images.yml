@@ -55,8 +55,10 @@ jobs:
           BUILD_ARG_FLAGS=""
           if [ -n "$BUILD_ARG_NAME" ] && [ -n "$BUILD_ARG_VALUE" ]; then
             BUILD_ARG_FLAGS="--build-arg $BUILD_ARG_NAME=$BUILD_ARG_VALUE"
+          fi
           if [ "$BUILD_WITH_TAG" = "true" ]; then
             BUILD_ARG_FLAGS="$BUILD_ARG_FLAGS --build-arg RELEASE_VERSION=$IMAGE_TAG"
+          fi
 
           docker build $BUILD_ARG_FLAGS \
               -t ghcr.io/${{ github.actor }}/${REPO_NAME}/${{ matrix.image.name }}:${IMAGE_TAG} \
