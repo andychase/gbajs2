@@ -8,6 +8,7 @@ import { ModalBody } from './modal-body.tsx';
 import { ModalFooter } from './modal-footer.tsx';
 import { ModalHeader } from './modal-header.tsx';
 import { useEmulatorContext, useModalContext } from '../../hooks/context.tsx';
+import { useAddCallbacks } from '../../hooks/emulator/use-add-callbacks.tsx';
 import {
   EmbeddedProductTour,
   type TourSteps
@@ -25,6 +26,7 @@ const FlexModalBody = styled(ModalBody)`
 export const FileSystemModal = () => {
   const { setIsModalOpen } = useModalContext();
   const { emulator } = useEmulatorContext();
+  const { syncActionIfEnabled } = useAddCallbacks();
   const [allFiles, setAllFiles] = useState<FileNode | undefined>();
   const baseId = useId();
 
@@ -32,8 +34,9 @@ export const FileSystemModal = () => {
     (path: string) => {
       emulator?.deleteFile(path);
       setAllFiles(emulator?.listAllFiles());
+      syncActionIfEnabled();
     },
-    [emulator]
+    [emulator, syncActionIfEnabled]
   );
 
   const downloadFile = (path: string) => {

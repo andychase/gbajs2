@@ -5,6 +5,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { LoadRomModal } from './load-rom.tsx';
 import { renderWithContext } from '../../../test/render-with-context.tsx';
 import * as contextHooks from '../../hooks/context.tsx';
+import * as addCallbackHooks from '../../hooks/emulator/use-add-callbacks.tsx';
 import * as runGameHooks from '../../hooks/emulator/use-run-game.tsx';
 import * as listRomHooks from '../../hooks/use-list-roms.tsx';
 import * as loadRomHooks from '../../hooks/use-load-rom.tsx';
@@ -25,9 +26,13 @@ describe('<LoadRomModal />', () => {
       (_file, cb) => cb && cb()
     );
     const runGameSpy = vi.fn();
+    const syncActionIfEnabledSpy = vi.fn();
     const { useEmulatorContext: originalEmulator } = await vi.importActual<
       typeof contextHooks
     >('../../hooks/context.tsx');
+    const { useAddCallbacks: originalCallbacks } = await vi.importActual<
+      typeof addCallbackHooks
+    >('../../hooks/emulator/use-add-callbacks.tsx');
 
     vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
       ...originalEmulator(),
@@ -37,6 +42,11 @@ describe('<LoadRomModal />', () => {
           gamePath: '/games'
         })
       } as GBAEmulator
+    }));
+
+    vi.spyOn(addCallbackHooks, 'useAddCallbacks').mockImplementation(() => ({
+      ...originalCallbacks(),
+      syncActionIfEnabled: syncActionIfEnabledSpy
     }));
 
     vi.spyOn(runGameHooks, 'useRunGame').mockReturnValue(runGameSpy);
@@ -54,6 +64,7 @@ describe('<LoadRomModal />', () => {
     await waitForElementToBeRemoved(screen.queryByText(/Loading rom:/));
 
     expect(uploadRomSpy).toHaveBeenCalledOnce();
+    expect(syncActionIfEnabledSpy).toHaveBeenCalledOnce();
     expect(runGameSpy).toHaveBeenCalledOnce();
     expect(runGameSpy).toHaveBeenCalledWith('/games/rom1.gba');
   });

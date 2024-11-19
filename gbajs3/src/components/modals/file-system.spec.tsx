@@ -5,6 +5,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { FileSystemModal } from './file-system.tsx';
 import { renderWithContext } from '../../../test/render-with-context.tsx';
 import * as contextHooks from '../../hooks/context.tsx';
+import * as addCallbackHooks from '../../hooks/emulator/use-add-callbacks.tsx';
 import { productTourLocalStorageKey } from '../product-tour/consts.tsx';
 
 import type {
@@ -60,10 +61,14 @@ describe('<FileSystemModal />', () => {
 
   it('deletes file from the tree', async () => {
     const deleteFileSpy: (p: string) => void = vi.fn();
+    const syncActionIfEnabledSpy = vi.fn();
     const listAllFilesSpy = vi.fn(() => defaultFSData);
     const { useEmulatorContext: original } = await vi.importActual<
       typeof contextHooks
     >('../../hooks/context.tsx');
+    const { useAddCallbacks: originalCallbacks } = await vi.importActual<
+      typeof addCallbackHooks
+    >('../../hooks/emulator/use-add-callbacks.tsx');
 
     vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => {
       return {
@@ -75,6 +80,11 @@ describe('<FileSystemModal />', () => {
       };
     });
 
+    vi.spyOn(addCallbackHooks, 'useAddCallbacks').mockImplementation(() => ({
+      ...originalCallbacks(),
+      syncActionIfEnabled: syncActionIfEnabledSpy
+    }));
+
     renderWithContext(<FileSystemModal />);
 
     listAllFilesSpy.mockClear(); // clear calls from initial render
@@ -85,6 +95,7 @@ describe('<FileSystemModal />', () => {
     expect(deleteFileSpy).toHaveBeenCalledOnce();
     expect(deleteFileSpy).toHaveBeenCalledWith('/data/games/rom1.gba');
     expect(listAllFilesSpy).toHaveBeenCalledOnce();
+    expect(syncActionIfEnabledSpy).toHaveBeenCalledOnce();
   });
 
   it('downloads file from the tree', async () => {

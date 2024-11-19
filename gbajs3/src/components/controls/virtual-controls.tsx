@@ -24,6 +24,7 @@ import {
   useModalContext,
   useRunningContext
 } from '../../hooks/context.tsx';
+import { useAddCallbacks } from '../../hooks/emulator/use-add-callbacks.tsx';
 import { useQuickReload } from '../../hooks/emulator/use-quick-reload.tsx';
 import { UploadSaveToServerModal } from '../modals/upload-save-to-server.tsx';
 
@@ -62,6 +63,7 @@ export const VirtualControls = () => {
   const { layouts } = useLayoutContext();
   const virtualControlToastId = useId();
   const quickReload = useQuickReload();
+  const { syncActionIfEnabled } = useAddCallbacks();
   const [currentSaveStateSlot] = useLocalStorage(
     saveStateSlotLocalStorageKey,
     0
@@ -378,6 +380,8 @@ export const VirtualControls = () => {
       children: <BiSave />,
       onClick: () => {
         const wasSuccessful = emulator?.createSaveState(currentSaveStateSlot);
+
+        if (wasSuccessful) syncActionIfEnabled({ withToast: false });
 
         toastOnCondition(
           !!wasSuccessful,

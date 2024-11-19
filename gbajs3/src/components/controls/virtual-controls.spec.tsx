@@ -8,6 +8,7 @@ import { VirtualControls } from './virtual-controls.tsx';
 import { renderWithContext } from '../../../test/render-with-context.tsx';
 import { GbaDarkTheme } from '../../context/theme/theme.tsx';
 import * as contextHooks from '../../hooks/context.tsx';
+import * as addCallbackHooks from '../../hooks/emulator/use-add-callbacks.tsx';
 import * as quickReloadHooks from '../../hooks/emulator/use-quick-reload.tsx';
 import { UploadSaveToServerModal } from '../modals/upload-save-to-server.tsx';
 
@@ -270,15 +271,24 @@ describe('<VirtualControls />', () => {
 
     it('creates save state', async () => {
       const createSaveStateSpy: (slot: number) => boolean = vi.fn(() => true);
+      const syncActionIfEnabledSpy = vi.fn();
       const { useEmulatorContext: original } = await vi.importActual<
         typeof contextHooks
       >('../../hooks/context.tsx');
+      const { useAddCallbacks: originalCallbacks } = await vi.importActual<
+        typeof addCallbackHooks
+      >('../../hooks/emulator/use-add-callbacks.tsx');
 
       vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
         ...original(),
         emulator: {
           createSaveState: createSaveStateSpy
         } as GBAEmulator
+      }));
+
+      vi.spyOn(addCallbackHooks, 'useAddCallbacks').mockImplementation(() => ({
+        ...originalCallbacks(),
+        syncActionIfEnabled: syncActionIfEnabledSpy
       }));
 
       const toastSuccessSpy = vi.spyOn(toast.default, 'success');
@@ -291,6 +301,7 @@ describe('<VirtualControls />', () => {
 
       expect(createSaveStateSpy).toHaveBeenCalledOnce();
       expect(createSaveStateSpy).toHaveBeenCalledWith(2);
+      expect(syncActionIfEnabledSpy).toHaveBeenCalledOnce();
       expect(toastSuccessSpy).toHaveBeenCalledWith('Saved slot: 2', {
         id: expect.anything()
       });
@@ -298,15 +309,24 @@ describe('<VirtualControls />', () => {
 
     it('create save state renders error toast', async () => {
       const createSaveStateSpy: (slot: number) => boolean = vi.fn(() => false);
+      const syncActionIfEnabledSpy = vi.fn();
       const { useEmulatorContext: original } = await vi.importActual<
         typeof contextHooks
       >('../../hooks/context.tsx');
+      const { useAddCallbacks: originalCallbacks } = await vi.importActual<
+        typeof addCallbackHooks
+      >('../../hooks/emulator/use-add-callbacks.tsx');
 
       vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
         ...original(),
         emulator: {
           createSaveState: createSaveStateSpy
         } as GBAEmulator
+      }));
+
+      vi.spyOn(addCallbackHooks, 'useAddCallbacks').mockImplementation(() => ({
+        ...originalCallbacks(),
+        syncActionIfEnabled: syncActionIfEnabledSpy
       }));
 
       const toastErrorSpy = vi.spyOn(toast.default, 'error');
@@ -319,6 +339,7 @@ describe('<VirtualControls />', () => {
 
       expect(createSaveStateSpy).toHaveBeenCalledOnce();
       expect(createSaveStateSpy).toHaveBeenCalledWith(2);
+      expect(syncActionIfEnabledSpy).not.toHaveBeenCalled();
       expect(toastErrorSpy).toHaveBeenCalledWith('Failed to save slot: 2', {
         id: expect.anything()
       });

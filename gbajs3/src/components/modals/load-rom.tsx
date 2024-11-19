@@ -7,6 +7,7 @@ import { ModalBody } from './modal-body.tsx';
 import { ModalFooter } from './modal-footer.tsx';
 import { ModalHeader } from './modal-header.tsx';
 import { useEmulatorContext, useModalContext } from '../../hooks/context.tsx';
+import { useAddCallbacks } from '../../hooks/emulator/use-add-callbacks.tsx';
 import { useRunGame } from '../../hooks/emulator/use-run-game.tsx';
 import { useListRoms } from '../../hooks/use-list-roms.tsx';
 import { useLoadRom } from '../../hooks/use-load-rom.tsx';
@@ -94,19 +95,21 @@ export const LoadRomModal = () => {
   const [currentRomLoading, setCurrentRomLoading] = useState<string | null>(
     null
   );
+  const { syncActionIfEnabled } = useAddCallbacks();
 
   const shouldUploadRom = !romLoading && !!romFile && !!currentRomLoading;
 
   useEffect(() => {
     if (shouldUploadRom) {
       const runCallback = () => {
+        syncActionIfEnabled();
         runGame(emulator?.filePaths().gamePath + '/' + romFile.name);
       };
 
       emulator?.uploadRom(romFile, runCallback);
       setCurrentRomLoading(null);
     }
-  }, [emulator, shouldUploadRom, romFile, runGame]);
+  }, [emulator, shouldUploadRom, romFile, runGame, syncActionIfEnabled]);
 
   const tourSteps: TourSteps = [
     {

@@ -7,7 +7,12 @@ import { useRunningContext, useEmulatorContext } from '../context.tsx';
 
 export type CoreCallbackOptions = {
   saveFileSystemOnInGameSave: boolean;
+  saveFileSystemOnCreateUpdateDelete?: boolean;
   notificationsEnabled?: boolean;
+};
+
+type SyncActionIfEnabledProps = {
+  withToast?: boolean;
 };
 
 // return a function or null based on a condition, null clears the callback in
@@ -18,19 +23,34 @@ const optionalFunc = (condition: boolean, func: () => void) =>
 export const useAddCallbacks = () => {
   const { isRunning } = useRunningContext();
   const { emulator } = useEmulatorContext();
-  const [, setFileSystemOptions] = useLocalStorage<
+  const [coreCallbackOptions, setCoreCallbackOptions] = useLocalStorage<
     CoreCallbackOptions | undefined
   >(emulatorCoreCallbacksLocalStorageKey);
+
+  const syncActionIfEnabled = useCallback(
+    async ({ withToast = true }: SyncActionIfEnabledProps = {}) => {
+      if (coreCallbackOptions?.saveFileSystemOnCreateUpdateDelete) {
+        await emulator?.fsSync();
+        if (coreCallbackOptions?.notificationsEnabled && withToast)
+          toast.success('Saved File System');
+      }
+    },
+    [
+      emulator,
+      coreCallbackOptions?.saveFileSystemOnCreateUpdateDelete,
+      coreCallbackOptions?.notificationsEnabled
+    ]
+  );
 
   const addCallbacks = useCallback(
     (options: CoreCallbackOptions) =>
       emulator?.addCoreCallbacks({
         saveDataUpdatedCallback: optionalFunc(
           options.saveFileSystemOnInGameSave,
-          () => {
-            emulator.fsSync();
+          async () => {
+            await emulator.fsSync();
             if (options.notificationsEnabled)
-              toast.success('Saved File System ');
+              toast.success('Saved File System');
           }
         )
       }),
@@ -39,15 +59,19 @@ export const useAddCallbacks = () => {
 
   const addCallbacksAndSaveSettings = useCallback(
     (options: CoreCallbackOptions) => {
-      setFileSystemOptions((prevState) => ({
+      setCoreCallbackOptions((prevState) => ({
         ...prevState,
         ...options
       }));
 
       if (isRunning) addCallbacks(options);
     },
-    [addCallbacks, isRunning, setFileSystemOptions]
+    [addCallbacks, isRunning, setCoreCallbackOptions]
   );
 
-  return { addCallbacks, addCallbacksAndSaveSettings };
+  return {
+    addCallbacks,
+    addCallbacksAndSaveSettings,
+    syncActionIfEnabled
+  };
 };

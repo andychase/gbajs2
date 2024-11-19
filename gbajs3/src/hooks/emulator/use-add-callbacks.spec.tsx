@@ -1,4 +1,5 @@
 import { act } from 'react';
+import * as toast from 'react-hot-toast';
 import { describe, expect, it, vi } from 'vitest';
 
 import { useAddCallbacks } from './use-add-callbacks.tsx';
@@ -167,6 +168,87 @@ describe('useAddCallbacks hook', () => {
       );
 
       expect(emulatorAddCoreCallbacksSpy).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('syncActionIfEnabled', () => {
+    it('should sync files and toast when options are enabled', async () => {
+      const emulatorFSSyncSpy: () => void = vi.fn();
+
+      vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
+        setCanvas: vi.fn(),
+        canvas: null,
+        emulator: {
+          fsSync: emulatorFSSyncSpy
+        } as GBAEmulator
+      }));
+
+      const toastSuccessSpy = vi.spyOn(toast.default, 'success');
+
+      localStorage.setItem(
+        emulatorCoreCallbacksLocalStorageKey,
+        '{"saveFileSystemOnCreateUpdateDelete":true,"notificationsEnabled":true}'
+      );
+
+      const { result } = renderHookWithContext(() => useAddCallbacks());
+
+      await act(() => result.current.syncActionIfEnabled());
+
+      expect(emulatorFSSyncSpy).toHaveBeenCalledOnce();
+      expect(toastSuccessSpy).toHaveBeenCalledOnce();
+      expect(toastSuccessSpy).toHaveBeenCalledWith('Saved File System');
+    });
+
+    it('should only sync files', async () => {
+      const emulatorFSSyncSpy: () => void = vi.fn();
+
+      vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
+        setCanvas: vi.fn(),
+        canvas: null,
+        emulator: {
+          fsSync: emulatorFSSyncSpy
+        } as GBAEmulator
+      }));
+
+      const toastSuccessSpy = vi.spyOn(toast.default, 'success');
+
+      localStorage.setItem(
+        emulatorCoreCallbacksLocalStorageKey,
+        '{"saveFileSystemOnCreateUpdateDelete":true,"notificationsEnabled":false}'
+      );
+
+      const { result } = renderHookWithContext(() => useAddCallbacks());
+
+      await act(() => result.current.syncActionIfEnabled());
+
+      expect(emulatorFSSyncSpy).toHaveBeenCalledOnce();
+      expect(toastSuccessSpy).not.toHaveBeenCalled();
+    });
+
+    it('should noop if file system save is disabled', async () => {
+      const emulatorFSSyncSpy: () => void = vi.fn();
+
+      vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
+        setCanvas: vi.fn(),
+        canvas: null,
+        emulator: {
+          fsSync: emulatorFSSyncSpy
+        } as GBAEmulator
+      }));
+
+      const toastSuccessSpy = vi.spyOn(toast.default, 'success');
+
+      localStorage.setItem(
+        emulatorCoreCallbacksLocalStorageKey,
+        '{"saveFileSystemOnCreateUpdateDelete":false,"notificationsEnabled":true}'
+      );
+
+      const { result } = renderHookWithContext(() => useAddCallbacks());
+
+      await act(() => result.current.syncActionIfEnabled());
+
+      expect(emulatorFSSyncSpy).not.toHaveBeenCalled();
+      expect(toastSuccessSpy).not.toHaveBeenCalled();
     });
   });
 });

@@ -5,6 +5,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { LoadSaveModal } from './load-save.tsx';
 import { renderWithContext } from '../../../test/render-with-context.tsx';
 import * as contextHooks from '../../hooks/context.tsx';
+import * as addCallbackHooks from '../../hooks/emulator/use-add-callbacks.tsx';
 import * as listSaveHooks from '../../hooks/use-list-saves.tsx';
 import * as loadSaveHooks from '../../hooks/use-load-save.tsx';
 import { productTourLocalStorageKey } from '../product-tour/consts.tsx';
@@ -22,9 +23,13 @@ describe('<LoadSaveModal />', () => {
   it('loads save from the server', async () => {
     const uploadSaveOrSaveStateSpy: (file: File, cb?: () => void) => void =
       vi.fn((_file, cb) => cb && cb());
+    const syncActionIfEnabledSpy = vi.fn();
     const { useEmulatorContext: originalEmulator } = await vi.importActual<
       typeof contextHooks
     >('../../hooks/context.tsx');
+    const { useAddCallbacks: originalCallbacks } = await vi.importActual<
+      typeof addCallbackHooks
+    >('../../hooks/emulator/use-add-callbacks.tsx');
 
     vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
       ...originalEmulator(),
@@ -34,6 +39,11 @@ describe('<LoadSaveModal />', () => {
           savePath: '/saves'
         })
       } as GBAEmulator
+    }));
+
+    vi.spyOn(addCallbackHooks, 'useAddCallbacks').mockImplementation(() => ({
+      ...originalCallbacks(),
+      syncActionIfEnabled: syncActionIfEnabledSpy
     }));
 
     renderWithContext(<LoadSaveModal />);
@@ -49,6 +59,7 @@ describe('<LoadSaveModal />', () => {
     await waitForElementToBeRemoved(screen.queryByText(/Loading save:/));
 
     expect(uploadSaveOrSaveStateSpy).toHaveBeenCalledOnce();
+    expect(syncActionIfEnabledSpy).toHaveBeenCalledOnce();
   });
 
   it('renders message when there are no saves', () => {

@@ -29,6 +29,9 @@ describe('<FileSystemOptionsForm />', () => {
     // form and form fields
     expect(screen.getByLabelText('File System Options Form')).toBeVisible();
     expect(screen.getByText('Save file system on in-game save')).toBeVisible();
+    expect(
+      screen.getByText('Save file system on creates / updates / deletes')
+    ).toBeVisible();
   });
 
   it('saves file system options', async () => {
@@ -37,7 +40,8 @@ describe('<FileSystemOptionsForm />', () => {
 
     vi.spyOn(addCallbacksHooks, 'useAddCallbacks').mockImplementation(() => ({
       addCallbacks: vi.fn(),
-      addCallbacksAndSaveSettings: addCallbacksAndSaveSettingsSpy
+      addCallbacksAndSaveSettings: addCallbacksAndSaveSettingsSpy,
+      syncActionIfEnabled: vi.fn()
     }));
 
     renderWithContext(<FileSystemOptionsForm id="testId" />);
@@ -50,6 +54,9 @@ describe('<FileSystemOptionsForm />', () => {
     await userEvent.click(
       screen.getByLabelText('Save file system on in-game save')
     );
+    await userEvent.click(
+      screen.getByLabelText('Save file system on creates / updates / deletes')
+    );
     await userEvent.click(screen.getByLabelText('Enable Notifications'));
     // submit form
     await userEvent.click(submitButton);
@@ -58,7 +65,8 @@ describe('<FileSystemOptionsForm />', () => {
     expect(addCallbacksAndSaveSettingsSpy).toHaveBeenCalledWith(
       {
         saveFileSystemOnInGameSave: true,
-        notificationsEnabled: true
+        notificationsEnabled: true,
+        saveFileSystemOnCreateUpdateDelete: true
       },
       expect.anything()
     );

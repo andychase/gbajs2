@@ -6,6 +6,7 @@ import { UploadPublicExternalRomsModal } from './upload-public-external-roms.tsx
 import { testRomLocation } from '../../../test/mocks/handlers.ts';
 import { renderWithContext } from '../../../test/render-with-context.tsx';
 import * as contextHooks from '../../hooks/context.tsx';
+import * as addCallbackHooks from '../../hooks/emulator/use-add-callbacks.tsx';
 import * as runGameHooks from '../../hooks/emulator/use-run-game.tsx';
 
 import type { GBAEmulator } from '../../emulator/mgba/mgba-emulator.tsx';
@@ -18,11 +19,16 @@ describe('<UploadPublicExternalRomsModal />', () => {
     const uploadRomSpy: (file: File, cb?: () => void) => void = vi.fn(
       (_file, cb) => cb && cb()
     );
+    const syncActionIfEnabledSpy = vi.fn();
 
     const {
       useEmulatorContext: originalEmulator,
       useModalContext: originalModal
     } = await vi.importActual<typeof contextHooks>('../../hooks/context.tsx');
+
+    const { useAddCallbacks: originalCallbacks } = await vi.importActual<
+      typeof addCallbackHooks
+    >('../../hooks/emulator/use-add-callbacks.tsx');
 
     vi.spyOn(contextHooks, 'useModalContext').mockImplementation(() => ({
       ...originalModal(),
@@ -37,6 +43,11 @@ describe('<UploadPublicExternalRomsModal />', () => {
           gamePath: '/games'
         })
       } as GBAEmulator
+    }));
+
+    vi.spyOn(addCallbackHooks, 'useAddCallbacks').mockImplementation(() => ({
+      ...originalCallbacks(),
+      syncActionIfEnabled: syncActionIfEnabledSpy
     }));
 
     vi.spyOn(runGameHooks, 'useRunGame').mockReturnValue(runGameSpy);
@@ -66,7 +77,7 @@ describe('<UploadPublicExternalRomsModal />', () => {
     );
 
     expect(uploadRomSpy).toHaveBeenCalledOnce();
-
+    expect(syncActionIfEnabledSpy).toHaveBeenCalledOnce();
     expect(runGameSpy).toHaveBeenCalledOnce();
     expect(runGameSpy).toHaveBeenCalledWith('/games/good_rom.gba');
 

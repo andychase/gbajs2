@@ -8,6 +8,7 @@ import { ModalBody } from './modal-body.tsx';
 import { ModalFooter } from './modal-footer.tsx';
 import { ModalHeader } from './modal-header.tsx';
 import { useEmulatorContext, useModalContext } from '../../hooks/context.tsx';
+import { useAddCallbacks } from '../../hooks/emulator/use-add-callbacks.tsx';
 import {
   EmbeddedProductTour,
   type TourSteps
@@ -85,6 +86,7 @@ export const CheatsModal = () => {
   const { setIsModalOpen } = useModalContext();
   const { emulator } = useEmulatorContext();
   const [viewRawCheats, setViewRawCheats] = useState(false);
+  const { syncActionIfEnabled } = useAddCallbacks();
   const baseId = useId();
   const defaultCheat = { desc: '', code: '', enable: false };
 
@@ -197,6 +199,7 @@ export const CheatsModal = () => {
 
             if (cheatsFile)
               emulator?.uploadCheats(cheatsFile, () => {
+                syncActionIfEnabled();
                 emulator.autoLoadCheats();
                 refreshForm();
               });

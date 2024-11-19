@@ -5,6 +5,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { UploadCheatsModal } from './upload-cheats.tsx';
 import { renderWithContext } from '../../../test/render-with-context.tsx';
 import * as contextHooks from '../../hooks/context.tsx';
+import * as addCallbackHooks from '../../hooks/emulator/use-add-callbacks.tsx';
 import { productTourLocalStorageKey } from '../product-tour/consts.tsx';
 
 import type { GBAEmulator } from '../../emulator/mgba/mgba-emulator.tsx';
@@ -14,16 +15,25 @@ describe('<UploadCheatsModal />', () => {
     const uploadCheatsSpy: (file: File, cb?: () => void) => void = vi.fn(
       (_file, cb) => cb && cb()
     );
+    const syncActionIfEnabledSpy = vi.fn();
 
     const { useEmulatorContext: originalEmulator } = await vi.importActual<
       typeof contextHooks
     >('../../hooks/context.tsx');
+    const { useAddCallbacks: originalCallbacks } = await vi.importActual<
+      typeof addCallbackHooks
+    >('../../hooks/emulator/use-add-callbacks.tsx');
 
     vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
       ...originalEmulator(),
       emulator: {
         uploadCheats: uploadCheatsSpy
       } as GBAEmulator
+    }));
+
+    vi.spyOn(addCallbackHooks, 'useAddCallbacks').mockImplementation(() => ({
+      ...originalCallbacks(),
+      syncActionIfEnabled: syncActionIfEnabledSpy
     }));
 
     const testCheatFile = new File(['Some cheat file contents'], 'rom1.cheats');
@@ -42,7 +52,11 @@ describe('<UploadCheatsModal />', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Upload' }));
 
     expect(uploadCheatsSpy).toHaveBeenCalledOnce();
-    expect(uploadCheatsSpy).toHaveBeenCalledWith(testCheatFile);
+    expect(uploadCheatsSpy).toHaveBeenCalledWith(
+      testCheatFile,
+      expect.anything()
+    );
+    expect(syncActionIfEnabledSpy).toHaveBeenCalledOnce();
 
     expect(screen.getByText('Upload complete!')).toBeVisible();
     expect(screen.queryByText('File to upload:')).not.toBeInTheDocument();
@@ -53,16 +67,25 @@ describe('<UploadCheatsModal />', () => {
     const uploadCheatsSpy: (file: File, cb?: () => void) => void = vi.fn(
       (_file, cb) => cb && cb()
     );
+    const syncActionIfEnabledSpy = vi.fn();
 
     const { useEmulatorContext: originalEmulator } = await vi.importActual<
       typeof contextHooks
     >('../../hooks/context.tsx');
+    const { useAddCallbacks: originalCallbacks } = await vi.importActual<
+      typeof addCallbackHooks
+    >('../../hooks/emulator/use-add-callbacks.tsx');
 
     vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
       ...originalEmulator(),
       emulator: {
         uploadCheats: uploadCheatsSpy
       } as GBAEmulator
+    }));
+
+    vi.spyOn(addCallbackHooks, 'useAddCallbacks').mockImplementation(() => ({
+      ...originalCallbacks(),
+      syncActionIfEnabled: syncActionIfEnabledSpy
     }));
 
     const testCheatFiles = [
@@ -85,8 +108,15 @@ describe('<UploadCheatsModal />', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Upload' }));
 
     expect(uploadCheatsSpy).toHaveBeenCalledTimes(2);
-    expect(uploadCheatsSpy).toHaveBeenCalledWith(testCheatFiles[0]);
-    expect(uploadCheatsSpy).toHaveBeenCalledWith(testCheatFiles[1]);
+    expect(uploadCheatsSpy).toHaveBeenCalledWith(
+      testCheatFiles[0],
+      expect.anything()
+    );
+    expect(uploadCheatsSpy).toHaveBeenCalledWith(
+      testCheatFiles[1],
+      expect.anything()
+    );
+    expect(syncActionIfEnabledSpy).toHaveBeenCalledOnce();
 
     expect(screen.getByText('Upload complete!')).toBeVisible();
     expect(screen.queryByText('Files to upload:')).not.toBeInTheDocument();

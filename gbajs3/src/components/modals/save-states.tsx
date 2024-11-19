@@ -9,6 +9,7 @@ import { ModalBody } from './modal-body.tsx';
 import { ModalFooter } from './modal-footer.tsx';
 import { ModalHeader } from './modal-header.tsx';
 import { useEmulatorContext, useModalContext } from '../../hooks/context.tsx';
+import { useAddCallbacks } from '../../hooks/emulator/use-add-callbacks.tsx';
 import { saveStateSlotLocalStorageKey } from '../controls/consts.tsx';
 import {
   EmbeddedProductTour,
@@ -95,6 +96,7 @@ export const SaveStatesModal = () => {
     saveStateSlotLocalStorageKey,
     0
   );
+  const { syncActionIfEnabled } = useAddCallbacks();
   const baseId = useId();
   const {
     register,
@@ -223,6 +225,7 @@ export const SaveStatesModal = () => {
                     const slot = parseInt(slotString);
                     emulator?.deleteSaveState(slot);
                     refreshSaveStates();
+                    syncActionIfEnabled();
                   }
                 }}
               >
@@ -248,6 +251,7 @@ export const SaveStatesModal = () => {
               refreshSaveStates();
               setCurrentSlot((prevState) => prevState + 1);
               setSaveStateError(null);
+              syncActionIfEnabled();
             } else {
               setSaveStateError('Failed to create save state');
             }

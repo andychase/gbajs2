@@ -13,6 +13,7 @@ import { ModalBody } from './modal-body.tsx';
 import { ModalFooter } from './modal-footer.tsx';
 import { ModalHeader } from './modal-header.tsx';
 import { useEmulatorContext, useModalContext } from '../../hooks/context.tsx';
+import { useAddCallbacks } from '../../hooks/emulator/use-add-callbacks.tsx';
 import { useRunGame } from '../../hooks/emulator/use-run-game.tsx';
 import { useLoadExternalRom } from '../../hooks/use-load-external-rom.tsx';
 import { ErrorWithIcon } from '../shared/error-with-icon.tsx';
@@ -63,6 +64,7 @@ export const UploadPublicExternalRomsModal = ({
   const [currentRomURL, setCurrentRomURL] = useState<string | null>(null);
   const uploadRomButtonId = useId();
   const runGame = useRunGame();
+  const { syncActionIfEnabled } = useAddCallbacks();
 
   const {
     data: externalRomFile,
@@ -74,6 +76,7 @@ export const UploadPublicExternalRomsModal = ({
   useEffect(() => {
     if (!isExternalRomLoading && externalRomFile && currentRomURL) {
       const runCallback = () => {
+        syncActionIfEnabled();
         const hasSucceeded = runGame(
           emulator?.filePaths().gamePath + '/' + externalRomFile.name
         );
@@ -93,7 +96,8 @@ export const UploadPublicExternalRomsModal = ({
     emulator,
     externalRomFile,
     isExternalRomLoading,
-    setIsModalOpen
+    setIsModalOpen,
+    syncActionIfEnabled
   ]);
 
   return (

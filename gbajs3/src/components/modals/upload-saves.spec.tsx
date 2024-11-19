@@ -5,6 +5,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { UploadSavesModal } from './upload-saves.tsx';
 import { renderWithContext } from '../../../test/render-with-context.tsx';
 import * as contextHooks from '../../hooks/context.tsx';
+import * as addCallbackHooks from '../../hooks/emulator/use-add-callbacks.tsx';
 import { productTourLocalStorageKey } from '../product-tour/consts.tsx';
 
 import type { GBAEmulator } from '../../emulator/mgba/mgba-emulator.tsx';
@@ -13,16 +14,25 @@ describe('<UploadSavesModal />', () => {
   it('uploads file', async () => {
     const uploadSaveOrSaveStateSpy: (file: File, cb?: () => void) => void =
       vi.fn((_file, cb) => cb && cb());
+    const syncActionIfEnabledSpy = vi.fn();
 
     const { useEmulatorContext: originalEmulator } = await vi.importActual<
       typeof contextHooks
     >('../../hooks/context.tsx');
+    const { useAddCallbacks: originalCallbacks } = await vi.importActual<
+      typeof addCallbackHooks
+    >('../../hooks/emulator/use-add-callbacks.tsx');
 
     vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
       ...originalEmulator(),
       emulator: {
         uploadSaveOrSaveState: uploadSaveOrSaveStateSpy
       } as GBAEmulator
+    }));
+
+    vi.spyOn(addCallbackHooks, 'useAddCallbacks').mockImplementation(() => ({
+      ...originalCallbacks(),
+      syncActionIfEnabled: syncActionIfEnabledSpy
     }));
 
     const testSaveFile = new File(['Some save file contents'], 'rom1.sav');
@@ -41,7 +51,11 @@ describe('<UploadSavesModal />', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Upload' }));
 
     expect(uploadSaveOrSaveStateSpy).toHaveBeenCalledOnce();
-    expect(uploadSaveOrSaveStateSpy).toHaveBeenCalledWith(testSaveFile);
+    expect(uploadSaveOrSaveStateSpy).toHaveBeenCalledWith(
+      testSaveFile,
+      expect.anything()
+    );
+    expect(syncActionIfEnabledSpy).toHaveBeenCalledOnce();
 
     expect(screen.getByText('Upload complete!')).toBeVisible();
     expect(screen.queryByText('File to upload:')).not.toBeInTheDocument();
@@ -52,16 +66,25 @@ describe('<UploadSavesModal />', () => {
     const uploadSaveSpy: (file: File, cb?: () => void) => void = vi.fn(
       (_file, cb) => cb && cb()
     );
+    const syncActionIfEnabledSpy = vi.fn();
 
     const { useEmulatorContext: originalEmulator } = await vi.importActual<
       typeof contextHooks
     >('../../hooks/context.tsx');
+    const { useAddCallbacks: originalCallbacks } = await vi.importActual<
+      typeof addCallbackHooks
+    >('../../hooks/emulator/use-add-callbacks.tsx');
 
     vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
       ...originalEmulator(),
       emulator: {
         uploadSaveOrSaveState: uploadSaveSpy
       } as GBAEmulator
+    }));
+
+    vi.spyOn(addCallbackHooks, 'useAddCallbacks').mockImplementation(() => ({
+      ...originalCallbacks(),
+      syncActionIfEnabled: syncActionIfEnabledSpy
     }));
 
     const testSaveFiles = [
@@ -84,8 +107,15 @@ describe('<UploadSavesModal />', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Upload' }));
 
     expect(uploadSaveSpy).toHaveBeenCalledTimes(2);
-    expect(uploadSaveSpy).toHaveBeenCalledWith(testSaveFiles[0]);
-    expect(uploadSaveSpy).toHaveBeenCalledWith(testSaveFiles[1]);
+    expect(uploadSaveSpy).toHaveBeenCalledWith(
+      testSaveFiles[0],
+      expect.anything()
+    );
+    expect(uploadSaveSpy).toHaveBeenCalledWith(
+      testSaveFiles[1],
+      expect.anything()
+    );
+    expect(syncActionIfEnabledSpy).toHaveBeenCalledOnce();
 
     expect(screen.getByText('Upload complete!')).toBeVisible();
     expect(screen.queryByText('Files to upload:')).not.toBeInTheDocument();

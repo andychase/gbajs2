@@ -5,6 +5,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { CheatsModal } from './cheats.tsx';
 import { renderWithContext } from '../../../test/render-with-context.tsx';
 import * as contextHooks from '../../hooks/context.tsx';
+import * as addCallbackHooks from '../../hooks/emulator/use-add-callbacks.tsx';
 import { productTourLocalStorageKey } from '../product-tour/consts.tsx';
 
 import type {
@@ -129,7 +130,11 @@ describe('<CheatsModal />', () => {
     const { useEmulatorContext: original } = await vi.importActual<
       typeof contextHooks
     >('../../hooks/context.tsx');
+    const { useAddCallbacks: originalCallbacks } = await vi.importActual<
+      typeof addCallbackHooks
+    >('../../hooks/emulator/use-add-callbacks.tsx');
     const autoLoadCheatsSpy: () => boolean = vi.fn(() => true);
+    const syncActionIfEnabledSpy = vi.fn();
 
     vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
       ...original(),
@@ -141,6 +146,11 @@ describe('<CheatsModal />', () => {
         parseCheatsString: (str) =>
           str && [{ desc: 'cheat1', code: 'code1', enable: false }]
       } as GBAEmulator
+    }));
+
+    vi.spyOn(addCallbackHooks, 'useAddCallbacks').mockImplementation(() => ({
+      ...originalCallbacks(),
+      syncActionIfEnabled: syncActionIfEnabledSpy
     }));
 
     renderWithContext(<CheatsModal />);
@@ -159,6 +169,7 @@ describe('<CheatsModal />', () => {
         enable: true
       }
     ]);
+    expect(syncActionIfEnabledSpy).toHaveBeenCalledOnce();
     expect(uploadCheatsSpy).toHaveBeenCalledOnce();
     expect(autoLoadCheatsSpy).toHaveBeenCalledOnce();
   });
@@ -174,7 +185,11 @@ describe('<CheatsModal />', () => {
     const { useEmulatorContext: original } = await vi.importActual<
       typeof contextHooks
     >('../../hooks/context.tsx');
+    const { useAddCallbacks: originalCallbacks } = await vi.importActual<
+      typeof addCallbackHooks
+    >('../../hooks/emulator/use-add-callbacks.tsx');
     const autoLoadCheatsSpy: () => boolean = vi.fn(() => true);
+    const syncActionIfEnabledSpy = vi.fn();
 
     vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
       ...original(),
@@ -186,6 +201,11 @@ describe('<CheatsModal />', () => {
           str && [{ desc: 'cheat1', code: 'code1', enable: false }],
         getCurrentCheatsFileName: getCurrentCheatsFileNameSpy
       } as GBAEmulator
+    }));
+
+    vi.spyOn(addCallbackHooks, 'useAddCallbacks').mockImplementation(() => ({
+      ...originalCallbacks(),
+      syncActionIfEnabled: syncActionIfEnabledSpy
     }));
 
     renderWithContext(<CheatsModal />);
@@ -200,6 +220,7 @@ describe('<CheatsModal />', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Submit' }));
 
+    expect(syncActionIfEnabledSpy).toHaveBeenCalledOnce();
     expect(uploadCheatsSpy).toHaveBeenCalledOnce();
     expect(autoLoadCheatsSpy).toHaveBeenCalledOnce();
     expect(getCurrentCheatsFileNameSpy).toHaveBeenCalledOnce();

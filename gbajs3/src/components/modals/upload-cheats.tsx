@@ -6,6 +6,7 @@ import { ModalBody } from './modal-body.tsx';
 import { ModalFooter } from './modal-footer.tsx';
 import { ModalHeader } from './modal-header.tsx';
 import { useEmulatorContext, useModalContext } from '../../hooks/context.tsx';
+import { useAddCallbacks } from '../../hooks/emulator/use-add-callbacks.tsx';
 import {
   EmbeddedProductTour,
   type TourSteps
@@ -30,6 +31,7 @@ export const UploadCheatsModal = () => {
     formState: { isSubmitSuccessful },
     control
   } = useForm<InputProps>();
+  const { syncActionIfEnabled } = useAddCallbacks();
   const cheatsFormId = useId();
 
   const onDrop = useCallback(
@@ -40,9 +42,18 @@ export const UploadCheatsModal = () => {
     [reset, setValue]
   );
 
-  const onSubmit: SubmitHandler<InputProps> = ({ cheatFiles }) => {
-    cheatFiles.forEach((cheatFiles) => emulator?.uploadCheats(cheatFiles));
+  const onSubmit: SubmitHandler<InputProps> = async ({ cheatFiles }) => {
+    await Promise.all(
+      cheatFiles.map(
+        (cheatFile) =>
+          new Promise<void>((resolve) => {
+            emulator?.uploadCheats(cheatFile, resolve);
+          })
+      )
+    );
+
     reset();
+    syncActionIfEnabled();
   };
 
   const tourSteps: TourSteps = [

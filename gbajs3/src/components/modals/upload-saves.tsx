@@ -6,6 +6,7 @@ import { ModalBody } from './modal-body.tsx';
 import { ModalFooter } from './modal-footer.tsx';
 import { ModalHeader } from './modal-header.tsx';
 import { useEmulatorContext, useModalContext } from '../../hooks/context.tsx';
+import { useAddCallbacks } from '../../hooks/emulator/use-add-callbacks.tsx';
 import {
   EmbeddedProductTour,
   type TourSteps
@@ -26,6 +27,7 @@ const validFileExtensions = [
 export const UploadSavesModal = () => {
   const { setIsModalOpen } = useModalContext();
   const { emulator } = useEmulatorContext();
+  const { syncActionIfEnabled } = useAddCallbacks();
   const {
     reset,
     handleSubmit,
@@ -43,9 +45,18 @@ export const UploadSavesModal = () => {
     [reset, setValue]
   );
 
-  const onSubmit: SubmitHandler<InputProps> = ({ saveFiles }) => {
-    saveFiles.forEach((saveFile) => emulator?.uploadSaveOrSaveState(saveFile));
+  const onSubmit: SubmitHandler<InputProps> = async ({ saveFiles }) => {
+    await Promise.all(
+      saveFiles.map(
+        (saveFile) =>
+          new Promise<void>((resolve) => {
+            emulator?.uploadSaveOrSaveState(saveFile, resolve);
+          })
+      )
+    );
+
     reset();
+    syncActionIfEnabled();
   };
 
   const tourSteps: TourSteps = [

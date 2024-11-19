@@ -35,7 +35,8 @@ describe('useRunGame hook', () => {
 
     vi.spyOn(addCallbacksHooks, 'useAddCallbacks').mockImplementation(() => ({
       addCallbacks: vi.fn(),
-      addCallbacksAndSaveSettings: vi.fn()
+      addCallbacksAndSaveSettings: vi.fn(),
+      syncActionIfEnabled: vi.fn()
     }));
 
     vi.spyOn(contextHooks, 'useRunningContext').mockImplementation(() => ({
@@ -102,7 +103,8 @@ describe('useRunGame hook', () => {
 
     vi.spyOn(addCallbacksHooks, 'useAddCallbacks').mockImplementation(() => ({
       addCallbacks: addCallbacksSpy,
-      addCallbacksAndSaveSettings: vi.fn()
+      addCallbacksAndSaveSettings: vi.fn(),
+      syncActionIfEnabled: vi.fn()
     }));
 
     vi.spyOn(contextHooks, 'useRunningContext').mockImplementation(() => ({

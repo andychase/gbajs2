@@ -83,6 +83,11 @@ export const FileSystemOptionsForm = ({ id }: FileSystemOptionsFormProps) => {
             watcher={watch('saveFileSystemOnInGameSave')}
             {...register('saveFileSystemOnInGameSave')}
           />
+          <ManagedCheckbox
+            label="Save file system on creates / updates / deletes"
+            watcher={watch('saveFileSystemOnCreateUpdateDelete')}
+            {...register('saveFileSystemOnCreateUpdateDelete')}
+          />
           <ManagedSwitch
             label="Enable Notifications"
             watcher={watch('notificationsEnabled')}

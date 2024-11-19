@@ -7,6 +7,7 @@ import { ModalBody } from './modal-body.tsx';
 import { ModalFooter } from './modal-footer.tsx';
 import { ModalHeader } from './modal-header.tsx';
 import { useEmulatorContext, useModalContext } from '../../hooks/context.tsx';
+import { useAddCallbacks } from '../../hooks/emulator/use-add-callbacks.tsx';
 import { useListSaves } from '../../hooks/use-list-saves.tsx';
 import { useLoadSave } from '../../hooks/use-load-save.tsx';
 import {
@@ -78,6 +79,7 @@ export const LoadSaveModal = () => {
   const { setIsModalOpen } = useModalContext();
   const { emulator } = useEmulatorContext();
   const saveListId = useId();
+  const { syncActionIfEnabled } = useAddCallbacks();
   const {
     data: saveList,
     isLoading: saveListLoading,
@@ -97,10 +99,10 @@ export const LoadSaveModal = () => {
 
   useEffect(() => {
     if (shouldUploadSave) {
-      emulator?.uploadSaveOrSaveState(saveFile);
+      emulator?.uploadSaveOrSaveState(saveFile, syncActionIfEnabled);
       setCurrentSaveLoading(null);
     }
-  }, [emulator, shouldUploadSave, saveFile]);
+  }, [emulator, shouldUploadSave, saveFile, syncActionIfEnabled]);
 
   const tourSteps: TourSteps = [
     {

@@ -5,6 +5,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { SaveStatesModal } from './save-states.tsx';
 import { renderWithContext } from '../../../test/render-with-context.tsx';
 import * as contextHooks from '../../hooks/context.tsx';
+import * as addCallbackHooks from '../../hooks/emulator/use-add-callbacks.tsx';
 import { saveStateSlotLocalStorageKey } from '../controls/consts.tsx';
 import { productTourLocalStorageKey } from '../product-tour/consts.tsx';
 
@@ -61,9 +62,13 @@ describe('<SaveStatesModal />', () => {
   it('creates saves states', async () => {
     const listSaveStatesSpy = vi.fn(() => ['rom0.ss0']);
     const createSaveStateSpy: (s: number) => boolean = vi.fn(() => true);
+    const syncActionIfEnabledSpy = vi.fn();
     const { useEmulatorContext: original } = await vi.importActual<
       typeof contextHooks
     >('../../hooks/context.tsx');
+    const { useAddCallbacks: originalCallbacks } = await vi.importActual<
+      typeof addCallbackHooks
+    >('../../hooks/emulator/use-add-callbacks.tsx');
 
     vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
       ...original(),
@@ -71,6 +76,11 @@ describe('<SaveStatesModal />', () => {
         listSaveStates: listSaveStatesSpy as () => string[],
         createSaveState: createSaveStateSpy
       } as GBAEmulator
+    }));
+
+    vi.spyOn(addCallbackHooks, 'useAddCallbacks').mockImplementation(() => ({
+      ...originalCallbacks(),
+      syncActionIfEnabled: syncActionIfEnabledSpy
     }));
 
     renderWithContext(<SaveStatesModal />);
@@ -84,6 +94,7 @@ describe('<SaveStatesModal />', () => {
     expect(createSaveStateSpy).toHaveBeenCalledOnce();
     expect(createSaveStateSpy).toHaveBeenCalledWith(1);
     expect(listSaveStatesSpy).toHaveBeenCalledOnce();
+    expect(syncActionIfEnabledSpy).toHaveBeenCalledOnce();
   });
 
   it('renders error if creating save state fails', async () => {
@@ -112,9 +123,13 @@ describe('<SaveStatesModal />', () => {
   it('deletes saves states', async () => {
     const deleteSaveStateSpy: (s: number) => void = vi.fn();
     const listSaveStatesSpy = vi.fn(() => ['rom0.ss0', 'rom1.ss1']);
+    const syncActionIfEnabledSpy = vi.fn();
     const { useEmulatorContext: original } = await vi.importActual<
       typeof contextHooks
     >('../../hooks/context.tsx');
+    const { useAddCallbacks: originalCallbacks } = await vi.importActual<
+      typeof addCallbackHooks
+    >('../../hooks/emulator/use-add-callbacks.tsx');
 
     vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => {
       return {
@@ -126,6 +141,11 @@ describe('<SaveStatesModal />', () => {
       };
     });
 
+    vi.spyOn(addCallbackHooks, 'useAddCallbacks').mockImplementation(() => ({
+      ...originalCallbacks(),
+      syncActionIfEnabled: syncActionIfEnabledSpy
+    }));
+
     renderWithContext(<SaveStatesModal />);
 
     listSaveStatesSpy.mockClear(); // clear calls from initial render
@@ -135,6 +155,7 @@ describe('<SaveStatesModal />', () => {
     expect(deleteSaveStateSpy).toHaveBeenCalledOnce();
     expect(deleteSaveStateSpy).toHaveBeenCalledWith(1);
     expect(listSaveStatesSpy).toHaveBeenCalledOnce();
+    expect(syncActionIfEnabledSpy).toHaveBeenCalledOnce();
   });
 
   it('loads save state', async () => {
