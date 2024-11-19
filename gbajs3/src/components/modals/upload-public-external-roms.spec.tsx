@@ -84,8 +84,6 @@ describe('<UploadPublicExternalRomsModal />', () => {
     expect(onLoadOrDismissSpy).toHaveBeenCalledOnce();
     expect(onLoadOrDismissSpy).toHaveBeenCalledWith('loaded');
     expect(setIsModalOpenSpy).toHaveBeenCalledWith(false);
-
-    expect(await screen.findByText('Upload complete!')).toBeVisible();
   });
 
   it('renders external rom error', async () => {

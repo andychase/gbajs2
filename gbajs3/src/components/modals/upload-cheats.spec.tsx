@@ -11,15 +11,17 @@ import { productTourLocalStorageKey } from '../product-tour/consts.tsx';
 import type { GBAEmulator } from '../../emulator/mgba/mgba-emulator.tsx';
 
 describe('<UploadCheatsModal />', () => {
-  it('uploads file', async () => {
+  it('uploads file and closes modal', async () => {
     const uploadCheatsSpy: (file: File, cb?: () => void) => void = vi.fn(
       (_file, cb) => cb && cb()
     );
     const syncActionIfEnabledSpy = vi.fn();
+    const setIsModalOpenSpy = vi.fn();
 
-    const { useEmulatorContext: originalEmulator } = await vi.importActual<
-      typeof contextHooks
-    >('../../hooks/context.tsx');
+    const {
+      useEmulatorContext: originalEmulator,
+      useModalContext: originalModal
+    } = await vi.importActual<typeof contextHooks>('../../hooks/context.tsx');
     const { useAddCallbacks: originalCallbacks } = await vi.importActual<
       typeof addCallbackHooks
     >('../../hooks/emulator/use-add-callbacks.tsx');
@@ -34,6 +36,11 @@ describe('<UploadCheatsModal />', () => {
     vi.spyOn(addCallbackHooks, 'useAddCallbacks').mockImplementation(() => ({
       ...originalCallbacks(),
       syncActionIfEnabled: syncActionIfEnabledSpy
+    }));
+
+    vi.spyOn(contextHooks, 'useModalContext').mockImplementation(() => ({
+      ...originalModal(),
+      setIsModalOpen: setIsModalOpenSpy
     }));
 
     const testCheatFile = new File(['Some cheat file contents'], 'rom1.cheats');
@@ -57,21 +64,20 @@ describe('<UploadCheatsModal />', () => {
       expect.anything()
     );
     expect(syncActionIfEnabledSpy).toHaveBeenCalledOnce();
-
-    expect(screen.getByText('Upload complete!')).toBeVisible();
-    expect(screen.queryByText('File to upload:')).not.toBeInTheDocument();
-    expect(screen.queryByText('rom1.cheats')).not.toBeInTheDocument();
+    expect(setIsModalOpenSpy).toHaveBeenCalledWith(false);
   });
 
-  it('uploads multiple files', async () => {
+  it('uploads multiple files and closes modal', async () => {
     const uploadCheatsSpy: (file: File, cb?: () => void) => void = vi.fn(
       (_file, cb) => cb && cb()
     );
     const syncActionIfEnabledSpy = vi.fn();
+    const setIsModalOpenSpy = vi.fn();
 
-    const { useEmulatorContext: originalEmulator } = await vi.importActual<
-      typeof contextHooks
-    >('../../hooks/context.tsx');
+    const {
+      useEmulatorContext: originalEmulator,
+      useModalContext: originalModal
+    } = await vi.importActual<typeof contextHooks>('../../hooks/context.tsx');
     const { useAddCallbacks: originalCallbacks } = await vi.importActual<
       typeof addCallbackHooks
     >('../../hooks/emulator/use-add-callbacks.tsx');
@@ -86,6 +92,11 @@ describe('<UploadCheatsModal />', () => {
     vi.spyOn(addCallbackHooks, 'useAddCallbacks').mockImplementation(() => ({
       ...originalCallbacks(),
       syncActionIfEnabled: syncActionIfEnabledSpy
+    }));
+
+    vi.spyOn(contextHooks, 'useModalContext').mockImplementation(() => ({
+      ...originalModal(),
+      setIsModalOpen: setIsModalOpenSpy
     }));
 
     const testCheatFiles = [
@@ -117,11 +128,7 @@ describe('<UploadCheatsModal />', () => {
       expect.anything()
     );
     expect(syncActionIfEnabledSpy).toHaveBeenCalledOnce();
-
-    expect(screen.getByText('Upload complete!')).toBeVisible();
-    expect(screen.queryByText('Files to upload:')).not.toBeInTheDocument();
-    expect(screen.queryByText('rom1.cheats')).not.toBeInTheDocument();
-    expect(screen.queryByText('rom2.cheats')).not.toBeInTheDocument();
+    expect(setIsModalOpenSpy).toHaveBeenCalledWith(false);
   });
 
   it('renders form validation error', async () => {

@@ -21,7 +21,6 @@ import {
   LoadingIndicator,
   PacmanIndicator
 } from '../shared/loading-indicator.tsx';
-import { CenteredTextContainer } from '../shared/styled.tsx';
 
 import type { PublicRomUploadStatus } from '../../hooks/use-show-load-public-roms.tsx';
 
@@ -60,7 +59,6 @@ export const UploadPublicExternalRomsModal = ({
   const theme = useTheme();
   const { setIsModalOpen } = useModalContext();
   const { emulator } = useEmulatorContext();
-  const [hasCompletedUpload, setHasCompletedUpload] = useState(false);
   const [currentRomURL, setCurrentRomURL] = useState<string | null>(null);
   const uploadRomButtonId = useId();
   const runGame = useRunGame();
@@ -87,7 +85,6 @@ export const UploadPublicExternalRomsModal = ({
       };
       emulator?.uploadRom(externalRomFile, runCallback);
       setCurrentRomURL(null);
-      setHasCompletedUpload(true);
     }
   }, [
     onLoadOrDismiss,
@@ -113,13 +110,9 @@ export const UploadPublicExternalRomsModal = ({
           indicator={<PacmanIndicator />}
           loadingCopy="Loading rom from url:"
         >
-          {!hasCompletedUpload && (
-            <>
-              <p>A public rom URL has been shared with you.</p>
-              <p>You can load it using the upload button!</p>
-              <p>Make sure you trust the provider before uploading:</p>
-            </>
-          )}
+          <p>A public rom URL has been shared with you.</p>
+          <p>You can load it using the upload button!</p>
+          <p>Make sure you trust the provider before uploading:</p>
           <URLDisplay url={url} />
           {!!externalRomLoadError && (
             <ErrorWithIcon
@@ -127,16 +120,12 @@ export const UploadPublicExternalRomsModal = ({
               text="Loading rom from URL has failed"
             />
           )}
-          {hasCompletedUpload && (
-            <CenteredTextContainer>
-              <p>Upload complete!</p>
-            </CenteredTextContainer>
-          )}
         </LoadingIndicator>
       </ModalBody>
       <ModalFooter>
         <Button
           id={uploadRomButtonId}
+          disabled={isExternalRomLoading}
           onClick={() => {
             setCurrentRomURL(url.href);
             executeLoadExternalRom({ url: url });

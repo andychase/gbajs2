@@ -11,9 +11,7 @@ import {
   EmbeddedProductTour,
   type TourSteps
 } from '../product-tour/embedded-product-tour.tsx';
-import { CircleCheckButton } from '../shared/circle-check-button.tsx';
 import { DragAndDropInput } from '../shared/drag-and-drop-input.tsx';
-import { CenteredTextContainer } from '../shared/styled.tsx';
 
 type InputProps = {
   cheatFiles: File[];
@@ -24,13 +22,7 @@ const validFileExtensions = ['.cheats'];
 export const UploadCheatsModal = () => {
   const { setIsModalOpen } = useModalContext();
   const { emulator } = useEmulatorContext();
-  const {
-    reset,
-    handleSubmit,
-    setValue,
-    formState: { isSubmitSuccessful },
-    control
-  } = useForm<InputProps>();
+  const { reset, handleSubmit, setValue, control } = useForm<InputProps>();
   const { syncActionIfEnabled } = useAddCallbacks();
   const cheatsFormId = useId();
 
@@ -52,8 +44,8 @@ export const UploadCheatsModal = () => {
       )
     );
 
-    reset();
-    syncActionIfEnabled();
+    await syncActionIfEnabled();
+    setIsModalOpen(false);
   };
 
   const tourSteps: TourSteps = [
@@ -101,7 +93,6 @@ export const UploadCheatsModal = () => {
                 validFileExtensions={validFileExtensions}
                 error={error?.message}
                 hideAcceptedFiles={!value?.length}
-                hideErrors={isSubmitSuccessful}
                 multiple
               >
                 <p>
@@ -112,20 +103,12 @@ export const UploadCheatsModal = () => {
               </DragAndDropInput>
             )}
           />
-          {isSubmitSuccessful && (
-            <CenteredTextContainer>
-              <p>Upload complete!</p>
-            </CenteredTextContainer>
-          )}
         </form>
       </ModalBody>
       <ModalFooter>
-        <CircleCheckButton
-          copy="Upload"
-          form={cheatsFormId}
-          showSuccess={isSubmitSuccessful}
-          type="submit"
-        />
+        <Button form={cheatsFormId} type="submit" variant="contained">
+          Upload
+        </Button>
         <Button variant="outlined" onClick={() => setIsModalOpen(false)}>
           Close
         </Button>

@@ -11,9 +11,7 @@ import {
   EmbeddedProductTour,
   type TourSteps
 } from '../product-tour/embedded-product-tour.tsx';
-import { CircleCheckButton } from '../shared/circle-check-button.tsx';
 import { DragAndDropInput } from '../shared/drag-and-drop-input.tsx';
-import { CenteredTextContainer } from '../shared/styled.tsx';
 
 type InputProps = {
   saveFiles: File[];
@@ -28,13 +26,7 @@ export const UploadSavesModal = () => {
   const { setIsModalOpen } = useModalContext();
   const { emulator } = useEmulatorContext();
   const { syncActionIfEnabled } = useAddCallbacks();
-  const {
-    reset,
-    handleSubmit,
-    setValue,
-    formState: { isSubmitSuccessful },
-    control
-  } = useForm<InputProps>();
+  const { reset, handleSubmit, setValue, control } = useForm<InputProps>();
   const uploadSavesFormId = useId();
 
   const onDrop = useCallback(
@@ -55,8 +47,8 @@ export const UploadSavesModal = () => {
       )
     );
 
-    reset();
-    syncActionIfEnabled();
+    await syncActionIfEnabled();
+    setIsModalOpen(false);
   };
 
   const tourSteps: TourSteps = [
@@ -105,7 +97,6 @@ export const UploadSavesModal = () => {
                 validFileExtensions={validFileExtensions}
                 error={error?.message}
                 hideAcceptedFiles={!value?.length}
-                hideErrors={isSubmitSuccessful}
                 multiple
               >
                 <p>
@@ -115,20 +106,12 @@ export const UploadSavesModal = () => {
               </DragAndDropInput>
             )}
           />
-          {isSubmitSuccessful && (
-            <CenteredTextContainer>
-              <p>Upload complete!</p>
-            </CenteredTextContainer>
-          )}
         </form>
       </ModalBody>
       <ModalFooter>
-        <CircleCheckButton
-          copy="Upload"
-          form={uploadSavesFormId}
-          showSuccess={isSubmitSuccessful}
-          type="submit"
-        />
+        <Button form={uploadSavesFormId} type="submit" variant="contained">
+          Upload
+        </Button>
         <Button variant="outlined" onClick={() => setIsModalOpen(false)}>
           Close
         </Button>
