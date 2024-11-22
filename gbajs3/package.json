@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.13.5",
     "@mui/material": "^6.0.2",
     "@mui/x-tree-view": "^7.0.0",
     "@thenick775/mgba-wasm": "^1.0.20",
