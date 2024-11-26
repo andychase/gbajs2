@@ -57,7 +57,7 @@
     "eslint-plugin-react-hooks": "^5.0.0",
     "eslint-plugin-react-refresh": "^0.4.1",
     "eslint-plugin-styled-components-a11y": "^2.1.31",
-    "eslint-plugin-testing-library": "^6.2.0",
+    "eslint-plugin-testing-library": "^7.0.0",
     "globals": "^15.12.0",
     "jest-styled-components": "^7.2.0",
     "jsdom": "^25.0.0",
