@@ -10,6 +10,7 @@ import { MinusSquare, PlusSquare } from '../../shared/action-box-icons.tsx';
 import { ButtonBase } from '../../shared/custom-button-base.tsx';
 import { ManagedCheckbox } from '../../shared/managed-checkbox.tsx';
 import { ManagedSwitch } from '../../shared/managed-switch.tsx';
+import { Copy } from '../../shared/styled.tsx';
 
 import type { CoreCallbackOptions } from '../../../hooks/emulator/use-add-callbacks.tsx';
 
@@ -36,8 +37,7 @@ const StyledForm = styled.form`
   }
 `;
 
-const OptionsFormTitle = styled.p`
-  margin: 0;
+const OptionsFormTitle = styled(Copy)`
   ${fileSystemFontStyle}
 `;
 

@@ -1,4 +1,4 @@
-import React, { type ReactNode } from 'react';
+import { forwardRef, type ReactNode } from 'react';
 import { styled } from 'styled-components';
 
 type ButtonBaseProps = {
@@ -16,12 +16,10 @@ const StyledButton = styled.button`
   padding: inherit;
 `;
 
-export const ButtonBase = React.forwardRef<HTMLButtonElement, ButtonBaseProps>(
-  ({ children, ...rest }, ref) => {
-    return (
-      <StyledButton ref={ref} {...rest}>
-        {children}
-      </StyledButton>
-    );
-  }
+export const ButtonBase = forwardRef<HTMLButtonElement, ButtonBaseProps>(
+  ({ children, ...rest }, ref) => (
+    <StyledButton ref={ref} {...rest}>
+      {children}
+    </StyledButton>
+  )
 );

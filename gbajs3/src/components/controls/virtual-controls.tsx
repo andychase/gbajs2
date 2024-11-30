@@ -27,15 +27,15 @@ import {
 import { useAddCallbacks } from '../../hooks/emulator/use-add-callbacks.tsx';
 import { useQuickReload } from '../../hooks/emulator/use-quick-reload.tsx';
 import { UploadSaveToServerModal } from '../modals/upload-save-to-server.tsx';
+import { Copy } from '../shared/styled.tsx';
 
 import type { AreVirtualControlsEnabledProps } from '../modals/controls/virtual-controls-form.tsx';
 
-const VirtualButtonTextLarge = styled.p`
+const VirtualButtonTextLarge = styled(Copy)`
   text-align: center;
   vertical-align: middle;
   line-height: 54px;
   color: ${({ theme }) => theme.pureWhite};
-  margin: 0;
   font-size: 1.5em;
 `;
 

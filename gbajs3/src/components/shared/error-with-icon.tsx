@@ -1,5 +1,7 @@
 import { styled } from 'styled-components';
 
+import { Copy } from './styled.tsx';
+
 type ErrorWithIconProps = {
   text: string;
   icon: JSX.Element;
@@ -12,8 +14,7 @@ const ErrorWrapper = styled.div`
   gap: 5px;
 `;
 
-const ErrorText = styled.p`
-  margin: 0;
+const ErrorText = styled(Copy)`
   color: ${({ theme }) => theme.errorRed};
 `;
 

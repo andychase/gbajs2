@@ -21,6 +21,7 @@ import {
   LoadingIndicator,
   PacmanIndicator
 } from '../shared/loading-indicator.tsx';
+import { Copy } from '../shared/styled.tsx';
 
 import type { PublicRomUploadStatus } from '../../hooks/use-show-load-public-roms.tsx';
 
@@ -31,10 +32,6 @@ type UploadPublicExternalRomsModalProps = {
 
 const LinkBreakWord = styled.a`
   word-break: break-all;
-`;
-
-const Copy = styled.p`
-  margin: 0;
 `;
 
 const URLDisplay = ({ url }: { url: URL }) => {

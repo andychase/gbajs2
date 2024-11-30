@@ -1,9 +1,12 @@
 import { BiPlus } from 'react-icons/bi';
 import { styled } from 'styled-components';
 
-export const CenteredText = styled.p`
-  text-align: center;
+export const Copy = styled.p`
   margin: 0;
+`;
+
+export const CenteredText = styled(Copy)`
+  text-align: center;
 `;
 
 export const Header = styled.h3`

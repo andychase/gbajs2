@@ -21,7 +21,7 @@ const LoadingContainer = styled.div`
   margin-bottom: 15px;
 `;
 
-const Copy = styled.p`
+const BreakWord = styled.p`
   word-wrap: break-word;
   max-width: 100%;
 `;
@@ -47,11 +47,11 @@ export const LoadingIndicator = ({
 }: LoadingIndicatorProps) => {
   return isLoading ? (
     <LoadingContainer>
-      <Copy>
+      <BreakWord>
         {loadingCopy}
         <br />
         {currentName}
-      </Copy>
+      </BreakWord>
       {indicator}
     </LoadingContainer>
   ) : (
