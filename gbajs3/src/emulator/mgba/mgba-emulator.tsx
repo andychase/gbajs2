@@ -57,7 +57,7 @@ export type GBAEmulator = {
   quitEmulator: () => void;
   quitGame: () => void;
   remapKeyBindings: (keyBindings: KeyBinding[]) => void;
-  resume: () => void;
+  resume: () => Promise<void>;
   run: (romPath: string) => boolean;
   screenshot: (fileName?: string) => boolean;
   setCurrentGameName: (gameName: string | undefined) => void;
@@ -194,6 +194,14 @@ export const mGBAEmulator = (mGBA: mGBAEmulatorTypeDef): GBAEmulator => {
     return gbaSDLKey;
   };
 
+  const resumeAudio = async () => {
+    if (
+      mGBA.SDL2.audioContext.state === 'suspended' ||
+      mGBA.SDL2.audioContext.state === 'interrupted'
+    )
+      await mGBA.SDL2.audioContext.resume();
+  };
+
   return {
     addCoreCallbacks: mGBA.addCoreCallbacks,
     autoLoadCheats: mGBA.autoLoadCheats,
@@ -214,15 +222,7 @@ export const mGBAEmulator = (mGBA: mGBAEmulatorTypeDef): GBAEmulator => {
     loadSaveState: mGBA.loadState,
     listSaveStates: () => mGBA.FS.readdir(paths.saveStatePath),
     listRoms: mGBA.listRoms,
-    setVolume: async (volumePercent) => {
-      if (
-        mGBA.SDL2.audioContext.state === 'suspended' ||
-        mGBA.SDL2.audioContext.state === 'interrupted'
-      )
-        await mGBA.SDL2.audioContext.resume();
-
-      mGBA.setVolume(volumePercent);
-    },
+    setVolume: mGBA.setVolume,
     getVolume: mGBA.getVolume,
     enableKeyboardInput: () => mGBA.toggleInput(true),
     disableKeyboardInput: () => mGBA.toggleInput(false),
@@ -251,7 +251,10 @@ export const mGBAEmulator = (mGBA: mGBAEmulatorTypeDef): GBAEmulator => {
     },
     deleteFile: mGBA.FS.unlink,
     pause: mGBA.pauseGame,
-    resume: mGBA.resumeGame,
+    resume: async () => {
+      await resumeAudio();
+      mGBA.resumeGame();
+    },
     quitGame: mGBA.quitGame,
     quitEmulator: mGBA.quitMgba,
     quickReload: mGBA.quickReload,

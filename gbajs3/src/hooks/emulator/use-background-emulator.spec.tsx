@@ -15,7 +15,7 @@ vi.mock('@uidotdev/usehooks', async (importOriginal) => {
   };
 });
 
-describe('useQuickReload hook', () => {
+describe('useBackgroundEmulator hook', () => {
   it('pauses emulator when entering background if running and not paused', () => {
     const emulatorPauseSpy: () => void = vi.fn();
     const emulatorResumeSpy: () => void = vi.fn();
