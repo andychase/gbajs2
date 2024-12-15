@@ -35,7 +35,7 @@
     "react-joyride": "^2.7.0",
     "react-modal": "^3.16.1",
     "react-rnd": "^10.4.1",
-    "react-spinners": "^0.14.1",
+    "react-spinners": "^0.15.0",
     "styled-components": "^6.1.1",
     "usehooks-ts": "^3.0.1"
   },
