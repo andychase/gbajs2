@@ -13,6 +13,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - id: set-release-version
+        run: echo "RELEASE_VERSION=${GITHUB_SHA::7}" >> $GITHUB_ENV
+
       - id: build-publish
         uses: bitovi/github-actions-react-to-github-pages@v1.2.4
         with:
@@ -20,3 +23,5 @@ jobs:
           checkout-sparse-checkout-cone-mode: false
           install_command: cd ./gbajs3 && npm ci
           path: ./gbajs3/dist
+        env:
+          VITE_GBA_RELEASE_VERSION: ${{ env.RELEASE_VERSION }}
