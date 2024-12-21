@@ -31,6 +31,13 @@ exports[`<Screen /> > renders with default desktop position and size 1`] = `
   }
 }
 
+@media only screen and (max-height: 450px) and (max-width: 1000px) and (orientation: landscape) {
+  .c0 {
+    width: calc(100dvh * (3 / 2));
+    height: 100dvh;
+  }
+}
+
 <div
   class="c0 react-draggable"
   data-testid="screen-wrapper"
@@ -75,6 +82,13 @@ exports[`<Screen /> > renders with default mobile position and size 1`] = `
   .c0 {
     width: min(       calc(100dvw - 285px),       calc(85dvh * 3 / 2)     );
     height: 85dvh;
+  }
+}
+
+@media only screen and (max-height: 450px) and (max-width: 1000px) and (orientation: landscape) {
+  .c0 {
+    width: calc(100dvh * (3 / 2));
+    height: 100dvh;
   }
 }
 

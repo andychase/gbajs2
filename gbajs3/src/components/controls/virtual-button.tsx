@@ -50,6 +50,10 @@ const VirtualButtonBase = styled(ButtonBase)`
   cursor: pointer;
   box-sizing: content-box;
   border-width: 2px;
+
+  @media ${({ theme }) => theme.isMobileLandscape} {
+    background-color: transparent;
+  }
 `;
 
 const CircularButton = styled(VirtualButtonBase)<CircularButtonProps>`

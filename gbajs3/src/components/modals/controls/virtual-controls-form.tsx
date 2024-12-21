@@ -38,10 +38,12 @@ export const VirtualControlsForm = ({
     );
   const theme = useTheme();
   const isLargerThanPhone = useMediaQuery(theme.isLargerThanPhone);
+  const isMobileLandscape = useMediaQuery(theme.isMobileLandscape);
 
   const shouldShowVirtualControl = (virtualControlEnabled?: boolean) => {
     return (
-      (virtualControlEnabled === undefined && !isLargerThanPhone) ||
+      (virtualControlEnabled === undefined &&
+        (!isLargerThanPhone || isMobileLandscape)) ||
       !!virtualControlEnabled
     );
   };

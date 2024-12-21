@@ -123,6 +123,11 @@ const HamburgerButton = styled(ButtonBase)<ExpandableComponentProps>`
   min-height: 36px;
   min-width: 40px;
 
+  @media ${({ theme }) => theme.isMobileLandscape} {
+    bottom: 15px;
+    top: unset;
+  }
+
   ${({ $isExpanded = false }) =>
     !$isExpanded &&
     `left: -8px;
@@ -153,6 +158,7 @@ export const NavigationMenu = () => {
   const { execute: executeLogout } = useLogout();
   const theme = useTheme();
   const isLargerThanPhone = useMediaQuery(theme.isLargerThanPhone);
+  const isMobileLandscape = useMediaQuery(theme.isMobileLandscape);
   const menuHeaderId = useId();
   const quickReload = useQuickReload();
 
@@ -388,7 +394,7 @@ export const NavigationMenu = () => {
           />
         </MenuItemWrapper>
       </NavigationMenuWrapper>
-      {isExpanded && !isLargerThanPhone && (
+      {isExpanded && (!isLargerThanPhone || isMobileLandscape) && (
         <NavigationMenuClearDismiss
           aria-label="Menu Dismiss"
           onClick={() => {

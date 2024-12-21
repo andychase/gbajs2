@@ -65,6 +65,10 @@ const BackgroundContainer = styled.section<BackgroundContainerProps>`
     top: ${$initialPosition.top};
     left: ${$initialPosition.left};
     `};
+
+  @media ${({ theme }) => theme.isMobileLandscape} {
+    background-color: transparent;
+  }
 `;
 
 const CenterKnob = styled.div<CenterKnobProps>`
@@ -86,6 +90,10 @@ const CenterKnob = styled.div<CenterKnobProps>`
     bottom: -0.8rem;
     border: 0.8rem solid ${({ theme }) => theme.gbaThemeBlue}50;
     border-radius: 50%;
+  }
+
+  @media ${({ theme }) => theme.isMobileLandscape} {
+    background-color: transparent;
   }
 `;
 
