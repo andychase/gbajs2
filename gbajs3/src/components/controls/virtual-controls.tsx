@@ -139,7 +139,7 @@ export const VirtualControls = () => {
         left: `calc(${horizontalStartPos}px - 85px)`
       }
     },
-    'start-button': {
+    'select-button': {
       defaultMobile: {
         top: '88dvh',
         left: '25dvw'
@@ -157,7 +157,7 @@ export const VirtualControls = () => {
         left: '220px'
       }
     },
-    'select-button': {
+    'start-button': {
       defaultMobile: {
         top: '88dvh',
         left: '55dvw'
@@ -333,19 +333,19 @@ export const VirtualControls = () => {
       enabled: shouldShowVirtualButtonsAndOpad
     },
     {
-      keyId: 'START',
-      isRectangular: true,
-      children: <VirtualButtonTextSmall>Start</VirtualButtonTextSmall>,
-      initialPosition: initialPositionForKey('start-button'),
-      keyName: 'start-button',
-      enabled: shouldShowVirtualButtonsAndOpad
-    },
-    {
       keyId: 'SELECT',
       isRectangular: true,
       children: <VirtualButtonTextSmall>Select</VirtualButtonTextSmall>,
       initialPosition: initialPositionForKey('select-button'),
       keyName: 'select-button',
+      enabled: shouldShowVirtualButtonsAndOpad
+    },
+    {
+      keyId: 'START',
+      isRectangular: true,
+      children: <VirtualButtonTextSmall>Start</VirtualButtonTextSmall>,
+      initialPosition: initialPositionForKey('start-button'),
+      keyName: 'start-button',
       enabled: shouldShowVirtualButtonsAndOpad
     },
     {
