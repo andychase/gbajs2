@@ -43,7 +43,6 @@ exports[`<Screen /> > renders with default desktop position and size 1`] = `
   data-testid="screen-wrapper"
   style="position: absolute; user-select: auto; display: inline-block; top: 0px; left: 0px; cursor: auto; transform: translate(520px,30px); max-width: 9007199254740991px; max-height: 9007199254740991px; box-sizing: border-box; flex-shrink: 0;"
 >
-  <div />
   <canvas
     class="c1"
     data-testid="screen-wrapper:render-canvas"
@@ -97,7 +96,6 @@ exports[`<Screen /> > renders with default mobile position and size 1`] = `
   data-testid="screen-wrapper"
   style="position: absolute; user-select: auto; display: inline-block; top: 0px; left: 0px; cursor: auto; transform: translate(0px,0px); max-width: 9007199254740991px; max-height: 9007199254740991px; box-sizing: border-box; flex-shrink: 0;"
 >
-  <div />
   <canvas
     class="c1"
     data-testid="screen-wrapper:render-canvas"
