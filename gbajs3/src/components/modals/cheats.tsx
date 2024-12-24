@@ -208,24 +208,24 @@ export const CheatsModal = () => {
           <TextField
             error={!!errors?.rawCheats}
             label="Raw Libretro Cheats"
-            InputLabelProps={{
-              shrink: true
-            }}
             multiline
             fullWidth
             minRows={6}
             variant="outlined"
-            InputProps={{
-              sx: {
-                ['textarea']: {
-                  whiteSpace: 'pre',
-                  // see: https://github.com/mui/material-ui/issues/41490
-                  //      remove/refactor once resolved
-                  overflowX: 'auto !important'
-                }
-              }
-            }}
             helperText={errors?.rawCheats?.message}
+            slotProps={{
+              input: {
+                sx: {
+                  ['textarea']: {
+                    whiteSpace: 'pre',
+                    // see: https://github.com/mui/material-ui/issues/41490
+                    //      remove/refactor once resolved
+                    overflowX: 'auto !important'
+                  }
+                }
+              },
+              inputLabel: { shrink: true }
+            }}
             style={{ display: viewRawCheats ? 'block' : 'none' }}
             {...register('rawCheats')}
           />

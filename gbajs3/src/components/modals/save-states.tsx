@@ -173,12 +173,10 @@ export const SaveStatesModal = () => {
           <TextField
             label="Current Save State Slot"
             type="number"
-            InputLabelProps={{
-              shrink: true
-            }}
             size="small"
             error={!!errors?.saveStateSlot}
             helperText={errors?.saveStateSlot?.message}
+            slotProps={{ inputLabel: { shrink: true } }}
             {...register('saveStateSlot', {
               required: { value: true, message: 'Slot is required' },
               min: { value: 0, message: 'Slot must be >= 0' },
