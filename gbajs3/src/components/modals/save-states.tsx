@@ -1,4 +1,4 @@
-import { Button, IconButton, TextField } from '@mui/material';
+import { Button, IconButton } from '@mui/material';
 import { useLocalStorage } from '@uidotdev/usehooks';
 import { useCallback, useEffect, useId, useState } from 'react';
 import { useForm, type SubmitHandler } from 'react-hook-form';
@@ -17,6 +17,7 @@ import {
 } from '../product-tour/embedded-product-tour.tsx';
 import { CircleCheckButton } from '../shared/circle-check-button.tsx';
 import { ErrorWithIcon } from '../shared/error-with-icon.tsx';
+import { NumberInput } from '../shared/number-input.tsx';
 import { CenteredText, StyledBiPlus } from '../shared/styled.tsx';
 
 type InputProps = {
@@ -170,16 +171,14 @@ export const SaveStatesModal = () => {
           id={`${baseId}--save-state-slot-form`}
           onSubmit={handleSubmit(onSubmit)}
         >
-          <TextField
+          <NumberInput
             label="Current Save State Slot"
-            type="number"
             size="small"
             error={!!errors?.saveStateSlot}
-            helperText={errors?.saveStateSlot?.message}
+            min={0}
             slotProps={{ inputLabel: { shrink: true } }}
             {...register('saveStateSlot', {
               required: { value: true, message: 'Slot is required' },
-              min: { value: 0, message: 'Slot must be >= 0' },
               valueAsNumber: true
             })}
           />
@@ -188,7 +187,7 @@ export const SaveStatesModal = () => {
             showSuccess={isSubmitSuccessful}
             size="small"
             type="submit"
-            sx={{ maxHeight: '40px' }}
+            sx={{ maxHeight: '40px', minWidth: 'fit-content' }}
           />
         </StyledForm>
 

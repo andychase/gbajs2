@@ -201,24 +201,6 @@ describe('<SaveStatesModal />', () => {
     expect(screen.getByText('Failed to load save state')).toBeVisible();
   });
 
-  it('renders form validations', async () => {
-    renderWithContext(<SaveStatesModal />);
-
-    const currentSlot = screen.getByLabelText('Current Save State Slot');
-
-    expect(currentSlot).toBeVisible();
-
-    await userEvent.type(currentSlot, '{backspace}');
-
-    await userEvent.click(screen.getByRole('button', { name: 'Update Slot' }));
-
-    expect(screen.getByText('Slot is required')).toBeVisible();
-
-    await userEvent.type(currentSlot, '-1');
-
-    expect(await screen.findByText('Slot must be >= 0')).toBeVisible();
-  });
-
   it('closes modal using the close button', async () => {
     const setIsModalOpenSpy = vi.fn();
     const { useModalContext: original } = await vi.importActual<
