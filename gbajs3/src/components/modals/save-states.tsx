@@ -122,9 +122,8 @@ export const SaveStatesModal = () => {
     setValue('saveStateSlot', currentSlot);
   }, [currentSlot, setValue]);
 
-  const onSubmit: SubmitHandler<InputProps> = async (formData) => {
+  const onSubmit: SubmitHandler<InputProps> = async (formData) =>
     setCurrentSlot(formData.saveStateSlot);
-  };
 
   const renderedSaveStates =
     currentSaveStates ??

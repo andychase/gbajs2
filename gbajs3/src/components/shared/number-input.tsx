@@ -6,7 +6,7 @@ import {
   type IconButtonProps,
   type TextFieldProps
 } from '@mui/material';
-import { forwardRef, type MouseEvent, useRef } from 'react';
+import { forwardRef, useRef, type MouseEvent, type KeyboardEvent } from 'react';
 import { BiSolidUpArrow, BiSolidDownArrow } from 'react-icons/bi';
 
 type NumberInputProps = TextFieldProps & {
@@ -23,12 +23,15 @@ const commonAdornmentButtonProps: IconButtonProps = {
 const preventDefault = (event: MouseEvent<HTMLButtonElement>) =>
   event.preventDefault();
 
+const replaceLeadingZeros = (value: string) => value.replace(/^0+/, '');
+
 export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
   (
     { disabled = false, size, slotProps, step = 1, min, max, sx, ...rest },
     externalRef
   ) => {
     const internalRef = useRef<HTMLInputElement | null>(null);
+    const isIntermediateValue = useRef(false);
 
     const callbackRef = (element: HTMLInputElement | null) => {
       internalRef.current = element;
@@ -54,23 +57,21 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
     const increment = (e: MouseEvent<HTMLButtonElement>) => {
       preventDefault(e);
 
-      if (!internalRef.current) return;
-
-      const currentValue = internalRef.current.valueAsNumber;
-      const newValue = clamp(currentValue + step);
-
-      dispatchEvent(newValue);
+      if (internalRef.current) {
+        const currentValue = internalRef.current?.valueAsNumber;
+        const newValue = clamp(currentValue + step);
+        dispatchEvent(newValue);
+      }
     };
 
     const decrement = (e: MouseEvent<HTMLButtonElement>) => {
       preventDefault(e);
 
-      if (!internalRef.current) return;
-
-      const currentValue = internalRef.current.valueAsNumber;
-      const newValue = clamp(currentValue - step);
-
-      dispatchEvent(newValue);
+      if (internalRef.current) {
+        const currentValue = internalRef.current?.valueAsNumber;
+        const newValue = clamp(currentValue - step);
+        dispatchEvent(newValue);
+      }
     };
 
     const enforceRange = () => {
@@ -81,6 +82,29 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
           new Event('input', { bubbles: true })
         );
       }
+    };
+
+    const sanitizeInput = () => {
+      if (internalRef.current && !isIntermediateValue.current) {
+        const value = internalRef.current.valueAsNumber;
+
+        if (isNaN(value) || value === undefined)
+          internalRef.current.value = '0';
+        else internalRef.current.value = clamp(value).toString();
+      }
+    };
+
+    const handleIntermediateValue = (e: KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === '-') {
+        if (min !== undefined && Number(min) >= 0) {
+          e.preventDefault();
+        } else if (internalRef.current) {
+          internalRef.current.value = replaceLeadingZeros(
+            internalRef.current.value
+          );
+          isIntermediateValue.current = true;
+        }
+      } else isIntermediateValue.current = false;
     };
 
     return (
@@ -124,14 +148,8 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
                 </Stack>
               </InputAdornment>
             ),
-            onInput: () => {
-              if (internalRef.current) {
-                const value = internalRef?.current.valueAsNumber;
-                if (isNaN(value) || value === undefined)
-                  internalRef.current.value = min ? min.toString() : '0';
-                else internalRef.current.value = value.toString();
-              }
-            },
+            onInput: sanitizeInput,
+            onKeyDown: handleIntermediateValue,
             onBlur: enforceRange,
             ...slotProps?.input
           },
