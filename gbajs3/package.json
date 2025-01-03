@@ -18,7 +18,7 @@
     "@emotion/styled": "^11.13.5",
     "@mui/material": "^6.0.2",
     "@mui/x-tree-view": "^7.0.0",
-    "@thenick775/mgba-wasm": "^1.0.20",
+    "@thenick775/mgba-wasm": "^1.1.0",
     "@uidotdev/usehooks": "^2.4.1",
     "jwt-decode": "^4.0.0",
     "nanoid": "^5.0.7",

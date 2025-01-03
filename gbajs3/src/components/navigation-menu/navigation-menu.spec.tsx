@@ -21,6 +21,7 @@ import { LoadSaveModal } from '../modals/load-save.tsx';
 import { LoginModal } from '../modals/login.tsx';
 import { SaveStatesModal } from '../modals/save-states.tsx';
 import { UploadCheatsModal } from '../modals/upload-cheats.tsx';
+import { UploadPatchesModal } from '../modals/upload-patches.tsx';
 import { UploadRomToServerModal } from '../modals/upload-rom-to-server.tsx';
 import { UploadRomModal } from '../modals/upload-rom.tsx';
 import { UploadSaveToServerModal } from '../modals/upload-save-to-server.tsx';
@@ -35,6 +36,8 @@ describe('<NavigationMenu />', () => {
     expect(screen.getByRole('list', { name: 'Menu' })).toBeInTheDocument();
     expect(screen.getByLabelText('Menu Toggle')).toBeInTheDocument();
     expect(screen.getByLabelText('Menu Dismiss')).toBeInTheDocument();
+    // renders default mounted menu items
+    expect(screen.getAllByRole('listitem')).toHaveLength(13);
   });
 
   it('toggles menu with button', async () => {
@@ -86,6 +89,7 @@ describe('<NavigationMenu />', () => {
       ['About', <AboutModal />],
       ['Upload Saves', <UploadSavesModal />],
       ['Upload Cheats', <UploadCheatsModal />],
+      ['Upload Patches', <UploadPatchesModal />],
       ['Upload Rom', <UploadRomModal />],
       ['Load Local Rom', <LoadLocalRomModal />],
       ['Controls', <ControlsModal />],

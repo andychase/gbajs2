@@ -48,6 +48,7 @@ import { LoadSaveModal } from '../modals/load-save.tsx';
 import { LoginModal } from '../modals/login.tsx';
 import { SaveStatesModal } from '../modals/save-states.tsx';
 import { UploadCheatsModal } from '../modals/upload-cheats.tsx';
+import { UploadPatchesModal } from '../modals/upload-patches.tsx';
 import { UploadRomToServerModal } from '../modals/upload-rom-to-server.tsx';
 import { UploadRomModal } from '../modals/upload-rom.tsx';
 import { UploadSaveToServerModal } from '../modals/upload-save-to-server.tsx';
@@ -215,6 +216,15 @@ export const NavigationMenu = () => {
               icon={<BiCloudUpload />}
               onClick={() => {
                 setModalContent(<UploadCheatsModal />);
+                setIsModalOpen(true);
+              }}
+            />
+            <NavLeaf
+              title="Upload Patches"
+              $disabled={isRunning}
+              icon={<BiCloudUpload />}
+              onClick={() => {
+                setModalContent(<UploadPatchesModal />);
                 setIsModalOpen(true);
               }}
             />

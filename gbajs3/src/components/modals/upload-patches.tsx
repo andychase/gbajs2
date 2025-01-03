@@ -14,32 +14,32 @@ import {
 import { DragAndDropInput } from '../shared/drag-and-drop-input.tsx';
 
 type InputProps = {
-  cheatFiles: File[];
+  patchFiles: File[];
 };
 
-const validFileExtensions = ['.cheats'];
+const validFileExtensions = ['.ips', '.ups', '.bps'];
 
-export const UploadCheatsModal = () => {
+export const UploadPatchesModal = () => {
   const { setIsModalOpen } = useModalContext();
   const { emulator } = useEmulatorContext();
-  const { reset, handleSubmit, setValue, control } = useForm<InputProps>();
   const { syncActionIfEnabled } = useAddCallbacks();
-  const cheatsFormId = useId();
+  const { reset, handleSubmit, setValue, control } = useForm<InputProps>();
+  const uploadPatchesFormId = useId();
 
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
       reset();
-      setValue('cheatFiles', acceptedFiles, { shouldValidate: true });
+      setValue('patchFiles', acceptedFiles, { shouldValidate: true });
     },
     [reset, setValue]
   );
 
-  const onSubmit: SubmitHandler<InputProps> = async ({ cheatFiles }) => {
+  const onSubmit: SubmitHandler<InputProps> = async ({ patchFiles }) => {
     await Promise.all(
-      cheatFiles.map(
-        (cheatFile) =>
+      patchFiles.map(
+        (patchFile) =>
           new Promise<void>((resolve) =>
-            emulator?.uploadCheats(cheatFile, resolve)
+            emulator?.uploadPatch(patchFile, resolve)
           )
       )
     );
@@ -53,41 +53,38 @@ export const UploadCheatsModal = () => {
       content: (
         <>
           <p>
-            Use this area to drag and drop your cheat files, or click to select
-            files.
+            Use this area to drag and drop .ips/.ups/.bps patch files, or click
+            to select files.
           </p>
-          <p>
-            Cheat files should be in libretro format and have the extension
-            '.cheats'.
-          </p>
+          <p>The name of your patch files must match the name of your rom.</p>
           <p>You may drop or select multiple files!</p>
         </>
       ),
-      target: `#${CSS.escape(`${cheatsFormId}--drag-and-drop`)}`
+      target: `#${CSS.escape(`${uploadPatchesFormId}--drag-and-drop`)}`
     }
   ];
 
   return (
     <>
-      <ModalHeader title="Upload Cheats" />
+      <ModalHeader title="Upload Patches" />
       <ModalBody>
         <form
-          id={cheatsFormId}
-          aria-label="Upload Cheats Form"
+          id={uploadPatchesFormId}
+          aria-label="Upload Patches Form"
           onSubmit={handleSubmit(onSubmit)}
         >
           <Controller
             control={control}
-            name="cheatFiles"
+            name="patchFiles"
             rules={{
-              validate: (cheatFiles) =>
-                cheatFiles?.length > 0 ||
-                'At least one .cheats file is required'
+              validate: (patchFiles) =>
+                patchFiles?.length > 0 ||
+                'At least one .ips/.ups/.bps file is required'
             }}
             render={({ field: { name, value }, fieldState: { error } }) => (
               <DragAndDropInput
-                ariaLabel="Upload Cheats"
-                id={`${cheatsFormId}--drag-and-drop`}
+                ariaLabel="Upload Patches"
+                id={`${uploadPatchesFormId}--drag-and-drop`}
                 onDrop={onDrop}
                 name={name}
                 validFileExtensions={validFileExtensions}
@@ -95,18 +92,14 @@ export const UploadCheatsModal = () => {
                 hideAcceptedFiles={!value?.length}
                 multiple
               >
-                <p>
-                  Drag and drop cheat files here,
-                  <br />
-                  or click to upload files
-                </p>
+                <p>Drag and drop patch files here, or click to upload files</p>
               </DragAndDropInput>
             )}
           />
         </form>
       </ModalBody>
       <ModalFooter>
-        <Button form={cheatsFormId} type="submit" variant="contained">
+        <Button form={uploadPatchesFormId} type="submit" variant="contained">
           Upload
         </Button>
         <Button variant="outlined" onClick={() => setIsModalOpen(false)}>
@@ -115,7 +108,7 @@ export const UploadCheatsModal = () => {
       </ModalFooter>
       <EmbeddedProductTour
         steps={tourSteps}
-        completedProductTourStepName="hasCompletedUploadCheatsTour"
+        completedProductTourStepName="hasCompletedUploadPatchesTour"
       />
     </>
   );

@@ -41,9 +41,9 @@ export const UploadSavesModal = () => {
     await Promise.all(
       saveFiles.map(
         (saveFile) =>
-          new Promise<void>((resolve) => {
-            emulator?.uploadSaveOrSaveState(saveFile, resolve);
-          })
+          new Promise<void>((resolve) =>
+            emulator?.uploadSaveOrSaveState(saveFile, resolve)
+          )
       )
     );
 

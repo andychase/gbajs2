@@ -4,10 +4,6 @@ import type {
   mGBAEmulator as mGBAEmulatorTypeDef
 } from '@thenick775/mgba-wasm';
 
-interface FsNode extends FS.FSNode {
-  mode: number;
-}
-
 export type KeyBinding = {
   gbaInput: string; // represents the GBA input to be remapped
   key: string; // represents the key property of a browser KeyboardEvent
@@ -66,6 +62,7 @@ export type GBAEmulator = {
   simulateKeyDown: (keyId: string) => void;
   simulateKeyUp: (keyId: string) => void;
   uploadCheats: (file: File, callback?: () => void) => void;
+  uploadPatch: (file: File, callback?: () => void) => void;
   uploadRom: (file: File, callback?: () => void) => void;
   uploadSaveOrSaveState: (file: File, callback?: () => void) => void;
 };
@@ -98,7 +95,7 @@ export const mGBAEmulator = (mGBA: mGBAEmulatorTypeDef): GBAEmulator => {
         if (ignorePaths.includes(name)) continue;
 
         const currPath = `${path}/${name}`;
-        const { mode } = mGBA.FS.lookupPath(currPath, {}).node as FsNode;
+        const { mode } = mGBA.FS.lookupPath(currPath, {}).node;
         const fileNode = {
           path: currPath,
           isDir: mGBA.FS.isDir(mode),
@@ -241,6 +238,7 @@ export const mGBAEmulator = (mGBA: mGBAEmulatorTypeDef): GBAEmulator => {
     getCurrentSaveName: () => filepathToFileName(mGBA.saveName),
     getFile: (path) => mGBA.FS.readFile(path),
     uploadCheats: mGBA.uploadCheats,
+    uploadPatch: mGBA.uploadPatch,
     uploadRom: mGBA.uploadRom,
     uploadSaveOrSaveState: mGBA.uploadSaveOrSaveState,
     deleteSaveState: (slot) => {
