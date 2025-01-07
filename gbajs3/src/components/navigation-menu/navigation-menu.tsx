@@ -113,12 +113,11 @@ const HamburgerButton = styled(ButtonBase)<ExpandableComponentProps>`
   color: ${({ theme }) => theme.pureWhite};
   z-index: 200;
   position: fixed;
-  left: ${NavigationMenuWidth - 6}px;
+  left: ${NavigationMenuWidth - 50}px;
   top: 12px;
   transition: 0.4s ease-in-out;
   -webkit-transition: 0.4s ease-in-out;
   cursor: pointer;
-  padding: 0.375rem 0.75rem;
   border-radius: 0.25rem;
   border: none;
   min-height: 36px;
@@ -131,7 +130,7 @@ const HamburgerButton = styled(ButtonBase)<ExpandableComponentProps>`
 
   ${({ $isExpanded = false }) =>
     !$isExpanded &&
-    `left: -8px;
+    `left: -5px;
     `}
 
   &:focus {
@@ -176,7 +175,9 @@ export const NavigationMenu = () => {
         onClick={() => setIsExpanded((prevState) => !prevState)}
         aria-label="Menu Toggle"
       >
-        <BiMenu />
+        <BiMenu
+          style={{ height: '29px', width: '29px', verticalAlign: 'middle' }}
+        />
       </HamburgerButton>
       <NavigationMenuWrapper
         data-testid="menu-wrapper"

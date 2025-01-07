@@ -45,7 +45,7 @@ describe('<NavigationMenu />', () => {
 
     expect(screen.getByTestId('menu-wrapper')).toHaveStyle(`left: 0`);
     expect(screen.getByLabelText('Menu Toggle')).toHaveStyle(
-      `left: ${NavigationMenuWidth - 6}px`
+      `left: ${NavigationMenuWidth - 50}px`
     );
     expect(screen.getByLabelText('Menu Dismiss')).toBeInTheDocument();
 
@@ -54,14 +54,14 @@ describe('<NavigationMenu />', () => {
     expect(screen.getByTestId('menu-wrapper')).toHaveStyle(
       `left: -${NavigationMenuWidth + 5}px`
     );
-    expect(screen.getByLabelText('Menu Toggle')).toHaveStyle('left: -8px');
+    expect(screen.getByLabelText('Menu Toggle')).toHaveStyle('left: -5px');
     expect(screen.queryByLabelText('Menu Dismiss')).not.toBeInTheDocument();
 
     await userEvent.click(screen.getByLabelText('Menu Toggle'));
 
     expect(screen.getByTestId('menu-wrapper')).toHaveStyle(`left: 0`);
     expect(screen.getByLabelText('Menu Toggle')).toHaveStyle(
-      `left: ${NavigationMenuWidth - 6}px`
+      `left: ${NavigationMenuWidth - 50}px`
     );
     expect(screen.getByLabelText('Menu Dismiss')).toBeInTheDocument();
   });
@@ -71,7 +71,7 @@ describe('<NavigationMenu />', () => {
 
     expect(screen.getByTestId('menu-wrapper')).toHaveStyle(`left: 0`);
     expect(screen.getByLabelText('Menu Toggle')).toHaveStyle(
-      `left: ${NavigationMenuWidth - 6}px`
+      `left: ${NavigationMenuWidth - 50}px`
     );
     expect(screen.getByLabelText('Menu Dismiss')).toBeInTheDocument();
 
@@ -80,7 +80,7 @@ describe('<NavigationMenu />', () => {
     expect(screen.getByTestId('menu-wrapper')).toHaveStyle(
       `left: -${NavigationMenuWidth + 5}px`
     );
-    expect(screen.getByLabelText('Menu Toggle')).toHaveStyle('left: -8px');
+    expect(screen.getByLabelText('Menu Toggle')).toHaveStyle('left: -5px');
     expect(screen.queryByLabelText('Menu Dismiss')).not.toBeInTheDocument();
   });
 
