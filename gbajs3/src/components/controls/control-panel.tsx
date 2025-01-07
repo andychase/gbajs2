@@ -163,7 +163,7 @@ const PanelControlButton = styled(ButtonBase).attrs({
   }
 `;
 
-const PanelControlSlider = styled.li<PanelControlSliderProps>`
+const PanelControlSlider = styled.div<PanelControlSliderProps>`
   ${InteractivePanelControlStyle}
   grid-area: ${({ $gridArea }) => $gridArea};
   max-height: 40px;
@@ -223,22 +223,28 @@ const SliderIconButton = ({ icon, ...rest }: SliderIconButtonProps) => {
 
 const PanelSlider = forwardRef<HTMLSpanElement, PanelSliderProps>(
   ({ controlled, gridArea, id, maxIcon, minIcon, ...rest }, ref) => (
-    <ContentSpan ref={ref}>
-      <PanelControlSlider id={id} $gridArea={gridArea} $controlled={controlled}>
-        {minIcon}
-        <MutedMarkSlider
-          marks
-          sx={{
-            width: '85px',
-            margin: '0 10px',
-            maxHeight: '40px'
-          }}
-          valueLabelDisplay="auto"
-          {...rest}
-        />
-        {maxIcon}
-      </PanelControlSlider>
-    </ContentSpan>
+    <PanelControlWrapper>
+      <ContentSpan ref={ref}>
+        <PanelControlSlider
+          id={id}
+          $gridArea={gridArea}
+          $controlled={controlled}
+        >
+          {minIcon}
+          <MutedMarkSlider
+            marks
+            sx={{
+              width: '85px',
+              margin: '0 10px',
+              maxHeight: '40px'
+            }}
+            valueLabelDisplay="auto"
+            {...rest}
+          />
+          {maxIcon}
+        </PanelControlSlider>
+      </ContentSpan>
+    </PanelControlWrapper>
   )
 );
 

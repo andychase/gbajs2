@@ -235,281 +235,289 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
         </svg>
       </button>
     </li>
-    <span
-      class="c4"
+    <li
+      class="c1"
     >
-      <li
-        class="c5"
-        id=":r2:--volume-slider"
+      <span
+        class="c4"
       >
-        <button
-          aria-label="Mute Volume"
-          class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-1928est-MuiButtonBase-root-MuiIconButton-root"
-          tabindex="0"
-          type="button"
+        <div
+          class="c5"
+          id=":r2:--volume-slider"
         >
-          <svg
-            fill="currentColor"
-            height="2em"
-            stroke="currentColor"
-            stroke-width="0"
-            style="max-height: 100%;"
-            viewBox="0 0 24 24"
-            width="2em"
-            xmlns="http://www.w3.org/2000/svg"
+          <button
+            aria-label="Mute Volume"
+            class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-1928est-MuiButtonBase-root-MuiIconButton-root"
+            tabindex="0"
+            type="button"
           >
-            <path
-              d="m21.707 20.293-2.023-2.023A9.566 9.566 0 0 0 21.999 12c0-4.091-2.472-7.453-5.999-9v2c2.387 1.386 3.999 4.047 3.999 7a8.113 8.113 0 0 1-1.672 4.913l-1.285-1.285C17.644 14.536 18 13.19 18 12c0-1.771-.775-3.9-2-5v7.586l-2-2V4a1 1 0 0 0-1.554-.832L7.727 6.313l-4.02-4.02-1.414 1.414 18 18 1.414-1.414zM12 5.868v4.718L9.169 7.755 12 5.868zM4 17h2.697l5.748 3.832a1.004 1.004 0 0 0 1.027.05A1 1 0 0 0 14 20v-1.879l-2-2v2.011l-4.445-2.964c-.025-.017-.056-.02-.082-.033a.986.986 0 0 0-.382-.116C7.059 15.016 7.032 15 7 15H4V9h.879L3.102 7.223A1.995 1.995 0 0 0 2 9v6c0 1.103.897 2 2 2z"
-            />
-          </svg>
-        </button>
-        <span
-          class="MuiSlider-root MuiSlider-colorPrimary MuiSlider-sizeMedium c6 css-1uesrtc-MuiSlider-root"
-        >
+            <svg
+              fill="currentColor"
+              height="2em"
+              stroke="currentColor"
+              stroke-width="0"
+              style="max-height: 100%;"
+              viewBox="0 0 24 24"
+              width="2em"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="m21.707 20.293-2.023-2.023A9.566 9.566 0 0 0 21.999 12c0-4.091-2.472-7.453-5.999-9v2c2.387 1.386 3.999 4.047 3.999 7a8.113 8.113 0 0 1-1.672 4.913l-1.285-1.285C17.644 14.536 18 13.19 18 12c0-1.771-.775-3.9-2-5v7.586l-2-2V4a1 1 0 0 0-1.554-.832L7.727 6.313l-4.02-4.02-1.414 1.414 18 18 1.414-1.414zM12 5.868v4.718L9.169 7.755 12 5.868zM4 17h2.697l5.748 3.832a1.004 1.004 0 0 0 1.027.05A1 1 0 0 0 14 20v-1.879l-2-2v2.011l-4.445-2.964c-.025-.017-.056-.02-.082-.033a.986.986 0 0 0-.382-.116C7.059 15.016 7.032 15 7 15H4V9h.879L3.102 7.223A1.995 1.995 0 0 0 2 9v6c0 1.103.897 2 2 2z"
+              />
+            </svg>
+          </button>
           <span
-            class="MuiSlider-rail css-r64h58-MuiSlider-rail"
-          />
-          <span
-            class="MuiSlider-track css-xvk2i-MuiSlider-track"
-            style="left: 0%; width: 100%;"
-          />
-          <span
-            class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
-            data-index="0"
-            style="left: 0%;"
-          />
-          <span
-            class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
-            data-index="1"
-            style="left: 10%;"
-          />
-          <span
-            class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
-            data-index="2"
-            style="left: 20%;"
-          />
-          <span
-            class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
-            data-index="3"
-            style="left: 30.000000000000004%;"
-          />
-          <span
-            class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
-            data-index="4"
-            style="left: 40%;"
-          />
-          <span
-            class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
-            data-index="5"
-            style="left: 50%;"
-          />
-          <span
-            class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
-            data-index="6"
-            style="left: 60.00000000000001%;"
-          />
-          <span
-            class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
-            data-index="7"
-            style="left: 70%;"
-          />
-          <span
-            class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
-            data-index="8"
-            style="left: 80%;"
-          />
-          <span
-            class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
-            data-index="9"
-            style="left: 90%;"
-          />
-          <span
-            class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
-            data-index="10"
-            style="left: 100%;"
-          />
-          <span
-            class="MuiSlider-thumb MuiSlider-thumbSizeMedium MuiSlider-thumbColorPrimary MuiSlider-thumb MuiSlider-thumbSizeMedium MuiSlider-thumbColorPrimary css-1xcmt9q-MuiSlider-thumb"
-            data-index="0"
-            style="left: 100%;"
+            class="MuiSlider-root MuiSlider-colorPrimary MuiSlider-sizeMedium c6 css-1uesrtc-MuiSlider-root"
           >
-            <input
-              aria-label="Volume Slider"
-              aria-orientation="horizontal"
-              aria-valuemax="1"
-              aria-valuemin="0"
-              aria-valuenow="1"
-              data-index="0"
-              max="1"
-              min="0"
-              step="0.1"
-              style="border: 0px; height: 100%; margin: -1px; overflow: hidden; padding: 0px; position: absolute; white-space: nowrap; width: 100%; direction: ltr;"
-              type="range"
-              value="1"
+            <span
+              class="MuiSlider-rail css-r64h58-MuiSlider-rail"
             />
             <span
-              aria-hidden="true"
-              class="MuiSlider-valueLabel css-1asissc-MuiSlider-valueLabel"
+              class="MuiSlider-track css-xvk2i-MuiSlider-track"
+              style="left: 0%; width: 100%;"
+            />
+            <span
+              class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
+              data-index="0"
+              style="left: 0%;"
+            />
+            <span
+              class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
+              data-index="1"
+              style="left: 10%;"
+            />
+            <span
+              class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
+              data-index="2"
+              style="left: 20%;"
+            />
+            <span
+              class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
+              data-index="3"
+              style="left: 30.000000000000004%;"
+            />
+            <span
+              class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
+              data-index="4"
+              style="left: 40%;"
+            />
+            <span
+              class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
+              data-index="5"
+              style="left: 50%;"
+            />
+            <span
+              class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
+              data-index="6"
+              style="left: 60.00000000000001%;"
+            />
+            <span
+              class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
+              data-index="7"
+              style="left: 70%;"
+            />
+            <span
+              class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
+              data-index="8"
+              style="left: 80%;"
+            />
+            <span
+              class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
+              data-index="9"
+              style="left: 90%;"
+            />
+            <span
+              class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
+              data-index="10"
+              style="left: 100%;"
+            />
+            <span
+              class="MuiSlider-thumb MuiSlider-thumbSizeMedium MuiSlider-thumbColorPrimary MuiSlider-thumb MuiSlider-thumbSizeMedium MuiSlider-thumbColorPrimary css-1xcmt9q-MuiSlider-thumb"
+              data-index="0"
+              style="left: 100%;"
             >
+              <input
+                aria-label="Volume Slider"
+                aria-orientation="horizontal"
+                aria-valuemax="1"
+                aria-valuemin="0"
+                aria-valuenow="1"
+                data-index="0"
+                max="1"
+                min="0"
+                step="0.1"
+                style="border: 0px; height: 100%; margin: -1px; overflow: hidden; padding: 0px; position: absolute; white-space: nowrap; width: 100%; direction: ltr;"
+                type="range"
+                value="1"
+              />
               <span
-                class="MuiSlider-valueLabelCircle"
+                aria-hidden="true"
+                class="MuiSlider-valueLabel css-1asissc-MuiSlider-valueLabel"
               >
                 <span
-                  class="MuiSlider-valueLabelLabel"
+                  class="MuiSlider-valueLabelCircle"
                 >
-                  100
+                  <span
+                    class="MuiSlider-valueLabelLabel"
+                  >
+                    100
+                  </span>
                 </span>
               </span>
             </span>
           </span>
-        </span>
-        <button
-          aria-label="Max Volume"
-          class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-1928est-MuiButtonBase-root-MuiIconButton-root"
-          tabindex="0"
-          type="button"
-        >
-          <svg
-            fill="currentColor"
-            height="2em"
-            stroke="currentColor"
-            stroke-width="0"
-            style="max-height: 100%;"
-            viewBox="0 0 24 24"
-            width="2em"
-            xmlns="http://www.w3.org/2000/svg"
+          <button
+            aria-label="Max Volume"
+            class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-1928est-MuiButtonBase-root-MuiIconButton-root"
+            tabindex="0"
+            type="button"
           >
-            <path
-              d="M16 21c3.527-1.547 5.999-4.909 5.999-9S19.527 4.547 16 3v2c2.387 1.386 3.999 4.047 3.999 7S18.387 17.614 16 19v2z"
-            />
-            <path
-              d="M16 7v10c1.225-1.1 2-3.229 2-5s-.775-3.9-2-5zM4 17h2.697l5.748 3.832a1.004 1.004 0 0 0 1.027.05A1 1 0 0 0 14 20V4a1 1 0 0 0-1.554-.832L6.697 7H4c-1.103 0-2 .897-2 2v6c0 1.103.897 2 2 2zm0-8h3c.033 0 .061-.016.093-.019a1.027 1.027 0 0 0 .38-.116c.026-.015.057-.017.082-.033L12 5.868v12.264l-4.445-2.964c-.025-.017-.056-.02-.082-.033a.986.986 0 0 0-.382-.116C7.059 15.016 7.032 15 7 15H4V9z"
-            />
-          </svg>
-        </button>
-      </li>
-    </span>
-    <span
-      class="c4"
+            <svg
+              fill="currentColor"
+              height="2em"
+              stroke="currentColor"
+              stroke-width="0"
+              style="max-height: 100%;"
+              viewBox="0 0 24 24"
+              width="2em"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M16 21c3.527-1.547 5.999-4.909 5.999-9S19.527 4.547 16 3v2c2.387 1.386 3.999 4.047 3.999 7S18.387 17.614 16 19v2z"
+              />
+              <path
+                d="M16 7v10c1.225-1.1 2-3.229 2-5s-.775-3.9-2-5zM4 17h2.697l5.748 3.832a1.004 1.004 0 0 0 1.027.05A1 1 0 0 0 14 20V4a1 1 0 0 0-1.554-.832L6.697 7H4c-1.103 0-2 .897-2 2v6c0 1.103.897 2 2 2zm0-8h3c.033 0 .061-.016.093-.019a1.027 1.027 0 0 0 .38-.116c.026-.015.057-.017.082-.033L12 5.868v12.264l-4.445-2.964c-.025-.017-.056-.02-.082-.033a.986.986 0 0 0-.382-.116C7.059 15.016 7.032 15 7 15H4V9z"
+              />
+            </svg>
+          </button>
+        </div>
+      </span>
+    </li>
+    <li
+      class="c1"
     >
-      <li
-        class="c7"
-        id=":r2:--fast-forward"
+      <span
+        class="c4"
       >
-        <button
-          aria-label="Regular Speed"
-          class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-1928est-MuiButtonBase-root-MuiIconButton-root"
-          tabindex="0"
-          type="button"
+        <div
+          class="c7"
+          id=":r2:--fast-forward"
         >
-          <svg
-            fill="currentColor"
-            height="2em"
-            stroke="currentColor"
-            stroke-width="0"
-            style="max-height: 100%;"
-            viewBox="0 0 1024 1024"
-            width="2em"
-            xmlns="http://www.w3.org/2000/svg"
+          <button
+            aria-label="Regular Speed"
+            class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-1928est-MuiButtonBase-root-MuiIconButton-root"
+            tabindex="0"
+            type="button"
           >
-            <path
-              d="M825.8 498L538.4 249.9c-10.7-9.2-26.4-.9-26.4 14v496.3c0 14.9 15.7 23.2 26.4 14L825.8 526c8.3-7.2 8.3-20.8 0-28zm-320 0L218.4 249.9c-10.7-9.2-26.4-.9-26.4 14v496.3c0 14.9 15.7 23.2 26.4 14L505.8 526c4.1-3.6 6.2-8.8 6.2-14 0-5.2-2.1-10.4-6.2-14z"
-            />
-          </svg>
-        </button>
-        <span
-          class="MuiSlider-root MuiSlider-colorPrimary MuiSlider-sizeMedium c6 css-1uesrtc-MuiSlider-root"
-        >
+            <svg
+              fill="currentColor"
+              height="2em"
+              stroke="currentColor"
+              stroke-width="0"
+              style="max-height: 100%;"
+              viewBox="0 0 1024 1024"
+              width="2em"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M825.8 498L538.4 249.9c-10.7-9.2-26.4-.9-26.4 14v496.3c0 14.9 15.7 23.2 26.4 14L825.8 526c8.3-7.2 8.3-20.8 0-28zm-320 0L218.4 249.9c-10.7-9.2-26.4-.9-26.4 14v496.3c0 14.9 15.7 23.2 26.4 14L505.8 526c4.1-3.6 6.2-8.8 6.2-14 0-5.2-2.1-10.4-6.2-14z"
+              />
+            </svg>
+          </button>
           <span
-            class="MuiSlider-rail css-r64h58-MuiSlider-rail"
-          />
-          <span
-            class="MuiSlider-track css-xvk2i-MuiSlider-track"
-            style="left: 0%; width: 0%;"
-          />
-          <span
-            class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
-            data-index="0"
-            style="left: 0%;"
-          />
-          <span
-            class="MuiSlider-mark css-lq5hqx-MuiSlider-mark"
-            data-index="1"
-            style="left: 25%;"
-          />
-          <span
-            class="MuiSlider-mark css-lq5hqx-MuiSlider-mark"
-            data-index="2"
-            style="left: 50%;"
-          />
-          <span
-            class="MuiSlider-mark css-lq5hqx-MuiSlider-mark"
-            data-index="3"
-            style="left: 75%;"
-          />
-          <span
-            class="MuiSlider-mark css-lq5hqx-MuiSlider-mark"
-            data-index="4"
-            style="left: 100%;"
-          />
-          <span
-            class="MuiSlider-thumb MuiSlider-thumbSizeMedium MuiSlider-thumbColorPrimary MuiSlider-thumb MuiSlider-thumbSizeMedium MuiSlider-thumbColorPrimary css-1xcmt9q-MuiSlider-thumb"
-            data-index="0"
-            style="left: 0%;"
+            class="MuiSlider-root MuiSlider-colorPrimary MuiSlider-sizeMedium c6 css-1uesrtc-MuiSlider-root"
           >
-            <input
-              aria-label="Fast Forward Slider"
-              aria-orientation="horizontal"
-              aria-valuemax="5"
-              aria-valuemin="1"
-              aria-valuenow="1"
-              data-index="0"
-              max="5"
-              min="1"
-              step="1"
-              style="border: 0px; height: 100%; margin: -1px; overflow: hidden; padding: 0px; position: absolute; white-space: nowrap; width: 100%; direction: ltr;"
-              type="range"
-              value="1"
+            <span
+              class="MuiSlider-rail css-r64h58-MuiSlider-rail"
             />
             <span
-              aria-hidden="true"
-              class="MuiSlider-valueLabel css-1asissc-MuiSlider-valueLabel"
+              class="MuiSlider-track css-xvk2i-MuiSlider-track"
+              style="left: 0%; width: 0%;"
+            />
+            <span
+              class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
+              data-index="0"
+              style="left: 0%;"
+            />
+            <span
+              class="MuiSlider-mark css-lq5hqx-MuiSlider-mark"
+              data-index="1"
+              style="left: 25%;"
+            />
+            <span
+              class="MuiSlider-mark css-lq5hqx-MuiSlider-mark"
+              data-index="2"
+              style="left: 50%;"
+            />
+            <span
+              class="MuiSlider-mark css-lq5hqx-MuiSlider-mark"
+              data-index="3"
+              style="left: 75%;"
+            />
+            <span
+              class="MuiSlider-mark css-lq5hqx-MuiSlider-mark"
+              data-index="4"
+              style="left: 100%;"
+            />
+            <span
+              class="MuiSlider-thumb MuiSlider-thumbSizeMedium MuiSlider-thumbColorPrimary MuiSlider-thumb MuiSlider-thumbSizeMedium MuiSlider-thumbColorPrimary css-1xcmt9q-MuiSlider-thumb"
+              data-index="0"
+              style="left: 0%;"
             >
+              <input
+                aria-label="Fast Forward Slider"
+                aria-orientation="horizontal"
+                aria-valuemax="5"
+                aria-valuemin="1"
+                aria-valuenow="1"
+                data-index="0"
+                max="5"
+                min="1"
+                step="1"
+                style="border: 0px; height: 100%; margin: -1px; overflow: hidden; padding: 0px; position: absolute; white-space: nowrap; width: 100%; direction: ltr;"
+                type="range"
+                value="1"
+              />
               <span
-                class="MuiSlider-valueLabelCircle"
+                aria-hidden="true"
+                class="MuiSlider-valueLabel css-1asissc-MuiSlider-valueLabel"
               >
                 <span
-                  class="MuiSlider-valueLabelLabel"
+                  class="MuiSlider-valueLabelCircle"
                 >
-                  x1
+                  <span
+                    class="MuiSlider-valueLabelLabel"
+                  >
+                    x1
+                  </span>
                 </span>
               </span>
             </span>
           </span>
-        </span>
-        <button
-          aria-label="Max Fast Forward"
-          class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-1928est-MuiButtonBase-root-MuiIconButton-root"
-          tabindex="0"
-          type="button"
-        >
-          <svg
-            fill="currentColor"
-            height="2em"
-            stroke="currentColor"
-            stroke-width="0"
-            style="max-height: 100%;"
-            viewBox="0 0 1024 1024"
-            width="2em"
-            xmlns="http://www.w3.org/2000/svg"
+          <button
+            aria-label="Max Fast Forward"
+            class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-1928est-MuiButtonBase-root-MuiIconButton-root"
+            tabindex="0"
+            type="button"
           >
-            <path
-              d="M793.8 499.3L506.4 273.5c-10.7-8.4-26.4-.8-26.4 12.7v451.6c0 13.5 15.7 21.1 26.4 12.7l287.4-225.8a16.14 16.14 0 0 0 0-25.4zm-320 0L186.4 273.5c-10.7-8.4-26.4-.8-26.4 12.7v451.5c0 13.5 15.7 21.1 26.4 12.7l287.4-225.8c4.1-3.2 6.2-8 6.2-12.7 0-4.6-2.1-9.4-6.2-12.6zM857.6 248h-51.2c-3.5 0-6.4 2.7-6.4 6v516c0 3.3 2.9 6 6.4 6h51.2c3.5 0 6.4-2.7 6.4-6V254c0-3.3-2.9-6-6.4-6z"
-            />
-          </svg>
-        </button>
-      </li>
-    </span>
+            <svg
+              fill="currentColor"
+              height="2em"
+              stroke="currentColor"
+              stroke-width="0"
+              style="max-height: 100%;"
+              viewBox="0 0 1024 1024"
+              width="2em"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M793.8 499.3L506.4 273.5c-10.7-8.4-26.4-.8-26.4 12.7v451.6c0 13.5 15.7 21.1 26.4 12.7l287.4-225.8a16.14 16.14 0 0 0 0-25.4zm-320 0L186.4 273.5c-10.7-8.4-26.4-.8-26.4 12.7v451.5c0 13.5 15.7 21.1 26.4 12.7l287.4-225.8c4.1-3.2 6.2-8 6.2-12.7 0-4.6-2.1-9.4-6.2-12.6zM857.6 248h-51.2c-3.5 0-6.4 2.7-6.4 6v516c0 3.3 2.9 6 6.4 6h51.2c3.5 0 6.4-2.7 6.4-6V254c0-3.3-2.9-6-6.4-6z"
+              />
+            </svg>
+          </button>
+        </div>
+      </span>
+    </li>
   </ul>
   <div />
 </div>
@@ -745,281 +753,289 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
         </svg>
       </button>
     </li>
-    <span
-      class="c4"
+    <li
+      class="c1"
     >
-      <li
-        class="c5"
-        id=":r1:--volume-slider"
+      <span
+        class="c4"
       >
-        <button
-          aria-label="Mute Volume"
-          class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-1928est-MuiButtonBase-root-MuiIconButton-root"
-          tabindex="0"
-          type="button"
+        <div
+          class="c5"
+          id=":r1:--volume-slider"
         >
-          <svg
-            fill="currentColor"
-            height="2em"
-            stroke="currentColor"
-            stroke-width="0"
-            style="max-height: 100%;"
-            viewBox="0 0 24 24"
-            width="2em"
-            xmlns="http://www.w3.org/2000/svg"
+          <button
+            aria-label="Mute Volume"
+            class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-1928est-MuiButtonBase-root-MuiIconButton-root"
+            tabindex="0"
+            type="button"
           >
-            <path
-              d="m21.707 20.293-2.023-2.023A9.566 9.566 0 0 0 21.999 12c0-4.091-2.472-7.453-5.999-9v2c2.387 1.386 3.999 4.047 3.999 7a8.113 8.113 0 0 1-1.672 4.913l-1.285-1.285C17.644 14.536 18 13.19 18 12c0-1.771-.775-3.9-2-5v7.586l-2-2V4a1 1 0 0 0-1.554-.832L7.727 6.313l-4.02-4.02-1.414 1.414 18 18 1.414-1.414zM12 5.868v4.718L9.169 7.755 12 5.868zM4 17h2.697l5.748 3.832a1.004 1.004 0 0 0 1.027.05A1 1 0 0 0 14 20v-1.879l-2-2v2.011l-4.445-2.964c-.025-.017-.056-.02-.082-.033a.986.986 0 0 0-.382-.116C7.059 15.016 7.032 15 7 15H4V9h.879L3.102 7.223A1.995 1.995 0 0 0 2 9v6c0 1.103.897 2 2 2z"
-            />
-          </svg>
-        </button>
-        <span
-          class="MuiSlider-root MuiSlider-colorPrimary MuiSlider-sizeMedium c6 css-1uesrtc-MuiSlider-root"
-        >
+            <svg
+              fill="currentColor"
+              height="2em"
+              stroke="currentColor"
+              stroke-width="0"
+              style="max-height: 100%;"
+              viewBox="0 0 24 24"
+              width="2em"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="m21.707 20.293-2.023-2.023A9.566 9.566 0 0 0 21.999 12c0-4.091-2.472-7.453-5.999-9v2c2.387 1.386 3.999 4.047 3.999 7a8.113 8.113 0 0 1-1.672 4.913l-1.285-1.285C17.644 14.536 18 13.19 18 12c0-1.771-.775-3.9-2-5v7.586l-2-2V4a1 1 0 0 0-1.554-.832L7.727 6.313l-4.02-4.02-1.414 1.414 18 18 1.414-1.414zM12 5.868v4.718L9.169 7.755 12 5.868zM4 17h2.697l5.748 3.832a1.004 1.004 0 0 0 1.027.05A1 1 0 0 0 14 20v-1.879l-2-2v2.011l-4.445-2.964c-.025-.017-.056-.02-.082-.033a.986.986 0 0 0-.382-.116C7.059 15.016 7.032 15 7 15H4V9h.879L3.102 7.223A1.995 1.995 0 0 0 2 9v6c0 1.103.897 2 2 2z"
+              />
+            </svg>
+          </button>
           <span
-            class="MuiSlider-rail css-r64h58-MuiSlider-rail"
-          />
-          <span
-            class="MuiSlider-track css-xvk2i-MuiSlider-track"
-            style="left: 0%; width: 100%;"
-          />
-          <span
-            class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
-            data-index="0"
-            style="left: 0%;"
-          />
-          <span
-            class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
-            data-index="1"
-            style="left: 10%;"
-          />
-          <span
-            class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
-            data-index="2"
-            style="left: 20%;"
-          />
-          <span
-            class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
-            data-index="3"
-            style="left: 30.000000000000004%;"
-          />
-          <span
-            class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
-            data-index="4"
-            style="left: 40%;"
-          />
-          <span
-            class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
-            data-index="5"
-            style="left: 50%;"
-          />
-          <span
-            class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
-            data-index="6"
-            style="left: 60.00000000000001%;"
-          />
-          <span
-            class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
-            data-index="7"
-            style="left: 70%;"
-          />
-          <span
-            class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
-            data-index="8"
-            style="left: 80%;"
-          />
-          <span
-            class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
-            data-index="9"
-            style="left: 90%;"
-          />
-          <span
-            class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
-            data-index="10"
-            style="left: 100%;"
-          />
-          <span
-            class="MuiSlider-thumb MuiSlider-thumbSizeMedium MuiSlider-thumbColorPrimary MuiSlider-thumb MuiSlider-thumbSizeMedium MuiSlider-thumbColorPrimary css-1xcmt9q-MuiSlider-thumb"
-            data-index="0"
-            style="left: 100%;"
+            class="MuiSlider-root MuiSlider-colorPrimary MuiSlider-sizeMedium c6 css-1uesrtc-MuiSlider-root"
           >
-            <input
-              aria-label="Volume Slider"
-              aria-orientation="horizontal"
-              aria-valuemax="1"
-              aria-valuemin="0"
-              aria-valuenow="1"
-              data-index="0"
-              max="1"
-              min="0"
-              step="0.1"
-              style="border: 0px; height: 100%; margin: -1px; overflow: hidden; padding: 0px; position: absolute; white-space: nowrap; width: 100%; direction: ltr;"
-              type="range"
-              value="1"
+            <span
+              class="MuiSlider-rail css-r64h58-MuiSlider-rail"
             />
             <span
-              aria-hidden="true"
-              class="MuiSlider-valueLabel css-1asissc-MuiSlider-valueLabel"
+              class="MuiSlider-track css-xvk2i-MuiSlider-track"
+              style="left: 0%; width: 100%;"
+            />
+            <span
+              class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
+              data-index="0"
+              style="left: 0%;"
+            />
+            <span
+              class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
+              data-index="1"
+              style="left: 10%;"
+            />
+            <span
+              class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
+              data-index="2"
+              style="left: 20%;"
+            />
+            <span
+              class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
+              data-index="3"
+              style="left: 30.000000000000004%;"
+            />
+            <span
+              class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
+              data-index="4"
+              style="left: 40%;"
+            />
+            <span
+              class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
+              data-index="5"
+              style="left: 50%;"
+            />
+            <span
+              class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
+              data-index="6"
+              style="left: 60.00000000000001%;"
+            />
+            <span
+              class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
+              data-index="7"
+              style="left: 70%;"
+            />
+            <span
+              class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
+              data-index="8"
+              style="left: 80%;"
+            />
+            <span
+              class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
+              data-index="9"
+              style="left: 90%;"
+            />
+            <span
+              class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
+              data-index="10"
+              style="left: 100%;"
+            />
+            <span
+              class="MuiSlider-thumb MuiSlider-thumbSizeMedium MuiSlider-thumbColorPrimary MuiSlider-thumb MuiSlider-thumbSizeMedium MuiSlider-thumbColorPrimary css-1xcmt9q-MuiSlider-thumb"
+              data-index="0"
+              style="left: 100%;"
             >
+              <input
+                aria-label="Volume Slider"
+                aria-orientation="horizontal"
+                aria-valuemax="1"
+                aria-valuemin="0"
+                aria-valuenow="1"
+                data-index="0"
+                max="1"
+                min="0"
+                step="0.1"
+                style="border: 0px; height: 100%; margin: -1px; overflow: hidden; padding: 0px; position: absolute; white-space: nowrap; width: 100%; direction: ltr;"
+                type="range"
+                value="1"
+              />
               <span
-                class="MuiSlider-valueLabelCircle"
+                aria-hidden="true"
+                class="MuiSlider-valueLabel css-1asissc-MuiSlider-valueLabel"
               >
                 <span
-                  class="MuiSlider-valueLabelLabel"
+                  class="MuiSlider-valueLabelCircle"
                 >
-                  100
+                  <span
+                    class="MuiSlider-valueLabelLabel"
+                  >
+                    100
+                  </span>
                 </span>
               </span>
             </span>
           </span>
-        </span>
-        <button
-          aria-label="Max Volume"
-          class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-1928est-MuiButtonBase-root-MuiIconButton-root"
-          tabindex="0"
-          type="button"
-        >
-          <svg
-            fill="currentColor"
-            height="2em"
-            stroke="currentColor"
-            stroke-width="0"
-            style="max-height: 100%;"
-            viewBox="0 0 24 24"
-            width="2em"
-            xmlns="http://www.w3.org/2000/svg"
+          <button
+            aria-label="Max Volume"
+            class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-1928est-MuiButtonBase-root-MuiIconButton-root"
+            tabindex="0"
+            type="button"
           >
-            <path
-              d="M16 21c3.527-1.547 5.999-4.909 5.999-9S19.527 4.547 16 3v2c2.387 1.386 3.999 4.047 3.999 7S18.387 17.614 16 19v2z"
-            />
-            <path
-              d="M16 7v10c1.225-1.1 2-3.229 2-5s-.775-3.9-2-5zM4 17h2.697l5.748 3.832a1.004 1.004 0 0 0 1.027.05A1 1 0 0 0 14 20V4a1 1 0 0 0-1.554-.832L6.697 7H4c-1.103 0-2 .897-2 2v6c0 1.103.897 2 2 2zm0-8h3c.033 0 .061-.016.093-.019a1.027 1.027 0 0 0 .38-.116c.026-.015.057-.017.082-.033L12 5.868v12.264l-4.445-2.964c-.025-.017-.056-.02-.082-.033a.986.986 0 0 0-.382-.116C7.059 15.016 7.032 15 7 15H4V9z"
-            />
-          </svg>
-        </button>
-      </li>
-    </span>
-    <span
-      class="c4"
+            <svg
+              fill="currentColor"
+              height="2em"
+              stroke="currentColor"
+              stroke-width="0"
+              style="max-height: 100%;"
+              viewBox="0 0 24 24"
+              width="2em"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M16 21c3.527-1.547 5.999-4.909 5.999-9S19.527 4.547 16 3v2c2.387 1.386 3.999 4.047 3.999 7S18.387 17.614 16 19v2z"
+              />
+              <path
+                d="M16 7v10c1.225-1.1 2-3.229 2-5s-.775-3.9-2-5zM4 17h2.697l5.748 3.832a1.004 1.004 0 0 0 1.027.05A1 1 0 0 0 14 20V4a1 1 0 0 0-1.554-.832L6.697 7H4c-1.103 0-2 .897-2 2v6c0 1.103.897 2 2 2zm0-8h3c.033 0 .061-.016.093-.019a1.027 1.027 0 0 0 .38-.116c.026-.015.057-.017.082-.033L12 5.868v12.264l-4.445-2.964c-.025-.017-.056-.02-.082-.033a.986.986 0 0 0-.382-.116C7.059 15.016 7.032 15 7 15H4V9z"
+              />
+            </svg>
+          </button>
+        </div>
+      </span>
+    </li>
+    <li
+      class="c1"
     >
-      <li
-        class="c7"
-        id=":r1:--fast-forward"
+      <span
+        class="c4"
       >
-        <button
-          aria-label="Regular Speed"
-          class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-1928est-MuiButtonBase-root-MuiIconButton-root"
-          tabindex="0"
-          type="button"
+        <div
+          class="c7"
+          id=":r1:--fast-forward"
         >
-          <svg
-            fill="currentColor"
-            height="2em"
-            stroke="currentColor"
-            stroke-width="0"
-            style="max-height: 100%;"
-            viewBox="0 0 1024 1024"
-            width="2em"
-            xmlns="http://www.w3.org/2000/svg"
+          <button
+            aria-label="Regular Speed"
+            class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-1928est-MuiButtonBase-root-MuiIconButton-root"
+            tabindex="0"
+            type="button"
           >
-            <path
-              d="M825.8 498L538.4 249.9c-10.7-9.2-26.4-.9-26.4 14v496.3c0 14.9 15.7 23.2 26.4 14L825.8 526c8.3-7.2 8.3-20.8 0-28zm-320 0L218.4 249.9c-10.7-9.2-26.4-.9-26.4 14v496.3c0 14.9 15.7 23.2 26.4 14L505.8 526c4.1-3.6 6.2-8.8 6.2-14 0-5.2-2.1-10.4-6.2-14z"
-            />
-          </svg>
-        </button>
-        <span
-          class="MuiSlider-root MuiSlider-colorPrimary MuiSlider-sizeMedium c6 css-1uesrtc-MuiSlider-root"
-        >
+            <svg
+              fill="currentColor"
+              height="2em"
+              stroke="currentColor"
+              stroke-width="0"
+              style="max-height: 100%;"
+              viewBox="0 0 1024 1024"
+              width="2em"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M825.8 498L538.4 249.9c-10.7-9.2-26.4-.9-26.4 14v496.3c0 14.9 15.7 23.2 26.4 14L825.8 526c8.3-7.2 8.3-20.8 0-28zm-320 0L218.4 249.9c-10.7-9.2-26.4-.9-26.4 14v496.3c0 14.9 15.7 23.2 26.4 14L505.8 526c4.1-3.6 6.2-8.8 6.2-14 0-5.2-2.1-10.4-6.2-14z"
+              />
+            </svg>
+          </button>
           <span
-            class="MuiSlider-rail css-r64h58-MuiSlider-rail"
-          />
-          <span
-            class="MuiSlider-track css-xvk2i-MuiSlider-track"
-            style="left: 0%; width: 0%;"
-          />
-          <span
-            class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
-            data-index="0"
-            style="left: 0%;"
-          />
-          <span
-            class="MuiSlider-mark css-lq5hqx-MuiSlider-mark"
-            data-index="1"
-            style="left: 25%;"
-          />
-          <span
-            class="MuiSlider-mark css-lq5hqx-MuiSlider-mark"
-            data-index="2"
-            style="left: 50%;"
-          />
-          <span
-            class="MuiSlider-mark css-lq5hqx-MuiSlider-mark"
-            data-index="3"
-            style="left: 75%;"
-          />
-          <span
-            class="MuiSlider-mark css-lq5hqx-MuiSlider-mark"
-            data-index="4"
-            style="left: 100%;"
-          />
-          <span
-            class="MuiSlider-thumb MuiSlider-thumbSizeMedium MuiSlider-thumbColorPrimary MuiSlider-thumb MuiSlider-thumbSizeMedium MuiSlider-thumbColorPrimary css-1xcmt9q-MuiSlider-thumb"
-            data-index="0"
-            style="left: 0%;"
+            class="MuiSlider-root MuiSlider-colorPrimary MuiSlider-sizeMedium c6 css-1uesrtc-MuiSlider-root"
           >
-            <input
-              aria-label="Fast Forward Slider"
-              aria-orientation="horizontal"
-              aria-valuemax="5"
-              aria-valuemin="1"
-              aria-valuenow="1"
-              data-index="0"
-              max="5"
-              min="1"
-              step="1"
-              style="border: 0px; height: 100%; margin: -1px; overflow: hidden; padding: 0px; position: absolute; white-space: nowrap; width: 100%; direction: ltr;"
-              type="range"
-              value="1"
+            <span
+              class="MuiSlider-rail css-r64h58-MuiSlider-rail"
             />
             <span
-              aria-hidden="true"
-              class="MuiSlider-valueLabel css-1asissc-MuiSlider-valueLabel"
+              class="MuiSlider-track css-xvk2i-MuiSlider-track"
+              style="left: 0%; width: 0%;"
+            />
+            <span
+              class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
+              data-index="0"
+              style="left: 0%;"
+            />
+            <span
+              class="MuiSlider-mark css-lq5hqx-MuiSlider-mark"
+              data-index="1"
+              style="left: 25%;"
+            />
+            <span
+              class="MuiSlider-mark css-lq5hqx-MuiSlider-mark"
+              data-index="2"
+              style="left: 50%;"
+            />
+            <span
+              class="MuiSlider-mark css-lq5hqx-MuiSlider-mark"
+              data-index="3"
+              style="left: 75%;"
+            />
+            <span
+              class="MuiSlider-mark css-lq5hqx-MuiSlider-mark"
+              data-index="4"
+              style="left: 100%;"
+            />
+            <span
+              class="MuiSlider-thumb MuiSlider-thumbSizeMedium MuiSlider-thumbColorPrimary MuiSlider-thumb MuiSlider-thumbSizeMedium MuiSlider-thumbColorPrimary css-1xcmt9q-MuiSlider-thumb"
+              data-index="0"
+              style="left: 0%;"
             >
+              <input
+                aria-label="Fast Forward Slider"
+                aria-orientation="horizontal"
+                aria-valuemax="5"
+                aria-valuemin="1"
+                aria-valuenow="1"
+                data-index="0"
+                max="5"
+                min="1"
+                step="1"
+                style="border: 0px; height: 100%; margin: -1px; overflow: hidden; padding: 0px; position: absolute; white-space: nowrap; width: 100%; direction: ltr;"
+                type="range"
+                value="1"
+              />
               <span
-                class="MuiSlider-valueLabelCircle"
+                aria-hidden="true"
+                class="MuiSlider-valueLabel css-1asissc-MuiSlider-valueLabel"
               >
                 <span
-                  class="MuiSlider-valueLabelLabel"
+                  class="MuiSlider-valueLabelCircle"
                 >
-                  x1
+                  <span
+                    class="MuiSlider-valueLabelLabel"
+                  >
+                    x1
+                  </span>
                 </span>
               </span>
             </span>
           </span>
-        </span>
-        <button
-          aria-label="Max Fast Forward"
-          class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-1928est-MuiButtonBase-root-MuiIconButton-root"
-          tabindex="0"
-          type="button"
-        >
-          <svg
-            fill="currentColor"
-            height="2em"
-            stroke="currentColor"
-            stroke-width="0"
-            style="max-height: 100%;"
-            viewBox="0 0 1024 1024"
-            width="2em"
-            xmlns="http://www.w3.org/2000/svg"
+          <button
+            aria-label="Max Fast Forward"
+            class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-1928est-MuiButtonBase-root-MuiIconButton-root"
+            tabindex="0"
+            type="button"
           >
-            <path
-              d="M793.8 499.3L506.4 273.5c-10.7-8.4-26.4-.8-26.4 12.7v451.6c0 13.5 15.7 21.1 26.4 12.7l287.4-225.8a16.14 16.14 0 0 0 0-25.4zm-320 0L186.4 273.5c-10.7-8.4-26.4-.8-26.4 12.7v451.5c0 13.5 15.7 21.1 26.4 12.7l287.4-225.8c4.1-3.2 6.2-8 6.2-12.7 0-4.6-2.1-9.4-6.2-12.6zM857.6 248h-51.2c-3.5 0-6.4 2.7-6.4 6v516c0 3.3 2.9 6 6.4 6h51.2c3.5 0 6.4-2.7 6.4-6V254c0-3.3-2.9-6-6.4-6z"
-            />
-          </svg>
-        </button>
-      </li>
-    </span>
+            <svg
+              fill="currentColor"
+              height="2em"
+              stroke="currentColor"
+              stroke-width="0"
+              style="max-height: 100%;"
+              viewBox="0 0 1024 1024"
+              width="2em"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M793.8 499.3L506.4 273.5c-10.7-8.4-26.4-.8-26.4 12.7v451.6c0 13.5 15.7 21.1 26.4 12.7l287.4-225.8a16.14 16.14 0 0 0 0-25.4zm-320 0L186.4 273.5c-10.7-8.4-26.4-.8-26.4 12.7v451.5c0 13.5 15.7 21.1 26.4 12.7l287.4-225.8c4.1-3.2 6.2-8 6.2-12.7 0-4.6-2.1-9.4-6.2-12.6zM857.6 248h-51.2c-3.5 0-6.4 2.7-6.4 6v516c0 3.3 2.9 6 6.4 6h51.2c3.5 0 6.4-2.7 6.4-6V254c0-3.3-2.9-6-6.4-6z"
+              />
+            </svg>
+          </button>
+        </div>
+      </span>
+    </li>
   </ul>
   <div />
 </div>
