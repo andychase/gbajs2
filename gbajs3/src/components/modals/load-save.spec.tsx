@@ -34,10 +34,7 @@ describe('<LoadSaveModal />', () => {
     vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
       ...originalEmulator(),
       emulator: {
-        uploadSaveOrSaveState: uploadSaveOrSaveStateSpy,
-        filePaths: () => ({
-          savePath: '/saves'
-        })
+        uploadSaveOrSaveState: uploadSaveOrSaveStateSpy
       } as GBAEmulator
     }));
 

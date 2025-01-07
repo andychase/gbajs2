@@ -103,7 +103,7 @@ export const LoadRomModal = () => {
     if (shouldUploadRom) {
       const runCallback = () => {
         syncActionIfEnabled();
-        runGame(emulator?.filePaths().gamePath + '/' + romFile.name);
+        runGame(romFile.name);
       };
 
       emulator?.uploadRom(romFile, runCallback);

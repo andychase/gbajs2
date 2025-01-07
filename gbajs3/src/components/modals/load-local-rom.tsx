@@ -92,7 +92,7 @@ export const LoadLocalRomModal = () => {
             <StyledLi key={`${romName}_${idx}`}>
               <LoadRomButton
                 onClick={() => {
-                  runGame(emulator?.filePaths().gamePath + '/' + romName);
+                  runGame(romName);
                   setIsModalOpen(false);
                 }}
               >

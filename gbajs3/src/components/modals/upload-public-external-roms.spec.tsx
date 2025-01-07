@@ -38,10 +38,7 @@ describe('<UploadPublicExternalRomsModal />', () => {
     vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
       ...originalEmulator(),
       emulator: {
-        uploadRom: uploadRomSpy,
-        filePaths: () => ({
-          gamePath: '/games'
-        })
+        uploadRom: uploadRomSpy
       } as GBAEmulator
     }));
 
@@ -79,7 +76,7 @@ describe('<UploadPublicExternalRomsModal />', () => {
     expect(uploadRomSpy).toHaveBeenCalledOnce();
     expect(syncActionIfEnabledSpy).toHaveBeenCalledOnce();
     expect(runGameSpy).toHaveBeenCalledOnce();
-    expect(runGameSpy).toHaveBeenCalledWith('/games/good_rom.gba');
+    expect(runGameSpy).toHaveBeenCalledWith('good_rom.gba');
 
     expect(onLoadOrDismissSpy).toHaveBeenCalledOnce();
     expect(onLoadOrDismissSpy).toHaveBeenCalledWith('loaded');
@@ -100,10 +97,7 @@ describe('<UploadPublicExternalRomsModal />', () => {
     vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
       ...originalEmulator(),
       emulator: {
-        uploadRom: uploadRomSpy,
-        filePaths: () => ({
-          gamePath: '/games'
-        })
+        uploadRom: uploadRomSpy
       } as GBAEmulator
     }));
 

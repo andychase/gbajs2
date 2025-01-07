@@ -72,9 +72,7 @@ export const UploadPublicExternalRomsModal = ({
     if (!isExternalRomLoading && externalRomFile && currentRomURL) {
       const runCallback = () => {
         syncActionIfEnabled();
-        const hasSucceeded = runGame(
-          emulator?.filePaths().gamePath + '/' + externalRomFile.name
-        );
+        const hasSucceeded = runGame(externalRomFile.name);
         if (hasSucceeded) {
           onLoadOrDismiss('loaded');
           setIsModalOpen(false);

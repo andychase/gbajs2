@@ -18,6 +18,7 @@ describe('useQuickReload hook', () => {
       setCanvas: vi.fn(),
       canvas: null,
       emulator: {
+        getCurrentGameName: () => undefined,
         quickReload: emulatorQuickReloadSpy
       } as GBAEmulator
     }));
@@ -46,9 +47,6 @@ describe('useQuickReload hook', () => {
       setCanvas: vi.fn(),
       canvas: null,
       emulator: {
-        filePaths: () => ({
-          gamePath: '/games'
-        }),
         getCurrentGameName: () => 'some_rom.gba'
       } as GBAEmulator
     }));
@@ -67,7 +65,7 @@ describe('useQuickReload hook', () => {
     });
 
     expect(runGameSpy).toHaveBeenCalledOnce();
-    expect(runGameSpy).toHaveBeenCalledWith('/games/some_rom.gba');
+    expect(runGameSpy).toHaveBeenCalledWith('some_rom.gba');
     expect(emulatorQuickReloadSpy).not.toHaveBeenCalled();
 
     expect(setIsRunningSpy).toHaveBeenCalledOnce();
@@ -79,10 +77,7 @@ describe('useQuickReload hook', () => {
     const runGameSpy = vi.fn(() => true);
     const setIsRunningSpy = vi.fn();
 
-    localStorage.setItem(
-      emulatorGameNameLocalStorageKey,
-      '"/games/some_rom_2.gba"'
-    );
+    localStorage.setItem(emulatorGameNameLocalStorageKey, '"some_rom_2.gba"');
 
     vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
       setCanvas: vi.fn(),
@@ -106,7 +101,7 @@ describe('useQuickReload hook', () => {
     });
 
     expect(runGameSpy).toHaveBeenCalledOnce();
-    expect(runGameSpy).toHaveBeenCalledWith('/games/some_rom_2.gba');
+    expect(runGameSpy).toHaveBeenCalledWith('some_rom_2.gba');
     expect(emulatorQuickReloadSpy).not.toHaveBeenCalled();
 
     expect(setIsRunningSpy).toHaveBeenCalledOnce();

@@ -38,10 +38,7 @@ describe('<UploadRomModal />', () => {
     vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
       ...originalEmulator(),
       emulator: {
-        uploadRom: uploadRomSpy,
-        filePaths: () => ({
-          gamePath: '/games'
-        })
+        uploadRom: uploadRomSpy
       } as GBAEmulator
     }));
 
@@ -67,11 +64,12 @@ describe('<UploadRomModal />', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Upload' }));
 
+    expect(uploadRomSpy).toHaveBeenCalledOnce();
     expect(uploadRomSpy).toHaveBeenCalledWith(testRom, expect.anything());
 
     expect(syncActionIfEnabledSpy).toHaveBeenCalledOnce();
     expect(runGameSpy).toHaveBeenCalledOnce();
-    expect(runGameSpy).toHaveBeenCalledWith('/games/rom1.gba');
+    expect(runGameSpy).toHaveBeenCalledWith('rom1.gba');
     expect(setIsModalOpenSpy).toHaveBeenCalledWith(false);
   });
 
@@ -94,10 +92,7 @@ describe('<UploadRomModal />', () => {
 
     // needs to be a consistent object
     const testEmu = {
-      uploadRom: uploadRomSpy,
-      filePaths: () => ({
-        gamePath: '/games'
-      })
+      uploadRom: uploadRomSpy
     } as GBAEmulator;
 
     vi.spyOn(contextHooks, 'useModalContext').mockImplementation(() => ({
@@ -140,7 +135,7 @@ describe('<UploadRomModal />', () => {
 
     expect(syncActionIfEnabledSpy).toHaveBeenCalledOnce();
     expect(runGameSpy).toHaveBeenCalledOnce();
-    expect(runGameSpy).toHaveBeenCalledWith('/games/good_rom.gba');
+    expect(runGameSpy).toHaveBeenCalledWith('good_rom.gba');
     expect(setIsModalOpenSpy).toHaveBeenCalledWith(false);
   });
 
@@ -158,10 +153,7 @@ describe('<UploadRomModal />', () => {
       ...originalEmulator(),
       emulator: {
         uploadRom: uploadRomSpy,
-        run: emulatorRunSpy,
-        filePaths: () => ({
-          gamePath: '/games'
-        })
+        run: emulatorRunSpy
       } as GBAEmulator
     }));
 

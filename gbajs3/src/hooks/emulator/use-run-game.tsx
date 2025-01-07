@@ -42,13 +42,15 @@ export const useRunGame = () => {
   const { addCallbacks } = useAddCallbacks();
 
   const run = useCallback(
-    (romPath: string) => {
+    (romName: string) => {
+      const romPath = `${emulator?.filePaths().gamePath}/${romName}`;
       const isSuccessfulRun = emulator?.run(romPath);
       setIsRunning(!!isSuccessfulRun);
-      setStoredGameName(romPath);
-      emulator?.setVolume(currentEmulatorVolume);
+      setStoredGameName(romName);
 
       if (isSuccessfulRun) {
+        emulator?.setVolume(currentEmulatorVolume);
+
         if (currentKeyBindings) emulator?.remapKeyBindings(currentKeyBindings);
 
         if (fastForwardMultiplier > 1 && !emulator?.isFastForwardEnabled())

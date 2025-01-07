@@ -58,10 +58,7 @@ describe('<LoadLocalRomModal />', () => {
     vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
       ...originalEmulator(),
       emulator: {
-        listRoms: () => ['rom1.gba'],
-        filePaths: () => ({
-          gamePath: '/games'
-        })
+        listRoms: () => ['rom1.gba']
       } as GBAEmulator
     }));
 
@@ -74,7 +71,7 @@ describe('<LoadLocalRomModal />', () => {
     await userEvent.click(localRom);
 
     expect(runGameSpy).toHaveBeenCalledOnce();
-    expect(runGameSpy).toHaveBeenCalledWith('/games/rom1.gba');
+    expect(runGameSpy).toHaveBeenCalledWith('rom1.gba');
     expect(setIsModalOpenSpy).toHaveBeenCalledWith(false);
   });
 

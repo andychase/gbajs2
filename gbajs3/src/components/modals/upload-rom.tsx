@@ -60,9 +60,7 @@ export const UploadRomModal = () => {
     if (shouldUploadExternalRom) {
       const runCallback = () => {
         syncActionIfEnabled();
-        const hasSucceeded = runGame(
-          emulator?.filePaths().gamePath + '/' + externalRomFile.name
-        );
+        const hasSucceeded = runGame(externalRomFile.name);
         if (hasSucceeded) {
           setIsModalOpen(false);
         }
@@ -96,9 +94,7 @@ export const UploadRomModal = () => {
 
     const runCallback = () => {
       syncActionIfEnabled();
-      const hasSucceeded = runGame(
-        emulator?.filePaths().gamePath + '/' + romFile.name
-      );
+      const hasSucceeded = runGame(romFile.name);
       if (hasSucceeded) {
         setIsModalOpen(false);
       }

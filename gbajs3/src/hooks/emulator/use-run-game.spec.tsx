@@ -29,7 +29,10 @@ describe('useRunGame hook', () => {
       canvas: null,
       emulator: {
         run: emulatorRunSpy,
-        setVolume: emulatorSetVolumeSpy
+        setVolume: emulatorSetVolumeSpy,
+        filePaths: () => ({
+          gamePath: '/data/games'
+        })
       } as GBAEmulator
     }));
 
@@ -49,11 +52,11 @@ describe('useRunGame hook', () => {
     const { result } = renderHookWithContext(() => useRunGame());
 
     act(() => {
-      expect(result.current('/games/some_rom.gba')).toBeTruthy();
+      expect(result.current('some_rom.gba')).toBeTruthy();
     });
 
     expect(emulatorRunSpy).toHaveBeenCalledOnce();
-    expect(emulatorRunSpy).toHaveBeenCalledWith('/games/some_rom.gba');
+    expect(emulatorRunSpy).toHaveBeenCalledWith('/data/games/some_rom.gba');
 
     expect(setIsRunningSpy).toHaveBeenCalledOnce();
     expect(setIsRunningSpy).toHaveBeenCalledWith(true);
@@ -61,7 +64,7 @@ describe('useRunGame hook', () => {
     // set stored game name
     expect(setItemSpy).toHaveBeenCalledWith(
       emulatorGameNameLocalStorageKey,
-      '"/games/some_rom.gba"'
+      '"some_rom.gba"'
     );
 
     // set volume
@@ -97,7 +100,10 @@ describe('useRunGame hook', () => {
         isFastForwardEnabled: () => false,
         setVolume: vi.fn() as (v: number) => void,
         remapKeyBindings: emulatorRemapKeyBindingsSpy,
-        setFastForwardMultiplier: emulatorSetFastForwardMultiplierSpy
+        setFastForwardMultiplier: emulatorSetFastForwardMultiplierSpy,
+        filePaths: () => ({
+          gamePath: '/data/games'
+        })
       } as GBAEmulator
     }));
 
@@ -115,7 +121,7 @@ describe('useRunGame hook', () => {
     const { result } = renderHookWithContext(() => useRunGame());
 
     act(() => {
-      expect(result.current('/games/some_rom.gba')).toBeTruthy();
+      expect(result.current('some_rom.gba')).toBeTruthy();
     });
 
     expect(emulatorRemapKeyBindingsSpy).toHaveBeenCalledOnce();
