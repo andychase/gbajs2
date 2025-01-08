@@ -20,7 +20,7 @@ export const GbaDarkTheme: DefaultTheme = {
   darkGrayBlue: '#495057',
   disabledGray: '#6c757d',
   errorRed: '#d32f2f',
-  gbaThemeBlue: '#0d6efd',
+  gbaThemeBlue: '#1c76fd',
   mediumBlack: '#100901',
   menuHighlight: '#ffffff26',
   menuHover: '#0a58ca',
