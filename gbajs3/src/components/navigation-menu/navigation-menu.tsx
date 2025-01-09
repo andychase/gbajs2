@@ -50,7 +50,7 @@ import { SaveStatesModal } from '../modals/save-states.tsx';
 import { UploadCheatsModal } from '../modals/upload-cheats.tsx';
 import { UploadPatchesModal } from '../modals/upload-patches.tsx';
 import { UploadRomToServerModal } from '../modals/upload-rom-to-server.tsx';
-import { UploadRomModal } from '../modals/upload-rom.tsx';
+import { UploadRomsModal } from '../modals/upload-roms.tsx';
 import { UploadSaveToServerModal } from '../modals/upload-save-to-server.tsx';
 import { UploadSavesModal } from '../modals/upload-saves.tsx';
 import { ButtonBase } from '../shared/custom-button-base.tsx';
@@ -230,11 +230,11 @@ export const NavigationMenu = () => {
               }}
             />
             <NavLeaf
-              title="Upload Rom"
+              title="Upload Roms"
               $disabled={isRunning}
               icon={<BiUpload />}
               onClick={() => {
-                setModalContent(<UploadRomModal />);
+                setModalContent(<UploadRomsModal />);
                 setIsModalOpen(true);
               }}
             />

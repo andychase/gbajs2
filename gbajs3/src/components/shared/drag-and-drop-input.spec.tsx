@@ -339,6 +339,23 @@ describe('<DragAndDropInput />', () => {
     expect(screen.getByText('Some files were rejected')).toBeVisible();
   });
 
+  it('renders passed in error', () => {
+    renderWithContext(
+      <DragAndDropInput
+        id="testId"
+        ariaLabel="Upload File"
+        name="testFile"
+        onDrop={vi.fn()}
+        validFileExtensions={[]}
+        error={'some error'}
+      >
+        <p>Upload file here</p>
+      </DragAndDropInput>
+    );
+
+    expect(screen.getByText('some error')).toBeVisible();
+  });
+
   it('deletes file from the accepted file list', async () => {
     const testFiles = [
       new File(['Some test file contents 1'], 'test_file1.test'),
@@ -373,5 +390,31 @@ describe('<DragAndDropInput />', () => {
     expect(screen.getByText('File to upload:')).toBeVisible();
     expect(screen.getByText('test_file1.test')).toBeVisible();
     expect(screen.queryByText('test_file2.test')).not.toBeInTheDocument();
+  });
+
+  it('renders additional file actions', async () => {
+    const testFile = new File(['Some test file contents'], 'test_file.test');
+    const onDropSpy = vi.fn();
+
+    renderWithContext(
+      <DragAndDropInput
+        id="testId"
+        ariaLabel="Upload File"
+        name="testFile"
+        onDrop={onDropSpy}
+        validFileExtensions={['.test']}
+        renderAdditionalFileActions={({ fileName, index }) => (
+          <button>{`${fileName}_${index}`}</button>
+        )}
+      >
+        <p>Upload file here</p>
+      </DragAndDropInput>
+    );
+
+    await userEvent.upload(screen.getByTestId('hidden-file-input'), testFile);
+
+    expect(
+      screen.getByRole('button', { name: 'test_file.test_0' })
+    ).toBeVisible();
   });
 });

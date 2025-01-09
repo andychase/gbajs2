@@ -1,4 +1,4 @@
-import { Button, Divider, TextField } from '@mui/material';
+import { Button, Divider, Checkbox, TextField } from '@mui/material';
 import { useCallback, useEffect, useId, useState } from 'react';
 import { useForm, Controller, type SubmitHandler } from 'react-hook-form';
 import { BiError } from 'react-icons/bi';
@@ -22,14 +22,55 @@ import {
   PacmanIndicator
 } from '../shared/loading-indicator.tsx';
 
+import type { CheckboxProps } from '@mui/material';
+
 type InputProps = {
-  romFile: File;
+  romFiles: File[];
+  romFileToRun: string;
   romURL: string;
+};
+
+type RunRomCheckbox = {
+  fileName: string;
+} & Pick<CheckboxProps, 'checked' | 'onChange'>;
+
+type AdditionalFileActionsProps = {
+  fileName: string;
+  index: number;
+  selectedFileName: string | null;
+  setSelectedFileName: (name: string | null) => void;
 };
 
 const validFileExtensions = ['.gba', '.gbc', '.gb', '.zip', '.7z'];
 
-export const UploadRomModal = () => {
+const RunRomCheckbox = ({ fileName, checked, onChange }: RunRomCheckbox) => (
+  <Checkbox
+    inputProps={{ 'aria-label': `Run ${fileName}` }}
+    checked={checked}
+    onChange={onChange}
+    sx={{ padding: '0 ' }}
+  />
+);
+
+const AdditionalFileActions = ({
+  fileName,
+  index,
+  selectedFileName,
+  setSelectedFileName
+}: AdditionalFileActionsProps) => {
+  const isChecked =
+    fileName === selectedFileName || (!selectedFileName && index === 0);
+
+  return (
+    <RunRomCheckbox
+      fileName={fileName}
+      checked={isChecked}
+      onChange={() => setSelectedFileName(isChecked ? null : fileName)}
+    />
+  );
+};
+
+export const UploadRomsModal = () => {
   const theme = useTheme();
   const { setIsModalOpen } = useModalContext();
   const { emulator } = useEmulatorContext();
@@ -61,9 +102,7 @@ export const UploadRomModal = () => {
       const runCallback = () => {
         syncActionIfEnabled();
         const hasSucceeded = runGame(externalRomFile.name);
-        if (hasSucceeded) {
-          setIsModalOpen(false);
-        }
+        if (hasSucceeded) setIsModalOpen(false);
       };
       emulator?.uploadRom(externalRomFile, runCallback);
       setCurrentRomURL(null);
@@ -80,45 +119,58 @@ export const UploadRomModal = () => {
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
       reset();
-      setValue('romFile', acceptedFiles[0], { shouldValidate: true });
+      setValue('romFiles', acceptedFiles, { shouldValidate: true });
     },
     [reset, setValue]
   );
 
-  const onSubmit: SubmitHandler<InputProps> = async ({ romFile, romURL }) => {
+  const onSubmit: SubmitHandler<InputProps> = async ({
+    romFiles,
+    romFileToRun,
+    romURL
+  }) => {
     if (romURL) {
       setCurrentRomURL(romURL);
       await executeLoadExternalRom({ url: new URL(romURL) });
       return;
     }
 
-    const runCallback = () => {
-      syncActionIfEnabled();
-      const hasSucceeded = runGame(romFile.name);
-      if (hasSucceeded) {
-        setIsModalOpen(false);
-      }
-    };
-    emulator?.uploadRom(romFile, runCallback);
+    await Promise.all(
+      romFiles.map(
+        (romFile, idx) =>
+          new Promise<boolean>((resolve) => {
+            const runCallback = () =>
+              resolve(
+                (romFile.name === romFileToRun ||
+                  (!romFileToRun && idx === 0)) &&
+                  runGame(romFile.name)
+              );
+            emulator?.uploadRom(romFile, runCallback);
+          })
+      )
+    );
+
+    syncActionIfEnabled();
+    setIsModalOpen(false);
   };
 
-  const isRomFileSet = !!watch('romFile');
+  const isRomFileSet = !!watch('romFiles')?.length;
 
   const tourSteps: TourSteps = [
     {
       content: (
         <>
           <p>
-            Use this area to drag and drop your rom or zipped rom file, or click
-            to select a file.
+            Use this area to drag and drop roms or zipped rom files, or click to
+            select files.
           </p>
           <p>
             Rom files should have an extension of:{' '}
             {validFileExtensions.map((ext) => `'${ext}'`).join(', ')}.
           </p>
           <p>
-            You may drop or select one rom at a time, once uploaded your game
-            will boot!
+            You may drop or select multiple files, once uploaded the selected
+            game will boot!
           </p>
         </>
       ),
@@ -144,17 +196,17 @@ export const UploadRomModal = () => {
         >
           <form
             id={uploadRomFormId}
-            aria-label="Upload Rom Form"
+            aria-label="Upload Roms Form"
             onSubmit={handleSubmit(onSubmit)}
           >
             <Controller
               control={control}
-              name="romFile"
+              name="romFiles"
               rules={{
-                validate: (rom, formValues) =>
+                validate: (roms, formValues) =>
                   !!formValues.romURL ||
-                  !!rom ||
-                  'A rom file or URL is required'
+                  !!roms ||
+                  'At least one rom file or URL is required'
               }}
               render={({ field: { name }, fieldState: { error } }) => (
                 <DragAndDropInput
@@ -164,10 +216,20 @@ export const UploadRomModal = () => {
                   name={name}
                   validFileExtensions={validFileExtensions}
                   hideErrors={!!error}
+                  multiple
+                  renderAdditionalFileActions={(props) => (
+                    <AdditionalFileActions
+                      selectedFileName={watch('romFileToRun')}
+                      setSelectedFileName={(name) =>
+                        setValue('romFileToRun', name ?? 'none')
+                      }
+                      {...props}
+                    />
+                  )}
                 >
                   <p>
-                    Drag and drop a rom or zipped rom file here, or click to
-                    upload a file
+                    Drag and drop roms or zipped rom files here, or click to
+                    upload files
                   </p>
                 </DragAndDropInput>
               )}
@@ -189,8 +251,8 @@ export const UploadRomModal = () => {
                     validate: (romURL, formValues) => {
                       if (!romURL) return true;
 
-                      if (formValues.romFile)
-                        return 'Cannot specify both a file and a URL';
+                      if (formValues.romFiles)
+                        return 'Cannot specify both files and a URL';
 
                       try {
                         new URL(romURL);
@@ -209,10 +271,10 @@ export const UploadRomModal = () => {
                 )}
               </>
             )}
-            {errors.romFile?.message && (
+            {errors.romFiles?.message && (
               <ErrorWithIcon
                 icon={<BiError style={{ color: theme.errorRed }} />}
-                text={errors.romFile.message}
+                text={errors.romFiles.message}
               />
             )}
           </form>

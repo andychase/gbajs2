@@ -24,6 +24,10 @@ type DragAndDropInputProps = {
   name: string;
   onDrop: (acceptedFiles: File[]) => void;
   validFileExtensions: Extension[];
+  renderAdditionalFileActions?: (fileInfo: {
+    fileName: string;
+    index: number;
+  }) => ReactNode;
 };
 
 type DropAreaProps = {
@@ -80,36 +84,45 @@ const AcceptedFile = styled.li`
 
 const IconSeparator = styled.div`
   display: flex;
-  gap: 15px;
+  gap: 8px;
 `;
 
 const AcceptedFiles = ({
   fileNames,
+  renderAdditionalActions,
   onDeleteFile
 }: {
   fileNames: string[];
+  renderAdditionalActions?: (fileInfo: {
+    fileName: string;
+    index: number;
+    totalFiles: number;
+  }) => ReactNode;
   onDeleteFile: (fileName: string) => void;
-}) => {
-  return (
-    <FileList>
-      <p>File{fileNames.length > 1 && 's'} to upload:</p>
-      {fileNames.map((name, idx) => (
-        <AcceptedFile key={`${name}_${idx}`}>
-          <p>{name}</p>
-          <IconSeparator>
-            <IconButton
-              aria-label={`Delete ${name}`}
-              sx={{ padding: 0 }}
-              onClick={() => onDeleteFile(name)}
-            >
-              <BiTrash />
-            </IconButton>
-          </IconSeparator>
-        </AcceptedFile>
-      ))}
-    </FileList>
-  );
-};
+}) => (
+  <FileList>
+    <p>File{fileNames.length > 1 && 's'} to upload:</p>
+    {fileNames.map((fileName, index) => (
+      <AcceptedFile key={`${fileName}_${index}`}>
+        <p>{fileName}</p>
+        <IconSeparator>
+          {renderAdditionalActions?.({
+            fileName,
+            index,
+            totalFiles: fileNames.length
+          })}
+          <IconButton
+            aria-label={`Delete ${fileName}`}
+            sx={{ padding: 0 }}
+            onClick={() => onDeleteFile(fileName)}
+          >
+            <BiTrash />
+          </IconButton>
+        </IconSeparator>
+      </AcceptedFile>
+    ))}
+  </FileList>
+);
 
 const hasValidFileExtension = (file: File, validExtensions: Extension[]) => {
   const fileExtension = `.${file.name.split('.').pop()}`;
@@ -161,6 +174,7 @@ export const DragAndDropInput = ({
   id,
   multiple = false,
   name,
+  renderAdditionalFileActions,
   onDrop,
   validFileExtensions
 }: DragAndDropInputProps) => {
@@ -213,6 +227,7 @@ export const DragAndDropInput = ({
         <AcceptedFiles
           fileNames={acceptedFileNames}
           onDeleteFile={onDeleteFile}
+          renderAdditionalActions={renderAdditionalFileActions}
         />
       )}
       {!!rejectedFileErrors.length && !hideErrors && (

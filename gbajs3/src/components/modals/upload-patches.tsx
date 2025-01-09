@@ -92,7 +92,11 @@ export const UploadPatchesModal = () => {
                 hideAcceptedFiles={!value?.length}
                 multiple
               >
-                <p>Drag and drop patch files here, or click to upload files</p>
+                <p>
+                  Drag and drop patch files here,
+                  <br />
+                  or click to upload files
+                </p>
               </DragAndDropInput>
             )}
           />

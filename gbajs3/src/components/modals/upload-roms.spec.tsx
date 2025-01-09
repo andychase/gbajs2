@@ -2,7 +2,7 @@ import { screen, waitForElementToBeRemoved } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
-import { UploadRomModal } from './upload-rom.tsx';
+import { UploadRomsModal } from './upload-roms.tsx';
 import { testRomLocation } from '../../../test/mocks/handlers.ts';
 import { renderWithContext } from '../../../test/render-with-context.tsx';
 import * as contextHooks from '../../hooks/context.tsx';
@@ -12,7 +12,7 @@ import { productTourLocalStorageKey } from '../product-tour/consts.tsx';
 
 import type { GBAEmulator } from '../../emulator/mgba/mgba-emulator.tsx';
 
-describe('<UploadRomModal />', () => {
+describe('<UploadRomsModal />', () => {
   it('uploads file and closes modal', async () => {
     const setIsModalOpenSpy = vi.fn();
     const uploadRomSpy: (file: File, cb?: () => void) => void = vi.fn(
@@ -51,7 +51,7 @@ describe('<UploadRomModal />', () => {
 
     const testRom = new File(['Some rom file contents'], 'rom1.gba');
 
-    renderWithContext(<UploadRomModal />);
+    renderWithContext(<UploadRomsModal />);
 
     const romInput = screen.getByTestId('hidden-file-input');
 
@@ -67,9 +67,157 @@ describe('<UploadRomModal />', () => {
     expect(uploadRomSpy).toHaveBeenCalledOnce();
     expect(uploadRomSpy).toHaveBeenCalledWith(testRom, expect.anything());
 
-    expect(syncActionIfEnabledSpy).toHaveBeenCalledOnce();
     expect(runGameSpy).toHaveBeenCalledOnce();
     expect(runGameSpy).toHaveBeenCalledWith('rom1.gba');
+    expect(syncActionIfEnabledSpy).toHaveBeenCalledOnce();
+    expect(setIsModalOpenSpy).toHaveBeenCalledOnce();
+    expect(setIsModalOpenSpy).toHaveBeenCalledWith(false);
+  });
+
+  it('uploads multiple files, loads first file, and closes modal', async () => {
+    const setIsModalOpenSpy = vi.fn();
+    const uploadRomSpy: (file: File, cb?: () => void) => void = vi.fn(
+      (_file, cb) => cb && cb()
+    );
+    const syncActionIfEnabledSpy = vi.fn();
+    const runGameSpy = vi.fn(() => true);
+
+    const {
+      useEmulatorContext: originalEmulator,
+      useModalContext: originalModal
+    } = await vi.importActual<typeof contextHooks>('../../hooks/context.tsx');
+    const { useAddCallbacks: originalCallbacks } = await vi.importActual<
+      typeof addCallbackHooks
+    >('../../hooks/emulator/use-add-callbacks.tsx');
+
+    vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
+      ...originalEmulator(),
+      emulator: {
+        uploadRom: uploadRomSpy
+      } as GBAEmulator
+    }));
+
+    vi.spyOn(contextHooks, 'useModalContext').mockImplementation(() => ({
+      ...originalModal(),
+      setIsModalOpen: setIsModalOpenSpy
+    }));
+
+    vi.spyOn(addCallbackHooks, 'useAddCallbacks').mockImplementation(() => ({
+      ...originalCallbacks(),
+      syncActionIfEnabled: syncActionIfEnabledSpy
+    }));
+
+    vi.spyOn(runGameHooks, 'useRunGame').mockReturnValue(runGameSpy);
+
+    const testRomFiles = [
+      new File(['Some rom file contents 1'], 'rom1.gba'),
+      new File(['Some rom file contents 2'], 'rom2.gba')
+    ];
+
+    renderWithContext(<UploadRomsModal />);
+
+    const romInput = screen.getByTestId('hidden-file-input');
+
+    expect(romInput).toBeInTheDocument();
+
+    await userEvent.upload(romInput, testRomFiles);
+
+    expect(screen.getByText('Files to upload:')).toBeVisible();
+    expect(screen.getByText('rom1.gba')).toBeVisible();
+    expect(screen.getByText('rom2.gba')).toBeVisible();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Upload' }));
+
+    expect(uploadRomSpy).toHaveBeenCalledTimes(2);
+    expect(uploadRomSpy).toHaveBeenCalledWith(
+      testRomFiles[0],
+      expect.anything()
+    );
+    expect(uploadRomSpy).toHaveBeenCalledWith(
+      testRomFiles[1],
+      expect.anything()
+    );
+
+    expect(runGameSpy).toHaveBeenCalledOnce();
+    expect(runGameSpy).toHaveBeenCalledWith('rom1.gba');
+
+    expect(syncActionIfEnabledSpy).toHaveBeenCalledOnce();
+    expect(setIsModalOpenSpy).toHaveBeenCalledOnce();
+    expect(setIsModalOpenSpy).toHaveBeenCalledWith(false);
+  });
+
+  it('uploads multiple files, loads selected file, and closes modal', async () => {
+    const setIsModalOpenSpy = vi.fn();
+    const uploadRomSpy: (file: File, cb?: () => void) => void = vi.fn(
+      (_file, cb) => cb && cb()
+    );
+    const syncActionIfEnabledSpy = vi.fn();
+    const runGameSpy = vi.fn(() => true);
+
+    const {
+      useEmulatorContext: originalEmulator,
+      useModalContext: originalModal
+    } = await vi.importActual<typeof contextHooks>('../../hooks/context.tsx');
+    const { useAddCallbacks: originalCallbacks } = await vi.importActual<
+      typeof addCallbackHooks
+    >('../../hooks/emulator/use-add-callbacks.tsx');
+
+    vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
+      ...originalEmulator(),
+      emulator: {
+        uploadRom: uploadRomSpy
+      } as GBAEmulator
+    }));
+
+    vi.spyOn(contextHooks, 'useModalContext').mockImplementation(() => ({
+      ...originalModal(),
+      setIsModalOpen: setIsModalOpenSpy
+    }));
+
+    vi.spyOn(addCallbackHooks, 'useAddCallbacks').mockImplementation(() => ({
+      ...originalCallbacks(),
+      syncActionIfEnabled: syncActionIfEnabledSpy
+    }));
+
+    vi.spyOn(runGameHooks, 'useRunGame').mockReturnValue(runGameSpy);
+
+    const testRomFiles = [
+      new File(['Some rom file contents 1'], 'rom1.gba'),
+      new File(['Some rom file contents 2'], 'rom2.gba')
+    ];
+
+    renderWithContext(<UploadRomsModal />);
+
+    const romInput = screen.getByTestId('hidden-file-input');
+
+    expect(romInput).toBeInTheDocument();
+
+    await userEvent.upload(romInput, testRomFiles);
+
+    await userEvent.click(
+      screen.getByLabelText('Run rom2.gba', { selector: 'input' })
+    );
+    expect(
+      screen.getByLabelText('Run rom2.gba', { selector: 'input' })
+    ).toBeChecked();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Upload' }));
+
+    expect(uploadRomSpy).toHaveBeenCalledTimes(2);
+    expect(uploadRomSpy).toHaveBeenCalledWith(
+      testRomFiles[0],
+      expect.anything()
+    );
+    expect(uploadRomSpy).toHaveBeenCalledWith(
+      testRomFiles[1],
+      expect.anything()
+    );
+
+    expect(runGameSpy).toHaveBeenCalledOnce();
+    expect(runGameSpy).toHaveBeenCalledWith('rom2.gba');
+
+    expect(syncActionIfEnabledSpy).toHaveBeenCalledOnce();
+    expect(setIsModalOpenSpy).toHaveBeenCalledOnce();
     expect(setIsModalOpenSpy).toHaveBeenCalledWith(false);
   });
 
@@ -112,7 +260,7 @@ describe('<UploadRomModal />', () => {
 
     vi.spyOn(runGameHooks, 'useRunGame').mockReturnValue(runGameSpy);
 
-    renderWithContext(<UploadRomModal />);
+    renderWithContext(<UploadRomsModal />);
 
     const uploadRomFromURLInput = screen.getByLabelText('Upload from a URL');
 
@@ -157,7 +305,7 @@ describe('<UploadRomModal />', () => {
       } as GBAEmulator
     }));
 
-    renderWithContext(<UploadRomModal />);
+    renderWithContext(<UploadRomsModal />);
 
     const uploadRomFromURLInput = screen.getByLabelText('Upload from a URL');
 
@@ -184,12 +332,27 @@ describe('<UploadRomModal />', () => {
     ).toBeVisible();
   });
 
-  it('renders form validation error', async () => {
-    renderWithContext(<UploadRomModal />);
+  it('renders invalid url error', async () => {
+    renderWithContext(<UploadRomsModal />);
+
+    await userEvent.type(
+      screen.getByLabelText('Upload from a URL'),
+      `invalid url`
+    );
 
     await userEvent.click(screen.getByRole('button', { name: 'Upload' }));
 
-    expect(screen.getByText(/A rom file or URL is required/)).toBeVisible();
+    expect(screen.getByText(/Invalid URL/)).toBeVisible();
+  });
+
+  it('renders form validation error', async () => {
+    renderWithContext(<UploadRomsModal />);
+
+    await userEvent.click(screen.getByRole('button', { name: 'Upload' }));
+
+    expect(
+      screen.getByText(/At least one rom file or URL is required/)
+    ).toBeVisible();
   });
 
   it('closes modal using the close button', async () => {
@@ -203,7 +366,7 @@ describe('<UploadRomModal />', () => {
       setIsModalOpen: setIsModalOpenSpy
     }));
 
-    renderWithContext(<UploadRomModal />);
+    renderWithContext(<UploadRomsModal />);
 
     // click the close button
     const closeButton = screen.getByText('Close', { selector: 'button' });
@@ -228,11 +391,11 @@ describe('<UploadRomModal />', () => {
       '{"hasCompletedProductTourIntro":"finished"}'
     );
 
-    renderWithContext(<UploadRomModal />);
+    renderWithContext(<UploadRomsModal />);
 
     expect(
       await screen.findByText(
-        'Use this area to drag and drop your rom or zipped rom file, or click to select a file.'
+        'Use this area to drag and drop roms or zipped rom files, or click to select files.'
       )
     ).toBeInTheDocument();
     expect(
@@ -242,7 +405,7 @@ describe('<UploadRomModal />', () => {
     ).toBeInTheDocument();
     expect(
       screen.getByText(
-        'You may drop or select one rom at a time, once uploaded your game will boot!'
+        'You may drop or select multiple files, once uploaded the selected game will boot!'
       )
     ).toBeInTheDocument();
 
@@ -253,7 +416,7 @@ describe('<UploadRomModal />', () => {
 
     expect(
       screen.getByText(
-        'Use this area to drag and drop your rom or zipped rom file, or click to select a file.'
+        'Use this area to drag and drop roms or zipped rom files, or click to select files.'
       )
     ).toBeVisible();
     expect(
@@ -263,7 +426,7 @@ describe('<UploadRomModal />', () => {
     ).toBeVisible();
     expect(
       screen.getByText(
-        'You may drop or select one rom at a time, once uploaded your game will boot!'
+        'You may drop or select multiple files, once uploaded the selected game will boot!'
       )
     ).toBeVisible();
   });

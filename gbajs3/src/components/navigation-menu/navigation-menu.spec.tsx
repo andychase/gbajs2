@@ -23,7 +23,7 @@ import { SaveStatesModal } from '../modals/save-states.tsx';
 import { UploadCheatsModal } from '../modals/upload-cheats.tsx';
 import { UploadPatchesModal } from '../modals/upload-patches.tsx';
 import { UploadRomToServerModal } from '../modals/upload-rom-to-server.tsx';
-import { UploadRomModal } from '../modals/upload-rom.tsx';
+import { UploadRomsModal } from '../modals/upload-roms.tsx';
 import { UploadSaveToServerModal } from '../modals/upload-save-to-server.tsx';
 import { UploadSavesModal } from '../modals/upload-saves.tsx';
 
@@ -90,7 +90,7 @@ describe('<NavigationMenu />', () => {
       ['Upload Saves', <UploadSavesModal />],
       ['Upload Cheats', <UploadCheatsModal />],
       ['Upload Patches', <UploadPatchesModal />],
-      ['Upload Rom', <UploadRomModal />],
+      ['Upload Roms', <UploadRomsModal />],
       ['Load Local Rom', <LoadLocalRomModal />],
       ['Controls', <ControlsModal />],
       ['File System', <FileSystemModal />],
