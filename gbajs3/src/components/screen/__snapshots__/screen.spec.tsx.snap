@@ -18,10 +18,22 @@ exports[`<Screen /> > renders with default desktop position and size 1`] = `
 
 .c0 {
   background-color: #000;
-  border: solid 1px #000;
   overflow: visible;
   width: 100dvw;
   height: calc(100dvw * 2 / 3);
+}
+
+.c0::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  margin: 2px;
+  pointer-events: none;
+  border: 2px dashed #1c76fd;
+  visibility: hidden;
 }
 
 @media only screen and (min-width: 600px) {
@@ -71,10 +83,22 @@ exports[`<Screen /> > renders with default mobile position and size 1`] = `
 
 .c0 {
   background-color: #000;
-  border: solid 1px #000;
   overflow: visible;
   width: 100dvw;
   height: calc(100dvw * 2 / 3);
+}
+
+.c0::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  margin: 2px;
+  pointer-events: none;
+  border: 2px dashed #1c76fd;
+  visibility: hidden;
 }
 
 @media only screen and (min-width: 600px) {

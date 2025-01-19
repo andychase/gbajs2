@@ -13,6 +13,8 @@ import {
 import { NavigationMenuWidth } from '../navigation-menu/consts.tsx';
 import { GripperHandle } from '../shared/gripper-handle.tsx';
 
+type ScreenWrapperProps = RndProps & { $areItemsDraggable: boolean };
+
 const defaultGBACanvasWidth = 240;
 const defaultGBACanvasHeight = 160;
 
@@ -31,9 +33,8 @@ const RenderCanvas = styled.canvas`
   image-rendering: pixelated;
 `;
 
-const ScreenWrapper = styled(Rnd)<RndProps>`
+const ScreenWrapper = styled(Rnd)<ScreenWrapperProps>`
   background-color: ${({ theme }) => theme.pureBlack};
-  border: solid 1px ${({ theme }) => theme.pureBlack};
   overflow: visible;
   width: 100dvw;
   height: calc(100dvw * 2 / 3);
@@ -49,6 +50,20 @@ const ScreenWrapper = styled(Rnd)<RndProps>`
   @media ${({ theme }) => theme.isMobileLandscape} {
     width: calc(100dvh * (3 / 2));
     height: 100dvh;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    margin: 2px;
+    pointer-events: none;
+    border: 2px dashed ${({ theme }) => theme.gbaThemeBlue};
+    visibility: ${({ $areItemsDraggable }) =>
+      $areItemsDraggable ? 'visible' : 'hidden'};
   }
 `;
 
@@ -151,6 +166,7 @@ export const Screen = () => {
           position: { ...position }
         });
       }}
+      $areItemsDraggable={areItemsDraggable}
     >
       <RenderCanvas
         data-testid="screen-wrapper:render-canvas"

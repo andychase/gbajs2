@@ -54,6 +54,7 @@ import type { IconType } from 'react-icons';
 type PanelProps = {
   $controlled: boolean;
   $isLargerThanPhone: boolean;
+  $areItemsDraggable: boolean;
 };
 
 type SliderIconButtonProps = {
@@ -109,6 +110,15 @@ const Panel = styled.ul<PanelProps>`
     flex-wrap: wrap;
     justify-content: space-evenly;
     gap: 10px;
+  `}
+
+  ${({ $areItemsDraggable = false, theme }) =>
+    $areItemsDraggable &&
+    `
+    outline-color: ${theme.gbaThemeBlue};
+    outline-style: dashed;
+    outline-width: 2px;
+    outline-offset: -2px;
   `}
 `;
 
@@ -509,6 +519,7 @@ export const ControlPanel = () => {
         <Panel
           $controlled={isControlled}
           $isLargerThanPhone={isLargerThanPhone}
+          $areItemsDraggable={areItemsDraggable}
         >
           <IconContext.Provider value={{ size: '2em' }}>
             <PanelButton
