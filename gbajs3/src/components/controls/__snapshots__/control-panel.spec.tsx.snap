@@ -132,7 +132,7 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
 <div
   class="react-draggable"
   data-testid="control-panel-wrapper"
-  id=":r2:"
+  id=":ra:"
   style="position: absolute; user-select: auto; width: auto; height: auto; display: inline-block; top: 0px; left: 0px; cursor: auto; transform: translate(0px,10px); max-width: 9007199254740991px; max-height: 9007199254740991px; box-sizing: border-box; flex-shrink: 0;"
 >
   <ul
@@ -144,7 +144,7 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
       <button
         aria-label="Play"
         class="c2 c3 noDrag"
-        id=":r2:--play"
+        id=":ra:--play"
       >
         <svg
           fill="currentColor"
@@ -167,7 +167,7 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
       <button
         aria-label="Quit Game"
         class="c2 c3 noDrag"
-        id=":r2:--quit-game"
+        id=":ra:--quit-game"
       >
         <svg
           fill="currentColor"
@@ -190,7 +190,7 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
       <button
         aria-label="Drag Items"
         class="c2 c3 noDrag"
-        id=":r2:--drag"
+        id=":ra:--drag"
       >
         <svg
           fill="currentColor"
@@ -213,7 +213,7 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
       <button
         aria-label="Resize Items"
         class="c2 c3 noDrag"
-        id=":r2:--resize"
+        id=":ra:--resize"
       >
         <svg
           fill="none"
@@ -243,14 +243,18 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
       >
         <div
           class="c5"
-          id=":r2:--volume-slider"
+          id=":ra:--volume-slider"
         >
           <button
             aria-label="Mute Volume"
-            class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-62e45k-MuiButtonBase-root-MuiIconButton-root"
+            class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-dhaj44-MuiButtonBase-root-MuiIconButton-root"
+            id=":rb:"
             tabindex="0"
             type="button"
           >
+            <span
+              class="MuiIconButton-loadingIndicator css-165vu30-MuiIconButton-loadingIndicator"
+            />
             <svg
               fill="currentColor"
               height="2em"
@@ -368,10 +372,14 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
           </span>
           <button
             aria-label="Max Volume"
-            class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-62e45k-MuiButtonBase-root-MuiIconButton-root"
+            class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-dhaj44-MuiButtonBase-root-MuiIconButton-root"
+            id=":rc:"
             tabindex="0"
             type="button"
           >
+            <span
+              class="MuiIconButton-loadingIndicator css-165vu30-MuiIconButton-loadingIndicator"
+            />
             <svg
               fill="currentColor"
               height="2em"
@@ -401,14 +409,18 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
       >
         <div
           class="c7"
-          id=":r2:--fast-forward"
+          id=":ra:--fast-forward"
         >
           <button
             aria-label="Regular Speed"
-            class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-62e45k-MuiButtonBase-root-MuiIconButton-root"
+            class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-dhaj44-MuiButtonBase-root-MuiIconButton-root"
+            id=":rd:"
             tabindex="0"
             type="button"
           >
+            <span
+              class="MuiIconButton-loadingIndicator css-165vu30-MuiIconButton-loadingIndicator"
+            />
             <svg
               fill="currentColor"
               height="2em"
@@ -496,10 +508,14 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
           </span>
           <button
             aria-label="Max Fast Forward"
-            class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-62e45k-MuiButtonBase-root-MuiIconButton-root"
+            class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-dhaj44-MuiButtonBase-root-MuiIconButton-root"
+            id=":re:"
             tabindex="0"
             type="button"
           >
+            <span
+              class="MuiIconButton-loadingIndicator css-165vu30-MuiIconButton-loadingIndicator"
+            />
             <svg
               fill="currentColor"
               height="2em"
@@ -650,8 +666,8 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
 <div
   class="react-draggable"
   data-testid="control-panel-wrapper"
-  id=":r1:"
-  style="position: absolute; user-select: auto; height: auto; display: inline-block; top: 0px; left: 0px; cursor: auto; transform: translate(0px,0px); max-width: 9007199254740991px; max-height: 9007199254740991px; box-sizing: border-box; flex-shrink: 0;"
+  id=":r5:"
+  style="position: absolute; user-select: auto; width: 100dvw; height: auto; display: inline-block; top: 0px; left: 0px; cursor: auto; transform: translate(0px,0px); max-width: 9007199254740991px; max-height: 9007199254740991px; box-sizing: border-box; flex-shrink: 0;"
 >
   <ul
     class="c0"
@@ -662,7 +678,7 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
       <button
         aria-label="Play"
         class="c2 c3 noDrag"
-        id=":r1:--play"
+        id=":r5:--play"
       >
         <svg
           fill="currentColor"
@@ -685,7 +701,7 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
       <button
         aria-label="Quit Game"
         class="c2 c3 noDrag"
-        id=":r1:--quit-game"
+        id=":r5:--quit-game"
       >
         <svg
           fill="currentColor"
@@ -708,7 +724,7 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
       <button
         aria-label="Drag Items"
         class="c2 c3 noDrag"
-        id=":r1:--drag"
+        id=":r5:--drag"
       >
         <svg
           fill="currentColor"
@@ -731,7 +747,7 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
       <button
         aria-label="Resize Items"
         class="c2 c3 noDrag"
-        id=":r1:--resize"
+        id=":r5:--resize"
       >
         <svg
           fill="none"
@@ -761,14 +777,18 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
       >
         <div
           class="c5"
-          id=":r1:--volume-slider"
+          id=":r5:--volume-slider"
         >
           <button
             aria-label="Mute Volume"
-            class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-62e45k-MuiButtonBase-root-MuiIconButton-root"
+            class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-dhaj44-MuiButtonBase-root-MuiIconButton-root"
+            id=":r6:"
             tabindex="0"
             type="button"
           >
+            <span
+              class="MuiIconButton-loadingIndicator css-165vu30-MuiIconButton-loadingIndicator"
+            />
             <svg
               fill="currentColor"
               height="2em"
@@ -886,10 +906,14 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
           </span>
           <button
             aria-label="Max Volume"
-            class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-62e45k-MuiButtonBase-root-MuiIconButton-root"
+            class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-dhaj44-MuiButtonBase-root-MuiIconButton-root"
+            id=":r7:"
             tabindex="0"
             type="button"
           >
+            <span
+              class="MuiIconButton-loadingIndicator css-165vu30-MuiIconButton-loadingIndicator"
+            />
             <svg
               fill="currentColor"
               height="2em"
@@ -919,14 +943,18 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
       >
         <div
           class="c7"
-          id=":r1:--fast-forward"
+          id=":r5:--fast-forward"
         >
           <button
             aria-label="Regular Speed"
-            class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-62e45k-MuiButtonBase-root-MuiIconButton-root"
+            class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-dhaj44-MuiButtonBase-root-MuiIconButton-root"
+            id=":r8:"
             tabindex="0"
             type="button"
           >
+            <span
+              class="MuiIconButton-loadingIndicator css-165vu30-MuiIconButton-loadingIndicator"
+            />
             <svg
               fill="currentColor"
               height="2em"
@@ -1014,10 +1042,14 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
           </span>
           <button
             aria-label="Max Fast Forward"
-            class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-62e45k-MuiButtonBase-root-MuiIconButton-root"
+            class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-dhaj44-MuiButtonBase-root-MuiIconButton-root"
+            id=":r9:"
             tabindex="0"
             type="button"
           >
+            <span
+              class="MuiIconButton-loadingIndicator css-165vu30-MuiIconButton-loadingIndicator"
+            />
             <svg
               fill="currentColor"
               height="2em"
