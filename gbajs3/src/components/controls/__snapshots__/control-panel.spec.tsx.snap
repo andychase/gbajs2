@@ -8,53 +8,12 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
   padding: inherit;
 }
 
-.c0 {
-  background-color: #4f555a;
-  list-style: none;
-  padding: 10px;
-  margin: 0;
-  max-width: 100%;
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-  grid-template-rows: 1fr 1fr;
-  gap: 10px 10px;
-  grid-template-areas: '. . . .' 'volume volume fastForward fastForward';
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: space-evenly;
-  gap: 10px;
-}
-
 .c1 {
   display: contents;
 }
 
-.c3 {
-  cursor: pointer;
-  background-color: #a9a9a9;
-  border-radius: 0.25rem;
-  min-width: 40px;
-  min-height: 40px;
-  width: fit-content;
-  height: fit-content;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #000;
-  width: 100%;
-  border: none;
-  flex-grow: 1;
-  margin: 0;
-  padding: 0;
-}
-
-.c3:focus {
-  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-}
-
-.c3:active {
-  color: #1c76fd;
+.c4 {
+  display: contents;
 }
 
 .c5 {
@@ -100,8 +59,61 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
   background-color: currentColor;
 }
 
-.c4 {
-  display: contents;
+.c3 {
+  cursor: pointer;
+  background-color: #a9a9a9;
+  border-radius: 0.25rem;
+  min-width: 40px;
+  min-height: 40px;
+  width: fit-content;
+  height: fit-content;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #000;
+  width: 100%;
+  border: none;
+  flex-grow: 1;
+  margin: 0;
+  padding: 0;
+}
+
+.c3:focus {
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.c3:active {
+  color: #1c76fd;
+}
+
+.c0 {
+  background-color: #4f555a;
+  list-style: none;
+  padding: 10px;
+  margin: 0;
+  max-width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 10px 10px;
+  grid-template-areas: '. . . .' 'volume volume fastForward fastForward';
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+  gap: 10px;
+}
+
+@media only screen and (min-width: 600px) {
+  .c5 {
+    width: auto;
+  }
+}
+
+@media only screen and (min-width: 600px) {
+  .c7 {
+    width: auto;
+  }
 }
 
 @media only screen and (min-width: 600px) {
@@ -114,18 +126,6 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
   .c3 {
     flex-shrink: 1;
     min-width: unset;
-  }
-}
-
-@media only screen and (min-width: 600px) {
-  .c5 {
-    width: auto;
-  }
-}
-
-@media only screen and (min-width: 600px) {
-  .c7 {
-    width: auto;
   }
 }
 
@@ -143,7 +143,7 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
     >
       <button
         aria-label="Play"
-        class="c2 c3 noDrag"
+        class="c2 c3"
         id=":ra:--play"
       >
         <svg
@@ -166,7 +166,7 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
     >
       <button
         aria-label="Quit Game"
-        class="c2 c3 noDrag"
+        class="c2 c3"
         id=":ra:--quit-game"
       >
         <svg
@@ -547,48 +547,12 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
   padding: inherit;
 }
 
-.c0 {
-  background-color: #4f555a;
-  list-style: none;
-  padding: 10px;
-  margin: 0;
-  max-width: 100%;
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-  grid-template-rows: 1fr 1fr;
-  gap: 10px 10px;
-  grid-template-areas: '. . . .' 'volume volume fastForward fastForward';
-}
-
 .c1 {
   display: contents;
 }
 
-.c3 {
-  cursor: pointer;
-  background-color: #a9a9a9;
-  border-radius: 0.25rem;
-  min-width: 40px;
-  min-height: 40px;
-  width: fit-content;
-  height: fit-content;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #000;
-  width: 100%;
-  border: none;
-  flex-grow: 1;
-  margin: 0;
-  padding: 0;
-}
-
-.c3:focus {
-  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-}
-
-.c3:active {
-  color: #1c76fd;
+.c4 {
+  display: contents;
 }
 
 .c5 {
@@ -634,8 +598,56 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
   background-color: currentColor;
 }
 
-.c4 {
-  display: contents;
+.c3 {
+  cursor: pointer;
+  background-color: #a9a9a9;
+  border-radius: 0.25rem;
+  min-width: 40px;
+  min-height: 40px;
+  width: fit-content;
+  height: fit-content;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #000;
+  width: 100%;
+  border: none;
+  flex-grow: 1;
+  margin: 0;
+  padding: 0;
+}
+
+.c3:focus {
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.c3:active {
+  color: #1c76fd;
+}
+
+.c0 {
+  background-color: #4f555a;
+  list-style: none;
+  padding: 10px;
+  margin: 0;
+  max-width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 10px 10px;
+  grid-template-areas: '. . . .' 'volume volume fastForward fastForward';
+}
+
+@media only screen and (min-width: 600px) {
+  .c5 {
+    width: auto;
+  }
+}
+
+@media only screen and (min-width: 600px) {
+  .c7 {
+    width: auto;
+  }
 }
 
 @media only screen and (min-width: 600px) {
@@ -648,18 +660,6 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
   .c3 {
     flex-shrink: 1;
     min-width: unset;
-  }
-}
-
-@media only screen and (min-width: 600px) {
-  .c5 {
-    width: auto;
-  }
-}
-
-@media only screen and (min-width: 600px) {
-  .c7 {
-    width: auto;
   }
 }
 
@@ -677,7 +677,7 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
     >
       <button
         aria-label="Play"
-        class="c2 c3 noDrag"
+        class="c2 c3"
         id=":r5:--play"
       >
         <svg
@@ -700,7 +700,7 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
     >
       <button
         aria-label="Quit Game"
-        class="c2 c3 noDrag"
+        class="c2 c3"
         id=":r5:--quit-game"
       >
         <svg

@@ -107,26 +107,26 @@ export const VirtualButton = ({
 
   if (!enabled) return null;
 
-  const clickEvents = onClick ? { onClick } : {};
-  const pointerEvents = keyId
-    ? {
-        onPointerDown: () => {
-          emulator?.simulateKeyDown(keyId);
-        },
-        onPointerUp: () => {
-          emulator?.simulateKeyUp(keyId);
-        },
-        onPointerLeave: () => {
-          emulator?.simulateKeyUp(keyId);
-        },
-        onPointerOut: () => {
-          emulator?.simulateKeyUp(keyId);
-        },
-        onPointerCancel: () => {
-          emulator?.simulateKeyUp(keyId);
+  const pointerEvents =
+    keyId && !areItemsDraggable
+      ? {
+          onPointerDown: () => {
+            emulator?.simulateKeyDown(keyId);
+          },
+          onPointerUp: () => {
+            emulator?.simulateKeyUp(keyId);
+          },
+          onPointerLeave: () => {
+            emulator?.simulateKeyUp(keyId);
+          },
+          onPointerOut: () => {
+            emulator?.simulateKeyUp(keyId);
+          },
+          onPointerCancel: () => {
+            emulator?.simulateKeyUp(keyId);
+          }
         }
-      }
-    : {};
+      : undefined;
   // due to using pointer events for the buttons without a click handler,
   // we need to manage key events ourselves for buttons with an emulator keyId
   const keyboardEvents = keyId
@@ -139,7 +139,7 @@ export const VirtualButton = ({
           if (e.code == 'Space' || e.key == ' ') emulator?.simulateKeyUp(keyId);
         }
       }
-    : {};
+    : undefined;
 
   const position = layouts?.[inputName]?.position ?? { x: 0, y: 0 };
 
@@ -159,8 +159,8 @@ export const VirtualButton = ({
           $initialPosition={initialPosition}
           $areItemsDraggable={areItemsDraggable}
           aria-label={ariaLabel}
+          onClick={onClick}
           {...pointerEvents}
-          {...clickEvents}
           {...keyboardEvents}
         >
           {children}
@@ -172,8 +172,8 @@ export const VirtualButton = ({
           $diameter={width}
           $areItemsDraggable={areItemsDraggable}
           aria-label={ariaLabel}
+          onClick={onClick}
           {...pointerEvents}
-          {...clickEvents}
           {...keyboardEvents}
         >
           {children}

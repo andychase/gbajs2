@@ -257,6 +257,17 @@ export const OPad = ({ initialPosition }: OPadProps) => {
 
   const dragPosition = layouts?.oPad?.position ?? { x: 0, y: 0 };
 
+  const pointerEvents = !areItemsDraggable
+    ? {
+        onPointerDown: handlePointerDown,
+        onPointerMove: handlePointerMove,
+        onPointerUp: resetPosition,
+        onPointerCancel: resetPosition,
+        onPointerOut: resetPosition,
+        onPointerLeave: resetPosition
+      }
+    : undefined;
+
   return (
     <Draggable
       nodeRef={containerDragRef}
@@ -271,12 +282,7 @@ export const OPad = ({ initialPosition }: OPadProps) => {
         ref={containerDragRef}
         $initialPosition={initialPosition}
         $areItemsDraggable={areItemsDraggable}
-        onPointerDown={handlePointerDown}
-        onPointerMove={handlePointerMove}
-        onPointerUp={resetPosition}
-        onPointerCancel={resetPosition}
-        onPointerOut={resetPosition}
-        onPointerLeave={resetPosition}
+        {...pointerEvents}
       >
         <Draggable disabled nodeRef={knobDragRef} position={position}>
           <CenterKnob ref={knobDragRef} $isControlled={isControlled} />
