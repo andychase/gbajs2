@@ -32,10 +32,12 @@ Do not attempt to log into the server unless you are the server owner or an appr
 - Re-mappable Keyboard Bindings
 - Virtual Controls (Desktop/Mobile)
 - Movable desktop canvas and controls
+- Control profiles
 - Mobile UI support
 - Offline PWA Support
 - Save state support
 - Cheat code support
+- Soft patch support
 - Core Support
   - mGBA support (wasm based)
 - Admin UI
