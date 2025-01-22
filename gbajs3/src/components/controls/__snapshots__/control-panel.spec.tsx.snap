@@ -252,9 +252,6 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
             tabindex="0"
             type="button"
           >
-            <span
-              class="MuiIconButton-loadingIndicator css-165vu30-MuiIconButton-loadingIndicator"
-            />
             <svg
               fill="currentColor"
               height="2em"
@@ -377,9 +374,6 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
             tabindex="0"
             type="button"
           >
-            <span
-              class="MuiIconButton-loadingIndicator css-165vu30-MuiIconButton-loadingIndicator"
-            />
             <svg
               fill="currentColor"
               height="2em"
@@ -418,9 +412,6 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
             tabindex="0"
             type="button"
           >
-            <span
-              class="MuiIconButton-loadingIndicator css-165vu30-MuiIconButton-loadingIndicator"
-            />
             <svg
               fill="currentColor"
               height="2em"
@@ -513,9 +504,6 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
             tabindex="0"
             type="button"
           >
-            <span
-              class="MuiIconButton-loadingIndicator css-165vu30-MuiIconButton-loadingIndicator"
-            />
             <svg
               fill="currentColor"
               height="2em"
@@ -786,9 +774,6 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
             tabindex="0"
             type="button"
           >
-            <span
-              class="MuiIconButton-loadingIndicator css-165vu30-MuiIconButton-loadingIndicator"
-            />
             <svg
               fill="currentColor"
               height="2em"
@@ -911,9 +896,6 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
             tabindex="0"
             type="button"
           >
-            <span
-              class="MuiIconButton-loadingIndicator css-165vu30-MuiIconButton-loadingIndicator"
-            />
             <svg
               fill="currentColor"
               height="2em"
@@ -952,9 +934,6 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
             tabindex="0"
             type="button"
           >
-            <span
-              class="MuiIconButton-loadingIndicator css-165vu30-MuiIconButton-loadingIndicator"
-            />
             <svg
               fill="currentColor"
               height="2em"
@@ -1047,9 +1026,6 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
             tabindex="0"
             type="button"
           >
-            <span
-              class="MuiIconButton-loadingIndicator css-165vu30-MuiIconButton-loadingIndicator"
-            />
             <svg
               fill="currentColor"
               height="2em"
