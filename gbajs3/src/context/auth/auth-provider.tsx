@@ -1,12 +1,12 @@
 import { jwtDecode, type JwtPayload } from 'jwt-decode';
 import { useState, useEffect, useCallback, type ReactNode } from 'react';
-import { useInterval } from 'usehooks-ts';
 
 import {
   AuthContext,
   type AuthContextProps,
   type AccessTokenSource
 } from './auth-context.tsx';
+import { useInterval } from '../../hooks/use-interval.ts';
 import { useRefreshAccessToken } from '../../hooks/use-refresh.tsx';
 
 type AuthProviderProps = { children: ReactNode };

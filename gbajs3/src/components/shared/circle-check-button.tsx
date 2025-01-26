@@ -1,7 +1,8 @@
 import { Button } from '@mui/material';
 import { useId, useState } from 'react';
 import { styled, keyframes } from 'styled-components';
-import { useInterval } from 'usehooks-ts';
+
+import { useInterval } from '../../hooks/use-interval.ts';
 
 import type { ButtonProps } from '@mui/material';
 
