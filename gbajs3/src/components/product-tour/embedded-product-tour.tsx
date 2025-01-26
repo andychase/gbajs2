@@ -11,7 +11,6 @@ import type { CompletedProductTourSteps } from './product-tour-intro.tsx';
 type EmbeddedProductTourProps = {
   completedProductTourStepName: string;
   steps: TourSteps;
-  allowScrolling?: boolean;
   isNotInModal?: boolean;
   millisecondDelay?: number;
   renderWithoutDelay?: boolean;
@@ -32,7 +31,6 @@ export type TourSteps = Step[];
 export const EmbeddedProductTour = ({
   completedProductTourStepName,
   steps,
-  allowScrolling = true,
   isNotInModal = false, // by default, this component is assumed to be used in modals
   millisecondDelay = 500,
   renderWithoutDelay = false,
@@ -74,7 +72,6 @@ export const EmbeddedProductTour = ({
   return (
     <Joyride
       continuous
-      disableScrollParentFix={allowScrolling}
       hideCloseButton
       showProgress
       showSkipButton
