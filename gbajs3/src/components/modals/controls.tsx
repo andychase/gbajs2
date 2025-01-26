@@ -71,7 +71,7 @@ const ControlTabs = ({
   resetPositionsButtonId,
   setIsSuccessfulSubmit
 }: ControlTabsProps) => {
-  const { clearLayouts } = useLayoutContext();
+  const { clearLayoutsAndBounds } = useLayoutContext();
   const [value, setValue] = useState(0);
 
   const tabIndexToFormId = (tabIndex: number) => {
@@ -116,7 +116,7 @@ const ControlTabs = ({
         <Button
           id={resetPositionsButtonId}
           sx={{ marginTop: '10px' }}
-          onClick={clearLayouts}
+          onClick={clearLayoutsAndBounds}
         >
           Reset All Positions
         </Button>

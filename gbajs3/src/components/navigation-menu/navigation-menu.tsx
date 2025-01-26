@@ -1,5 +1,6 @@
 import { useMediaQuery } from '@mui/material';
-import { useId, useState } from 'react';
+import { useId, useRef, useState } from 'react';
+import Draggable from 'react-draggable';
 import toast from 'react-hot-toast';
 import {
   BiInfoCircle,
@@ -31,7 +32,9 @@ import {
   useEmulatorContext,
   useAuthContext,
   useModalContext,
-  useRunningContext
+  useRunningContext,
+  useDragContext,
+  useLayoutContext
 } from '../../hooks/context.tsx';
 import { useQuickReload } from '../../hooks/emulator/use-quick-reload.tsx';
 import { useLogout } from '../../hooks/use-logout.tsx';
@@ -108,7 +111,9 @@ const MenuItemWrapper = styled.ul`
   }
 `;
 
-const HamburgerButton = styled(ButtonBase)<ExpandableComponentProps>`
+const HamburgerButton = styled(ButtonBase)<
+  ExpandableComponentProps & { $areItemsDraggable: boolean }
+>`
   background-color: ${({ theme }) => theme.mediumBlack};
   color: ${({ theme }) => theme.pureWhite};
   z-index: 200;
@@ -117,6 +122,7 @@ const HamburgerButton = styled(ButtonBase)<ExpandableComponentProps>`
   top: 12px;
   transition: 0.4s ease-in-out;
   -webkit-transition: 0.4s ease-in-out;
+  transition-property: left;
   cursor: pointer;
   border-radius: 0.25rem;
   border: none;
@@ -137,6 +143,14 @@ const HamburgerButton = styled(ButtonBase)<ExpandableComponentProps>`
     outline: 0;
     box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
   }
+
+  ${({ $areItemsDraggable = false, theme }) =>
+    $areItemsDraggable &&
+    `
+    outline-color: ${theme.gbaThemeBlue};
+    outline-style: dashed;
+    outline-width: 2px;
+  `}
 `;
 
 const NavigationMenuClearDismiss = styled.button`
@@ -151,11 +165,14 @@ const NavigationMenuClearDismiss = styled.button`
 
 export const NavigationMenu = () => {
   const [isExpanded, setIsExpanded] = useState(true);
+  const menuButtonRef = useRef<HTMLButtonElement | null>(null);
   const { setModalContent, setIsModalOpen } = useModalContext();
   const { isAuthenticated } = useAuthContext();
   const { canvas, emulator } = useEmulatorContext();
   const { isRunning } = useRunningContext();
   const { execute: executeLogout } = useLogout();
+  const { areItemsDraggable } = useDragContext();
+  const { layouts, setLayout } = useLayoutContext();
   const theme = useTheme();
   const isLargerThanPhone = useMediaQuery(theme.isLargerThanPhone);
   const isMobileLandscape = useMediaQuery(theme.isMobileLandscape);
@@ -169,16 +186,29 @@ export const NavigationMenu = () => {
 
   return (
     <>
-      <HamburgerButton
-        id="menu-btn"
-        $isExpanded={isExpanded}
-        onClick={() => setIsExpanded((prevState) => !prevState)}
-        aria-label="Menu Toggle"
+      <Draggable
+        nodeRef={menuButtonRef}
+        bounds="parent"
+        axis="y"
+        position={layouts?.menuButton?.position ?? { x: 0, y: 0 }}
+        disabled={!areItemsDraggable}
+        onStop={(_, data) =>
+          setLayout('menuButton', { position: { x: 0, y: data.y } })
+        }
       >
-        <BiMenu
-          style={{ height: '29px', width: '29px', verticalAlign: 'middle' }}
-        />
-      </HamburgerButton>
+        <HamburgerButton
+          ref={menuButtonRef}
+          id="menu-btn"
+          $isExpanded={isExpanded}
+          onClick={() => setIsExpanded((prevState) => !prevState)}
+          aria-label="Menu Toggle"
+          $areItemsDraggable={areItemsDraggable}
+        >
+          <BiMenu
+            style={{ height: '29px', width: '29px', verticalAlign: 'middle' }}
+          />
+        </HamburgerButton>
+      </Draggable>
       <NavigationMenuWrapper
         data-testid="menu-wrapper"
         id="menu-wrapper"

@@ -1,5 +1,5 @@
 import { useLocalStorage } from '@uidotdev/usehooks';
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 
 import type { Layouts } from '../context/layout/layout-context.tsx';
 
@@ -13,13 +13,5 @@ export const useLayouts = () => {
 
   const clearLayouts = useCallback(() => setLayouts({}), [setLayouts]);
 
-  const hasSetLayout = useMemo(
-    () =>
-      !!Object.values(layouts).some(
-        (layout) => !!layout?.position || !!layout?.size
-      ),
-    [layouts]
-  );
-
-  return { layouts, setLayouts, hasSetLayout, clearLayouts };
+  return { layouts, setLayouts, clearLayouts };
 };

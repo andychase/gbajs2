@@ -1,4 +1,4 @@
-import { screen } from '@testing-library/react';
+import { fireEvent, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import * as toast from 'react-hot-toast';
 import { describe, expect, it, vi } from 'vitest';
@@ -432,5 +432,67 @@ describe('<NavigationMenu />', () => {
         expect(setIsModalOpenSpy).toHaveBeenCalledWith(true);
       }
     );
+  });
+
+  describe('menu button', () => {
+    const initialPos = {
+      clientX: 0,
+      clientY: 0
+    };
+    const movements = [
+      { clientX: 0, clientY: 220 },
+      { clientX: 0, clientY: 120 }
+    ];
+
+    it('sets layout on drag', async () => {
+      const setLayoutSpy = vi.fn();
+      const { useLayoutContext: originalLayout, useDragContext: originalDrag } =
+        await vi.importActual<typeof contextHooks>('../../hooks/context.tsx');
+
+      vi.spyOn(contextHooks, 'useDragContext').mockImplementation(() => ({
+        ...originalDrag(),
+        areItemsDraggable: true
+      }));
+
+      vi.spyOn(contextHooks, 'useLayoutContext').mockImplementation(() => ({
+        ...originalLayout(),
+        setLayout: setLayoutSpy
+      }));
+
+      renderWithContext(<NavigationMenu />);
+
+      fireEvent.mouseDown(screen.getByLabelText('Menu Toggle'), initialPos);
+      fireEvent.mouseMove(document, movements[0]);
+      fireEvent.mouseUp(document, movements[1]);
+
+      expect(setLayoutSpy).toHaveBeenCalledOnce();
+      expect(setLayoutSpy).toHaveBeenCalledWith('menuButton', {
+        position: {
+          x: movements[1].clientX,
+          y: movements[1].clientY
+        }
+      });
+    });
+
+    it('renders with existing layout', async () => {
+      const { useLayoutContext: originalLayout, useDragContext: originalDrag } =
+        await vi.importActual<typeof contextHooks>('../../hooks/context.tsx');
+
+      vi.spyOn(contextHooks, 'useDragContext').mockImplementation(() => ({
+        ...originalDrag(),
+        areItemsDraggable: true
+      }));
+
+      vi.spyOn(contextHooks, 'useLayoutContext').mockImplementation(() => ({
+        ...originalLayout(),
+        layouts: { menuButton: { position: { x: 0, y: 200 } } }
+      }));
+
+      renderWithContext(<NavigationMenu />);
+
+      expect(screen.getByLabelText('Menu Toggle')).toHaveStyle({
+        transform: 'translate(0px,200px)'
+      });
+    });
   });
 });
