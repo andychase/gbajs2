@@ -41,7 +41,7 @@ describe('<Screen />', () => {
   });
 
   it('sets initial bounds when rendered', async () => {
-    const setInitialBoundSpy = vi.fn();
+    const setLayoutSpy = vi.fn();
 
     const { useLayoutContext: originalLayout } = await vi.importActual<
       typeof contextHooks
@@ -49,20 +49,22 @@ describe('<Screen />', () => {
 
     vi.spyOn(contextHooks, 'useLayoutContext').mockImplementation(() => ({
       ...originalLayout(),
-      setInitialBound: setInitialBoundSpy
+      setLayout: setLayoutSpy
     }));
 
     renderWithContext(<Screen />);
 
-    expect(setInitialBoundSpy).toHaveBeenCalledWith('screen', {
-      bottom: 0,
-      height: 0,
-      left: 0,
-      right: 0,
-      top: 0,
-      width: 0,
-      x: 0,
-      y: 0
+    expect(setLayoutSpy).toHaveBeenCalledWith('screen', {
+      initialBounds: {
+        bottom: 0,
+        height: 0,
+        left: 0,
+        right: 0,
+        top: 0,
+        width: 0,
+        x: 0,
+        y: 0
+      }
     });
   });
 
@@ -129,7 +131,9 @@ describe('<Screen />', () => {
 
     vi.spyOn(contextHooks, 'useLayoutContext').mockImplementation(() => ({
       ...originalLayout(),
-      setLayout: setLayoutSpy
+      setLayout: setLayoutSpy,
+      hasSetLayout: true,
+      layouts: { screen: { initialBounds: new DOMRect() } }
     }));
 
     renderWithContext(<Screen />);
@@ -163,7 +167,8 @@ describe('<Screen />', () => {
     vi.spyOn(contextHooks, 'useLayoutContext').mockImplementation(() => ({
       ...originalLayout(),
       setLayout: setLayoutSpy,
-      initialBounds: { screen: new DOMRect() }
+      hasSetLayout: true,
+      layouts: { screen: { initialBounds: new DOMRect() } }
     }));
 
     renderWithContext(<Screen />);

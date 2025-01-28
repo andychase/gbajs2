@@ -3,21 +3,19 @@ import { createContext } from 'react';
 export type Layout = {
   position?: { x: number; y: number };
   size?: { width: string | number; height: string | number };
+  initialBounds?: DOMRect;
+  /** indicates whether or not this layout is standalone, and considered in any relative calculations or counts */
+  standalone?: boolean;
 };
 
 export type Layouts = {
   [key: string]: Layout;
 };
 
-export type InitialBounds = {
-  [key: string]: DOMRect | undefined;
-};
-
 export type LayoutContextProps = {
   layouts: Layouts;
-  clearLayoutsAndBounds: () => void;
-  initialBounds?: InitialBounds;
-  setInitialBound: (key: string, bounds?: DOMRect) => void;
+  hasSetLayout: boolean;
+  clearLayouts: () => void;
   setLayout: (layoutKey: string, layout: Layout) => void;
   setLayouts: (layouts: Layouts) => void;
 };

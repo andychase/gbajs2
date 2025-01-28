@@ -1,5 +1,6 @@
 import { useMediaQuery } from '@mui/material';
-import { useCallback, useRef } from 'react';
+import { useOrientation } from '@uidotdev/usehooks';
+import { useCallback, useLayoutEffect, useRef } from 'react';
 import { Rnd, type Props as RndProps } from 'react-rnd';
 import { styled, useTheme } from 'styled-components';
 
@@ -83,30 +84,36 @@ export const Screen = () => {
   const { setCanvas } = useEmulatorContext();
   const { areItemsDraggable } = useDragContext();
   const { areItemsResizable } = useResizeContext();
-  const { layouts, setLayout, initialBounds, setInitialBound } =
-    useLayoutContext();
+  const { layouts, setLayout, hasSetLayout } = useLayoutContext();
   const screenWrapperXStart = isLargerThanPhone ? NavigationMenuWidth + 10 : 0;
   const screenWrapperYStart = isLargerThanPhone && !isMobileLandscape ? 15 : 0;
   const rndRef = useRef<Rnd | null>();
+  const orientation = useOrientation();
 
   const refUpdateDefaultPosition = useCallback(
     (node: Rnd | null) => {
-      if (!layouts?.screen) {
+      if (!hasSetLayout) {
         node?.resizableElement?.current?.style?.removeProperty('width');
         node?.resizableElement?.current?.style?.removeProperty('height');
       }
 
-      if (!initialBounds?.screen && node) {
-        setInitialBound(
-          'screen',
-          node.resizableElement.current?.getBoundingClientRect()
-        );
-      }
+      if (!hasSetLayout && node)
+        setLayout('screen', {
+          initialBounds: node.resizableElement.current?.getBoundingClientRect()
+        });
 
       if (!rndRef.current) rndRef.current = node;
     },
-    [initialBounds?.screen, layouts?.screen, setInitialBound]
+    [hasSetLayout, setLayout]
   );
+
+  useLayoutEffect(() => {
+    if (!hasSetLayout && [0, 90, 270].includes(orientation.angle))
+      setLayout('screen', {
+        initialBounds:
+          rndRef.current?.resizableElement?.current?.getBoundingClientRect()
+      });
+  }, [hasSetLayout, isMobileLandscape, setLayout, orientation.angle]);
 
   const refSetCanvas = useCallback(
     (node: HTMLCanvasElement | null) => setCanvas(node),

@@ -22,9 +22,9 @@ describe('<VirtualControls />', () => {
 
     vi.spyOn(contextHooks, 'useLayoutContext').mockImplementation(() => ({
       ...original(),
-      initialBounds: {
-        ...original().initialBounds,
-        controlPanel: { left: 0, bottom: 0 } as DOMRect
+      layouts: {
+        ...original().layouts,
+        controlPanel: { initialBounds: { left: 0, bottom: 0 } as DOMRect }
       }
     }));
   });

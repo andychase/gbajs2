@@ -193,7 +193,10 @@ export const NavigationMenu = () => {
         position={layouts?.menuButton?.position ?? { x: 0, y: 0 }}
         disabled={!areItemsDraggable}
         onStop={(_, data) =>
-          setLayout('menuButton', { position: { x: 0, y: data.y } })
+          setLayout('menuButton', {
+            position: { x: 0, y: data.y },
+            standalone: true
+          })
         }
       >
         <HamburgerButton

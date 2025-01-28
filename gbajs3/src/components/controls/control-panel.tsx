@@ -81,8 +81,7 @@ export const ControlPanel = () => {
   const { isRunning } = useRunningContext();
   const { areItemsDraggable, setAreItemsDraggable } = useDragContext();
   const { areItemsResizable, setAreItemsResizable } = useResizeContext();
-  const { layouts, setLayout, initialBounds, setInitialBound } =
-    useLayoutContext();
+  const { layouts, setLayout, hasSetLayout } = useLayoutContext();
   const theme = useTheme();
   const isLargerThanPhone = useMediaQuery(theme.isLargerThanPhone);
   const isMobileLandscape = useMediaQuery(theme.isMobileLandscape);
@@ -105,16 +104,15 @@ export const ControlPanel = () => {
 
   const refSetLayout = useCallback(
     (node: Rnd | null) => {
-      if (!initialBounds?.controlPanel && node)
-        setInitialBound(
-          'controlPanel',
-          node?.resizableElement.current?.getBoundingClientRect()
-        );
+      if (!hasSetLayout && node)
+        setLayout('controlPanel', {
+          initialBounds: node.resizableElement.current?.getBoundingClientRect()
+        });
     },
-    [initialBounds?.controlPanel, setInitialBound]
+    [setLayout, hasSetLayout]
   );
 
-  const canvasBounds = initialBounds?.screen;
+  const canvasBounds = layouts?.screen?.initialBounds;
 
   if (!canvasBounds) return null;
 

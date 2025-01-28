@@ -32,9 +32,9 @@ describe('<ControlPanel />', () => {
 
     vi.spyOn(contextHooks, 'useLayoutContext').mockImplementation(() => ({
       ...original(),
-      initialBounds: {
-        ...original().initialBounds,
-        screen: { left: 0, bottom: 0 } as DOMRect
+      layouts: {
+        ...original().layouts,
+        screen: { initialBounds: { left: 0, bottom: 0 } as DOMRect }
       }
     }));
   });
@@ -95,7 +95,7 @@ describe('<ControlPanel />', () => {
   });
 
   it('sets initial bounds when rendered', async () => {
-    const setInitialBoundSpy = vi.fn();
+    const setLayoutSpy = vi.fn();
 
     const { useLayoutContext: originalLayout } = await vi.importActual<
       typeof contextHooks
@@ -103,20 +103,22 @@ describe('<ControlPanel />', () => {
 
     vi.spyOn(contextHooks, 'useLayoutContext').mockImplementation(() => ({
       ...originalLayout(),
-      setInitialBound: setInitialBoundSpy
+      setLayout: setLayoutSpy
     }));
 
     renderWithContext(<ControlPanel />);
 
-    expect(setInitialBoundSpy).toHaveBeenCalledWith('controlPanel', {
-      bottom: 0,
-      height: 0,
-      left: 0,
-      right: 0,
-      top: 0,
-      width: 0,
-      x: 0,
-      y: 0
+    expect(setLayoutSpy).toHaveBeenCalledWith('controlPanel', {
+      initialBounds: {
+        bottom: 0,
+        height: 0,
+        left: 0,
+        right: 0,
+        top: 0,
+        width: 0,
+        x: 0,
+        y: 0
+      }
     });
   });
 
@@ -133,10 +135,13 @@ describe('<ControlPanel />', () => {
     vi.spyOn(contextHooks, 'useLayoutContext').mockImplementation(() => ({
       ...originalLayout(),
       setLayout: setLayoutSpy,
-      initialBounds: { screen: new DOMRect() }
+      hasSetLayout: true,
+      layouts: { screen: { initialBounds: new DOMRect() } }
     }));
 
     renderWithContext(<ControlPanel />);
+
+    setLayoutSpy.mockClear(); // clear calls from initial render
 
     // simulate mouse events on wrapper
     fireEvent.mouseDown(
@@ -168,12 +173,11 @@ describe('<ControlPanel />', () => {
 
     // needs to be a consistent object
     const testLayout = {
-      clearLayoutsAndBounds: vi.fn(),
+      clearLayouts: vi.fn(),
       setLayout: setLayoutSpy,
       setLayouts: vi.fn(),
-      setInitialBound: vi.fn(),
-      layouts: {},
-      initialBounds: { screen: new DOMRect() }
+      hasSetLayout: true,
+      layouts: { screen: { initialBounds: new DOMRect() } }
     };
 
     vi.spyOn(contextHooks, 'useLayoutContext').mockImplementation(
@@ -181,6 +185,8 @@ describe('<ControlPanel />', () => {
     );
 
     renderWithContext(<ControlPanel />);
+
+    setLayoutSpy.mockClear(); // clear calls from initial render
 
     fireEvent.resize(screen.getByTestId('control-panel-wrapper'));
 

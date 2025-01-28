@@ -95,14 +95,14 @@ describe('<ControlsModal />', () => {
   });
 
   it('resets movable control layouts', async () => {
-    const clearLayoutsAndBoundsSpy = vi.fn();
+    const clearLayoutsSpy = vi.fn();
     const { useLayoutContext: original } = await vi.importActual<
       typeof contextHooks
     >('../../hooks/context.tsx');
 
     vi.spyOn(contextHooks, 'useLayoutContext').mockImplementation(() => ({
       ...original(),
-      clearLayoutsAndBounds: clearLayoutsAndBoundsSpy
+      clearLayouts: clearLayoutsSpy
     }));
 
     renderWithContext(<ControlsModal />);
@@ -115,7 +115,7 @@ describe('<ControlsModal />', () => {
 
     await userEvent.click(resetPositionsButton);
 
-    expect(clearLayoutsAndBoundsSpy).toHaveBeenCalledOnce();
+    expect(clearLayoutsSpy).toHaveBeenCalledOnce();
   });
 
   it('closes modal using the close button', async () => {

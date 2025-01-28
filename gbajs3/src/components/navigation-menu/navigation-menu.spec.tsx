@@ -470,7 +470,8 @@ describe('<NavigationMenu />', () => {
         position: {
           x: movements[1].clientX,
           y: movements[1].clientY
-        }
+        },
+        standalone: true
       });
     });
 
