@@ -156,21 +156,21 @@ export const mGBAEmulator = (mGBA: mGBAEmulatorTypeDef): GBAEmulator => {
     return Object.values(assembledCheats) as ParsedCheats[];
   };
 
-  const parsedCheatsToFile = (cheatsList: ParsedCheats[]) => {
-    const libretroCheats = cheatsList.map((cheat, idx) => {
-      return `cheat${idx}_desc = "${cheat.desc}"\ncheat${idx}_enable = ${cheat.enable}\ncheat${idx}_code = "${cheat.code}"\n`;
-    });
-    const header = `cheats = ${libretroCheats?.length}\n\n`;
+  const parsedCheatsToFile = (cheatsList: ParsedCheats[]): File | null => {
     const cheatsFileName = filepathToFileName(mGBA.gameName, '.cheats');
+    if (!cheatsFileName) return null;
 
-    if (libretroCheats?.length && cheatsFileName) {
-      const libretroCheatsFile = header + libretroCheats.join('\n');
-      const blob = new Blob([libretroCheatsFile], { type: 'text/plain' });
+    const content = cheatsList.length
+      ? `cheats = ${cheatsList.length}\n\n` +
+        cheatsList
+          .map(
+            ({ desc, enable, code }, idx) =>
+              `cheat${idx}_desc = "${desc}"\ncheat${idx}_enable = ${enable}\ncheat${idx}_code = "${code}"`
+          )
+          .join('\n')
+      : '';
 
-      return new File([blob], cheatsFileName);
-    }
-
-    return null;
+    return new File([new Blob([content])], cheatsFileName);
   };
 
   // emscriptens SDL_Keycode differs a bit from browser keycode/key mappings

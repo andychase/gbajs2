@@ -242,7 +242,7 @@ export const CheatsModal = () => {
                       label="Name"
                       error={!!errors?.cheats?.[index]?.desc}
                       size="small"
-                      autoComplete="Name"
+                      autoComplete="Cheat Name"
                       style={isLargerThanPhone ? { maxWidth: 100 } : undefined}
                       helperText={errors?.cheats?.[index]?.desc?.message}
                       {...register(`cheats.${index}.desc`, {
