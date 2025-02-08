@@ -70,7 +70,11 @@ Do not attempt to log into the server unless you are the server owner or an appr
 
 - Example Mobile
 
-<img src="./readme-graphics/gbajs3-mobile-portrait-v3.png" width="400px">
+<img src="./readme-graphics/gbajs3-mobile-portrait-v4.png" width="400px">
+
+<img src="./readme-graphics/gbajs3-mobile-landscape-v1.png" height="400px">
+
+All control positions can be modified if the default layouts do not suit your device!
 
 - Example Admin
 
