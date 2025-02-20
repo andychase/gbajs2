@@ -248,7 +248,6 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
           <button
             aria-label="Mute Volume"
             class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-dhaj44-MuiButtonBase-root-MuiIconButton-root"
-            id=":rb:"
             tabindex="0"
             type="button"
           >
@@ -370,7 +369,6 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
           <button
             aria-label="Max Volume"
             class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-dhaj44-MuiButtonBase-root-MuiIconButton-root"
-            id=":rc:"
             tabindex="0"
             type="button"
           >
@@ -408,7 +406,6 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
           <button
             aria-label="Regular Speed"
             class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-dhaj44-MuiButtonBase-root-MuiIconButton-root"
-            id=":rd:"
             tabindex="0"
             type="button"
           >
@@ -500,7 +497,6 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
           <button
             aria-label="Max Fast Forward"
             class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-dhaj44-MuiButtonBase-root-MuiIconButton-root"
-            id=":re:"
             tabindex="0"
             type="button"
           >
@@ -770,7 +766,6 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
           <button
             aria-label="Mute Volume"
             class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-dhaj44-MuiButtonBase-root-MuiIconButton-root"
-            id=":r6:"
             tabindex="0"
             type="button"
           >
@@ -892,7 +887,6 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
           <button
             aria-label="Max Volume"
             class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-dhaj44-MuiButtonBase-root-MuiIconButton-root"
-            id=":r7:"
             tabindex="0"
             type="button"
           >
@@ -930,7 +924,6 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
           <button
             aria-label="Regular Speed"
             class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-dhaj44-MuiButtonBase-root-MuiIconButton-root"
-            id=":r8:"
             tabindex="0"
             type="button"
           >
@@ -1022,7 +1015,6 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
           <button
             aria-label="Max Fast Forward"
             class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-dhaj44-MuiButtonBase-root-MuiIconButton-root"
-            id=":r9:"
             tabindex="0"
             type="button"
           >
