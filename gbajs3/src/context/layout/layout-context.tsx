@@ -3,7 +3,8 @@ import { createContext } from 'react';
 export type Layout = {
   position?: { x: number; y: number };
   size?: { width: string | number; height: string | number };
-  initialBounds?: DOMRect;
+  /** stored original initial bounds to maintain consistency when a layout is set for dependent children */
+  originalBounds?: DOMRect;
   /** indicates whether or not this layout is standalone, and considered in any relative calculations or counts */
   standalone?: boolean;
 };
@@ -14,7 +15,6 @@ export type Layouts = {
 
 export type LayoutContextProps = {
   layouts: Layouts;
-  hasSetLayout: boolean;
   clearLayouts: () => void;
   setLayout: (layoutKey: string, layout: Layout) => void;
   setLayouts: (layouts: Layouts) => void;

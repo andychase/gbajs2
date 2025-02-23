@@ -26,17 +26,16 @@ describe('<ControlPanel />', () => {
   ];
 
   beforeEach(async () => {
-    const { useLayoutContext: original } = await vi.importActual<
+    const { useInitialBoundsContext: original } = await vi.importActual<
       typeof contextHooks
     >('../../hooks/context.tsx');
 
-    vi.spyOn(contextHooks, 'useLayoutContext').mockImplementation(() => ({
-      ...original(),
-      layouts: {
-        ...original().layouts,
-        screen: { initialBounds: { left: 0, bottom: 0 } as DOMRect }
-      }
-    }));
+    vi.spyOn(contextHooks, 'useInitialBoundsContext').mockImplementation(
+      () => ({
+        ...original(),
+        initialBounds: { screen: { left: 0, bottom: 0 } as DOMRect }
+      })
+    );
   });
 
   it('renders panel controls', async () => {
@@ -95,30 +94,30 @@ describe('<ControlPanel />', () => {
   });
 
   it('sets initial bounds when rendered', async () => {
-    const setLayoutSpy = vi.fn();
+    const setInitialBoundSpy = vi.fn();
 
-    const { useLayoutContext: originalLayout } = await vi.importActual<
+    const { useInitialBoundsContext: originalBounds } = await vi.importActual<
       typeof contextHooks
     >('../../hooks/context.tsx');
 
-    vi.spyOn(contextHooks, 'useLayoutContext').mockImplementation(() => ({
-      ...originalLayout(),
-      setLayout: setLayoutSpy
-    }));
+    vi.spyOn(contextHooks, 'useInitialBoundsContext').mockImplementation(
+      () => ({
+        ...originalBounds(),
+        setInitialBound: setInitialBoundSpy
+      })
+    );
 
     renderWithContext(<ControlPanel />);
 
-    expect(setLayoutSpy).toHaveBeenCalledWith('controlPanel', {
-      initialBounds: {
-        bottom: 0,
-        height: 0,
-        left: 0,
-        right: 0,
-        top: 0,
-        width: 0,
-        x: 0,
-        y: 0
-      }
+    expect(setInitialBoundSpy).toHaveBeenCalledWith('controlPanel', {
+      bottom: 0,
+      height: 0,
+      left: 0,
+      right: 0,
+      top: 0,
+      width: 0,
+      x: 0,
+      y: 0
     });
   });
 
@@ -134,9 +133,7 @@ describe('<ControlPanel />', () => {
 
     vi.spyOn(contextHooks, 'useLayoutContext').mockImplementation(() => ({
       ...originalLayout(),
-      setLayout: setLayoutSpy,
-      hasSetLayout: true,
-      layouts: { screen: { initialBounds: new DOMRect() } }
+      setLayout: setLayoutSpy
     }));
 
     renderWithContext(<ControlPanel />);
@@ -149,9 +146,24 @@ describe('<ControlPanel />', () => {
       initialPos
     );
     fireEvent.mouseMove(document, movements[0]);
-    fireEvent.mouseUp(document, movements[1]);
 
     expect(setLayoutSpy).toHaveBeenCalledOnce();
+    expect(setLayoutSpy).toHaveBeenCalledWith('controlPanel', {
+      originalBounds: {
+        bottom: 0,
+        height: 0,
+        left: 0,
+        right: 0,
+        top: 0,
+        width: 0,
+        x: 0,
+        y: 0
+      }
+    });
+
+    fireEvent.mouseUp(document, movements[1]);
+
+    expect(setLayoutSpy).toHaveBeenCalledTimes(2);
     expect(setLayoutSpy).toHaveBeenCalledWith('controlPanel', {
       position: {
         x: movements[1].clientX,
@@ -176,8 +188,7 @@ describe('<ControlPanel />', () => {
       clearLayouts: vi.fn(),
       setLayout: setLayoutSpy,
       setLayouts: vi.fn(),
-      hasSetLayout: true,
-      layouts: { screen: { initialBounds: new DOMRect() } }
+      layouts: {}
     };
 
     vi.spyOn(contextHooks, 'useLayoutContext').mockImplementation(
@@ -193,9 +204,24 @@ describe('<ControlPanel />', () => {
     // simulate mouse events on a resize handle
     fireEvent.mouseDown(screen.getAllByTestId('gripper-handle')[0], initialPos);
     fireEvent.mouseMove(document, movements[0]);
-    fireEvent.mouseUp(document, movements[1]);
 
     expect(setLayoutSpy).toHaveBeenCalledOnce();
+    expect(setLayoutSpy).toHaveBeenCalledWith('controlPanel', {
+      originalBounds: {
+        bottom: 0,
+        height: 0,
+        left: 0,
+        right: 0,
+        top: 0,
+        width: 0,
+        x: 0,
+        y: 0
+      }
+    });
+
+    fireEvent.mouseUp(document, movements[1]);
+
+    expect(setLayoutSpy).toHaveBeenCalledTimes(2);
     expect(setLayoutSpy).toHaveBeenCalledWith('controlPanel', {
       position: {
         x: expect.anything(),

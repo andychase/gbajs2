@@ -1,6 +1,6 @@
 import { useMediaQuery } from '@mui/material';
 import { useLocalStorage } from '@uidotdev/usehooks';
-import { useCallback, useId, useState } from 'react';
+import { useCallback, useId, useRef, useState } from 'react';
 import { IconContext } from 'react-icons';
 import { AiOutlineFastForward, AiOutlineForward } from 'react-icons/ai';
 import {
@@ -22,6 +22,7 @@ import {
 import {
   useDragContext,
   useEmulatorContext,
+  useInitialBoundsContext,
   useLayoutContext,
   useResizeContext,
   useRunningContext
@@ -81,7 +82,8 @@ export const ControlPanel = () => {
   const { isRunning } = useRunningContext();
   const { areItemsDraggable, setAreItemsDraggable } = useDragContext();
   const { areItemsResizable, setAreItemsResizable } = useResizeContext();
-  const { layouts, setLayout, hasSetLayout } = useLayoutContext();
+  const { layouts, setLayout } = useLayoutContext();
+  const { initialBounds, setInitialBound } = useInitialBoundsContext();
   const theme = useTheme();
   const isLargerThanPhone = useMediaQuery(theme.isLargerThanPhone);
   const isMobileLandscape = useMediaQuery(theme.isMobileLandscape);
@@ -97,6 +99,7 @@ export const ControlPanel = () => {
     emulatorFFMultiplierLocalStorageKey,
     1
   );
+  const rndRef = useRef<Rnd | null>();
 
   // pause emulator when document is not visible,
   // resumes if applicable when document is visible
@@ -104,15 +107,18 @@ export const ControlPanel = () => {
 
   const refSetLayout = useCallback(
     (node: Rnd | null) => {
-      if (!hasSetLayout && node)
-        setLayout('controlPanel', {
-          initialBounds: node.resizableElement.current?.getBoundingClientRect()
-        });
+      if (!initialBounds?.controlPanel && node)
+        setInitialBound(
+          'controlPanel',
+          node.resizableElement.current?.getBoundingClientRect()
+        );
+
+      rndRef.current = node;
     },
-    [setLayout, hasSetLayout]
+    [initialBounds?.controlPanel, setInitialBound]
   );
 
-  const canvasBounds = layouts?.screen?.initialBounds;
+  const canvasBounds = layouts?.screen?.originalBounds ?? initialBounds?.screen;
 
   if (!canvasBounds) return null;
 
@@ -265,10 +271,24 @@ export const ControlPanel = () => {
         cancel=".noDrag"
         position={position}
         size={size}
+        onDragStart={() => {
+          if (!layouts?.controlPanel?.originalBounds)
+            setLayout('controlPanel', {
+              originalBounds:
+                rndRef.current?.resizableElement.current?.getBoundingClientRect()
+            });
+        }}
         onDragStop={(_, data) => {
           setLayout('controlPanel', { position: { x: data.x, y: data.y } });
         }}
-        onResizeStart={() => setIsResizing(true)}
+        onResizeStart={() => {
+          setIsResizing(true);
+          if (!layouts?.controlPanel?.originalBounds)
+            setLayout('controlPanel', {
+              originalBounds:
+                rndRef.current?.resizableElement.current?.getBoundingClientRect()
+            });
+        }}
         onResizeStop={(_1, _2, ref, _3, position) => {
           setLayout('controlPanel', {
             size: { width: ref.clientWidth, height: ref.clientHeight },

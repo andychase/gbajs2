@@ -19,10 +19,11 @@ import { OPad } from './o-pad.tsx';
 import { VirtualButton } from './virtual-button.tsx';
 import {
   useEmulatorContext,
-  useLayoutContext,
   useAuthContext,
   useModalContext,
-  useRunningContext
+  useRunningContext,
+  useInitialBoundsContext,
+  useLayoutContext
 } from '../../hooks/context.tsx';
 import { useAddCallbacks } from '../../hooks/emulator/use-add-callbacks.tsx';
 import { useQuickReload } from '../../hooks/emulator/use-quick-reload.tsx';
@@ -62,6 +63,7 @@ export const VirtualControls = () => {
   const { isAuthenticated } = useAuthContext();
   const { setModalContent, setIsModalOpen } = useModalContext();
   const { layouts } = useLayoutContext();
+  const { initialBounds } = useInitialBoundsContext();
   const virtualControlToastId = useId();
   const quickReload = useQuickReload();
   const { syncActionIfEnabled } = useAddCallbacks();
@@ -73,10 +75,11 @@ export const VirtualControls = () => {
     AreVirtualControlsEnabledProps | undefined
   >(virtualControlsLocalStorageKey);
 
-  const controlPanelBounds = layouts?.controlPanel?.initialBounds;
-  const canvasBounds = layouts?.screen?.initialBounds;
+  const controlPanelBounds =
+    layouts?.controlPanel?.originalBounds ?? initialBounds?.controlPanel;
+  const canvasBounds = layouts?.screen?.originalBounds ?? initialBounds?.screen;
 
-  if (!controlPanelBounds) return null;
+  if (!controlPanelBounds || !canvasBounds) return null;
 
   const shouldShowVirtualControl = (virtualControlEnabled?: boolean) => {
     return (

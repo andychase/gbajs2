@@ -16,17 +16,19 @@ import type { GBAEmulator } from '../../emulator/mgba/mgba-emulator.tsx';
 
 describe('<VirtualControls />', () => {
   beforeEach(async () => {
-    const { useLayoutContext: original } = await vi.importActual<
+    const { useInitialBoundsContext: original } = await vi.importActual<
       typeof contextHooks
     >('../../hooks/context.tsx');
 
-    vi.spyOn(contextHooks, 'useLayoutContext').mockImplementation(() => ({
-      ...original(),
-      layouts: {
-        ...original().layouts,
-        controlPanel: { initialBounds: { left: 0, bottom: 0 } as DOMRect }
-      }
-    }));
+    vi.spyOn(contextHooks, 'useInitialBoundsContext').mockImplementation(
+      () => ({
+        ...original(),
+        initialBounds: {
+          controlPanel: { left: 0, bottom: 0 } as DOMRect,
+          screen: { left: 0, bottom: 0 } as DOMRect
+        }
+      })
+    );
   });
 
   it('renders opad and default virtual controls on mobile', () => {

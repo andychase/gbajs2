@@ -5,6 +5,7 @@ import {
   useAuthContext,
   useDragContext,
   useEmulatorContext,
+  useInitialBoundsContext,
   useLayoutContext,
   useModalContext,
   useResizeContext,
@@ -15,6 +16,7 @@ import { DragContext } from '../context/emulator/contexts/drag-context.tsx';
 import { EmulatorContext } from '../context/emulator/contexts/emulator-context.tsx';
 import { ResizeContext } from '../context/emulator/contexts/resize-context.tsx';
 import { RunningContext } from '../context/emulator/contexts/running-context.tsx';
+import { InitialBoundsContext } from '../context/initial-bounds/initial-bounds-context.tsx';
 import { LayoutContext } from '../context/layout/layout-context.tsx';
 import { ModalContext } from '../context/modal/modal-context.tsx';
 
@@ -27,6 +29,7 @@ describe('useContext hooks', () => {
 
   const contextHooks = [
     [useAuthContext, AuthContext.displayName],
+    [useInitialBoundsContext, InitialBoundsContext.displayName],
     [useLayoutContext, LayoutContext.displayName],
     [useModalContext, ModalContext.displayName],
     [useEmulatorContext, EmulatorContext.displayName],

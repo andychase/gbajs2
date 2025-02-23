@@ -7,7 +7,11 @@ import { VirtualControlsForm } from './controls/virtual-controls-form.tsx';
 import { ModalBody } from './modal-body.tsx';
 import { ModalFooter } from './modal-footer.tsx';
 import { ModalHeader } from './modal-header.tsx';
-import { useLayoutContext, useModalContext } from '../../hooks/context.tsx';
+import {
+  useInitialBoundsContext,
+  useLayoutContext,
+  useModalContext
+} from '../../hooks/context.tsx';
 import {
   EmbeddedProductTour,
   type TourSteps
@@ -72,6 +76,7 @@ const ControlTabs = ({
   setIsSuccessfulSubmit
 }: ControlTabsProps) => {
   const { clearLayouts } = useLayoutContext();
+  const { clearInitialBounds } = useInitialBoundsContext();
   const [value, setValue] = useState(0);
 
   const tabIndexToFormId = (tabIndex: number) => {
@@ -95,6 +100,11 @@ const ControlTabs = ({
 
   const onAfterSubmit = () => setIsSuccessfulSubmit(true);
 
+  const clearLayoutsAndInitialBounds = () => {
+    clearInitialBounds();
+    clearLayouts();
+  };
+
   return (
     <>
       <TabsWithBorder
@@ -116,7 +126,7 @@ const ControlTabs = ({
         <Button
           id={resetPositionsButtonId}
           sx={{ marginTop: '10px' }}
-          onClick={clearLayouts}
+          onClick={clearLayoutsAndInitialBounds}
         >
           Reset All Positions
         </Button>

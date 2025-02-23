@@ -110,7 +110,7 @@ export const handlers = [
   ),
 
   http.get(`${testRomLocation}/good_rom.gba`, async () => {
-    await delay();
+    await delay(250);
 
     return new HttpResponse(`test external rom`, {
       headers: {
@@ -120,7 +120,7 @@ export const handlers = [
   }),
 
   http.get(`${testRomLocation}/bad_rom.gba`, async () => {
-    await delay();
+    await delay(250);
 
     return new HttpResponse(null, { status: 400 });
   })

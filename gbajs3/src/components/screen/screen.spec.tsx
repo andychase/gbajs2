@@ -41,30 +41,30 @@ describe('<Screen />', () => {
   });
 
   it('sets initial bounds when rendered', async () => {
-    const setLayoutSpy = vi.fn();
+    const setInitialBoundSpy = vi.fn();
 
-    const { useLayoutContext: originalLayout } = await vi.importActual<
+    const { useInitialBoundsContext: originalBounds } = await vi.importActual<
       typeof contextHooks
     >('../../hooks/context.tsx');
 
-    vi.spyOn(contextHooks, 'useLayoutContext').mockImplementation(() => ({
-      ...originalLayout(),
-      setLayout: setLayoutSpy
-    }));
+    vi.spyOn(contextHooks, 'useInitialBoundsContext').mockImplementation(
+      () => ({
+        ...originalBounds(),
+        setInitialBound: setInitialBoundSpy
+      })
+    );
 
     renderWithContext(<Screen />);
 
-    expect(setLayoutSpy).toHaveBeenCalledWith('screen', {
-      initialBounds: {
-        bottom: 0,
-        height: 0,
-        left: 0,
-        right: 0,
-        top: 0,
-        width: 0,
-        x: 0,
-        y: 0
-      }
+    expect(setInitialBoundSpy).toHaveBeenCalledWith('screen', {
+      bottom: 0,
+      height: 0,
+      left: 0,
+      right: 0,
+      top: 0,
+      width: 0,
+      x: 0,
+      y: 0
     });
   });
 
@@ -131,9 +131,7 @@ describe('<Screen />', () => {
 
     vi.spyOn(contextHooks, 'useLayoutContext').mockImplementation(() => ({
       ...originalLayout(),
-      setLayout: setLayoutSpy,
-      hasSetLayout: true,
-      layouts: { screen: { initialBounds: new DOMRect() } }
+      setLayout: setLayoutSpy
     }));
 
     renderWithContext(<Screen />);
@@ -141,9 +139,24 @@ describe('<Screen />', () => {
     // simulate mouse events on wrapper
     fireEvent.mouseDown(screen.getByTestId('screen-wrapper'), initialPos);
     fireEvent.mouseMove(document, movements[0]);
-    fireEvent.mouseUp(document, movements[1]);
 
     expect(setLayoutSpy).toHaveBeenCalledOnce();
+    expect(setLayoutSpy).toHaveBeenCalledWith('screen', {
+      originalBounds: {
+        bottom: 0,
+        height: 0,
+        left: 0,
+        right: 0,
+        top: 0,
+        width: 0,
+        x: 0,
+        y: 0
+      }
+    });
+
+    fireEvent.mouseUp(document, movements[1]);
+
+    expect(setLayoutSpy).toHaveBeenCalledTimes(2);
     expect(setLayoutSpy).toHaveBeenCalledWith('screen', {
       position: {
         x: movements[1].clientX,
@@ -166,9 +179,7 @@ describe('<Screen />', () => {
 
     vi.spyOn(contextHooks, 'useLayoutContext').mockImplementation(() => ({
       ...originalLayout(),
-      setLayout: setLayoutSpy,
-      hasSetLayout: true,
-      layouts: { screen: { initialBounds: new DOMRect() } }
+      setLayout: setLayoutSpy
     }));
 
     renderWithContext(<Screen />);
@@ -178,9 +189,24 @@ describe('<Screen />', () => {
     // simulate mouse events on a resize handle
     fireEvent.mouseDown(screen.getAllByTestId('gripper-handle')[0], initialPos);
     fireEvent.mouseMove(document, movements[0]);
-    fireEvent.mouseUp(document, movements[1]);
 
     expect(setLayoutSpy).toHaveBeenCalledOnce();
+    expect(setLayoutSpy).toHaveBeenCalledWith('screen', {
+      originalBounds: {
+        bottom: 0,
+        height: 0,
+        left: 0,
+        right: 0,
+        top: 0,
+        width: 0,
+        x: 0,
+        y: 0
+      }
+    });
+
+    fireEvent.mouseUp(document, movements[1]);
+
+    expect(setLayoutSpy).toHaveBeenCalledTimes(2);
     expect(setLayoutSpy).toHaveBeenCalledWith('screen', {
       position: {
         x: expect.anything(),

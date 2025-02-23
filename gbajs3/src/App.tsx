@@ -12,6 +12,7 @@ import { AppErrorBoundary } from './components/shared/error-boundary.tsx';
 import { ToasterWithDefaults } from './components/toast/toaster.tsx';
 import { AuthProvider } from './context/auth/auth-provider.tsx';
 import { EmulatorContextProvider } from './context/emulator/emulator-context-provider.tsx';
+import { InitialBoundsProvider } from './context/initial-bounds/initial-bounds-provider.tsx';
 import { LayoutProvider } from './context/layout/layout-provider.tsx';
 import { ModalProvider } from './context/modal/modal-provider.tsx';
 import { GbaDarkTheme } from './context/theme/theme.tsx';
@@ -24,16 +25,18 @@ export const App = () => {
         <ToasterWithDefaults />
         <AuthProvider>
           <EmulatorContextProvider>
-            <LayoutProvider>
-              <ModalProvider>
-                <PwaPrompt />
-                <NavigationMenu />
-                <Screen />
-                <ControlPanel />
-                <VirtualControls />
-                <ModalContainer />
-              </ModalProvider>
-            </LayoutProvider>
+            <InitialBoundsProvider>
+              <LayoutProvider>
+                <ModalProvider>
+                  <PwaPrompt />
+                  <NavigationMenu />
+                  <Screen />
+                  <ControlPanel />
+                  <VirtualControls />
+                  <ModalContainer />
+                </ModalProvider>
+              </LayoutProvider>
+            </InitialBoundsProvider>
           </EmulatorContextProvider>
         </AuthProvider>
       </AppErrorBoundary>
