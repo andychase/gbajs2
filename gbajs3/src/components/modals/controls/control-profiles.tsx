@@ -5,7 +5,10 @@ import { useState } from 'react';
 import { BiTrash, BiEdit, BiSave } from 'react-icons/bi';
 import { styled } from 'styled-components';
 
-import { useLayoutContext } from '../../../hooks/context.tsx';
+import {
+  useInitialBoundsContext,
+  useLayoutContext
+} from '../../../hooks/context.tsx';
 import { virtualControlProfilesLocalStorageKey } from '../../controls/consts.tsx';
 import { CenteredText, StyledBiPlus } from '../../shared/styled.tsx';
 
@@ -167,6 +170,7 @@ export const ControlProfiles = ({ id }: ControlProfilesProps) => {
     VirtualControlProfiles | undefined
   >(virtualControlProfilesLocalStorageKey);
   const { layouts, setLayouts } = useLayoutContext();
+  const { clearInitialBounds } = useInitialBoundsContext();
 
   const addProfile = () => {
     setVirtualControlProfiles((prevState) => [
@@ -178,6 +182,11 @@ export const ControlProfiles = ({ id }: ControlProfilesProps) => {
         active: true
       }
     ]);
+  };
+
+  const loadProfile = (layouts: Layouts) => {
+    setLayouts(layouts);
+    clearInitialBounds();
   };
 
   const updateProfile = (id: string, updatedName: string) => {
@@ -208,7 +217,7 @@ export const ControlProfiles = ({ id }: ControlProfilesProps) => {
             <StyledLi key={`${profile.name}_${idx}_action_list_item`}>
               <EditableProfileLoadButton
                 name={profile.name}
-                loadProfile={() => setLayouts(profile.layouts)}
+                loadProfile={() => loadProfile(profile.layouts)}
                 onSubmit={(name) => updateProfile(profile.id, name)}
               />
               <IconButton
