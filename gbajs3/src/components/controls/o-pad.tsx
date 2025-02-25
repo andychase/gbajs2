@@ -135,7 +135,7 @@ const RightArrow = styled(DirectionArrow)`
 export const OPad = ({ initialPosition }: OPadProps) => {
   const { emulator } = useEmulatorContext();
   const { areItemsDraggable } = useDragContext();
-  const { layouts, setLayout } = useLayoutContext();
+  const { getLayout, setLayout } = useLayoutContext();
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isControlled, setIsControlled] = useState(true);
   const containerDragRef = useRef<HTMLDivElement>(null);
@@ -255,7 +255,8 @@ export const OPad = ({ initialPosition }: OPadProps) => {
     unpressEmulatorArrow(event.pointerId);
   };
 
-  const dragPosition = layouts?.oPad?.position ?? { x: 0, y: 0 };
+  const layout = getLayout('oPad');
+  const dragPosition = layout?.position ?? { x: 0, y: 0 };
 
   const pointerEvents = !areItemsDraggable
     ? {

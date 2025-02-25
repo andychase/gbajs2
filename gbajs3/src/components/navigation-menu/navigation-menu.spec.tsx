@@ -476,18 +476,18 @@ describe('<NavigationMenu />', () => {
     });
 
     it('renders with existing layout', async () => {
-      const { useLayoutContext: originalLayout, useDragContext: originalDrag } =
-        await vi.importActual<typeof contextHooks>('../../hooks/context.tsx');
-
-      vi.spyOn(contextHooks, 'useDragContext').mockImplementation(() => ({
-        ...originalDrag(),
-        areItemsDraggable: true
-      }));
-
-      vi.spyOn(contextHooks, 'useLayoutContext').mockImplementation(() => ({
-        ...originalLayout(),
-        layouts: { menuButton: { position: { x: 0, y: 200 } } }
-      }));
+      localStorage.setItem(
+        'componentLayoutsV2',
+        `{
+          "menuButton": {
+            "portrait": {
+              "position": { "x": 0, "y": 200 },
+              "orientation": "UNKNOWN",
+              "isLargerThanPhone": false
+            } 
+          }
+        }`
+      );
 
       renderWithContext(<NavigationMenu />);
 

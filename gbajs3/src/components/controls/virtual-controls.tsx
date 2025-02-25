@@ -62,7 +62,7 @@ export const VirtualControls = () => {
   const { isRunning } = useRunningContext();
   const { isAuthenticated } = useAuthContext();
   const { setModalContent, setIsModalOpen } = useModalContext();
-  const { layouts } = useLayoutContext();
+  const { getLayout } = useLayoutContext();
   const { initialBounds } = useInitialBoundsContext();
   const virtualControlToastId = useId();
   const quickReload = useQuickReload();
@@ -75,9 +75,12 @@ export const VirtualControls = () => {
     AreVirtualControlsEnabledProps | undefined
   >(virtualControlsLocalStorageKey);
 
+  const screenLayout = getLayout('screen');
+  const controlPanelLayout = getLayout('controlPanel');
+
   const controlPanelBounds =
-    layouts?.controlPanel?.originalBounds ?? initialBounds?.controlPanel;
-  const canvasBounds = layouts?.screen?.originalBounds ?? initialBounds?.screen;
+    controlPanelLayout?.originalBounds ?? initialBounds?.controlPanel;
+  const canvasBounds = screenLayout?.originalBounds ?? initialBounds?.screen;
 
   if (!controlPanelBounds || !canvasBounds) return null;
 

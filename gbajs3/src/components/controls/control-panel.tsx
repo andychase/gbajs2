@@ -82,7 +82,7 @@ export const ControlPanel = () => {
   const { isRunning } = useRunningContext();
   const { areItemsDraggable, setAreItemsDraggable } = useDragContext();
   const { areItemsResizable, setAreItemsResizable } = useResizeContext();
-  const { layouts, setLayout } = useLayoutContext();
+  const { setLayout, getLayout } = useLayoutContext();
   const { initialBounds, setInitialBound } = useInitialBoundsContext();
   const theme = useTheme();
   const isLargerThanPhone = useMediaQuery(theme.isLargerThanPhone);
@@ -118,12 +118,15 @@ export const ControlPanel = () => {
     [initialBounds?.controlPanel, setInitialBound]
   );
 
-  const canvasBounds = layouts?.screen?.originalBounds ?? initialBounds?.screen;
+  const screenLayout = getLayout('screen');
+  const controlPanelLayout = getLayout('controlPanel');
+
+  const canvasBounds = screenLayout?.originalBounds ?? initialBounds?.screen;
 
   if (!canvasBounds) return null;
 
   const dragWrapperPadding = isLargerThanPhone ? 5 : 0;
-  const isControlled = !!layouts?.controlPanel?.size || isResizing;
+  const isControlled = !!controlPanelLayout?.size || isResizing;
 
   const togglePlay = () => {
     if (!isRunning) return;
@@ -241,8 +244,8 @@ export const ControlPanel = () => {
         height: 'auto'
       };
 
-  const position = layouts?.controlPanel?.position ?? defaultPosition;
-  const size = layouts?.controlPanel?.size ?? defaultSize;
+  const position = controlPanelLayout?.position ?? defaultPosition;
+  const size = controlPanelLayout?.size ?? defaultSize;
 
   const defaultSliderEvents = {
     onFocus: emulator?.disableKeyboardInput,
@@ -272,7 +275,7 @@ export const ControlPanel = () => {
         position={position}
         size={size}
         onDragStart={() => {
-          if (!layouts?.controlPanel?.originalBounds)
+          if (!controlPanelLayout?.originalBounds)
             setLayout('controlPanel', {
               originalBounds:
                 rndRef.current?.resizableElement.current?.getBoundingClientRect()
@@ -283,7 +286,7 @@ export const ControlPanel = () => {
         }}
         onResizeStart={() => {
           setIsResizing(true);
-          if (!layouts?.controlPanel?.originalBounds)
+          if (!controlPanelLayout?.originalBounds)
             setLayout('controlPanel', {
               originalBounds:
                 rndRef.current?.resizableElement.current?.getBoundingClientRect()

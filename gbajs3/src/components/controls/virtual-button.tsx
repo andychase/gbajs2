@@ -102,7 +102,7 @@ export const VirtualButton = ({
 }: VirtualButtonProps) => {
   const { emulator } = useEmulatorContext();
   const { areItemsDraggable } = useDragContext();
-  const { layouts, setLayout } = useLayoutContext();
+  const { getLayout, setLayout } = useLayoutContext();
   const dragRef = useRef<HTMLButtonElement | null>(null);
 
   if (!enabled) return null;
@@ -141,7 +141,8 @@ export const VirtualButton = ({
       }
     : undefined;
 
-  const position = layouts?.[inputName]?.position ?? { x: 0, y: 0 };
+  const layout = getLayout(inputName);
+  const position = layout?.position ?? { x: 0, y: 0 };
 
   return (
     <Draggable

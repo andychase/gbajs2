@@ -84,15 +84,17 @@ export const Screen = () => {
   const { setCanvas } = useEmulatorContext();
   const { areItemsDraggable } = useDragContext();
   const { areItemsResizable } = useResizeContext();
-  const { layouts, setLayout } = useLayoutContext();
+  const { getLayout, setLayout } = useLayoutContext();
   const { initialBounds, setInitialBound } = useInitialBoundsContext();
   const screenWrapperXStart = isLargerThanPhone ? NavigationMenuWidth + 10 : 0;
   const screenWrapperYStart = isLargerThanPhone && !isMobileLandscape ? 15 : 0;
   const rndRef = useRef<Rnd | null>();
 
+  const screenLayout = getLayout('screen');
+
   const refUpdateDefaultPosition = useCallback(
     (node: Rnd | null) => {
-      if (!layouts.screen) {
+      if (!screenLayout?.size) {
         node?.resizableElement?.current?.style?.removeProperty('width');
         node?.resizableElement?.current?.style?.removeProperty('height');
       }
@@ -105,7 +107,7 @@ export const Screen = () => {
 
       rndRef.current = node;
     },
-    [initialBounds?.screen, setInitialBound, layouts.screen]
+    [initialBounds?.screen, setInitialBound, screenLayout?.size]
   );
 
   const refSetCanvas = useCallback(
@@ -118,7 +120,7 @@ export const Screen = () => {
   const width = currentDimensions?.width ?? 0;
   const height = currentDimensions?.height ?? 0;
   const position =
-    layouts?.screen?.position ??
+    screenLayout?.position ??
     (isMobileLandscape
       ? {
           x: Math.floor(document.documentElement.clientWidth / 2 - width / 2),
@@ -128,7 +130,7 @@ export const Screen = () => {
           x: screenWrapperXStart,
           y: screenWrapperYStart
         });
-  const size = layouts?.screen?.size ?? defaultSize;
+  const size = screenLayout?.size ?? defaultSize;
 
   return (
     <ScreenWrapper
@@ -151,7 +153,7 @@ export const Screen = () => {
       position={position}
       size={size}
       onDragStart={() => {
-        if (!layouts?.screen?.originalBounds)
+        if (!screenLayout?.originalBounds)
           setLayout('screen', {
             originalBounds:
               rndRef.current?.resizableElement.current?.getBoundingClientRect()
@@ -161,7 +163,7 @@ export const Screen = () => {
         setLayout('screen', { position: { x: data.x, y: data.y } });
       }}
       onResizeStart={() => {
-        if (!layouts?.screen?.originalBounds)
+        if (!screenLayout?.originalBounds)
           setLayout('screen', {
             originalBounds:
               rndRef.current?.resizableElement.current?.getBoundingClientRect()

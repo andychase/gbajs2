@@ -188,7 +188,8 @@ describe('<ControlPanel />', () => {
       clearLayouts: vi.fn(),
       setLayout: setLayoutSpy,
       setLayouts: vi.fn(),
-      layouts: {}
+      layouts: {},
+      getLayout: () => undefined
     };
 
     vi.spyOn(contextHooks, 'useLayoutContext').mockImplementation(

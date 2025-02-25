@@ -172,7 +172,8 @@ export const NavigationMenu = () => {
   const { isRunning } = useRunningContext();
   const { execute: executeLogout } = useLogout();
   const { areItemsDraggable } = useDragContext();
-  const { layouts, setLayout } = useLayoutContext();
+  const { getLayout, setLayout } = useLayoutContext();
+  const menuButtonLayout = getLayout('menuButton');
   const theme = useTheme();
   const isLargerThanPhone = useMediaQuery(theme.isLargerThanPhone);
   const isMobileLandscape = useMediaQuery(theme.isMobileLandscape);
@@ -190,7 +191,7 @@ export const NavigationMenu = () => {
         nodeRef={menuButtonRef}
         bounds="parent"
         axis="y"
-        position={layouts?.menuButton?.position ?? { x: 0, y: 0 }}
+        position={menuButtonLayout?.position ?? { x: 0, y: 0 }}
         disabled={!areItemsDraggable}
         onStop={(_, data) =>
           setLayout('menuButton', {
