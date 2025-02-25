@@ -98,6 +98,9 @@ const LoadProfileButton = styled.button`
   text-align: left;
   font-size: 16px;
   height: 32px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 
   &:hover {
     color: ${({ theme }) => theme.darkGrayBlue};
@@ -108,6 +111,7 @@ const LoadProfileButton = styled.button`
 const FlexContainer = styled.div`
   display: flex;
   gap: 10px;
+  min-width: 0;
 `;
 
 const StatefulIconButton = ({
