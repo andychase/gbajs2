@@ -59,8 +59,14 @@ export const MutedMarkSlider = styled(Slider)`
 
 export const PanelControlButton = styled(ButtonBase).attrs(({ className }) => ({
   className
-}))<ControlledProps>`
+}))<ControlledProps & { $gridArea?: string }>`
   ${InteractivePanelControlStyle}
+
+  ${({ $gridArea }) =>
+    $gridArea &&
+    `
+  grid-area: ${$gridArea};
+`}
 
   border: none;
   flex-grow: 1;

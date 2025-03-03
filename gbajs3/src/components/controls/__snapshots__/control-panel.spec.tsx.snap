@@ -12,11 +12,11 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
   display: contents;
 }
 
-.c4 {
+.c8 {
   display: contents;
 }
 
-.c5 {
+.c9 {
   cursor: pointer;
   background-color: #a9a9a9;
   border-radius: 0.25rem;
@@ -33,7 +33,7 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
   max-height: 40px;
 }
 
-.c7 {
+.c11 {
   cursor: pointer;
   background-color: #a9a9a9;
   border-radius: 0.25rem;
@@ -50,11 +50,11 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
   max-height: 40px;
 }
 
-.c6 {
+.c10 {
   flex-grow: 1;
 }
 
-.c6 >.MuiSlider-markActive {
+.c10 >.MuiSlider-markActive {
   opacity: 1;
   background-color: currentColor;
 }
@@ -72,6 +72,7 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
   justify-content: center;
   color: #000;
   width: 100%;
+  grid-area: play;
   border: none;
   flex-grow: 1;
   margin: 0;
@@ -86,6 +87,118 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
   color: #1c76fd;
 }
 
+.c4 {
+  cursor: pointer;
+  background-color: #a9a9a9;
+  border-radius: 0.25rem;
+  min-width: 40px;
+  min-height: 40px;
+  width: fit-content;
+  height: fit-content;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #000;
+  width: 100%;
+  grid-area: quit;
+  border: none;
+  flex-grow: 1;
+  margin: 0;
+  padding: 0;
+}
+
+.c4:focus {
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.c4:active {
+  color: #1c76fd;
+}
+
+.c5 {
+  cursor: pointer;
+  background-color: #a9a9a9;
+  border-radius: 0.25rem;
+  min-width: 40px;
+  min-height: 40px;
+  width: fit-content;
+  height: fit-content;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #000;
+  width: 100%;
+  grid-area: drag;
+  border: none;
+  flex-grow: 1;
+  margin: 0;
+  padding: 0;
+}
+
+.c5:focus {
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.c5:active {
+  color: #1c76fd;
+}
+
+.c6 {
+  cursor: pointer;
+  background-color: #a9a9a9;
+  border-radius: 0.25rem;
+  min-width: 40px;
+  min-height: 40px;
+  width: fit-content;
+  height: fit-content;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #000;
+  width: 100%;
+  grid-area: resize;
+  border: none;
+  flex-grow: 1;
+  margin: 0;
+  padding: 0;
+}
+
+.c6:focus {
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.c6:active {
+  color: #1c76fd;
+}
+
+.c7 {
+  cursor: pointer;
+  background-color: #a9a9a9;
+  border-radius: 0.25rem;
+  min-width: 40px;
+  min-height: 40px;
+  width: fit-content;
+  height: fit-content;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #000;
+  width: 100%;
+  grid-area: rewind;
+  border: none;
+  flex-grow: 1;
+  margin: 0;
+  padding: 0;
+}
+
+.c7:focus {
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.c7:active {
+  color: #1c76fd;
+}
+
 .c0 {
   background-color: #4f555a;
   list-style: none;
@@ -93,10 +206,10 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
   margin: 0;
   max-width: 100%;
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-columns: repeat(10, 1fr);
   grid-template-rows: 1fr 1fr;
   gap: 10px 10px;
-  grid-template-areas: '. . . .' 'volume volume fastForward fastForward';
+  grid-template-areas: 'play play quit quit drag drag resize resize rewind rewind' 'volume volume volume volume volume fastForward fastForward fastForward fastForward fastForward';
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
@@ -105,13 +218,13 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
 }
 
 @media only screen and (min-width: 600px) {
-  .c5 {
+  .c9 {
     width: auto;
   }
 }
 
 @media only screen and (min-width: 600px) {
-  .c7 {
+  .c11 {
     width: auto;
   }
 }
@@ -124,6 +237,58 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
 
 @media only screen and (max-height: 450px) and (max-width: 1000px) and (orientation: landscape) {
   .c3 {
+    flex-shrink: 1;
+    min-width: unset;
+  }
+}
+
+@media only screen and (min-width: 600px) {
+  .c4 {
+    width: auto;
+  }
+}
+
+@media only screen and (max-height: 450px) and (max-width: 1000px) and (orientation: landscape) {
+  .c4 {
+    flex-shrink: 1;
+    min-width: unset;
+  }
+}
+
+@media only screen and (min-width: 600px) {
+  .c5 {
+    width: auto;
+  }
+}
+
+@media only screen and (max-height: 450px) and (max-width: 1000px) and (orientation: landscape) {
+  .c5 {
+    flex-shrink: 1;
+    min-width: unset;
+  }
+}
+
+@media only screen and (min-width: 600px) {
+  .c6 {
+    width: auto;
+  }
+}
+
+@media only screen and (max-height: 450px) and (max-width: 1000px) and (orientation: landscape) {
+  .c6 {
+    flex-shrink: 1;
+    min-width: unset;
+  }
+}
+
+@media only screen and (min-width: 600px) {
+  .c7 {
+    width: auto;
+  }
+}
+
+@media only screen and (max-height: 450px) and (max-width: 1000px) and (orientation: landscape) {
+  .c7 {
     flex-shrink: 1;
     min-width: unset;
   }
@@ -166,7 +331,7 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
     >
       <button
         aria-label="Quit Game"
-        class="c2 c3"
+        class="c2 c4"
         id=":ra:--quit-game"
       >
         <svg
@@ -189,7 +354,7 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
     >
       <button
         aria-label="Drag Items"
-        class="c2 c3 noDrag"
+        class="c2 c5 noDrag"
         id=":ra:--drag"
       >
         <svg
@@ -212,7 +377,7 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
     >
       <button
         aria-label="Resize Items"
-        class="c2 c3 noDrag"
+        class="c2 c6 noDrag"
         id=":ra:--resize"
       >
         <svg
@@ -238,11 +403,35 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
     <li
       class="c1"
     >
+      <button
+        aria-label="Rewind Emulator"
+        class="c2 c7"
+        id=":ra:--rewind"
+      >
+        <svg
+          fill="currentColor"
+          height="2em"
+          stroke="currentColor"
+          stroke-width="0"
+          style="max-height: 100%;"
+          viewBox="0 0 1024 1024"
+          width="2em"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M485.6 249.9L198.2 498c-8.3 7.1-8.3 20.8 0 27.9l287.4 248.2c10.7 9.2 26.4.9 26.4-14V263.8c0-14.8-15.7-23.2-26.4-13.9zm320 0L518.2 498a18.6 18.6 0 0 0-6.2 14c0 5.2 2.1 10.4 6.2 14l287.4 248.2c10.7 9.2 26.4.9 26.4-14V263.8c0-14.8-15.7-23.2-26.4-13.9z"
+          />
+        </svg>
+      </button>
+    </li>
+    <li
+      class="c1"
+    >
       <span
-        class="c4"
+        class="c8"
       >
         <div
-          class="c5"
+          class="c9"
           id=":ra:--volume-slider"
         >
           <button
@@ -267,7 +456,7 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
             </svg>
           </button>
           <span
-            class="MuiSlider-root MuiSlider-colorPrimary MuiSlider-sizeMedium c6 css-1uesrtc-MuiSlider-root"
+            class="MuiSlider-root MuiSlider-colorPrimary MuiSlider-sizeMedium c10 css-1uesrtc-MuiSlider-root"
           >
             <span
               class="MuiSlider-rail css-r64h58-MuiSlider-rail"
@@ -397,10 +586,10 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
       class="c1"
     >
       <span
-        class="c4"
+        class="c8"
       >
         <div
-          class="c7"
+          class="c11"
           id=":ra:--fast-forward"
         >
           <button
@@ -425,7 +614,7 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
             </svg>
           </button>
           <span
-            class="MuiSlider-root MuiSlider-colorPrimary MuiSlider-sizeMedium c6 css-1uesrtc-MuiSlider-root"
+            class="MuiSlider-root MuiSlider-colorPrimary MuiSlider-sizeMedium c10 css-1uesrtc-MuiSlider-root"
           >
             <span
               class="MuiSlider-rail css-r64h58-MuiSlider-rail"
@@ -535,11 +724,11 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
   display: contents;
 }
 
-.c4 {
+.c8 {
   display: contents;
 }
 
-.c5 {
+.c9 {
   cursor: pointer;
   background-color: #a9a9a9;
   border-radius: 0.25rem;
@@ -556,7 +745,7 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
   max-height: 40px;
 }
 
-.c7 {
+.c11 {
   cursor: pointer;
   background-color: #a9a9a9;
   border-radius: 0.25rem;
@@ -573,11 +762,11 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
   max-height: 40px;
 }
 
-.c6 {
+.c10 {
   flex-grow: 1;
 }
 
-.c6 >.MuiSlider-markActive {
+.c10 >.MuiSlider-markActive {
   opacity: 1;
   background-color: currentColor;
 }
@@ -595,6 +784,7 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
   justify-content: center;
   color: #000;
   width: 100%;
+  grid-area: play;
   border: none;
   flex-grow: 1;
   margin: 0;
@@ -609,6 +799,118 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
   color: #1c76fd;
 }
 
+.c4 {
+  cursor: pointer;
+  background-color: #a9a9a9;
+  border-radius: 0.25rem;
+  min-width: 40px;
+  min-height: 40px;
+  width: fit-content;
+  height: fit-content;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #000;
+  width: 100%;
+  grid-area: quit;
+  border: none;
+  flex-grow: 1;
+  margin: 0;
+  padding: 0;
+}
+
+.c4:focus {
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.c4:active {
+  color: #1c76fd;
+}
+
+.c5 {
+  cursor: pointer;
+  background-color: #a9a9a9;
+  border-radius: 0.25rem;
+  min-width: 40px;
+  min-height: 40px;
+  width: fit-content;
+  height: fit-content;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #000;
+  width: 100%;
+  grid-area: drag;
+  border: none;
+  flex-grow: 1;
+  margin: 0;
+  padding: 0;
+}
+
+.c5:focus {
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.c5:active {
+  color: #1c76fd;
+}
+
+.c6 {
+  cursor: pointer;
+  background-color: #a9a9a9;
+  border-radius: 0.25rem;
+  min-width: 40px;
+  min-height: 40px;
+  width: fit-content;
+  height: fit-content;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #000;
+  width: 100%;
+  grid-area: resize;
+  border: none;
+  flex-grow: 1;
+  margin: 0;
+  padding: 0;
+}
+
+.c6:focus {
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.c6:active {
+  color: #1c76fd;
+}
+
+.c7 {
+  cursor: pointer;
+  background-color: #a9a9a9;
+  border-radius: 0.25rem;
+  min-width: 40px;
+  min-height: 40px;
+  width: fit-content;
+  height: fit-content;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #000;
+  width: 100%;
+  grid-area: rewind;
+  border: none;
+  flex-grow: 1;
+  margin: 0;
+  padding: 0;
+}
+
+.c7:focus {
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.c7:active {
+  color: #1c76fd;
+}
+
 .c0 {
   background-color: #4f555a;
   list-style: none;
@@ -616,20 +918,20 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
   margin: 0;
   max-width: 100%;
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-columns: repeat(10, 1fr);
   grid-template-rows: 1fr 1fr;
   gap: 10px 10px;
-  grid-template-areas: '. . . .' 'volume volume fastForward fastForward';
+  grid-template-areas: 'play play quit quit drag drag resize resize rewind rewind' 'volume volume volume volume volume fastForward fastForward fastForward fastForward fastForward';
 }
 
 @media only screen and (min-width: 600px) {
-  .c5 {
+  .c9 {
     width: auto;
   }
 }
 
 @media only screen and (min-width: 600px) {
-  .c7 {
+  .c11 {
     width: auto;
   }
 }
@@ -642,6 +944,58 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
 
 @media only screen and (max-height: 450px) and (max-width: 1000px) and (orientation: landscape) {
   .c3 {
+    flex-shrink: 1;
+    min-width: unset;
+  }
+}
+
+@media only screen and (min-width: 600px) {
+  .c4 {
+    width: auto;
+  }
+}
+
+@media only screen and (max-height: 450px) and (max-width: 1000px) and (orientation: landscape) {
+  .c4 {
+    flex-shrink: 1;
+    min-width: unset;
+  }
+}
+
+@media only screen and (min-width: 600px) {
+  .c5 {
+    width: auto;
+  }
+}
+
+@media only screen and (max-height: 450px) and (max-width: 1000px) and (orientation: landscape) {
+  .c5 {
+    flex-shrink: 1;
+    min-width: unset;
+  }
+}
+
+@media only screen and (min-width: 600px) {
+  .c6 {
+    width: auto;
+  }
+}
+
+@media only screen and (max-height: 450px) and (max-width: 1000px) and (orientation: landscape) {
+  .c6 {
+    flex-shrink: 1;
+    min-width: unset;
+  }
+}
+
+@media only screen and (min-width: 600px) {
+  .c7 {
+    width: auto;
+  }
+}
+
+@media only screen and (max-height: 450px) and (max-width: 1000px) and (orientation: landscape) {
+  .c7 {
     flex-shrink: 1;
     min-width: unset;
   }
@@ -684,7 +1038,7 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
     >
       <button
         aria-label="Quit Game"
-        class="c2 c3"
+        class="c2 c4"
         id=":r5:--quit-game"
       >
         <svg
@@ -707,7 +1061,7 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
     >
       <button
         aria-label="Drag Items"
-        class="c2 c3 noDrag"
+        class="c2 c5 noDrag"
         id=":r5:--drag"
       >
         <svg
@@ -730,7 +1084,7 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
     >
       <button
         aria-label="Resize Items"
-        class="c2 c3 noDrag"
+        class="c2 c6 noDrag"
         id=":r5:--resize"
       >
         <svg
@@ -756,11 +1110,35 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
     <li
       class="c1"
     >
+      <button
+        aria-label="Rewind Emulator"
+        class="c2 c7"
+        id=":r5:--rewind"
+      >
+        <svg
+          fill="currentColor"
+          height="2em"
+          stroke="currentColor"
+          stroke-width="0"
+          style="max-height: 100%;"
+          viewBox="0 0 1024 1024"
+          width="2em"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M485.6 249.9L198.2 498c-8.3 7.1-8.3 20.8 0 27.9l287.4 248.2c10.7 9.2 26.4.9 26.4-14V263.8c0-14.8-15.7-23.2-26.4-13.9zm320 0L518.2 498a18.6 18.6 0 0 0-6.2 14c0 5.2 2.1 10.4 6.2 14l287.4 248.2c10.7 9.2 26.4.9 26.4-14V263.8c0-14.8-15.7-23.2-26.4-13.9z"
+          />
+        </svg>
+      </button>
+    </li>
+    <li
+      class="c1"
+    >
       <span
-        class="c4"
+        class="c8"
       >
         <div
-          class="c5"
+          class="c9"
           id=":r5:--volume-slider"
         >
           <button
@@ -785,7 +1163,7 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
             </svg>
           </button>
           <span
-            class="MuiSlider-root MuiSlider-colorPrimary MuiSlider-sizeMedium c6 css-1uesrtc-MuiSlider-root"
+            class="MuiSlider-root MuiSlider-colorPrimary MuiSlider-sizeMedium c10 css-1uesrtc-MuiSlider-root"
           >
             <span
               class="MuiSlider-rail css-r64h58-MuiSlider-rail"
@@ -915,10 +1293,10 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
       class="c1"
     >
       <span
-        class="c4"
+        class="c8"
       >
         <div
-          class="c7"
+          class="c11"
           id=":r5:--fast-forward"
         >
           <button
@@ -943,7 +1321,7 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
             </svg>
           </button>
           <span
-            class="MuiSlider-root MuiSlider-colorPrimary MuiSlider-sizeMedium c6 css-1uesrtc-MuiSlider-root"
+            class="MuiSlider-root MuiSlider-colorPrimary MuiSlider-sizeMedium c10 css-1uesrtc-MuiSlider-root"
           >
             <span
               class="MuiSlider-rail css-r64h58-MuiSlider-rail"

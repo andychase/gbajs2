@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
+    "build:with-coi-serviceworker": "vite build --mode with-coi-serviceworker",
     "lint": "eslint src test --report-unused-disable-directives --max-warnings 0",
     "lint:fix": "eslint src test --report-unused-disable-directives --max-warnings 0 --fix",
     "preview": "vite preview",
@@ -18,7 +19,7 @@
     "@emotion/styled": "^11.13.5",
     "@mui/material": "^6.0.2",
     "@mui/x-tree-view": "^7.0.0",
-    "@thenick775/mgba-wasm": "^1.1.0",
+    "@thenick775/mgba-wasm": "^2.0.0-beta.1",
     "@uidotdev/usehooks": "^2.4.1",
     "jwt-decode": "^4.0.0",
     "nanoid": "^5.0.7",
@@ -50,6 +51,7 @@
     "@vitejs/plugin-react": "^4.0.1",
     "@vitest/coverage-v8": "^3.0.2",
     "blob-polyfill": "^9.0.20240710",
+    "coi-serviceworker": "^0.1.7",
     "eslint": "^9.15.0",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-jest-dom": "^5.1.0",
@@ -66,7 +68,9 @@
     "typescript": "^5.1.3",
     "typescript-eslint": "^8.15.0",
     "vite": "^6.0.1",
+    "vite-plugin-html": "^3.2.2",
     "vite-plugin-pwa": "^0.21.0",
+    "vite-plugin-static-copy": "^2.3.0",
     "vitest": "^3.0.2"
   },
   "overrides": {

@@ -65,6 +65,7 @@ export type GBAEmulator = {
   uploadPatch: (file: File, callback?: () => void) => void;
   uploadRom: (file: File, callback?: () => void) => void;
   uploadSaveOrSaveState: (file: File, callback?: () => void) => void;
+  toggleRewind: (enabled: boolean) => void;
 };
 
 export const KEY_LOCATION_STANDARD = 0;
@@ -272,6 +273,7 @@ export const mGBAEmulator = (mGBA: mGBAEmulatorTypeDef): GBAEmulator => {
       ),
     filePaths: mGBA.filePaths,
     fsSync: mGBA.FSSync,
+    toggleRewind: mGBA.toggleRewind,
     listAllFiles,
     parseCheatsString,
     parsedCheatsToFile

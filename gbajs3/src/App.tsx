@@ -18,6 +18,12 @@ import { ModalProvider } from './context/modal/modal-provider.tsx';
 import { GbaDarkTheme } from './context/theme/theme.tsx';
 
 export const App = () => {
+  if (crossOriginIsolated) {
+    console.log(`crossOriginIsolated`);
+  } else {
+    console.log(`not crossOriginIsolated`);
+  }
+
   return (
     <ThemeProvider theme={GbaDarkTheme}>
       <AppErrorBoundary>

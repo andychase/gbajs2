@@ -23,5 +23,6 @@ jobs:
           checkout-sparse-checkout-cone-mode: false
           install_command: cd ./gbajs3 && npm ci
           path: ./gbajs3/dist
+          build_command: npm run build:with-coi-serviceworker
         env:
           VITE_GBA_RELEASE_VERSION: ${{ env.RELEASE_VERSION }}

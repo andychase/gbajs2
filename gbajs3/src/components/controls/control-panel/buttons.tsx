@@ -12,7 +12,10 @@ type PanelButtonProps = {
   className?: string;
   controlled: boolean;
   id: string;
+  $gridArea?: string;
   onClick?: () => void;
+  onPointerDown?: () => void;
+  onPointerUp?: () => void;
 };
 
 type SliderButtonProps = {
@@ -25,7 +28,10 @@ export const PanelButton = ({
   className,
   controlled,
   id,
-  onClick
+  $gridArea,
+  onClick,
+  onPointerDown,
+  onPointerUp
 }: PanelButtonProps) => (
   <PanelControlWrapper>
     <PanelControlButton
@@ -34,6 +40,9 @@ export const PanelButton = ({
       className={className}
       onClick={onClick}
       $controlled={controlled}
+      $gridArea={$gridArea}
+      onPointerDown={onPointerDown}
+      onPointerUp={onPointerUp}
     >
       {children}
     </PanelControlButton>

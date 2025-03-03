@@ -7,6 +7,8 @@ type ButtonBaseProps = {
   disabled?: boolean;
   id?: string;
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
+  onPointerDown?: () => void;
+  onPointerUp?: () => void;
 };
 
 const StyledButton = styled.button`

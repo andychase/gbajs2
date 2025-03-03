@@ -2,7 +2,11 @@ import { useMediaQuery } from '@mui/material';
 import { useLocalStorage } from '@uidotdev/usehooks';
 import { useCallback, useId, useRef, useState } from 'react';
 import { IconContext } from 'react-icons';
-import { AiOutlineFastForward, AiOutlineForward } from 'react-icons/ai';
+import {
+  AiOutlineBackward,
+  AiOutlineFastForward,
+  AiOutlineForward
+} from 'react-icons/ai';
 import {
   BiPlay,
   BiUndo,
@@ -50,12 +54,12 @@ const Panel = styled.ul<PanelProps>`
   margin: 0;
   max-width: 100%;
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-columns: repeat(10, 1fr);
   grid-template-rows: 1fr 1fr;
   gap: 10px 10px;
   grid-template-areas:
-    '. . . .'
-    'volume volume fastForward fastForward';
+    'play play quit quit drag drag resize resize rewind rewind'
+    'volume volume volume volume volume fastForward fastForward fastForward fastForward fastForward';
 
   ${({ $controlled, $isLargerThanPhone }) =>
     ($controlled || $isLargerThanPhone) &&
@@ -315,6 +319,7 @@ export const ControlPanel = () => {
               ariaLabel={isPaused || !isRunning ? 'Play' : 'Pause'}
               onClick={togglePlay}
               controlled={isControlled}
+              $gridArea="play"
             >
               {isPaused || !isRunning ? <BiPlay /> : <BiPause />}
             </PanelButton>
@@ -326,6 +331,7 @@ export const ControlPanel = () => {
                 setIsPaused(false);
               }}
               controlled={isControlled}
+              $gridArea="quit"
             >
               <BiUndo />
             </PanelButton>
@@ -337,6 +343,7 @@ export const ControlPanel = () => {
                 setAreItemsDraggable((prevState) => !prevState);
               }}
               controlled={isControlled}
+              $gridArea="drag"
             >
               {areItemsDraggable ? (
                 <BiMove color={theme.gbaThemeBlue} />
@@ -354,12 +361,27 @@ export const ControlPanel = () => {
                 setAreItemsResizable((prevState) => !prevState);
               }}
               controlled={isControlled}
+              $gridArea="resize"
             >
               {areItemsResizable ? (
                 <TbResize color={theme.gbaThemeBlue} />
               ) : (
                 <TbResize />
               )}
+            </PanelButton>
+            <PanelButton
+              id={`${controlPanelId}--rewind`}
+              ariaLabel={'Rewind Emulator'}
+              controlled={isControlled}
+              $gridArea="rewind"
+              onPointerDown={() => {
+                emulator?.toggleRewind(true);
+              }}
+              onPointerUp={() => {
+                emulator?.toggleRewind(false);
+              }}
+            >
+              <AiOutlineBackward style={{ maxHeight: '100%' }} />
             </PanelButton>
             <PanelSlider
               id={`${controlPanelId}--volume-slider`}

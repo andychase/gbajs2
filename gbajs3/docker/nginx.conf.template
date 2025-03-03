@@ -61,8 +61,11 @@ server {
 
     access_log  /var/log/nginx/access_log.log custom;
     error_log  /var/log/nginx/error_log.log warn;
-    
+
     location / {
+        add_header Cross-Origin-Opener-Policy same-origin always;
+        add_header Cross-Origin-Embedder-Policy require-corp always;
+
         root   /var/www;
         index  index.html index.htm;
     }
@@ -89,6 +92,8 @@ server {
     location ~* \.(?:js|css|png|jpe?g|gif|avif|svg|ico|woff|woff2|ttf|ico|wasm)$ {
         expires 365d;
         add_header Vary Accept-Encoding;
+        add_header Cross-Origin-Opener-Policy same-origin always;
+        add_header Cross-Origin-Embedder-Policy require-corp always;
         access_log off;
         root   /var/www;
         index  index.html index.htm;
