@@ -51,7 +51,6 @@
     "@vitejs/plugin-react": "^4.0.1",
     "@vitest/coverage-v8": "^3.0.2",
     "blob-polyfill": "^9.0.20240710",
-    "coi-serviceworker": "^0.1.7",
     "eslint": "^9.15.0",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-jest-dom": "^5.1.0",
@@ -70,7 +69,6 @@
     "vite": "^6.0.1",
     "vite-plugin-html": "^3.2.2",
     "vite-plugin-pwa": "^0.21.0",
-    "vite-plugin-static-copy": "^2.3.0",
     "vitest": "^3.0.2"
   },
   "overrides": {
