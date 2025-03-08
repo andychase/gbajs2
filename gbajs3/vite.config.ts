@@ -7,8 +7,6 @@ import { visualizer } from 'rollup-plugin-visualizer';
 import { createHtmlPlugin } from 'vite-plugin-html';
 
 export default defineConfig(({ mode }) => {
-  console.log('building with mode:', mode);
-
   const withCOIServiceWorker = mode === 'with-coi-serviceworker';
 
   return {
@@ -110,7 +108,7 @@ export default defineConfig(({ mode }) => {
               injectRegister: null,
               strategies: 'injectManifest',
               srcDir: 'src/service-worker',
-              filename: 'coi-sw.js',
+              filename: 'coi-sw.ts',
               injectManifest: {
                 injectionPoint: undefined
               }

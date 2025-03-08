@@ -1,3 +1,12 @@
+/**
+ * Used for non-production deploys only.
+ *
+ * This service worker is meant to operate in places like github pages that
+ * do not have the ability to add headers to make the page cross origin isolated.
+ *
+ * To include this in a build, build with the mode `with-coi-serviceworker`.
+ */
+
 export type {};
 declare let self: ServiceWorkerGlobalScope;
 

@@ -17,35 +17,27 @@ import { LayoutProvider } from './context/layout/layout-provider.tsx';
 import { ModalProvider } from './context/modal/modal-provider.tsx';
 import { GbaDarkTheme } from './context/theme/theme.tsx';
 
-export const App = () => {
-  if (crossOriginIsolated) {
-    console.log(`crossOriginIsolated`);
-  } else {
-    console.log(`not crossOriginIsolated`);
-  }
-
-  return (
-    <ThemeProvider theme={GbaDarkTheme}>
-      <AppErrorBoundary>
-        <ProductTourIntro />
-        <ToasterWithDefaults />
-        <AuthProvider>
-          <EmulatorContextProvider>
-            <InitialBoundsProvider>
-              <LayoutProvider>
-                <ModalProvider>
-                  <PwaPrompt />
-                  <NavigationMenu />
-                  <Screen />
-                  <ControlPanel />
-                  <VirtualControls />
-                  <ModalContainer />
-                </ModalProvider>
-              </LayoutProvider>
-            </InitialBoundsProvider>
-          </EmulatorContextProvider>
-        </AuthProvider>
-      </AppErrorBoundary>
-    </ThemeProvider>
-  );
-};
+export const App = () => (
+  <ThemeProvider theme={GbaDarkTheme}>
+    <AppErrorBoundary>
+      <ProductTourIntro />
+      <ToasterWithDefaults />
+      <AuthProvider>
+        <EmulatorContextProvider>
+          <InitialBoundsProvider>
+            <LayoutProvider>
+              <ModalProvider>
+                <PwaPrompt />
+                <NavigationMenu />
+                <Screen />
+                <ControlPanel />
+                <VirtualControls />
+                <ModalContainer />
+              </ModalProvider>
+            </LayoutProvider>
+          </InitialBoundsProvider>
+        </EmulatorContextProvider>
+      </AuthProvider>
+    </AppErrorBoundary>
+  </ThemeProvider>
+);
