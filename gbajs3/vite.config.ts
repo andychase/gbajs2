@@ -170,7 +170,8 @@ export default defineConfig(({ mode }) => {
           'test/**',
           'src/emulator/mgba/wasm/**',
           '**/*.d.ts',
-          '**/*eslint*'
+          '**/*eslint*',
+          '**/service-worker/**'
         ]
       }
     }
