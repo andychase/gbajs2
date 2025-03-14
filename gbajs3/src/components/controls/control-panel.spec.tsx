@@ -6,6 +6,7 @@ import { ControlPanel } from './control-panel.tsx';
 import { renderWithContext } from '../../../test/render-with-context.tsx';
 import {
   emulatorFFMultiplierLocalStorageKey,
+  emulatorSettingsLocalStorageKey,
   emulatorVolumeLocalStorageKey
 } from '../../context/emulator/consts.ts';
 import { GbaDarkTheme } from '../../context/theme/theme.tsx';
@@ -321,6 +322,64 @@ describe('<ControlPanel />', () => {
       expect(screen.queryAllByTestId('gripper-handle')).toHaveLength(0);
     });
 
+    it('toggles emulator rewind', async () => {
+      const toggleRewindSpy: (v: boolean) => void = vi.fn();
+      const { useEmulatorContext: originalEmulator } = await vi.importActual<
+        typeof contextHooks
+      >('../../hooks/context.tsx');
+
+      vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
+        ...originalEmulator(),
+        emulator: {
+          toggleRewind: toggleRewindSpy
+        } as GBAEmulator
+      }));
+
+      renderWithContext(<ControlPanel />);
+
+      fireEvent.pointerDown(screen.getByLabelText('Rewind Emulator'));
+
+      expect(toggleRewindSpy).toHaveBeenCalledOnce();
+      expect(toggleRewindSpy).toHaveBeenCalledWith(true);
+
+      fireEvent.pointerUp(screen.getByLabelText('Rewind Emulator'));
+
+      expect(toggleRewindSpy).toHaveBeenCalledTimes(2);
+      expect(toggleRewindSpy).toHaveBeenCalledWith(true);
+    });
+
+    it('mutes emulator when rewinding if setting is ON', async () => {
+      const setVolumeSpy: (v: number) => void = vi.fn();
+      const { useEmulatorContext: originalEmulator } = await vi.importActual<
+        typeof contextHooks
+      >('../../hooks/context.tsx');
+
+      vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
+        ...originalEmulator(),
+        emulator: {
+          toggleRewind: vi.fn() as (v: boolean) => void,
+          setVolume: setVolumeSpy
+        } as GBAEmulator
+      }));
+
+      localStorage.setItem(
+        emulatorSettingsLocalStorageKey,
+        '{"muteOnRewind":true}'
+      );
+
+      renderWithContext(<ControlPanel />);
+
+      fireEvent.pointerDown(screen.getByLabelText('Rewind Emulator'));
+
+      expect(setVolumeSpy).toHaveBeenCalledOnce();
+      expect(setVolumeSpy).toHaveBeenCalledWith(0);
+
+      fireEvent.pointerUp(screen.getByLabelText('Rewind Emulator'));
+
+      expect(setVolumeSpy).toHaveBeenCalledTimes(2);
+      expect(setVolumeSpy).toHaveBeenLastCalledWith(1);
+    });
+
     it('mutes volume', async () => {
       const setItemSpy = vi.spyOn(Storage.prototype, 'setItem');
       const emulatorSetVolumeSpy: (v: number) => void = vi.fn();
@@ -501,6 +560,39 @@ describe('<ControlPanel />', () => {
         '4'
       );
     });
+  });
+
+  it('mutes emulator when fast forwarding if setting is ON', async () => {
+    const ffMultiplierSpy: (v: number) => void = vi.fn();
+    const setVolumeSpy: (v: number) => void = vi.fn();
+    const { useEmulatorContext: originalEmulator } = await vi.importActual<
+      typeof contextHooks
+    >('../../hooks/context.tsx');
+
+    vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
+      ...originalEmulator(),
+      emulator: {
+        setFastForwardMultiplier: ffMultiplierSpy,
+        setVolume: setVolumeSpy
+      } as GBAEmulator
+    }));
+
+    localStorage.setItem(
+      emulatorSettingsLocalStorageKey,
+      '{"muteOnFastForward":true}'
+    );
+
+    renderWithContext(<ControlPanel />);
+
+    await userEvent.click(screen.getByLabelText('Max Fast Forward'));
+
+    expect(setVolumeSpy).toHaveBeenCalledOnce();
+    expect(setVolumeSpy).toHaveBeenCalledWith(0);
+
+    await userEvent.click(screen.getByLabelText('Regular Speed'));
+
+    expect(setVolumeSpy).toHaveBeenCalledTimes(2);
+    expect(setVolumeSpy).toHaveBeenLastCalledWith(1);
   });
 
   it('renders tour steps', async () => {

@@ -21,7 +21,8 @@ import {
   BiCheckShield,
   BiConversation,
   BiMenu,
-  BiFileFind
+  BiFileFind,
+  BiBrain
 } from 'react-icons/bi';
 import { styled, useTheme } from 'styled-components';
 
@@ -43,6 +44,7 @@ import { AboutModal } from '../modals/about.tsx';
 import { CheatsModal } from '../modals/cheats.tsx';
 import { ControlsModal } from '../modals/controls.tsx';
 import { DownloadSaveModal } from '../modals/download-save.tsx';
+import { EmulatorSettingsModal } from '../modals/emulator-settings.tsx';
 import { FileSystemModal } from '../modals/file-system.tsx';
 import { LegalModal } from '../modals/legal.tsx';
 import { LoadLocalRomModal } from '../modals/load-local-rom.tsx';
@@ -360,6 +362,16 @@ export const NavigationMenu = () => {
             $withPadding
             onClick={() => {
               setModalContent(<FileSystemModal />);
+              setIsModalOpen(true);
+            }}
+          />
+
+          <NavLeaf
+            title="Emulator Settings"
+            icon={<BiBrain />}
+            $withPadding
+            onClick={() => {
+              setModalContent(<EmulatorSettingsModal />);
               setIsModalOpen(true);
             }}
           />

@@ -2,13 +2,14 @@ import { useLocalStorage } from '@uidotdev/usehooks';
 import { useCallback } from 'react';
 import toast from 'react-hot-toast';
 
-import { emulatorCoreCallbacksLocalStorageKey } from '../../context/emulator/consts.ts';
-import { useRunningContext, useEmulatorContext } from '../context.tsx';
+import { emulatorSettingsLocalStorageKey } from '../../context/emulator/consts.ts';
+import { useEmulatorContext } from '../context.tsx';
+
+import type { EmulatorSettings } from '../../components/modals/emulator-settings.tsx';
 
 export type CoreCallbackOptions = {
   saveFileSystemOnInGameSave: boolean;
-  saveFileSystemOnCreateUpdateDelete?: boolean;
-  notificationsEnabled?: boolean;
+  fileSystemNotificationsEnabled?: boolean;
 };
 
 type SyncActionIfEnabledProps = {
@@ -21,24 +22,23 @@ const optionalFunc = (condition: boolean, func: () => void) =>
   condition ? func : null;
 
 export const useAddCallbacks = () => {
-  const { isRunning } = useRunningContext();
   const { emulator } = useEmulatorContext();
-  const [coreCallbackOptions, setCoreCallbackOptions] = useLocalStorage<
-    CoreCallbackOptions | undefined
-  >(emulatorCoreCallbacksLocalStorageKey);
+  const [emulatorSettings] = useLocalStorage<EmulatorSettings | undefined>(
+    emulatorSettingsLocalStorageKey
+  );
 
   const syncActionIfEnabled = useCallback(
     async ({ withToast = true }: SyncActionIfEnabledProps = {}) => {
-      if (coreCallbackOptions?.saveFileSystemOnCreateUpdateDelete) {
+      if (emulatorSettings?.saveFileSystemOnCreateUpdateDelete) {
         await emulator?.fsSync();
-        if (coreCallbackOptions?.notificationsEnabled && withToast)
+        if (emulatorSettings?.fileSystemNotificationsEnabled && withToast)
           toast.success('Saved File System');
       }
     },
     [
       emulator,
-      coreCallbackOptions?.saveFileSystemOnCreateUpdateDelete,
-      coreCallbackOptions?.notificationsEnabled
+      emulatorSettings?.saveFileSystemOnCreateUpdateDelete,
+      emulatorSettings?.fileSystemNotificationsEnabled
     ]
   );
 
@@ -49,7 +49,7 @@ export const useAddCallbacks = () => {
           options.saveFileSystemOnInGameSave,
           async () => {
             await emulator.fsSync();
-            if (options.notificationsEnabled)
+            if (options.fileSystemNotificationsEnabled)
               toast.success('Saved File System');
           }
         )
@@ -57,21 +57,8 @@ export const useAddCallbacks = () => {
     [emulator]
   );
 
-  const addCallbacksAndSaveSettings = useCallback(
-    (options: CoreCallbackOptions) => {
-      setCoreCallbackOptions((prevState) => ({
-        ...prevState,
-        ...options
-      }));
-
-      if (isRunning) addCallbacks(options);
-    },
-    [addCallbacks, isRunning, setCoreCallbackOptions]
-  );
-
   return {
     addCallbacks,
-    addCallbacksAndSaveSettings,
     syncActionIfEnabled
   };
 };

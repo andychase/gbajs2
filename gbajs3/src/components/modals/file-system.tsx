@@ -3,7 +3,6 @@ import { useCallback, useId, useState } from 'react';
 import { styled } from 'styled-components';
 
 import { EmulatorFileSystem } from './file-system/emulator-file-system.tsx';
-import { FileSystemOptionsForm } from './file-system/file-system-options-form.tsx';
 import { ModalBody } from './modal-body.tsx';
 import { ModalFooter } from './modal-footer.tsx';
 import { ModalHeader } from './modal-header.tsx';
@@ -77,15 +76,6 @@ export const FileSystemModal = () => {
     {
       content: (
         <p>
-          Click the <i>Options</i> label to adjust and save settings related to
-          the file system.
-        </p>
-      ),
-      target: `#${CSS.escape(`${baseId}--file-system-options`)}`
-    },
-    {
-      content: (
-        <p>
           Use the <i>SAVE FILE SYSTEM</i> button to persist all of your files to
           your device!
         </p>
@@ -104,7 +94,6 @@ export const FileSystemModal = () => {
           deleteFile={deleteFile}
           downloadFile={downloadFile}
         />
-        <FileSystemOptionsForm id={`${baseId}--file-system-options`} />
       </FlexModalBody>
       <ModalFooter>
         <CircleCheckButton

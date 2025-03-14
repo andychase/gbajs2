@@ -7,11 +7,11 @@ import {
   emulatorGameNameLocalStorageKey,
   emulatorKeyBindingsLocalStorageKey,
   emulatorVolumeLocalStorageKey,
-  emulatorCoreCallbacksLocalStorageKey
+  emulatorSettingsLocalStorageKey
 } from '../../context/emulator/consts.ts';
 import { useEmulatorContext, useRunningContext } from '../context.tsx';
 
-import type { CoreCallbackOptions } from './use-add-callbacks.tsx';
+import type { EmulatorSettings } from '../../components/modals/emulator-settings.tsx';
 import type { KeyBinding } from '../../emulator/mgba/mgba-emulator.tsx';
 
 export const useRunGame = () => {
@@ -31,12 +31,15 @@ export const useRunGame = () => {
     emulatorFFMultiplierLocalStorageKey,
     1
   );
-  const [coreCallbackOptions] = useLocalStorage<CoreCallbackOptions>(
-    emulatorCoreCallbacksLocalStorageKey,
+  const [emulatorSettings] = useLocalStorage<EmulatorSettings>(
+    emulatorSettingsLocalStorageKey,
     {
       saveFileSystemOnInGameSave: true,
       saveFileSystemOnCreateUpdateDelete: true,
-      notificationsEnabled: true
+      fileSystemNotificationsEnabled: true,
+      allowOpposingDirections: true,
+      muteOnFastForward: true,
+      muteOnRewind: true
     }
   );
   const { addCallbacks } = useAddCallbacks();
@@ -44,7 +47,10 @@ export const useRunGame = () => {
   const run = useCallback(
     (romName: string) => {
       const romPath = `${emulator?.filePaths().gamePath}/${romName}`;
-      const isSuccessfulRun = emulator?.run(romPath);
+      const saveOverridePath = emulatorSettings?.saveFileName
+        ? `${emulator?.filePaths().savePath}/${emulatorSettings?.saveFileName}`
+        : undefined;
+      const isSuccessfulRun = emulator?.run(romPath, saveOverridePath);
       setIsRunning(!!isSuccessfulRun);
       setStoredGameName(romName);
 
@@ -56,17 +62,29 @@ export const useRunGame = () => {
         if (fastForwardMultiplier > 1 && !emulator?.isFastForwardEnabled())
           emulator?.setFastForwardMultiplier(fastForwardMultiplier);
 
-        addCallbacks(coreCallbackOptions);
+        addCallbacks({
+          saveFileSystemOnInGameSave:
+            emulatorSettings?.saveFileSystemOnInGameSave,
+          fileSystemNotificationsEnabled:
+            emulatorSettings?.fileSystemNotificationsEnabled
+        });
+
+        emulator?.setCoreSettings({
+          allowOpposingDirections: emulatorSettings.allowOpposingDirections,
+          rewindBufferCapacity: emulatorSettings.rewindBufferCapacity,
+          rewindBufferInterval: emulatorSettings.rewindBufferInterval,
+          frameSkip: emulatorSettings.frameSkip
+        });
       }
 
       return !!isSuccessfulRun;
     },
     [
       addCallbacks,
-      coreCallbackOptions,
       currentEmulatorVolume,
       currentKeyBindings,
       emulator,
+      emulatorSettings,
       fastForwardMultiplier,
       setIsRunning,
       setStoredGameName

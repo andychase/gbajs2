@@ -50,8 +50,6 @@ describe('<FileSystemModal />', () => {
 
     // emulator file system
     expect(screen.getByLabelText('File System')).toBeVisible();
-    // file system options
-    expect(screen.getByRole('button', { name: 'Options' })).toBeVisible();
     // action buttons
     expect(
       screen.getByRole('button', { name: 'Save File System' })
@@ -226,18 +224,6 @@ describe('<FileSystemModal />', () => {
     expect(
       screen.getByText(
         'Use this area to view your current file tree, download files, and delete files from the tree.'
-      )
-    ).toBeVisible();
-
-    // advance tour
-    await userEvent.click(screen.getByRole('button', { name: /Next/ }));
-
-    expect(
-      screen.getByText(
-        (_, element) =>
-          element?.nodeName === 'P' &&
-          element?.textContent ===
-            'Click the Options label to adjust and save settings related to the file system.'
       )
     ).toBeVisible();
 

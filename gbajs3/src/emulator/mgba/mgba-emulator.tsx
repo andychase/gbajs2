@@ -1,5 +1,6 @@
 import type {
   coreCallbacks,
+  coreSettings,
   filePaths,
   mGBAEmulator as mGBAEmulatorTypeDef
 } from '@thenick775/mgba-wasm';
@@ -26,6 +27,7 @@ export type GBAEmulator = {
   addCoreCallbacks: (coreCallbacks: coreCallbacks) => void;
   autoLoadCheats: () => boolean;
   createSaveState: (slot: number) => boolean;
+  coreName: string;
   defaultKeyBindings: () => KeyBinding[];
   deleteFile: (path: string) => void;
   deleteSaveState: (slot: number) => void;
@@ -54,7 +56,7 @@ export type GBAEmulator = {
   quitGame: () => void;
   remapKeyBindings: (keyBindings: KeyBinding[]) => void;
   resume: () => Promise<void>;
-  run: (romPath: string) => boolean;
+  run: (romPath: string, savePathOverride?: string) => boolean;
   screenshot: (fileName?: string) => boolean;
   setCurrentGameName: (gameName: string | undefined) => void;
   setFastForwardMultiplier: (multiplier: number) => void;
@@ -66,6 +68,7 @@ export type GBAEmulator = {
   uploadRom: (file: File, callback?: () => void) => void;
   uploadSaveOrSaveState: (file: File, callback?: () => void) => void;
   toggleRewind: (enabled: boolean) => void;
+  setCoreSettings: (coreSettings: coreSettings) => void;
 };
 
 export const KEY_LOCATION_STANDARD = 0;
@@ -204,6 +207,7 @@ export const mGBAEmulator = (mGBA: mGBAEmulatorTypeDef): GBAEmulator => {
     addCoreCallbacks: mGBA.addCoreCallbacks,
     autoLoadCheats: mGBA.autoLoadCheats,
     createSaveState: mGBA.saveState,
+    coreName: 'mGBA',
     // note: this solution will not be accurate for all keyboard types
     defaultKeyBindings: () => [
       { gbaInput: 'A', key: 'X', location: KEY_LOCATION_STANDARD },
@@ -274,6 +278,7 @@ export const mGBAEmulator = (mGBA: mGBAEmulatorTypeDef): GBAEmulator => {
     filePaths: mGBA.filePaths,
     fsSync: mGBA.FSSync,
     toggleRewind: mGBA.toggleRewind,
+    setCoreSettings: mGBA.setCoreSettings,
     listAllFiles,
     parseCheatsString,
     parsedCheatsToFile

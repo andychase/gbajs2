@@ -13,6 +13,7 @@ import { AboutModal } from '../modals/about.tsx';
 import { CheatsModal } from '../modals/cheats.tsx';
 import { ControlsModal } from '../modals/controls.tsx';
 import { DownloadSaveModal } from '../modals/download-save.tsx';
+import { EmulatorSettingsModal } from '../modals/emulator-settings.tsx';
 import { FileSystemModal } from '../modals/file-system.tsx';
 import { LegalModal } from '../modals/legal.tsx';
 import { LoadLocalRomModal } from '../modals/load-local-rom.tsx';
@@ -37,7 +38,7 @@ describe('<NavigationMenu />', () => {
     expect(screen.getByLabelText('Menu Toggle')).toBeInTheDocument();
     expect(screen.getByLabelText('Menu Dismiss')).toBeInTheDocument();
     // renders default mounted menu items
-    expect(screen.getAllByRole('listitem')).toHaveLength(13);
+    expect(screen.getAllByRole('listitem')).toHaveLength(14);
   });
 
   it('toggles menu with button', async () => {
@@ -94,6 +95,7 @@ describe('<NavigationMenu />', () => {
       ['Load Local Rom', <LoadLocalRomModal />],
       ['Controls', <ControlsModal />],
       ['File System', <FileSystemModal />],
+      ['Emulator Settings', <EmulatorSettingsModal />],
       ['Legal', <LegalModal />],
       ['Login', <LoginModal />]
     ])('%s opens modal on click', async (title, expected) => {
