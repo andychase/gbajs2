@@ -81,9 +81,15 @@ describe('useRunGame hook', () => {
     expect(setCoreSettingsSpy).toHaveBeenCalledOnce();
     expect(setCoreSettingsSpy).toHaveBeenCalledWith({
       allowOpposingDirections: true,
+      audioBufferSize: 1024,
+      audioSampleRate: 48000,
+      audioSync: false,
       frameSkip: undefined,
       rewindBufferCapacity: undefined,
-      rewindBufferInterval: undefined
+      rewindBufferInterval: undefined,
+      rewindEnable: true,
+      threadedVideo: false,
+      videoSync: true
     });
   });
 
@@ -96,7 +102,7 @@ describe('useRunGame hook', () => {
     localStorage.setItem(emulatorFFMultiplierLocalStorageKey, '2');
     localStorage.setItem(
       emulatorSettingsLocalStorageKey,
-      '{"frameSkip":5,"rewindBufferCapacity":1200,"rewindBufferInterval":5,"allowOpposingDirections":true,"muteOnFastForward":true,"muteOnRewind":true,"saveFileSystemOnInGameSave":true,"saveFileSystemOnCreateUpdateDelete":true,"fileSystemNotificationsEnabled":true,"saveFileName":"custom_sav.sav"}'
+      '{"frameSkip":5,"rewindBufferCapacity":1200,"rewindBufferInterval":5,"allowOpposingDirections":false,"muteOnFastForward":false,"muteOnRewind":false,"saveFileSystemOnInGameSave":false,"saveFileSystemOnCreateUpdateDelete":false,"fileSystemNotificationsEnabled":false,"audioSampleRate":48000,"audioBufferSize":1024,"videoSync":false,"audioSync":true,"threadedVideo":true,"rewindEnable":false,"saveFileName":"custom_sav.sav"}'
     );
 
     const setIsRunningSpy = vi.fn();
@@ -158,16 +164,22 @@ describe('useRunGame hook', () => {
 
     expect(addCallbacksSpy).toHaveBeenCalledOnce();
     expect(addCallbacksSpy).toHaveBeenCalledWith({
-      saveFileSystemOnInGameSave: true,
-      fileSystemNotificationsEnabled: true
+      saveFileSystemOnInGameSave: false,
+      fileSystemNotificationsEnabled: false
     });
 
     expect(setCoreSettingsSpy).toHaveBeenCalledOnce();
     expect(setCoreSettingsSpy).toHaveBeenCalledWith({
-      allowOpposingDirections: true,
+      allowOpposingDirections: false,
+      audioBufferSize: 1024,
+      audioSampleRate: 48000,
+      audioSync: true,
       frameSkip: 5,
       rewindBufferCapacity: 1200,
-      rewindBufferInterval: 5
+      rewindBufferInterval: 5,
+      rewindEnable: false,
+      threadedVideo: true,
+      videoSync: false
     });
   });
 });

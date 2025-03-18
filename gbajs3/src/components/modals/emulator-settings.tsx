@@ -1,4 +1,11 @@
-import { Button, TextField } from '@mui/material';
+import {
+  Button,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField
+} from '@mui/material';
 import { useLocalStorage } from '@uidotdev/usehooks';
 import { useId } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -31,6 +38,12 @@ export type EmulatorSettings = {
   saveFileName?: string;
   saveFileSystemOnCreateUpdateDelete: boolean;
   saveFileSystemOnInGameSave: boolean;
+  audioSampleRate?: number;
+  audioBufferSize?: number;
+  videoSync: boolean;
+  audioSync: boolean;
+  threadedVideo: boolean;
+  rewindEnable: boolean;
 };
 
 const StyledForm = styled.form`
@@ -90,10 +103,19 @@ export const EmulatorSettingsModal = () => {
       saveFileSystemOnCreateUpdateDelete:
         emulatorSettings?.saveFileSystemOnCreateUpdateDelete ?? true,
       fileSystemNotificationsEnabled:
-        emulatorSettings?.fileSystemNotificationsEnabled ?? true
+        emulatorSettings?.fileSystemNotificationsEnabled ?? true,
+      audioSampleRate: emulatorSettings?.audioSampleRate ?? 48000,
+      audioBufferSize: emulatorSettings?.audioBufferSize ?? 1024,
+      videoSync: emulatorSettings?.videoSync ?? true,
+      audioSync: emulatorSettings?.audioSync ?? false,
+      threadedVideo: emulatorSettings?.threadedVideo ?? false,
+      rewindEnable: emulatorSettings?.rewindEnable ?? true
     }
   });
   const baseId = useId();
+
+  const defaultAudioSampleRates = emulator?.defaultAudioSampleRates();
+  const defaultAudioBufferSizes = emulator?.defaultAudioBufferSizes();
 
   const onSubmit: SubmitHandler<EmulatorSettings> = ({
     saveFileName,
@@ -111,20 +133,32 @@ export const EmulatorSettingsModal = () => {
       allowOpposingDirections: rest.allowOpposingDirections,
       frameSkip: rest.frameSkip,
       rewindBufferCapacity: rest.rewindBufferCapacity,
-      rewindBufferInterval: rest.rewindBufferInterval
+      rewindBufferInterval: rest.rewindBufferInterval,
+      audioSampleRate: rest.audioSampleRate,
+      audioBufferSize: rest.audioBufferSize,
+      videoSync: rest.videoSync,
+      audioSync: rest.audioSync,
+      threadedVideo: rest.threadedVideo,
+      rewindEnable: rest.rewindEnable
     });
   };
 
   const resetEmulatorSettings = () => {
     setEmulatorSettings(undefined);
     reset();
-    if (isRunning)
-      emulator?.setCoreSettings({
-        allowOpposingDirections: true,
-        frameSkip: 0,
-        rewindBufferCapacity: 600,
-        rewindBufferInterval: 1
-      });
+
+    emulator?.setCoreSettings({
+      allowOpposingDirections: true,
+      frameSkip: 0,
+      rewindBufferCapacity: 600,
+      rewindBufferInterval: 1,
+      audioSampleRate: 48000,
+      audioBufferSize: 1024,
+      videoSync: false,
+      audioSync: true,
+      threadedVideo: false,
+      rewindEnable: true
+    });
   };
 
   return (
@@ -190,6 +224,42 @@ export const EmulatorSettingsModal = () => {
               />
             )}
           />
+          <FormControl size="small" sx={{ minWidth: 140 }}>
+            <InputLabel>Audio Sample Rate</InputLabel>
+            <Select
+              label="Audio Sample Rate"
+              disabled={isRunning}
+              value={watch('audioSampleRate')}
+              {...register('audioSampleRate', {
+                required: { value: true, message: 'Sample rate is required' },
+                valueAsNumber: true
+              })}
+            >
+              {defaultAudioSampleRates?.map((sampleRate, idx) => (
+                <MenuItem key={`${sampleRate}_${idx}`} value={sampleRate}>
+                  {sampleRate}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <FormControl size="small" sx={{ minWidth: 170 }}>
+            <InputLabel>Audio Buffer Size</InputLabel>
+            <Select
+              label="Audio Buffer Size"
+              disabled={isRunning}
+              value={watch('audioBufferSize')}
+              {...register('audioBufferSize', {
+                required: { value: true, message: 'Buffer size is required' },
+                valueAsNumber: true
+              })}
+            >
+              {defaultAudioBufferSizes?.map((bufferSize, idx) => (
+                <MenuItem key={`${bufferSize}_${idx}`} value={bufferSize}>
+                  {bufferSize}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
           <GridContainer>
             <ManagedCheckbox
               label="Allow opposing directions"
@@ -220,6 +290,26 @@ export const EmulatorSettingsModal = () => {
               label="Save file system on in-game save"
               watcher={watch('saveFileSystemOnInGameSave')}
               {...register('saveFileSystemOnInGameSave')}
+            />
+            <ManagedCheckbox
+              label="Video Sync"
+              watcher={watch('videoSync')}
+              {...register('videoSync')}
+            />
+            <ManagedCheckbox
+              label="Audio Sync"
+              watcher={watch('audioSync')}
+              {...register('audioSync')}
+            />
+            <ManagedCheckbox
+              label="Threaded Video"
+              watcher={watch('threadedVideo')}
+              {...register('threadedVideo')}
+            />
+            <ManagedCheckbox
+              label="Rewind Enabled"
+              watcher={watch('rewindEnable')}
+              {...register('rewindEnable')}
             />
           </GridContainer>
         </StyledForm>

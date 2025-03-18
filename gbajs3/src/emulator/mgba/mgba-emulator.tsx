@@ -29,6 +29,8 @@ export type GBAEmulator = {
   createSaveState: (slot: number) => boolean;
   coreName: string;
   defaultKeyBindings: () => KeyBinding[];
+  defaultAudioSampleRates: () => number[];
+  defaultAudioBufferSizes: () => number[];
   deleteFile: (path: string) => void;
   deleteSaveState: (slot: number) => void;
   disableKeyboardInput: () => void;
@@ -73,6 +75,21 @@ export type GBAEmulator = {
 
 export const KEY_LOCATION_STANDARD = 0;
 export const KEY_LOCATION_NUMPAD = 3;
+
+const defaultSampleRates = [22050, 32000, 44100, 48000];
+const defaultAudioBufferSizes = [256, 512, 768, 1024, 1536, 2048, 3072, 4096];
+const defaultKeyBindings = [
+  { gbaInput: 'A', key: 'X', location: KEY_LOCATION_STANDARD },
+  { gbaInput: 'B', key: 'Z', location: KEY_LOCATION_STANDARD },
+  { gbaInput: 'L', key: 'A', location: KEY_LOCATION_STANDARD },
+  { gbaInput: 'R', key: 'S', location: KEY_LOCATION_STANDARD },
+  { gbaInput: 'Start', key: 'Enter', location: KEY_LOCATION_STANDARD },
+  { gbaInput: 'Select', key: 'Backspace', location: KEY_LOCATION_STANDARD },
+  { gbaInput: 'Up', key: 'ArrowUp', location: KEY_LOCATION_STANDARD },
+  { gbaInput: 'Down', key: 'ArrowDown', location: KEY_LOCATION_STANDARD },
+  { gbaInput: 'Left', key: 'ArrowLeft', location: KEY_LOCATION_STANDARD },
+  { gbaInput: 'Right', key: 'ArrowRight', location: KEY_LOCATION_STANDARD }
+];
 
 export const mGBAEmulator = (mGBA: mGBAEmulatorTypeDef): GBAEmulator => {
   const paths = mGBA.filePaths();
@@ -209,18 +226,9 @@ export const mGBAEmulator = (mGBA: mGBAEmulatorTypeDef): GBAEmulator => {
     createSaveState: mGBA.saveState,
     coreName: 'mGBA',
     // note: this solution will not be accurate for all keyboard types
-    defaultKeyBindings: () => [
-      { gbaInput: 'A', key: 'X', location: KEY_LOCATION_STANDARD },
-      { gbaInput: 'B', key: 'Z', location: KEY_LOCATION_STANDARD },
-      { gbaInput: 'L', key: 'A', location: KEY_LOCATION_STANDARD },
-      { gbaInput: 'R', key: 'S', location: KEY_LOCATION_STANDARD },
-      { gbaInput: 'Start', key: 'Enter', location: KEY_LOCATION_STANDARD },
-      { gbaInput: 'Select', key: 'Backspace', location: KEY_LOCATION_STANDARD },
-      { gbaInput: 'Up', key: 'ArrowUp', location: KEY_LOCATION_STANDARD },
-      { gbaInput: 'Down', key: 'ArrowDown', location: KEY_LOCATION_STANDARD },
-      { gbaInput: 'Left', key: 'ArrowLeft', location: KEY_LOCATION_STANDARD },
-      { gbaInput: 'Right', key: 'ArrowRight', location: KEY_LOCATION_STANDARD }
-    ],
+    defaultKeyBindings: () => defaultKeyBindings,
+    defaultAudioSampleRates: () => defaultSampleRates,
+    defaultAudioBufferSizes: () => defaultAudioBufferSizes,
     loadSaveState: mGBA.loadState,
     listSaveStates: () => mGBA.FS.readdir(paths.saveStatePath),
     listRoms: mGBA.listRoms,

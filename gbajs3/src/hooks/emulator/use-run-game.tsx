@@ -39,7 +39,13 @@ export const useRunGame = () => {
       fileSystemNotificationsEnabled: true,
       allowOpposingDirections: true,
       muteOnFastForward: true,
-      muteOnRewind: true
+      muteOnRewind: true,
+      audioSampleRate: 48000,
+      audioBufferSize: 1024,
+      videoSync: true,
+      audioSync: false,
+      threadedVideo: false,
+      rewindEnable: true
     }
   );
   const { addCallbacks } = useAddCallbacks();
@@ -73,7 +79,13 @@ export const useRunGame = () => {
           allowOpposingDirections: emulatorSettings.allowOpposingDirections,
           rewindBufferCapacity: emulatorSettings.rewindBufferCapacity,
           rewindBufferInterval: emulatorSettings.rewindBufferInterval,
-          frameSkip: emulatorSettings.frameSkip
+          frameSkip: emulatorSettings.frameSkip,
+          audioSampleRate: emulatorSettings.audioSampleRate,
+          audioBufferSize: emulatorSettings.audioBufferSize,
+          videoSync: emulatorSettings.videoSync,
+          audioSync: emulatorSettings.audioSync,
+          threadedVideo: emulatorSettings.threadedVideo,
+          rewindEnable: emulatorSettings.rewindEnable
         });
       }
 

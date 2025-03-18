@@ -1,6 +1,6 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { EmulatorSettingsModal } from './emulator-settings.tsx';
 import { renderWithContext } from '../../../test/render-with-context.tsx';
@@ -11,6 +11,23 @@ import type { GBAEmulator } from '../../emulator/mgba/mgba-emulator.tsx';
 import type { coreSettings } from '@thenick775/mgba-wasm';
 
 describe('<EmulatorSettingsModal />', () => {
+  const defaultSampleRates = [22050, 32000, 44100, 48000];
+  const defaultAudioBufferSizes = [256, 512, 768, 1024, 1536, 2048, 3072, 4096];
+
+  beforeEach(async () => {
+    const { useEmulatorContext: originalEmulator } = await vi.importActual<
+      typeof contextHooks
+    >('../../hooks/context.tsx');
+
+    vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
+      ...originalEmulator(),
+      emulator: {
+        defaultAudioSampleRates: () => defaultSampleRates,
+        defaultAudioBufferSizes: () => defaultAudioBufferSizes
+      } as GBAEmulator
+    }));
+  });
+
   it('renders modal with form fields', () => {
     renderWithContext(<EmulatorSettingsModal />);
 
@@ -51,7 +68,9 @@ describe('<EmulatorSettingsModal />', () => {
     vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
       ...originalEmulator(),
       emulator: {
-        setCoreSettings: setCoreSettingsSpy
+        setCoreSettings: setCoreSettingsSpy,
+        defaultAudioSampleRates: () => defaultSampleRates,
+        defaultAudioBufferSizes: () => defaultAudioBufferSizes
       } as GBAEmulator
     }));
 
@@ -63,15 +82,21 @@ describe('<EmulatorSettingsModal />', () => {
 
     expect(setItemSpy).toHaveBeenCalledWith(
       'emulatorSettings',
-      '{"frameSkip":0,"rewindBufferCapacity":600,"rewindBufferInterval":1,"allowOpposingDirections":true,"muteOnFastForward":true,"muteOnRewind":true,"saveFileSystemOnInGameSave":true,"saveFileSystemOnCreateUpdateDelete":true,"fileSystemNotificationsEnabled":true}'
+      '{"frameSkip":0,"rewindBufferCapacity":600,"rewindBufferInterval":1,"allowOpposingDirections":true,"muteOnFastForward":true,"muteOnRewind":true,"saveFileSystemOnInGameSave":true,"saveFileSystemOnCreateUpdateDelete":true,"fileSystemNotificationsEnabled":true,"audioSampleRate":48000,"audioBufferSize":1024,"videoSync":true,"audioSync":false,"threadedVideo":false,"rewindEnable":true}'
     );
 
     expect(setCoreSettingsSpy).toHaveBeenCalledOnce();
     expect(setCoreSettingsSpy).toHaveBeenCalledWith({
       allowOpposingDirections: true,
+      audioBufferSize: 1024,
+      audioSampleRate: 48000,
+      audioSync: false,
       frameSkip: 0,
       rewindBufferCapacity: 600,
-      rewindBufferInterval: 1
+      rewindBufferInterval: 1,
+      rewindEnable: true,
+      threadedVideo: false,
+      videoSync: true
     });
   });
 
@@ -86,7 +111,9 @@ describe('<EmulatorSettingsModal />', () => {
       ...originalEmulator(),
       emulator: {
         setCoreSettings: setCoreSettingsSpy,
-        getCurrentSaveName: () => 'current_save.sav'
+        getCurrentSaveName: () => 'current_save.sav',
+        defaultAudioSampleRates: () => defaultSampleRates,
+        defaultAudioBufferSizes: () => defaultAudioBufferSizes
       } as GBAEmulator
     }));
 
@@ -98,6 +125,7 @@ describe('<EmulatorSettingsModal />', () => {
     const rewindCapacityInput = screen.getByLabelText('Rewind Capacity');
     const rewindIntervalInput = screen.getByLabelText('Rewind Interval');
     const saveFileNameInput = screen.getByLabelText('Save File Name');
+    // TODO: test select inputs
 
     const allowOpposingDirectionsCheckbox = screen.getByLabelText(
       'Allow opposing directions'
@@ -115,6 +143,10 @@ describe('<EmulatorSettingsModal />', () => {
     const saveOnInGameSaveCheckbox = screen.getByLabelText(
       'Save file system on in-game save'
     );
+    const videoSyncCheckbox = screen.getByLabelText('Video Sync');
+    const audioSyncCheckbox = screen.getByLabelText('Audio Sync');
+    const threadedVideoCheckbox = screen.getByLabelText('Threaded Video');
+    const rewindEnabledCheckbox = screen.getByLabelText('Rewind Enabled');
 
     await userEvent.type(frameSkipInput, '25');
 
@@ -133,20 +165,30 @@ describe('<EmulatorSettingsModal />', () => {
     await userEvent.click(muteOnFastForwardCheckbox);
     await userEvent.click(saveFileSystemOnFSOperationCheckbox);
     await userEvent.click(saveOnInGameSaveCheckbox);
+    await userEvent.click(videoSyncCheckbox);
+    await userEvent.click(audioSyncCheckbox);
+    await userEvent.click(threadedVideoCheckbox);
+    await userEvent.click(rewindEnabledCheckbox);
 
     await userEvent.click(screen.getByRole('button', { name: 'Save' }));
 
     expect(setItemSpy).toHaveBeenCalledWith(
       'emulatorSettings',
-      '{"frameSkip":25,"rewindBufferCapacity":1000,"rewindBufferInterval":10,"allowOpposingDirections":false,"muteOnFastForward":false,"muteOnRewind":false,"saveFileSystemOnInGameSave":false,"saveFileSystemOnCreateUpdateDelete":false,"fileSystemNotificationsEnabled":false,"saveFileName":"custom_save_override.sav"}'
+      '{"frameSkip":25,"rewindBufferCapacity":1000,"rewindBufferInterval":10,"allowOpposingDirections":false,"muteOnFastForward":false,"muteOnRewind":false,"saveFileSystemOnInGameSave":false,"saveFileSystemOnCreateUpdateDelete":false,"fileSystemNotificationsEnabled":false,"audioSampleRate":48000,"audioBufferSize":1024,"videoSync":false,"audioSync":true,"threadedVideo":true,"rewindEnable":false,"saveFileName":"custom_save_override.sav"}'
     );
 
     expect(setCoreSettingsSpy).toHaveBeenCalledOnce();
     expect(setCoreSettingsSpy).toHaveBeenCalledWith({
+      allowOpposingDirections: false,
+      audioBufferSize: 1024,
+      audioSampleRate: 48000,
+      audioSync: true,
       frameSkip: 25,
       rewindBufferCapacity: 1000,
       rewindBufferInterval: 10,
-      allowOpposingDirections: false
+      rewindEnable: false,
+      threadedVideo: true,
+      videoSync: false
     });
   });
 
@@ -164,7 +206,9 @@ describe('<EmulatorSettingsModal />', () => {
       ...originalEmulator(),
       emulator: {
         setCoreSettings: setCoreSettingsSpy,
-        getCurrentSaveName: () => 'current_save.sav'
+        getCurrentSaveName: () => 'current_save.sav',
+        defaultAudioSampleRates: () => defaultSampleRates,
+        defaultAudioBufferSizes: () => defaultAudioBufferSizes
       } as GBAEmulator
     }));
 
@@ -179,9 +223,15 @@ describe('<EmulatorSettingsModal />', () => {
 
     expect(setCoreSettingsSpy).toHaveBeenCalledWith({
       allowOpposingDirections: true,
+      audioBufferSize: 1024,
+      audioSampleRate: 48000,
+      audioSync: true,
       frameSkip: 0,
       rewindBufferCapacity: 600,
-      rewindBufferInterval: 1
+      rewindBufferInterval: 1,
+      rewindEnable: true,
+      threadedVideo: false,
+      videoSync: false
     });
 
     expect(removeItemSpy).toHaveBeenCalledWith(emulatorSettingsLocalStorageKey);
@@ -196,7 +246,9 @@ describe('<EmulatorSettingsModal />', () => {
     vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
       ...originalEmulator(),
       emulator: {
-        getCurrentSaveName: () => 'current_save.sav'
+        getCurrentSaveName: () => 'current_save.sav',
+        defaultAudioSampleRates: () => defaultSampleRates,
+        defaultAudioBufferSizes: () => defaultAudioBufferSizes
       } as GBAEmulator
     }));
 
