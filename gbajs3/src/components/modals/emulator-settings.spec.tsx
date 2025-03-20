@@ -225,13 +225,13 @@ describe('<EmulatorSettingsModal />', () => {
       allowOpposingDirections: true,
       audioBufferSize: 1024,
       audioSampleRate: 48000,
-      audioSync: true,
+      audioSync: false,
       frameSkip: 0,
       rewindBufferCapacity: 600,
       rewindBufferInterval: 1,
       rewindEnable: true,
       threadedVideo: false,
-      videoSync: false
+      videoSync: true
     });
 
     expect(removeItemSpy).toHaveBeenCalledWith(emulatorSettingsLocalStorageKey);

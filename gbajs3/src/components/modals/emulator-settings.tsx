@@ -154,8 +154,8 @@ export const EmulatorSettingsModal = () => {
       rewindBufferInterval: 1,
       audioSampleRate: 48000,
       audioBufferSize: 1024,
-      videoSync: false,
-      audioSync: true,
+      videoSync: true,
+      audioSync: false,
       threadedVideo: false,
       rewindEnable: true
     });
