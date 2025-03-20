@@ -71,7 +71,7 @@ export const handlers = [
         data.username?.startsWith('valid') &&
         data.password?.startsWith('valid');
 
-      await delay();
+      await delay(100);
 
       if (isValidUser) {
         return HttpResponse.json('some token', {
@@ -110,7 +110,7 @@ export const handlers = [
   ),
 
   http.get(`${testRomLocation}/good_rom.gba`, async () => {
-    await delay(250);
+    await delay(100);
 
     return new HttpResponse(`test external rom`, {
       headers: {
@@ -120,7 +120,7 @@ export const handlers = [
   }),
 
   http.get(`${testRomLocation}/bad_rom.gba`, async () => {
-    await delay(250);
+    await delay(100);
 
     return new HttpResponse(null, { status: 400 });
   })
