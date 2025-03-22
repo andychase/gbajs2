@@ -70,10 +70,5 @@
     "vite-plugin-html": "^3.2.2",
     "vite-plugin-pwa": "^0.21.0",
     "vitest": "^3.0.2"
-  },
-  "overrides": {
-    "vite": {
-      "esbuild": "^0.25.0"
-    }
   }
 }
