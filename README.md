@@ -28,29 +28,29 @@ Do not attempt to log into the server unless you are the server owner or an appr
 
 - Golang server for logged-in user support
 - Nginx server for gbajs3 content
-- Fast Forward
-- Re-mappable Keyboard Bindings
-- Virtual Controls (Desktop/Mobile)
+- Fast Forward support
+- Re-mappable keyboard bindings
+- Virtual controls (Desktop/Mobile)
 - Movable desktop canvas and controls
 - Control profiles
 - Mobile UI support
-- Offline PWA Support
+- Offline PWA support
 - Save state support
 - Cheat code support
 - Soft patch support
 - Rewind support
 - Threading support
-- Core Support
+- Core support
   - mGBA support (wasm based)
 - Admin UI
 - Postgres support
 - Persistent file system utilizing IndexedDB
-- Interactive Product Tour
-- Load public rom file from query string
+- Interactive product tour
+- Load public rom files from query string
 
 ## Existing Feature List
 
-- Both cores support realtime clock
+- All cores support realtime clock
 - For additional mGBA features and information:
   - [compatibility list](https://wiki.gbatemp.net/wiki/MGBA)
   - [mGBA wasm fork Readme](https://github.com/thenick775/mgba/tree/feature/wasm)
@@ -62,13 +62,15 @@ Do not attempt to log into the server unless you are the server owner or an appr
 - Server enhancements
   - request an account feature suite
   - s3 backed file storage
-- SkyEmu secondary core (tentative)
+- Additional core support
+  - NanoBoyAdvance (secondary core)
+  - SkyEmu (secondary core)
 
 ## Sample Screenshots
 
 - Example Desktop
 
-<img src="./readme-graphics/gbajs3-desktop-v4.png">
+<img src="./readme-graphics/gbajs3-desktop-v5.png">
 
 - Example Mobile
 
@@ -172,7 +174,7 @@ Original work by andychase. Repo: (gbajs2 base)
 https://github.com/andychase/gbajs2
 Copyright © 2020, Andrew Chase
 
-Copyright © 2022 - 2024, Nicholas VanCise
+Copyright © 2022 - 2025, Nicholas VanCise
 
 All rights reserved.
 
