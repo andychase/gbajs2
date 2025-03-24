@@ -57,13 +57,9 @@ const FlexContainer = styled.div`
   display: flex;
   gap: 15px;
   min-width: 0;
-  flex-direction: column;
 
-  @media ${({ theme }) => theme.isLargerThanPhone} {
-    flex-direction: row;
-    * {
-      flex-grow: 1;
-    }
+  * {
+    flex-grow: 1;
   }
 `;
 
@@ -183,17 +179,17 @@ export const EmulatorSettingsModal = () => {
           onSubmit={handleSubmit(onSubmit)}
         >
           <Copy>Core: {emulator?.coreName}</Copy>
+          <NumberInput
+            label="Frame Skip"
+            min={0}
+            max={32}
+            size="small"
+            {...register('frameSkip', {
+              required: { value: true, message: 'Frame skip is required' },
+              valueAsNumber: true
+            })}
+          />
           <FlexContainer>
-            <NumberInput
-              label="Frame Skip"
-              min={0}
-              max={32}
-              size="small"
-              {...register('frameSkip', {
-                required: { value: true, message: 'Frame skip is required' },
-                valueAsNumber: true
-              })}
-            />
             <NumberInput
               label="Rewind Capacity"
               min={1}
@@ -221,6 +217,44 @@ export const EmulatorSettingsModal = () => {
               })}
             />
           </FlexContainer>
+          <FlexContainer>
+            <FormControl size="small">
+              <InputLabel>Audio Sample Rate</InputLabel>
+              <Select
+                label="Audio Sample Rate"
+                disabled={isRunning}
+                value={watch('audioSampleRate')}
+                {...register('audioSampleRate', {
+                  required: { value: true, message: 'Sample rate is required' },
+                  valueAsNumber: true
+                })}
+              >
+                {defaultAudioSampleRates?.map((sampleRate, idx) => (
+                  <MenuItem key={`${sampleRate}_${idx}`} value={sampleRate}>
+                    {sampleRate}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <FormControl size="small">
+              <InputLabel>Audio Buffer Size</InputLabel>
+              <Select
+                label="Audio Buffer Size"
+                disabled={isRunning}
+                value={watch('audioBufferSize')}
+                {...register('audioBufferSize', {
+                  required: { value: true, message: 'Buffer size is required' },
+                  valueAsNumber: true
+                })}
+              >
+                {defaultAudioBufferSizes?.map((bufferSize, idx) => (
+                  <MenuItem key={`${bufferSize}_${idx}`} value={bufferSize}>
+                    {bufferSize}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </FlexContainer>
           <Controller
             control={control}
             name="saveFileName"
@@ -236,42 +270,6 @@ export const EmulatorSettingsModal = () => {
               />
             )}
           />
-          <FormControl size="small" sx={{ minWidth: 140 }}>
-            <InputLabel>Audio Sample Rate</InputLabel>
-            <Select
-              label="Audio Sample Rate"
-              disabled={isRunning}
-              value={watch('audioSampleRate')}
-              {...register('audioSampleRate', {
-                required: { value: true, message: 'Sample rate is required' },
-                valueAsNumber: true
-              })}
-            >
-              {defaultAudioSampleRates?.map((sampleRate, idx) => (
-                <MenuItem key={`${sampleRate}_${idx}`} value={sampleRate}>
-                  {sampleRate}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          <FormControl size="small" sx={{ minWidth: 170 }}>
-            <InputLabel>Audio Buffer Size</InputLabel>
-            <Select
-              label="Audio Buffer Size"
-              disabled={isRunning}
-              value={watch('audioBufferSize')}
-              {...register('audioBufferSize', {
-                required: { value: true, message: 'Buffer size is required' },
-                valueAsNumber: true
-              })}
-            >
-              {defaultAudioBufferSizes?.map((bufferSize, idx) => (
-                <MenuItem key={`${bufferSize}_${idx}`} value={bufferSize}>
-                  {bufferSize}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
           <GridContainer>
             <ManagedCheckbox
               label="Allow opposing directions"
