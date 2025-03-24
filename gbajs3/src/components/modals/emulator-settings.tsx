@@ -20,6 +20,7 @@ import {
   useModalContext,
   useRunningContext
 } from '../../hooks/context.tsx';
+import { useAddCallbacks } from '../../hooks/emulator/use-add-callbacks.tsx';
 import { CircleCheckButton } from '../shared/circle-check-button.tsx';
 import { ManagedCheckbox } from '../shared/managed-checkbox.tsx';
 import { NumberInput } from '../shared/number-input.tsx';
@@ -76,6 +77,7 @@ export const EmulatorSettingsModal = () => {
   const { emulator } = useEmulatorContext();
   const { isRunning } = useRunningContext();
   const { setIsModalOpen } = useModalContext();
+  const { addCallbacks } = useAddCallbacks();
   const [emulatorSettings, setEmulatorSettings] = useLocalStorage<
     EmulatorSettings | undefined
   >(emulatorSettingsLocalStorageKey);
@@ -129,6 +131,11 @@ export const EmulatorSettingsModal = () => {
           : undefined
     });
 
+    addCallbacks({
+      saveFileSystemOnInGameSave: rest.saveFileSystemOnInGameSave,
+      fileSystemNotificationsEnabled: rest.fileSystemNotificationsEnabled
+    });
+
     emulator?.setCoreSettings({
       allowOpposingDirections: rest.allowOpposingDirections,
       frameSkip: rest.frameSkip,
@@ -146,6 +153,11 @@ export const EmulatorSettingsModal = () => {
   const resetEmulatorSettings = () => {
     setEmulatorSettings(undefined);
     reset();
+
+    addCallbacks({
+      saveFileSystemOnInGameSave: true,
+      fileSystemNotificationsEnabled: true
+    });
 
     emulator?.setCoreSettings({
       allowOpposingDirections: true,

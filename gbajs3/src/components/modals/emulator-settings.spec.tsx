@@ -6,8 +6,10 @@ import { EmulatorSettingsModal } from './emulator-settings.tsx';
 import { renderWithContext } from '../../../test/render-with-context.tsx';
 import { emulatorSettingsLocalStorageKey } from '../../context/emulator/consts.ts';
 import * as contextHooks from '../../hooks/context.tsx';
+import * as addCallbackHooks from '../../hooks/emulator/use-add-callbacks.tsx';
 
 import type { GBAEmulator } from '../../emulator/mgba/mgba-emulator.tsx';
+import type { CoreCallbackOptions } from '../../hooks/emulator/use-add-callbacks.tsx';
 import type { coreSettings } from '@thenick775/mgba-wasm';
 
 describe('<EmulatorSettingsModal />', () => {
@@ -59,11 +61,15 @@ describe('<EmulatorSettingsModal />', () => {
   });
 
   it('submits the form and saves default values', async () => {
+    const addCallbacksSpy: (options: CoreCallbackOptions) => void = vi.fn();
     const setCoreSettingsSpy: (coreSettings: coreSettings) => void = vi.fn();
 
     const { useEmulatorContext: originalEmulator } = await vi.importActual<
       typeof contextHooks
     >('../../hooks/context.tsx');
+    const { useAddCallbacks: originalCallbacks } = await vi.importActual<
+      typeof addCallbackHooks
+    >('../../hooks/emulator/use-add-callbacks.tsx');
 
     vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
       ...originalEmulator(),
@@ -72,6 +78,11 @@ describe('<EmulatorSettingsModal />', () => {
         defaultAudioSampleRates: () => defaultSampleRates,
         defaultAudioBufferSizes: () => defaultAudioBufferSizes
       } as GBAEmulator
+    }));
+
+    vi.spyOn(addCallbackHooks, 'useAddCallbacks').mockImplementation(() => ({
+      ...originalCallbacks(),
+      addCallbacks: addCallbacksSpy
     }));
 
     const setItemSpy = vi.spyOn(Storage.prototype, 'setItem');
@@ -84,6 +95,12 @@ describe('<EmulatorSettingsModal />', () => {
       'emulatorSettings',
       '{"frameSkip":0,"rewindBufferCapacity":600,"rewindBufferInterval":1,"allowOpposingDirections":true,"muteOnFastForward":true,"muteOnRewind":true,"saveFileSystemOnInGameSave":true,"saveFileSystemOnCreateUpdateDelete":true,"fileSystemNotificationsEnabled":true,"audioSampleRate":48000,"audioBufferSize":1024,"videoSync":true,"audioSync":false,"threadedVideo":false,"rewindEnable":true}'
     );
+
+    expect(addCallbacksSpy).toHaveBeenCalledOnce();
+    expect(addCallbacksSpy).toHaveBeenCalledWith({
+      fileSystemNotificationsEnabled: true,
+      saveFileSystemOnInGameSave: true
+    });
 
     expect(setCoreSettingsSpy).toHaveBeenCalledOnce();
     expect(setCoreSettingsSpy).toHaveBeenCalledWith({
@@ -101,11 +118,15 @@ describe('<EmulatorSettingsModal />', () => {
   });
 
   it('submits the form and saves edited values', async () => {
+    const addCallbacksSpy: (options: CoreCallbackOptions) => void = vi.fn();
     const setCoreSettingsSpy: (coreSettings: coreSettings) => void = vi.fn();
 
     const { useEmulatorContext: originalEmulator } = await vi.importActual<
       typeof contextHooks
     >('../../hooks/context.tsx');
+    const { useAddCallbacks: originalCallbacks } = await vi.importActual<
+      typeof addCallbackHooks
+    >('../../hooks/emulator/use-add-callbacks.tsx');
 
     vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
       ...originalEmulator(),
@@ -115,6 +136,11 @@ describe('<EmulatorSettingsModal />', () => {
         defaultAudioSampleRates: () => defaultSampleRates,
         defaultAudioBufferSizes: () => defaultAudioBufferSizes
       } as GBAEmulator
+    }));
+
+    vi.spyOn(addCallbackHooks, 'useAddCallbacks').mockImplementation(() => ({
+      ...originalCallbacks(),
+      addCallbacks: addCallbacksSpy
     }));
 
     const setItemSpy = vi.spyOn(Storage.prototype, 'setItem');
@@ -177,6 +203,12 @@ describe('<EmulatorSettingsModal />', () => {
       '{"frameSkip":25,"rewindBufferCapacity":1000,"rewindBufferInterval":10,"allowOpposingDirections":false,"muteOnFastForward":false,"muteOnRewind":false,"saveFileSystemOnInGameSave":false,"saveFileSystemOnCreateUpdateDelete":false,"fileSystemNotificationsEnabled":false,"audioSampleRate":48000,"audioBufferSize":1024,"videoSync":false,"audioSync":true,"threadedVideo":true,"rewindEnable":false,"saveFileName":"custom_save_override.sav"}'
     );
 
+    expect(addCallbacksSpy).toHaveBeenCalledOnce();
+    expect(addCallbacksSpy).toHaveBeenCalledWith({
+      fileSystemNotificationsEnabled: false,
+      saveFileSystemOnInGameSave: false
+    });
+
     expect(setCoreSettingsSpy).toHaveBeenCalledOnce();
     expect(setCoreSettingsSpy).toHaveBeenCalledWith({
       allowOpposingDirections: false,
@@ -193,6 +225,7 @@ describe('<EmulatorSettingsModal />', () => {
   });
 
   it('removes settings when reset button is clicked', async () => {
+    const addCallbacksSpy: (options: CoreCallbackOptions) => void = vi.fn();
     const setCoreSettingsSpy: (coreSettings: coreSettings) => void = vi.fn();
 
     const removeItemSpy = vi.spyOn(Storage.prototype, 'removeItem');
@@ -201,6 +234,9 @@ describe('<EmulatorSettingsModal />', () => {
       useEmulatorContext: originalEmulator,
       useRunningContext: originalRunning
     } = await vi.importActual<typeof contextHooks>('../../hooks/context.tsx');
+    const { useAddCallbacks: originalCallbacks } = await vi.importActual<
+      typeof addCallbackHooks
+    >('../../hooks/emulator/use-add-callbacks.tsx');
 
     vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
       ...originalEmulator(),
@@ -212,6 +248,11 @@ describe('<EmulatorSettingsModal />', () => {
       } as GBAEmulator
     }));
 
+    vi.spyOn(addCallbackHooks, 'useAddCallbacks').mockImplementation(() => ({
+      ...originalCallbacks(),
+      addCallbacks: addCallbacksSpy
+    }));
+
     vi.spyOn(contextHooks, 'useRunningContext').mockImplementation(() => ({
       ...originalRunning(),
       isRunning: true
@@ -220,6 +261,14 @@ describe('<EmulatorSettingsModal />', () => {
     renderWithContext(<EmulatorSettingsModal />);
 
     await userEvent.click(screen.getByRole('button', { name: 'Reset' }));
+
+    expect(removeItemSpy).toHaveBeenCalledWith(emulatorSettingsLocalStorageKey);
+
+    expect(addCallbacksSpy).toHaveBeenCalledOnce();
+    expect(addCallbacksSpy).toHaveBeenCalledWith({
+      fileSystemNotificationsEnabled: true,
+      saveFileSystemOnInGameSave: true
+    });
 
     expect(setCoreSettingsSpy).toHaveBeenCalledWith({
       allowOpposingDirections: true,
@@ -233,8 +282,6 @@ describe('<EmulatorSettingsModal />', () => {
       threadedVideo: false,
       videoSync: true
     });
-
-    expect(removeItemSpy).toHaveBeenCalledWith(emulatorSettingsLocalStorageKey);
   });
 
   it('displays current save name from emulator when running if no override is present', async () => {
