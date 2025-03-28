@@ -21,11 +21,13 @@ import {
   useRunningContext
 } from '../../hooks/context.tsx';
 import { useAddCallbacks } from '../../hooks/emulator/use-add-callbacks.tsx';
+import { EmbeddedProductTour } from '../product-tour/embedded-product-tour.tsx';
 import { CircleCheckButton } from '../shared/circle-check-button.tsx';
 import { ManagedCheckbox } from '../shared/managed-checkbox.tsx';
 import { NumberInput } from '../shared/number-input.tsx';
 import { Copy } from '../shared/styled.tsx';
 
+import type { TourSteps } from '../product-tour/embedded-product-tour.tsx';
 import type { SubmitHandler } from 'react-hook-form';
 
 export type EmulatorSettings = {
@@ -169,6 +171,187 @@ export const EmulatorSettingsModal = () => {
     });
   };
 
+  const tourSteps: TourSteps = [
+    {
+      content: <p>Use this form to adjust emulator core settings.</p>,
+      target: `#${CSS.escape(`${baseId}--emulator-settings-form`)}`
+    },
+    {
+      content: (
+        <p>
+          This form field changes the frame skip every render cycle, higher
+          numbers mean more frames skipped.
+        </p>
+      ),
+      target: `#${CSS.escape(`${baseId}--frame-skip`)}`
+    },
+    {
+      content: (
+        <p>
+          This form field changes the rewind buffer capacity, this number
+          represents how many frames are available when rewinding.
+        </p>
+      ),
+      target: `#${CSS.escape(`${baseId}--rewind-capacity`)}`
+    },
+    {
+      content: (
+        <p>
+          This form field changes how many frames are rewound in every rewind
+          cycle, higher numbers mean faster rewind.
+        </p>
+      ),
+      placement: 'right',
+      target: `#${CSS.escape(`${baseId}--rewind-interval`)}`
+    },
+    {
+      content: (
+        <p>
+          This form field changes the audio sample rate, and can only be set
+          when the emulator is not running. This is best effort, and values will
+          only apply if supported on your device.
+        </p>
+      ),
+      target: `#${CSS.escape(`${baseId}--audio-sample-rate`)}`
+    },
+    {
+      content: (
+        <p>
+          This form field changes the audio buffer size, and can only be set
+          when the emulator is not running. If you experience audio cracking,
+          try adjusting this value.
+        </p>
+      ),
+      placement: 'right',
+      target: `#${CSS.escape(`${baseId}--audio-buffer-size`)}`
+    },
+    {
+      content: (
+        <p>
+          This form field changes the default save name, and can only be set
+          when the emulator is not running.. Use this if your save file name
+          does not match the rom file name.
+        </p>
+      ),
+      target: `#${CSS.escape(`${baseId}--save-file-name`)}`
+    },
+    {
+      content: (
+        <p>
+          This checkbox enables and disables using opposing opad directions at
+          the same time.
+        </p>
+      ),
+      target: `#${CSS.escape(`${baseId}--allow-opposing-directions`)}`
+    },
+    {
+      content: (
+        <p>
+          This checkbox enables and disables toast notifications when creating,
+          updating or deleting files in the file system.
+        </p>
+      ),
+      placement: 'right',
+      target: `#${CSS.escape(`${baseId}--file-system-notifications`)}`
+    },
+    {
+      content: (
+        <p>
+          This checkbox enables and disables automatic muting when rewinding.
+        </p>
+      ),
+      target: `#${CSS.escape(`${baseId}--mute-on-rewind`)}`
+    },
+    {
+      content: (
+        <p>
+          This checkbox enables and disables automatic muting when fast forward
+          is enabled.
+        </p>
+      ),
+      placement: 'right',
+      target: `#${CSS.escape(`${baseId}--mute-on-fast-forward`)}`
+    },
+    {
+      content: (
+        <p>
+          This checkbox enables and disables automatic file system persistence
+          on create, update and delete actions.
+        </p>
+      ),
+      target: `#${CSS.escape(`${baseId}--save-file-system-on-cud`)}`
+    },
+    {
+      content: (
+        <p>
+          This checkbox enables and disables automatic file system persistence
+          when saving inside of a game.
+        </p>
+      ),
+      placement: 'right',
+      target: `#${CSS.escape(`${baseId}--save-file-system-on-in-game-save`)}`
+    },
+    {
+      content: (
+        <p>
+          This checkbox enables and disables syncing to video frames, only one
+          of video or audio sync should be checked at a time. If you dislike
+          screen tearing, this option should be enabled.
+        </p>
+      ),
+      target: `#${CSS.escape(`${baseId}--video-sync`)}`
+    },
+    {
+      content: (
+        <p>
+          This checkbox enables and disables syncing to audio, only one of audio
+          or video sync should be checked at a time. If you cannot get perfect
+          audio using different audio buffer sizes, enable this option.
+        </p>
+      ),
+      placement: 'right',
+      target: `#${CSS.escape(`${baseId}--audio-sync`)}`
+    },
+    {
+      content: (
+        <p>
+          This checkbox enables and disables threaded video, this sometimes
+          helps or hurts the frame rate.
+        </p>
+      ),
+      target: `#${CSS.escape(`${baseId}--threaded-video`)}`
+    },
+    {
+      content: (
+        <p>
+          This checkbox enables and disables rewind capabilities, and can only
+          take effect when the emulator is not running. Sometimes disabling can
+          help with performance.
+        </p>
+      ),
+      placement: 'right',
+      target: `#${CSS.escape(`${baseId}--rewind-enabled`)}`
+    },
+    {
+      content: (
+        <p>
+          Use the <i>Save</i> button to save your settings.
+        </p>
+      ),
+      target: `#${CSS.escape(`${baseId}--save-button`)}`
+    },
+    {
+      content: (
+        <p>
+          Use the <i>Reset</i> button to revert all settings to their original
+          defaults.
+        </p>
+      ),
+      placement: 'right',
+      target: `#${CSS.escape(`${baseId}--reset-button`)}`
+    }
+  ];
+
   return (
     <>
       <ModalHeader title="Emulator Settings" />
@@ -180,6 +363,7 @@ export const EmulatorSettingsModal = () => {
         >
           <Copy>Core: {emulator?.coreName}</Copy>
           <NumberInput
+            id={`${baseId}--frame-skip`}
             label="Frame Skip"
             min={0}
             max={32}
@@ -191,6 +375,7 @@ export const EmulatorSettingsModal = () => {
           />
           <FlexContainer>
             <NumberInput
+              id={`${baseId}--rewind-capacity`}
               label="Rewind Capacity"
               min={1}
               max={3600}
@@ -204,6 +389,7 @@ export const EmulatorSettingsModal = () => {
               })}
             />
             <NumberInput
+              id={`${baseId}--rewind-interval`}
               label="Rewind Interval"
               min={1}
               max={100}
@@ -218,7 +404,7 @@ export const EmulatorSettingsModal = () => {
             />
           </FlexContainer>
           <FlexContainer>
-            <FormControl size="small">
+            <FormControl id={`${baseId}--audio-sample-rate`} size="small">
               <InputLabel>Audio Sample Rate</InputLabel>
               <Select
                 label="Audio Sample Rate"
@@ -236,7 +422,7 @@ export const EmulatorSettingsModal = () => {
                 ))}
               </Select>
             </FormControl>
-            <FormControl size="small">
+            <FormControl id={`${baseId}--audio-buffer-size`} size="small">
               <InputLabel>Audio Buffer Size</InputLabel>
               <Select
                 label="Audio Buffer Size"
@@ -260,6 +446,7 @@ export const EmulatorSettingsModal = () => {
             name="saveFileName"
             render={({ field: { name, value, ...rest } }) => (
               <TextField
+                id={`${baseId}--save-file-name`}
                 value={value}
                 name={name}
                 label="Save File Name"
@@ -272,51 +459,61 @@ export const EmulatorSettingsModal = () => {
           />
           <GridContainer>
             <ManagedCheckbox
+              id={`${baseId}--allow-opposing-directions`}
               label="Allow opposing directions"
               watcher={watch('allowOpposingDirections')}
               {...register('allowOpposingDirections')}
             />
             <ManagedCheckbox
+              id={`${baseId}--file-system-notifications`}
               label="File system notifications"
               watcher={watch('fileSystemNotificationsEnabled')}
               {...register('fileSystemNotificationsEnabled')}
             />
             <ManagedCheckbox
+              id={`${baseId}--mute-on-rewind`}
               label="Mute on rewind"
               watcher={watch('muteOnRewind')}
               {...register('muteOnRewind')}
             />
             <ManagedCheckbox
+              id={`${baseId}--mute-on-fast-forward`}
               label="Mute on fast forward"
               watcher={watch('muteOnFastForward')}
               {...register('muteOnFastForward')}
             />
             <ManagedCheckbox
+              id={`${baseId}--save-file-system-on-cud`}
               label="Save file system on create / update / delete"
               watcher={watch('saveFileSystemOnCreateUpdateDelete')}
               {...register('saveFileSystemOnCreateUpdateDelete')}
             />
             <ManagedCheckbox
+              id={`${baseId}--save-file-system-on-in-game-save`}
               label="Save file system on in-game save"
               watcher={watch('saveFileSystemOnInGameSave')}
               {...register('saveFileSystemOnInGameSave')}
             />
             <ManagedCheckbox
+              id={`${baseId}--video-sync`}
               label="Video Sync"
               watcher={watch('videoSync')}
               {...register('videoSync')}
             />
             <ManagedCheckbox
+              id={`${baseId}--audio-sync`}
               label="Audio Sync"
               watcher={watch('audioSync')}
               {...register('audioSync')}
             />
             <ManagedCheckbox
+              id={`${baseId}--threaded-video`}
               label="Threaded Video"
               watcher={watch('threadedVideo')}
               {...register('threadedVideo')}
             />
             <ManagedCheckbox
+              id={`${baseId}--rewind-enabled`}
               label="Rewind Enabled"
               watcher={watch('rewindEnable')}
               {...register('rewindEnable')}
@@ -326,14 +523,14 @@ export const EmulatorSettingsModal = () => {
       </ModalBody>
       <ModalFooter>
         <CircleCheckButton
+          id={`${baseId}--save-button`}
           copy="Save"
           form={`${baseId}--emulator-settings-form`}
-          id={`${baseId}--submit-button`}
           showSuccess={isSubmitSuccessful}
           type="submit"
         />
         <Button
-          id={`${baseId}--toggle-raw-cheats`}
+          id={`${baseId}--reset-button`}
           color="info"
           variant="contained"
           onClick={resetEmulatorSettings}
@@ -344,6 +541,10 @@ export const EmulatorSettingsModal = () => {
           Close
         </Button>
       </ModalFooter>
+      <EmbeddedProductTour
+        steps={tourSteps}
+        completedProductTourStepName="hasCompletedSettingsTour"
+      />
     </>
   );
 };
