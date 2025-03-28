@@ -60,7 +60,6 @@ export type GBAEmulator = {
   resume: () => Promise<void>;
   run: (romPath: string, savePathOverride?: string) => boolean;
   screenshot: (fileName?: string) => boolean;
-  setCurrentGameName: (gameName: string | undefined) => void;
   setFastForwardMultiplier: (multiplier: number) => void;
   setVolume: (volumePercent: number) => void;
   simulateKeyDown: (keyId: string) => void;
@@ -136,7 +135,7 @@ export const mGBAEmulator = (mGBA: mGBAEmulatorTypeDef): GBAEmulator => {
   // NOTE: only libretro format supported at this time
   const parseCheatsString = (cheatsStr: string) => {
     const lines = cheatsStr.split('\n');
-    const ignoreLines = ['cheats = ', ''];
+    const ignoreLines = [/^cheats = \d+$/, /^$/];
 
     if (!lines?.[0]?.match('^cheats = [0-9]+$')) return [];
 
@@ -152,11 +151,11 @@ export const mGBAEmulator = (mGBA: mGBAEmulatorTypeDef): GBAEmulator => {
     };
 
     for (const cheatLine of lines) {
-      if (ignoreLines.includes(cheatLine)) continue;
+      if (ignoreLines.some((regex) => regex.test(cheatLine))) continue;
 
-      const match = cheatLine.match(
-        /^cheat([0-9]+)_([a-zA-Z]+)\s*=\s*"?([a-zA-Z0-9\s+:_]+)"?$/
-      );
+      const match = cheatLine
+        .trim()
+        .match(/^cheat([0-9]+)_([a-zA-Z]+)\s*=\s*"?([a-zA-Z0-9\s+:_]+)"?$/);
 
       if (match) {
         const [, cheatNumber, cheatType, value] = match;
@@ -244,9 +243,6 @@ export const mGBAEmulator = (mGBA: mGBAEmulatorTypeDef): GBAEmulator => {
     getCurrentRom: () =>
       mGBA.gameName ? mGBA.FS.readFile(mGBA.gameName) : null,
     getCurrentGameName: () => filepathToFileName(mGBA.gameName),
-    setCurrentGameName: (gameName) => {
-      if (gameName && !mGBA.gameName) mGBA.gameName = gameName;
-    },
     getCurrentSave: () => (mGBA.saveName ? mGBA.getSave() : null),
     getCurrentSaveName: () => filepathToFileName(mGBA.saveName),
     getFile: (path) => mGBA.FS.readFile(path),
