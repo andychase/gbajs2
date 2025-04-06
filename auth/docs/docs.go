@@ -15,7 +15,7 @@ const docTemplate = `{
             "email": "nvancisedev@gmail.com"
         },
         "license": {
-            "name": "Copyright (c) 2022 Nicholas VanCise"
+            "name": "Copyright (c) 2025 Nicholas VanCise"
         },
         "version": "{{.Version}}"
     },

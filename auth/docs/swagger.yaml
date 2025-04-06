@@ -15,7 +15,7 @@ info:
   description: This server is designed to provide auth support and local file handling
     to my gbajs implementation
   license:
-    name: Copyright (c) 2022 Nicholas VanCise
+    name: Copyright (c) 2025 Nicholas VanCise
   title: Gba File/JWT Auth Server
   version: "1.0"
 paths:

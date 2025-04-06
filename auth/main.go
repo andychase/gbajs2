@@ -5,7 +5,7 @@
 //	@contact.name	Nicholas VanCise
 //	@contact.url	https://nicholas-vancise.dev
 //	@contact.email	nvancisedev@gmail.com
-//	@license.name	Copyright (c) 2022 Nicholas VanCise
+//	@license.name	Copyright (c) 2025 Nicholas VanCise
 
 package main
 
