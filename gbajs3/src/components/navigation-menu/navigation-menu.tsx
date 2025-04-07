@@ -71,8 +71,8 @@ const NavigationMenuWrapper = styled.div<ExpandableComponentProps>`
   height: 100dvh;
   position: fixed;
   background-color: ${({ theme }) => theme.mediumBlack};
-  transition: 0.4s ease-in-out;
-  -webkit-transition: 0.4s ease-in-out;
+  transition: left 0.4s ease-in-out;
+  -webkit-transition: left 0.4s ease-in-out;
   z-index: 150;
   text-align: left;
   left: 0;

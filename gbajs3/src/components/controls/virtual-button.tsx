@@ -1,4 +1,4 @@
-import { useRef, type ReactNode } from 'react';
+import { useRef, type ReactNode, type KeyboardEvent } from 'react';
 import Draggable from 'react-draggable';
 import { styled } from 'styled-components';
 
@@ -56,7 +56,14 @@ const VirtualButtonBase = styled(ButtonBase)`
   }
 `;
 
-const CircularButton = styled(VirtualButtonBase)<CircularButtonProps>`
+const CircularButton = styled(VirtualButtonBase).attrs<CircularButtonProps>(
+  (props) => ({
+    style: {
+      top: props.$initialPosition?.top || '0',
+      left: props.$initialPosition?.left || '0'
+    }
+  })
+)<CircularButtonProps>`
   width: ${({ $diameter = 60 }) => $diameter}px;
   height: ${({ $diameter = 60 }) => $diameter}px;
   border-radius: 100px;
@@ -64,15 +71,16 @@ const CircularButton = styled(VirtualButtonBase)<CircularButtonProps>`
     $areItemsDraggable ? theme.gbaThemeBlue : 'rgba(255, 255, 255, 0.9)'};
   border-style: ${({ $areItemsDraggable = false }) =>
     $areItemsDraggable ? 'dashed' : 'solid'};
-
-  ${({ $initialPosition = { top: '0', left: '0' } }) =>
-    `
-    top: ${$initialPosition.top};
-    left: ${$initialPosition.left};
-    `}
 `;
 
-const RectangularButton = styled(VirtualButtonBase)<RectangularButtonProps>`
+const RectangularButton = styled(
+  VirtualButtonBase
+).attrs<RectangularButtonProps>((props) => ({
+  style: {
+    top: props.$initialPosition?.top ?? '0',
+    left: props.$initialPosition?.left ?? '0'
+  }
+}))`
   border-radius: 16px;
   width: fit-content;
   min-width: 85px;
@@ -80,12 +88,6 @@ const RectangularButton = styled(VirtualButtonBase)<RectangularButtonProps>`
     $areItemsDraggable ? theme.gbaThemeBlue : 'rgba(255, 255, 255, 0.9)'};
   border-style: ${({ $areItemsDraggable = false }) =>
     $areItemsDraggable ? 'dashed' : 'solid'};
-
-  ${({ $initialPosition = { top: '0', left: '0' } }) =>
-    `
-    top: ${$initialPosition.top};
-    left: ${$initialPosition.left};
-    `}
 `;
 
 export const VirtualButton = ({
@@ -131,11 +133,11 @@ export const VirtualButton = ({
   // we need to manage key events ourselves for buttons with an emulator keyId
   const keyboardEvents = keyId
     ? {
-        onKeyDown: (e: KeyboardEvent) => {
+        onKeyDown: (e: KeyboardEvent<HTMLButtonElement>) => {
           if (e.code == 'Space' || e.key == ' ')
             emulator?.simulateKeyDown(keyId);
         },
-        onKeyUp: (e: KeyboardEvent) => {
+        onKeyUp: (e: KeyboardEvent<HTMLButtonElement>) => {
           if (e.code == 'Space' || e.key == ' ') emulator?.simulateKeyUp(keyId);
         }
       }

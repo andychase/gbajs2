@@ -42,7 +42,14 @@ type KeyState = {
   RIGHT?: number;
 };
 
-const BackgroundContainer = styled.section<BackgroundContainerProps>`
+const BackgroundContainer = styled.section.attrs<BackgroundContainerProps>(
+  (props) => ({
+    style: {
+      top: props.$initialPosition?.top || '0',
+      left: props.$initialPosition?.left || '0'
+    }
+  })
+)`
   position: absolute;
   background-color: red;
   border-radius: 50%;
@@ -59,12 +66,6 @@ const BackgroundContainer = styled.section<BackgroundContainerProps>`
     $areItemsDraggable ? 'dashed' : 'solid'};
   border-width: 2px;
   z-index: 12;
-
-  ${({ $initialPosition = { top: '0', left: '0' } }) =>
-    `
-    top: ${$initialPosition.top};
-    left: ${$initialPosition.left};
-    `};
 
   @media ${({ theme }) => theme.isMobileLandscape} {
     background-color: transparent;

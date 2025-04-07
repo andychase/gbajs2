@@ -1,4 +1,4 @@
-import { useOrientation } from '@uidotdev/usehooks';
+import { useOrientation, useWindowSize } from '@uidotdev/usehooks';
 import { useCallback, useEffect, useState, type ReactNode } from 'react';
 
 import { InitialBoundsContext } from './initial-bounds-context.tsx';
@@ -12,6 +12,7 @@ export const InitialBoundsProvider = ({
 }: InitialBoundsProviderProps) => {
   const [initialBounds, setInitialBounds] = useState<InitialBounds>();
   const orientation = useOrientation();
+  const windowSize = useWindowSize();
 
   const setInitialBound = useCallback(
     (key: string, bounds?: DOMRect) =>
@@ -28,6 +29,10 @@ export const InitialBoundsProvider = ({
     if (orientation.angle !== null && [0, 90, 270].includes(orientation.angle))
       clearInitialBounds();
   }, [clearInitialBounds, orientation.angle]);
+
+  useEffect(() => {
+    if (windowSize.width && windowSize.height) clearInitialBounds();
+  }, [clearInitialBounds, windowSize.width, windowSize.height]);
 
   return (
     <InitialBoundsContext.Provider
