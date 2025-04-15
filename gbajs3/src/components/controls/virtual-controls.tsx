@@ -65,7 +65,7 @@ export const VirtualControls = () => {
   const { getLayout } = useLayoutContext();
   const { initialBounds } = useInitialBoundsContext();
   const virtualControlToastId = useId();
-  const quickReload = useQuickReload();
+  const { quickReload } = useQuickReload();
   const { syncActionIfEnabled } = useAddCallbacks();
   const [currentSaveStateSlot] = useLocalStorage(
     saveStateSlotLocalStorageKey,

@@ -10,101 +10,201 @@ import * as contextHooks from '../../hooks/context.tsx';
 import type { GBAEmulator } from '../../emulator/mgba/mgba-emulator.tsx';
 
 describe('useQuickReload hook', () => {
-  it('quick reloads using the emulator if running', async () => {
-    const emulatorQuickReloadSpy: () => void = vi.fn();
-    const setIsRunningSpy = vi.fn();
+  describe('quickReload', () => {
+    it('quick reloads using the emulator if running', async () => {
+      const emulatorQuickReloadSpy: () => void = vi.fn();
+      const setIsRunningSpy = vi.fn();
 
-    vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
-      setCanvas: vi.fn(),
-      canvas: null,
-      emulator: {
-        getCurrentGameName: () => undefined,
-        quickReload: emulatorQuickReloadSpy
-      } as GBAEmulator
-    }));
+      vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
+        setCanvas: vi.fn(),
+        canvas: null,
+        emulator: {
+          getCurrentGameName: () => undefined,
+          quickReload: emulatorQuickReloadSpy
+        } as GBAEmulator
+      }));
 
-    vi.spyOn(contextHooks, 'useRunningContext').mockImplementation(() => ({
-      isRunning: true,
-      setIsRunning: setIsRunningSpy
-    }));
+      vi.spyOn(contextHooks, 'useRunningContext').mockImplementation(() => ({
+        isRunning: true,
+        setIsRunning: setIsRunningSpy
+      }));
 
-    const { result } = renderHookWithContext(() => useQuickReload());
+      const {
+        result: {
+          current: { quickReload }
+        }
+      } = renderHookWithContext(() => useQuickReload());
 
-    act(() => {
-      result.current();
+      act(() => {
+        quickReload();
+      });
+
+      expect(emulatorQuickReloadSpy).toHaveBeenCalledOnce();
+      expect(setIsRunningSpy).not.toHaveBeenCalled();
     });
 
-    expect(emulatorQuickReloadSpy).toHaveBeenCalledOnce();
-    expect(setIsRunningSpy).not.toHaveBeenCalled();
+    it('quick reloads last game name from the emulator', async () => {
+      const emulatorQuickReloadSpy: () => void = vi.fn();
+      const runGameSpy = vi.fn(() => true);
+      const setIsRunningSpy = vi.fn();
+
+      vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
+        setCanvas: vi.fn(),
+        canvas: null,
+        emulator: {
+          getCurrentGameName: () => 'some_rom.gba'
+        } as GBAEmulator
+      }));
+
+      vi.spyOn(contextHooks, 'useRunningContext').mockImplementation(() => ({
+        isRunning: false,
+        setIsRunning: setIsRunningSpy
+      }));
+
+      vi.spyOn(runGameHooks, 'useRunGame').mockReturnValue(runGameSpy);
+
+      const {
+        result: {
+          current: { quickReload }
+        }
+      } = renderHookWithContext(() => useQuickReload());
+
+      act(() => {
+        quickReload();
+      });
+
+      expect(runGameSpy).toHaveBeenCalledOnce();
+      expect(runGameSpy).toHaveBeenCalledWith('some_rom.gba');
+      expect(emulatorQuickReloadSpy).not.toHaveBeenCalled();
+
+      expect(setIsRunningSpy).toHaveBeenCalledOnce();
+      expect(setIsRunningSpy).toHaveBeenCalledWith(true);
+    });
+
+    it('quick reloads last stored game name from localStorage', async () => {
+      const emulatorQuickReloadSpy: () => void = vi.fn();
+      const runGameSpy = vi.fn(() => true);
+      const setIsRunningSpy = vi.fn();
+
+      localStorage.setItem(emulatorGameNameLocalStorageKey, '"some_rom_2.gba"');
+
+      vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
+        setCanvas: vi.fn(),
+        canvas: null,
+        emulator: {
+          getCurrentGameName: () => undefined
+        } as GBAEmulator
+      }));
+
+      vi.spyOn(contextHooks, 'useRunningContext').mockImplementation(() => ({
+        isRunning: false,
+        setIsRunning: setIsRunningSpy
+      }));
+
+      vi.spyOn(runGameHooks, 'useRunGame').mockReturnValue(runGameSpy);
+
+      const {
+        result: {
+          current: { quickReload }
+        }
+      } = renderHookWithContext(() => useQuickReload());
+
+      act(() => {
+        quickReload();
+      });
+
+      expect(runGameSpy).toHaveBeenCalledOnce();
+      expect(runGameSpy).toHaveBeenCalledWith('some_rom_2.gba');
+      expect(emulatorQuickReloadSpy).not.toHaveBeenCalled();
+
+      expect(setIsRunningSpy).toHaveBeenCalledOnce();
+      expect(setIsRunningSpy).toHaveBeenCalledWith(true);
+    });
   });
 
-  it('quick reloads last stored game name in the emulator', async () => {
-    const emulatorQuickReloadSpy: () => void = vi.fn();
-    const runGameSpy = vi.fn(() => true);
-    const setIsRunningSpy = vi.fn();
+  describe('isQuickReloadAvailable', () => {
+    it('is available when running', () => {
+      vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
+        setCanvas: vi.fn(),
+        canvas: null,
+        emulator: {
+          getCurrentGameName: () => 'some_rom.gba'
+        } as GBAEmulator
+      }));
 
-    vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
-      setCanvas: vi.fn(),
-      canvas: null,
-      emulator: {
-        getCurrentGameName: () => 'some_rom.gba'
-      } as GBAEmulator
-    }));
+      vi.spyOn(contextHooks, 'useRunningContext').mockImplementation(() => ({
+        isRunning: true,
+        setIsRunning: vi.fn()
+      }));
 
-    vi.spyOn(contextHooks, 'useRunningContext').mockImplementation(() => ({
-      isRunning: false,
-      setIsRunning: setIsRunningSpy
-    }));
+      const {
+        result: {
+          current: { isQuickReloadAvailable }
+        }
+      } = renderHookWithContext(() => useQuickReload());
 
-    vi.spyOn(runGameHooks, 'useRunGame').mockReturnValue(runGameSpy);
-
-    const { result } = renderHookWithContext(() => useQuickReload());
-
-    act(() => {
-      result.current();
+      expect(isQuickReloadAvailable).toBe(true);
     });
 
-    expect(runGameSpy).toHaveBeenCalledOnce();
-    expect(runGameSpy).toHaveBeenCalledWith('some_rom.gba');
-    expect(emulatorQuickReloadSpy).not.toHaveBeenCalled();
+    it('is available if there is a current game name', () => {
+      vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
+        setCanvas: vi.fn(),
+        canvas: null,
+        emulator: {
+          getCurrentGameName: () => 'some_rom.gba'
+        } as GBAEmulator
+      }));
 
-    expect(setIsRunningSpy).toHaveBeenCalledOnce();
-    expect(setIsRunningSpy).toHaveBeenCalledWith(true);
-  });
+      vi.spyOn(contextHooks, 'useRunningContext').mockImplementation(() => ({
+        isRunning: true,
+        setIsRunning: vi.fn()
+      }));
 
-  it('quick reloads last stored game name in the localStorage', async () => {
-    const emulatorQuickReloadSpy: () => void = vi.fn();
-    const runGameSpy = vi.fn(() => true);
-    const setIsRunningSpy = vi.fn();
+      const {
+        result: {
+          current: { isQuickReloadAvailable }
+        }
+      } = renderHookWithContext(() => useQuickReload());
 
-    localStorage.setItem(emulatorGameNameLocalStorageKey, '"some_rom_2.gba"');
-
-    vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
-      setCanvas: vi.fn(),
-      canvas: null,
-      emulator: {
-        getCurrentGameName: () => undefined
-      } as GBAEmulator
-    }));
-
-    vi.spyOn(contextHooks, 'useRunningContext').mockImplementation(() => ({
-      isRunning: false,
-      setIsRunning: setIsRunningSpy
-    }));
-
-    vi.spyOn(runGameHooks, 'useRunGame').mockReturnValue(runGameSpy);
-
-    const { result } = renderHookWithContext(() => useQuickReload());
-
-    act(() => {
-      result.current();
+      expect(isQuickReloadAvailable).toBe(true);
     });
 
-    expect(runGameSpy).toHaveBeenCalledOnce();
-    expect(runGameSpy).toHaveBeenCalledWith('some_rom_2.gba');
-    expect(emulatorQuickReloadSpy).not.toHaveBeenCalled();
+    it('is available if there is a stored game name', () => {
+      localStorage.setItem(emulatorGameNameLocalStorageKey, '"some_rom_2.gba"');
 
-    expect(setIsRunningSpy).toHaveBeenCalledOnce();
-    expect(setIsRunningSpy).toHaveBeenCalledWith(true);
+      vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
+        setCanvas: vi.fn(),
+        canvas: null,
+        emulator: {
+          getCurrentGameName: () => undefined
+        } as GBAEmulator
+      }));
+
+      const {
+        result: {
+          current: { isQuickReloadAvailable }
+        }
+      } = renderHookWithContext(() => useQuickReload());
+
+      expect(isQuickReloadAvailable).toBe(true);
+    });
+
+    it('is not available if there is no current or stored game name', () => {
+      vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
+        setCanvas: vi.fn(),
+        canvas: null,
+        emulator: {
+          getCurrentGameName: () => undefined
+        } as GBAEmulator
+      }));
+
+      const {
+        result: {
+          current: { isQuickReloadAvailable }
+        }
+      } = renderHookWithContext(() => useQuickReload());
+
+      expect(isQuickReloadAvailable).toBe(false);
+    });
   });
 });

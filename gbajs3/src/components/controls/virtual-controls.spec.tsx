@@ -108,9 +108,10 @@ describe('<VirtualControls />', () => {
         } as GBAEmulator
       }));
 
-      vi.spyOn(quickReloadHooks, 'useQuickReload').mockReturnValue(
-        quickReloadSpy
-      );
+      vi.spyOn(quickReloadHooks, 'useQuickReload').mockImplementation(() => ({
+        quickReload: quickReloadSpy,
+        isQuickReloadAvailable: true
+      }));
 
       const toastErrorSpy = vi.spyOn(toast.default, 'error');
 
@@ -135,9 +136,10 @@ describe('<VirtualControls />', () => {
         } as GBAEmulator
       }));
 
-      vi.spyOn(quickReloadHooks, 'useQuickReload').mockReturnValue(
-        quickReloadSpy
-      );
+      vi.spyOn(quickReloadHooks, 'useQuickReload').mockImplementation(() => ({
+        quickReload: quickReloadSpy,
+        isQuickReloadAvailable: false
+      }));
 
       const toastErrorSpy = vi.spyOn(toast.default, 'error');
 
@@ -224,7 +226,8 @@ describe('<VirtualControls />', () => {
       vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
         ...original(),
         emulator: {
-          loadSaveState: loadSaveStateSpy
+          loadSaveState: loadSaveStateSpy,
+          getCurrentGameName: () => 'some_rom.gba'
         } as GBAEmulator
       }));
 
@@ -252,7 +255,8 @@ describe('<VirtualControls />', () => {
       vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
         ...original(),
         emulator: {
-          loadSaveState: loadSaveStateSpy
+          loadSaveState: loadSaveStateSpy,
+          getCurrentGameName: () => 'some_rom.gba'
         } as GBAEmulator
       }));
 
@@ -284,7 +288,8 @@ describe('<VirtualControls />', () => {
       vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
         ...original(),
         emulator: {
-          createSaveState: createSaveStateSpy
+          createSaveState: createSaveStateSpy,
+          getCurrentGameName: () => 'some_rom.gba'
         } as GBAEmulator
       }));
 
@@ -322,7 +327,8 @@ describe('<VirtualControls />', () => {
       vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
         ...original(),
         emulator: {
-          createSaveState: createSaveStateSpy
+          createSaveState: createSaveStateSpy,
+          getCurrentGameName: () => 'some_rom.gba'
         } as GBAEmulator
       }));
 

@@ -180,7 +180,7 @@ export const NavigationMenu = () => {
   const isLargerThanPhone = useMediaQuery(theme.isLargerThanPhone);
   const isMobileLandscape = useMediaQuery(theme.isMobileLandscape);
   const menuHeaderId = useId();
-  const quickReload = useQuickReload();
+  const { quickReload, isQuickReloadAvailable } = useQuickReload();
 
   const isMenuItemDisabledByAuth = !isAuthenticated();
   const hasApiLocation = !!import.meta.env.VITE_GBA_SERVER_LOCATION;
@@ -321,12 +321,6 @@ export const NavigationMenu = () => {
               }}
             />
             <NavLeaf
-              title="Quick Reload"
-              $disabled={!isRunning}
-              icon={<BiRedo />}
-              onClick={quickReload}
-            />
-            <NavLeaf
               title="Manage Save States"
               $disabled={!isRunning}
               icon={<BiBookmarks />}
@@ -345,6 +339,14 @@ export const NavigationMenu = () => {
               }}
             />
           </NavComponent>
+
+          <NavLeaf
+            title="Quick Reload"
+            $disabled={!isQuickReloadAvailable}
+            icon={<BiRedo />}
+            $withPadding
+            onClick={quickReload}
+          />
 
           <NavLeaf
             title="Controls"

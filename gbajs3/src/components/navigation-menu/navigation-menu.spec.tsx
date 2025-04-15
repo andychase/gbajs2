@@ -38,7 +38,7 @@ describe('<NavigationMenu />', () => {
     expect(screen.getByLabelText('Menu Toggle')).toBeInTheDocument();
     expect(screen.getByLabelText('Menu Dismiss')).toBeInTheDocument();
     // renders default mounted menu items
-    expect(screen.getAllByRole('listitem')).toHaveLength(14);
+    expect(screen.getAllByRole('listitem')).toHaveLength(15);
   });
 
   it('toggles menu with button', async () => {
@@ -174,9 +174,10 @@ describe('<NavigationMenu />', () => {
         isRunning: true
       }));
 
-      vi.spyOn(quickReloadHooks, 'useQuickReload').mockReturnValue(
-        quickReloadSpy
-      );
+      vi.spyOn(quickReloadHooks, 'useQuickReload').mockImplementation(() => ({
+        quickReload: quickReloadSpy,
+        isQuickReloadAvailable: true
+      }));
 
       renderWithContext(<NavigationMenu />);
 
@@ -187,6 +188,28 @@ describe('<NavigationMenu />', () => {
       await userEvent.click(menuNode);
 
       expect(quickReloadSpy).toHaveBeenCalledOnce();
+    });
+
+    it('Quick Reload renders as disabled', async () => {
+      const { useRunningContext: originalRunning } = await vi.importActual<
+        typeof contextHooks
+      >('../../hooks/context.tsx');
+
+      vi.spyOn(contextHooks, 'useRunningContext').mockImplementation(() => ({
+        ...originalRunning(),
+        isRunning: false
+      }));
+
+      vi.spyOn(quickReloadHooks, 'useQuickReload').mockImplementation(() => ({
+        quickReload: vi.fn(),
+        isQuickReloadAvailable: false
+      }));
+
+      renderWithContext(<NavigationMenu />);
+
+      const menuNode = screen.getByRole('button', { name: 'Quick Reload' });
+
+      expect(menuNode).toBeDisabled();
     });
 
     it('Screenshot calls emulator screenshot and toasts on success', async () => {
@@ -235,8 +258,8 @@ describe('<NavigationMenu />', () => {
       vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
         ...originalEmulator(),
         emulator: {
-          screenshot: () => false
-          // missing getCurrentGameName
+          screenshot: () => false,
+          getCurrentGameName: () => '/some_rom.gba'
         } as GBAEmulator,
         canvas: {} as HTMLCanvasElement
       }));
