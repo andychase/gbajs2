@@ -17,6 +17,17 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
+-- Name: goadmin; Type: DATABASE; Schema: -; Owner: <PG_DB_USER>
+--
+
+CREATE DATABASE goadmin WITH TEMPLATE = template0 ENCODING = 'UTF8' LOCALE_PROVIDER = libc LOCALE = 'en_US.utf8';
+
+
+ALTER DATABASE goadmin OWNER TO <PG_DB_USER>;
+
+\connect goadmin
+
+--
 -- Name: goadmin_menu_myid_seq; Type: SEQUENCE; Schema: public; Owner: <PG_DB_USER>
 --
 

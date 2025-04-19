@@ -1,4 +1,4 @@
-FROM postgres:15.2-alpine
+FROM postgres:15.12-alpine
 
 LABEL org.opencontainers.image.source https://github.com/thenick775/gbajs3
 
