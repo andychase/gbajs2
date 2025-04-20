@@ -31,7 +31,7 @@ fi
 # create default directories
 read -r -p "Do you want to create default directories? (y/n) " REPLY
 
-required_vars=("ROM_PATH" "SAVE_PATH" "CERT_DIR")
+required_vars=("ROM_PATH" "SAVE_PATH" "CERT_DIR" "PG_DATA_LOCATION")
 
 for var in "${required_vars[@]}"; do
   if [ -z "${!var}" ]; then
@@ -41,7 +41,7 @@ for var in "${required_vars[@]}"; do
 done
 
 if [[ $REPLY == "y" || $REPLY == "Y" ]]; then
-  for dir in "$ROM_PATH" "$SAVE_PATH" "$CERT_DIR"; do
+  for dir in "$ROM_PATH" "$SAVE_PATH" "$CERT_DIR" "$PG_DATA_LOCATION"; do
     if [ ! -d "$dir" ]; then
       mkdir -p "$dir" &&
         echo "Created directory: $dir"

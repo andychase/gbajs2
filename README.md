@@ -98,8 +98,7 @@ All control positions can be modified if the default layouts do not suit your de
 
   - copy env files from the examples in all directories
   - create default local directories
-    - note: the database mount directory will be created by the container with the correct permissions
-  - generate a local test ssl certificate pair
+  - generate a local test ssl certificate pair with prompting from OpenSSL (if installed)
 
 - This script will also generate a top level `.env` file of the following format, merging all service specific env files and additional docker config:
 
@@ -136,14 +135,23 @@ All control positions can be modified if the default layouts do not suit your de
 
   Leaving all default values in place will work for local development.
 
-- If your developing on a mac, you will need to share the bind mount location(s) manually, and ensure they have the correct permissions
+- If your developing on a mac, you will need to share the database bind mount location(s) manually, and ensure they have the correct permissions
 
   These settings are located in `Settings -> Resources -> File Sharing`
 
-- Build and run the docker containers:
+- Build and run the docker containers using compose:
 
   ```
   docker compose up;
+  ```
+
+- Build and run the docker containers using swarm:
+
+  ```
+  # swarm does not build images by default
+  docker compose build;
+  # add all images to the stack except shepherd for local dev
+  docker stack deploy -c docker-compose.swarm.yaml -c ./auth/docker-compose.yaml -c ./admin/docker-compose.yaml -c ./postgres/docker-compose.yaml -c ./gbajs3/docker-compose.yaml gbajs3;
   ```
 
 - Once docker has created the containers, the web server will be available at https://localhost
