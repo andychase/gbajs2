@@ -34,6 +34,10 @@ type ControlTabsProps = {
   setIsSuccessfulSubmit: (successfulSubmit: boolean) => void;
 };
 
+const StyledModalBody = styled(ModalBody)`
+  padding: 0 0 1rem 0;
+`;
+
 const TabsWithBorder = styled(Tabs)`
   border-bottom: 1px solid;
   border-color: rgba(0, 0, 0, 0.12);
@@ -44,7 +48,7 @@ const TabsWithBorder = styled(Tabs)`
 `;
 
 const TabWrapper = styled.div`
-  padding: 24px;
+  padding: 20px 40px 20px 40px;
 `;
 
 const a11yProps = (index: number) => {
@@ -207,7 +211,7 @@ export const ControlsModal = () => {
   return (
     <>
       <ModalHeader title="Controls" />
-      <ModalBody>
+      <StyledModalBody>
         <ControlTabs
           setFormId={setFormId}
           virtualControlsFormId={`${baseId}--virtual-controls-form`}
@@ -216,7 +220,7 @@ export const ControlsModal = () => {
           resetPositionsButtonId={`${baseId}--reset-positions-button`}
           setIsSuccessfulSubmit={setIsSuccessfulSubmit}
         />
-      </ModalBody>
+      </StyledModalBody>
       <ModalFooter>
         {formId !== `${baseId}--control-profiles` && (
           <CircleCheckButton
