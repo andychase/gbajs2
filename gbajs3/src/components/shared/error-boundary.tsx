@@ -17,7 +17,7 @@ type FallbackRendererProps = {
 };
 
 const ErrorWrapper = styled.div`
-  background-color: #fff;
+  background-color: ${({ theme }) => theme.pureWhite};
   border-radius: 4px;
   display: flex;
   flex-direction: column;
@@ -79,7 +79,7 @@ const fallbackRender = ({
   error,
   resetErrorBoundary
 }: FallbackRendererProps) => (
-  <Overlay>
+  <Overlay data-testid="fallback-renderer">
     <ErrorWrapper role="alert">
       <CenteredHeaderWrapper>
         <Header>An irrecoverable error occurred</Header>

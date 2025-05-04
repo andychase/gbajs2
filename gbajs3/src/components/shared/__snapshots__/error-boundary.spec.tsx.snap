@@ -1,0 +1,169 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`fallbackRender > renders styled fallback 1`] = `
+.c4 {
+  margin: 0;
+}
+
+.c2 {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  border-bottom: 1px solid #dee2e6;
+  padding: 1rem 1rem;
+}
+
+.c5 {
+  padding: 1rem;
+  overflow-y: auto;
+}
+
+.c10 {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  align-items: center;
+  justify-content: flex-end;
+  border-top: 1px solid #dee2e6;
+  padding: 1rem 1rem;
+}
+
+.c1 {
+  background-color: #fff;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  height: fit-content;
+  inset: 10px;
+  margin: 25px auto auto;
+  padding-top: 25px;
+  max-height: 80%;
+  max-width: calc(100dvw - 20px);
+  padding: 0;
+  touch-action: none;
+  user-select: text;
+  width: fit-content;
+}
+
+.c0 {
+  background-color: rgba(0, 0, 0, 0.5);
+  width: 100dvw;
+  height: 100dvh;
+  position: absolute;
+}
+
+.c3 {
+  justify-content: center;
+}
+
+.c6 {
+  padding: 1em 1em 0 1em;
+}
+
+.c8 {
+  object-fit: contain;
+  max-width: 100%;
+}
+
+.c11 {
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.c7 {
+  position: relative;
+}
+
+.c9 {
+  font-size: 5px;
+  position: absolute;
+  right: 15%;
+  bottom: 6%;
+}
+
+@media only screen and (min-width: 600px) {
+  .c1 {
+    max-width: 600px;
+  }
+}
+
+<div
+  class="c0"
+  data-testid="fallback-renderer"
+>
+  <div
+    class="c1"
+    role="alert"
+  >
+    <div
+      class="c2 c3"
+    >
+      <h3
+        class="c4"
+      >
+        An irrecoverable error occurred
+      </h3>
+    </div>
+    <div
+      class="c5 c6"
+    >
+      <div
+        class="c7"
+      >
+        <img
+          alt="GameBoy Advance with error icon"
+          class="c8"
+          src="/img/error-512x512.png"
+        />
+        <a
+          class="c9"
+          href="https://www.freepik.com/free-vector/editable-text-effect-error-3d-hack-virus-font-style_21408324.htm"
+          target="_blank"
+        >
+          Font by NACreative
+        </a>
+      </div>
+      <p
+        style="color: red;"
+      >
+        A test error
+      </p>
+      <p>
+        Please use the buttons below to copy the stack trace and create an issue, this helps a lot with error reporting!
+      </p>
+    </div>
+    <div
+      class="c10 c11"
+    >
+      <button
+        class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedInfo MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorInfo MuiButton-root MuiButton-contained MuiButton-containedInfo MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorInfo css-mnflth-MuiButtonBase-root-MuiButton-root"
+        tabindex="0"
+        type="button"
+      >
+        Copy trace
+      </button>
+      <span>
+        →
+      </span>
+      <a
+        class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSuccess MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSuccess MuiButton-root MuiButton-contained MuiButton-containedSuccess MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSuccess css-1elmdwi-MuiButtonBase-root-MuiButton-root"
+        href="https://github.com/thenick775/gbajs3/issues"
+        tabindex="0"
+        target="_blank"
+      >
+        Create issue
+      </a>
+      <span>
+        →
+      </span>
+      <button
+        class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary css-1mns5ui-MuiButtonBase-root-MuiButton-root"
+        tabindex="0"
+        type="button"
+      >
+        Dismiss and reset
+      </button>
+    </div>
+  </div>
+</div>
+`;
