@@ -1,4 +1,4 @@
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
@@ -43,8 +43,8 @@ describe('<CheatsModal />', () => {
 
     expect(screen.getByLabelText('Name')).toBeVisible();
     expect(screen.getByLabelText('Cheat Code')).toBeVisible();
-    expect(screen.getByLabelText('Enabled')).not.toBeChecked();
-    expect(screen.getByRole('button', { name: 'Delete' })).toBeVisible();
+    expect(screen.getByLabelText('Enabled')).toBeChecked();
+    expect(screen.getByRole('button', { name: 'Remove Cheat' })).toBeVisible();
   });
 
   it('renders existing raw and parsed cheats', async () => {
@@ -95,6 +95,8 @@ describe('<CheatsModal />', () => {
   });
 
   it('adds new cheat', async () => {
+    const scrollIntoViewSpy = vi.spyOn(HTMLElement.prototype, 'scrollIntoView');
+
     renderWithContext(<CheatsModal />);
 
     expect(screen.getByRole('list')).toBeVisible();
@@ -105,15 +107,17 @@ describe('<CheatsModal />', () => {
     );
 
     expect(screen.getAllByRole('listitem')).toHaveLength(2);
+    // adding a new cheat should cause the create button to scroll into view fully
+    await waitFor(() => expect(scrollIntoViewSpy).toHaveBeenCalledOnce());
   });
 
-  it('deletes cheat', async () => {
+  it('removes cheat', async () => {
     renderWithContext(<CheatsModal />);
 
     expect(screen.getByRole('list')).toBeVisible();
     expect(screen.getAllByRole('listitem')).toHaveLength(1);
 
-    await userEvent.click(screen.getByRole('button', { name: 'Delete' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Remove Cheat' }));
 
     expect(screen.queryAllByRole('listitem')).toHaveLength(0);
   });
@@ -274,7 +278,7 @@ describe('<CheatsModal />', () => {
     renderWithContext(<CheatsModal />);
 
     expect(
-      await screen.findByText('Use this form to enter, add, and delete cheats.')
+      await screen.findByText('Use this form to enter, add, and remove cheats.')
     ).toBeInTheDocument();
 
     // click joyride floater
@@ -283,7 +287,7 @@ describe('<CheatsModal />', () => {
     );
 
     expect(
-      screen.getByText('Use this form to enter, add, and delete cheats.')
+      screen.getByText('Use this form to enter, add, and remove cheats.')
     ).toBeVisible();
 
     // advance tour
@@ -309,7 +313,7 @@ describe('<CheatsModal />', () => {
     await userEvent.click(screen.getByRole('button', { name: /Next/ }));
 
     expect(
-      screen.getByText('Use the checkbox to enable/disable a cheat.')
+      screen.getByText('Use the switch to enable/disable a cheat.')
     ).toBeVisible();
 
     // advance tour

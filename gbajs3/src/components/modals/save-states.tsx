@@ -71,7 +71,7 @@ const SaveStatesList = styled.ul`
   }
 `;
 
-const StyledCiCircleRemove = styled(BiTrash)`
+const StyledBiTrash = styled(BiTrash)`
   height: 100%;
   width: 20px;
 `;
@@ -225,7 +225,7 @@ export const SaveStatesModal = () => {
                   }
                 }}
               >
-                <StyledCiCircleRemove />
+                <StyledBiTrash />
               </IconButton>
             </StyledLi>
           ))}

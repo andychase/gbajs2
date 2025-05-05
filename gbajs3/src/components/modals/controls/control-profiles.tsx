@@ -74,7 +74,7 @@ const ProfilesList = styled.ul`
   }
 `;
 
-const StyledCiCircleRemove = styled(BiTrash)`
+const StyledBiTrash = styled(BiTrash)`
   height: 100%;
   width: 20px;
 `;
@@ -229,7 +229,7 @@ export const ControlProfiles = ({ id }: ControlProfilesProps) => {
                 sx={{ padding: 0 }}
                 onClick={() => deleteProfile(profile.id)}
               >
-                <StyledCiCircleRemove />
+                <StyledBiTrash />
               </IconButton>
             </StyledLi>
           )

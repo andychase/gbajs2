@@ -180,15 +180,14 @@ export const mGBAEmulator = (mGBA: mGBAEmulatorTypeDef): GBAEmulator => {
     const cheatsFileName = filepathToFileName(mGBA.gameName, '.cheats');
     if (!cheatsFileName) return null;
 
-    const content = cheatsList.length
-      ? `cheats = ${cheatsList.length}\n\n` +
-        cheatsList
-          .map(
-            ({ desc, enable, code }, idx) =>
-              `cheat${idx}_desc = "${desc}"\ncheat${idx}_enable = ${enable}\ncheat${idx}_code = "${code}"`
-          )
-          .join('\n')
-      : '';
+    const content =
+      `cheats = ${cheatsList.length}\n\n` +
+      cheatsList
+        .map(
+          ({ desc, enable, code }, idx) =>
+            `cheat${idx}_desc = "${desc}"\ncheat${idx}_enable = ${enable}\ncheat${idx}_code = "${code}"\n`
+        )
+        .join('\n');
 
     return new File([new Blob([content])], cheatsFileName);
   };

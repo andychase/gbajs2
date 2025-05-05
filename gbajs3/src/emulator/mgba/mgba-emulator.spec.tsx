@@ -138,8 +138,8 @@ cheat1_code = "XYZ789"`;
 
     const expectedContent =
       `cheats = 2\n\n` +
-      `cheat0_desc = "Infinite Lives"\ncheat0_enable = true\ncheat0_code = "ABC123"\n` +
-      `cheat1_desc = "All Weapons"\ncheat1_enable = false\ncheat1_code = "XYZ789"`;
+      `cheat0_desc = "Infinite Lives"\ncheat0_enable = true\ncheat0_code = "ABC123"\n\n` +
+      `cheat1_desc = "All Weapons"\ncheat1_enable = false\ncheat1_code = "XYZ789"\n`;
 
     const content = await cheatsFile?.text();
     expect(content).toBe(expectedContent);
@@ -157,7 +157,7 @@ cheat1_code = "XYZ789"`;
     expect(cheatsFile).toBeNull();
   });
 
-  it('should generate an empty file if cheats list is empty', async () => {
+  it('should generate only a header if cheats list is empty', async () => {
     const emulator = createEmulator();
     const cheatsList: ParsedCheats[] = [];
 
@@ -166,8 +166,10 @@ cheat1_code = "XYZ789"`;
     expect(cheatsFile).toBeInstanceOf(File);
     expect(cheatsFile?.name).toBe('testGame.cheats');
 
-    const size = cheatsFile?.size;
-    expect(size).toBe(0);
+    const expectedContent = `cheats = 0\n\n`;
+
+    const content = await cheatsFile?.text();
+    expect(content).toBe(expectedContent);
   });
 
   it('should retrieve the current cheats file', () => {
