@@ -132,7 +132,7 @@ export default defineConfig(({ mode }) => {
           manualChunks: (id) => {
             const vendorPrefix = 'vendor';
             if (id.indexOf('node_modules') > -1) {
-              if (id.indexOf('@mui') > -1) {
+              if (id.indexOf('@mui') > -1 || id.indexOf('reselect') > -1) {
                 // vendor mui
                 return vendorPrefix + '_@mui';
               }

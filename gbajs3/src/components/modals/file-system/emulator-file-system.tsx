@@ -2,9 +2,9 @@ import { IconButton } from '@mui/material';
 import { alpha, styled as muiStyled } from '@mui/material/styles';
 import {
   SimpleTreeView,
-  TreeItem2,
+  TreeItem,
   treeItemClasses,
-  type TreeItem2Props
+  type TreeItemProps
 } from '@mui/x-tree-view';
 import { BiCloudDownload, BiTrash } from 'react-icons/bi';
 import { styled } from 'styled-components';
@@ -43,8 +43,8 @@ const IconSeparator = styled.div`
   gap: 15px;
 `;
 
-const StyledTreeItem = muiStyled((props: TreeItem2Props) => (
-  <TreeItem2 {...props} />
+const StyledTreeItem = muiStyled((props: TreeItemProps) => (
+  <TreeItem {...props} />
 ))(({ theme }) => ({
   marginTop: 5,
   // note: using mui theme here
