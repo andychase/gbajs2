@@ -42,10 +42,12 @@ export const useRunGame = () => {
       muteOnRewind: true,
       audioSampleRate: 48000,
       audioBufferSize: 1024,
-      videoSync: true,
+      timestepSync: true,
+      videoSync: false,
       audioSync: false,
       threadedVideo: false,
-      rewindEnable: true
+      rewindEnable: true,
+      showFpsCounter: false
     }
   );
   const { addCallbacks } = useAddCallbacks();
@@ -80,12 +82,15 @@ export const useRunGame = () => {
           rewindBufferCapacity: emulatorSettings.rewindBufferCapacity,
           rewindBufferInterval: emulatorSettings.rewindBufferInterval,
           frameSkip: emulatorSettings.frameSkip,
+          baseFpsTarget: emulatorSettings.baseFpsTarget,
           audioSampleRate: emulatorSettings.audioSampleRate,
           audioBufferSize: emulatorSettings.audioBufferSize,
+          timestepSync: emulatorSettings.timestepSync,
           videoSync: emulatorSettings.videoSync,
           audioSync: emulatorSettings.audioSync,
           threadedVideo: emulatorSettings.threadedVideo,
-          rewindEnable: emulatorSettings.rewindEnable
+          rewindEnable: emulatorSettings.rewindEnable,
+          showFpsCounter: emulatorSettings.showFpsCounter
         });
       }
 

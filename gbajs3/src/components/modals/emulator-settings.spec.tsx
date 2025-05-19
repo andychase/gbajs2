@@ -94,7 +94,7 @@ describe('<EmulatorSettingsModal />', () => {
 
     expect(setItemSpy).toHaveBeenCalledWith(
       'emulatorSettings',
-      '{"frameSkip":0,"rewindBufferCapacity":600,"rewindBufferInterval":1,"allowOpposingDirections":true,"muteOnFastForward":true,"muteOnRewind":true,"saveFileSystemOnInGameSave":true,"saveFileSystemOnCreateUpdateDelete":true,"fileSystemNotificationsEnabled":true,"audioSampleRate":48000,"audioBufferSize":1024,"videoSync":true,"audioSync":false,"threadedVideo":false,"rewindEnable":true}'
+      '{"frameSkip":0,"baseFpsTarget":60,"rewindBufferCapacity":600,"rewindBufferInterval":1,"allowOpposingDirections":true,"muteOnFastForward":true,"muteOnRewind":true,"saveFileSystemOnInGameSave":true,"saveFileSystemOnCreateUpdateDelete":true,"fileSystemNotificationsEnabled":true,"audioSampleRate":48000,"audioBufferSize":1024,"timestepSync":true,"videoSync":false,"audioSync":false,"threadedVideo":false,"rewindEnable":true,"showFpsCounter":false}'
     );
 
     expect(addCallbacksSpy).toHaveBeenCalledOnce();
@@ -110,11 +110,14 @@ describe('<EmulatorSettingsModal />', () => {
       audioSampleRate: 48000,
       audioSync: false,
       frameSkip: 0,
+      baseFpsTarget: 60,
       rewindBufferCapacity: 600,
       rewindBufferInterval: 1,
       rewindEnable: true,
+      showFpsCounter: false,
       threadedVideo: false,
-      videoSync: true
+      timestepSync: true,
+      videoSync: false
     });
   });
 
@@ -149,6 +152,7 @@ describe('<EmulatorSettingsModal />', () => {
     renderWithContext(<EmulatorSettingsModal />);
 
     const frameSkipInput = screen.getByLabelText('Frame Skip');
+    const baseFpsTargetInput = screen.getByLabelText('Base FPS Target');
     const rewindCapacityInput = screen.getByLabelText('Rewind Capacity');
     const rewindIntervalInput = screen.getByLabelText('Rewind Interval');
     const saveFileNameInput = screen.getByLabelText('Save File Name');
@@ -170,12 +174,17 @@ describe('<EmulatorSettingsModal />', () => {
     const saveOnInGameSaveCheckbox = screen.getByLabelText(
       'Save file system on in-game save'
     );
+    const timestepSyncCheckbox = screen.getByLabelText('Timestep Sync');
     const videoSyncCheckbox = screen.getByLabelText('Video Sync');
     const audioSyncCheckbox = screen.getByLabelText('Audio Sync');
+    const fpsCounterCheckbox = screen.getByLabelText('FPS Counter');
     const threadedVideoCheckbox = screen.getByLabelText('Threaded Video');
     const rewindEnabledCheckbox = screen.getByLabelText('Rewind Enabled');
 
     await userEvent.type(frameSkipInput, '25');
+
+    await userEvent.clear(baseFpsTargetInput);
+    await userEvent.type(baseFpsTargetInput, '30');
 
     await userEvent.clear(rewindCapacityInput);
     await userEvent.type(rewindCapacityInput, '1000');
@@ -192,8 +201,10 @@ describe('<EmulatorSettingsModal />', () => {
     await userEvent.click(muteOnFastForwardCheckbox);
     await userEvent.click(saveFileSystemOnFSOperationCheckbox);
     await userEvent.click(saveOnInGameSaveCheckbox);
+    await userEvent.click(timestepSyncCheckbox);
     await userEvent.click(videoSyncCheckbox);
     await userEvent.click(audioSyncCheckbox);
+    await userEvent.click(fpsCounterCheckbox);
     await userEvent.click(threadedVideoCheckbox);
     await userEvent.click(rewindEnabledCheckbox);
 
@@ -201,7 +212,7 @@ describe('<EmulatorSettingsModal />', () => {
 
     expect(setItemSpy).toHaveBeenCalledWith(
       'emulatorSettings',
-      '{"frameSkip":25,"rewindBufferCapacity":1000,"rewindBufferInterval":10,"allowOpposingDirections":false,"muteOnFastForward":false,"muteOnRewind":false,"saveFileSystemOnInGameSave":false,"saveFileSystemOnCreateUpdateDelete":false,"fileSystemNotificationsEnabled":false,"audioSampleRate":48000,"audioBufferSize":1024,"videoSync":false,"audioSync":true,"threadedVideo":true,"rewindEnable":false,"saveFileName":"custom_save_override.sav"}'
+      '{"frameSkip":25,"baseFpsTarget":30,"rewindBufferCapacity":1000,"rewindBufferInterval":10,"allowOpposingDirections":false,"muteOnFastForward":false,"muteOnRewind":false,"saveFileSystemOnInGameSave":false,"saveFileSystemOnCreateUpdateDelete":false,"fileSystemNotificationsEnabled":false,"audioSampleRate":48000,"audioBufferSize":1024,"timestepSync":false,"videoSync":true,"audioSync":true,"threadedVideo":true,"rewindEnable":false,"showFpsCounter":true,"saveFileName":"custom_save_override.sav"}'
     );
 
     expect(addCallbacksSpy).toHaveBeenCalledOnce();
@@ -217,11 +228,14 @@ describe('<EmulatorSettingsModal />', () => {
       audioSampleRate: 48000,
       audioSync: true,
       frameSkip: 25,
+      baseFpsTarget: 30,
       rewindBufferCapacity: 1000,
       rewindBufferInterval: 10,
       rewindEnable: false,
+      showFpsCounter: true,
       threadedVideo: true,
-      videoSync: false
+      timestepSync: false,
+      videoSync: true
     });
   });
 
@@ -275,13 +289,16 @@ describe('<EmulatorSettingsModal />', () => {
       allowOpposingDirections: true,
       audioBufferSize: 1024,
       audioSampleRate: 48000,
+      baseFpsTarget: 60,
       audioSync: false,
       frameSkip: 0,
       rewindBufferCapacity: 600,
       rewindBufferInterval: 1,
       rewindEnable: true,
+      showFpsCounter: false,
       threadedVideo: false,
-      videoSync: true
+      timestepSync: true,
+      videoSync: false
     });
   });
 
