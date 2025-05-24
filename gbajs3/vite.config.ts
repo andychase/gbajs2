@@ -101,7 +101,8 @@ export default defineConfig(({ mode }) => {
           ]
         },
         workbox: {
-          globPatterns: ['**/*.{js,css,html,wasm}']
+          globPatterns: ['**/*.{js,css,html,wasm}'],
+          navigateFallbackDenylist: [/^\/admin/]
         },
         ...(withCOIServiceWorker
           ? {
