@@ -4,6 +4,7 @@ exports[`<ModalBody /> > container matches snapshot 1`] = `
 .c0 {
   padding: 1rem;
   overflow-y: auto;
+  touch-action: pan-x pan-y;
 }
 
 <div

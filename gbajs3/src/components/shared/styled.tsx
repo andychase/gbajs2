@@ -24,6 +24,7 @@ export const HeaderWrapper = styled.div`
 export const BodyWrapper = styled.div`
   padding: 1rem;
   overflow-y: auto;
+  touch-action: pan-x pan-y;
 `;
 
 export const FooterWrapper = styled.div`
