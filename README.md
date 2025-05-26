@@ -76,7 +76,7 @@ Do not attempt to log into the server unless you are the server owner or an appr
 
 <img src="./readme-graphics/gbajs3-mobile-portrait-v5.png" width="400px">
 
-<img src="./readme-graphics/gbajs3-mobile-landscape-v2.png" height="400px">
+<img src="./readme-graphics/gbajs3-mobile-landscape-v2.png">
 
 All control positions can be modified if the default layouts do not suit your device!
 
