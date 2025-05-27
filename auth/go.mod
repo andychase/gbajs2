@@ -17,9 +17,9 @@ require (
 	github.com/stretchr/testify v1.10.0
 	github.com/swaggo/http-swagger v1.3.4
 	github.com/swaggo/swag v1.16.4
-	golang.org/x/crypto v0.37.0
+	golang.org/x/crypto v0.38.0
 	gorm.io/driver/postgres v1.5.11
-	gorm.io/gorm v1.25.12
+	gorm.io/gorm v1.30.0
 )
 
 require (
@@ -40,7 +40,7 @@ require (
 	github.com/gotestyourself/gotestyourself v2.2.0+incompatible // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761 // indirect
-	github.com/jackc/pgx/v5 v5.7.4 // indirect
+	github.com/jackc/pgx/v5 v5.7.5 // indirect
 	github.com/jackc/puddle/v2 v2.2.2 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
@@ -50,16 +50,16 @@ require (
 	github.com/moby/sys/user v0.4.0 // indirect
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/opencontainers/image-spec v1.1.1 // indirect
-	github.com/opencontainers/runc v1.2.6 // indirect
+	github.com/opencontainers/runc v1.3.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/sirupsen/logrus v1.9.3 // indirect
 	github.com/swaggo/files v1.0.1 // indirect
-	golang.org/x/net v0.39.0 // indirect
-	golang.org/x/sync v0.13.0 // indirect
-	golang.org/x/sys v0.32.0 // indirect
-	golang.org/x/text v0.24.0 // indirect
-	golang.org/x/tools v0.32.0 // indirect
+	golang.org/x/net v0.40.0 // indirect
+	golang.org/x/sync v0.14.0 // indirect
+	golang.org/x/sys v0.33.0 // indirect
+	golang.org/x/text v0.25.0 // indirect
+	golang.org/x/tools v0.33.0 // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	gotest.tools v2.2.0+incompatible // indirect
