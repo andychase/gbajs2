@@ -39,6 +39,13 @@ if [[ $REPLY == "y" || $REPLY == "Y" ]]; then
       echo "Env file $dir/.env does not exist."
     fi
   done
+
+  if [[ -f "./.env.swarm" ]]; then
+    rm "./.env.swarm" &&
+      echo "Deleted ./.env.swarm in ."
+  else
+    echo ".env.swarm does not exist"
+  fi
 else
   echo "Operation cancelled."
 fi
