@@ -221,9 +221,22 @@ cheat1_code = "XYZ789"`;
     expect(mockMGBA.bindKey).toHaveBeenCalledWith('Keypad 5', '5');
   });
 
-  it('should list all save states', () => {
-    const emulator = createEmulator();
-    expect(emulator.listSaveStates()).toEqual(['file1.sav', 'file2.sav']);
+  it('should list all current save states based on the game name', () => {
+    const emulator = createEmulator({
+      FS: {
+        ...mockMGBA.FS,
+        readdir: vi.fn(() => [
+          'testGame.ss1',
+          'testGame.ss2',
+          'file1.ss1',
+          'file2.ss2'
+        ])
+      } as unknown as typeof FS
+    });
+    expect(emulator.listCurrentSaveStates()).toEqual([
+      'testGame.ss1',
+      'testGame.ss2'
+    ]);
   });
 
   it('should delete a save state', () => {

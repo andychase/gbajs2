@@ -48,7 +48,8 @@ export type GBAEmulator = {
   isFastForwardEnabled: () => boolean;
   listAllFiles: () => FileNode;
   listRoms: () => string[];
-  listSaveStates: () => string[];
+  listCurrentSaveStates: () => string[];
+  getSaveState: (saveStateName: string) => Uint8Array;
   loadSaveState: (slot: number) => boolean;
   parseCheatsString: (cheatsStr: string) => ParsedCheats[];
   parsedCheatsToFile: (cheatsList: ParsedCheats[]) => File | null;
@@ -90,6 +91,14 @@ const defaultKeyBindings = [
   { gbaInput: 'Right', key: 'ArrowRight', location: KEY_LOCATION_STANDARD }
 ];
 
+const ignorePaths = ['.', '..'];
+
+const filterSaveStates =
+  (baseSaveStateName?: string) => (saveStateName: string) =>
+    !ignorePaths.includes(saveStateName) &&
+    baseSaveStateName &&
+    saveStateName.startsWith(baseSaveStateName);
+
 export const mGBAEmulator = (mGBA: mGBAEmulatorTypeDef): GBAEmulator => {
   const paths = mGBA.filePaths();
 
@@ -108,7 +117,6 @@ export const mGBAEmulator = (mGBA: mGBAEmulatorTypeDef): GBAEmulator => {
 
   const listAllFiles = () => {
     const root: FileNode = { path: paths.root, isDir: true, children: [] };
-    const ignorePaths = ['.', '..'];
 
     const recursiveRead = ({ path, children }: FileNode) => {
       for (const name of mGBA.FS.readdir(path)) {
@@ -228,7 +236,19 @@ export const mGBAEmulator = (mGBA: mGBAEmulatorTypeDef): GBAEmulator => {
     defaultAudioSampleRates: () => defaultSampleRates,
     defaultAudioBufferSizes: () => defaultAudioBufferSizes,
     loadSaveState: mGBA.loadState,
-    listSaveStates: () => mGBA.FS.readdir(paths.saveStatePath),
+    listCurrentSaveStates: () => {
+      const baseSaveStateName = filepathToFileName(mGBA.gameName, '.ss');
+
+      return mGBA.FS.readdir(paths.saveStatePath).filter(
+        filterSaveStates(baseSaveStateName)
+      );
+    },
+    getSaveState: (saveStateName: string) => {
+      const cheatsPath = `${paths.saveStatePath}/${saveStateName}`;
+      const exists = mGBA.FS.analyzePath(cheatsPath).exists;
+
+      return exists ? mGBA.FS.readFile(cheatsPath) : new Uint8Array();
+    },
     listRoms: mGBA.listRoms,
     setVolume: mGBA.setVolume,
     getVolume: mGBA.getVolume,
@@ -250,7 +270,7 @@ export const mGBAEmulator = (mGBA: mGBAEmulatorTypeDef): GBAEmulator => {
     uploadRom: mGBA.uploadRom,
     uploadSaveOrSaveState: mGBA.uploadSaveOrSaveState,
     deleteSaveState: (slot) => {
-      const saveStateName = filepathToFileName(mGBA.saveName, '.ss' + slot);
+      const saveStateName = filepathToFileName(mGBA.gameName, '.ss' + slot);
       const saveStatePath = `${paths.saveStatePath}/${saveStateName}`;
 
       mGBA.FS.unlink(saveStatePath);

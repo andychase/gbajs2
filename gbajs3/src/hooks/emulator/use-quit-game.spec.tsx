@@ -19,6 +19,7 @@ describe('useQuitGame hook', () => {
     const setIsRunningSpy = vi.fn();
     const fadeCanvasSpy = vi.fn();
     const testCanvas = {} as HTMLCanvasElement;
+    // must be stable
     const emu = {
       quitGame: emulatorQuitGameSpy,
       screenshot: screenshotSpy,
