@@ -52,6 +52,7 @@ export const FileSystemModal = () => {
       link.href = URL.createObjectURL(fileDownload);
       link.click();
       link.remove();
+      setTimeout(() => URL.revokeObjectURL(link.href), 0);
     }
   };
 

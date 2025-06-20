@@ -88,6 +88,7 @@ export const fadeCanvas = (
 
     clearWebGlCanvas(canvas);
     lcdFade2d(copyCanvas);
+    URL.revokeObjectURL(url);
   };
   fadeImage.src = url;
 };

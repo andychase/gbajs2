@@ -105,7 +105,8 @@ describe('<FileSystemModal />', () => {
     >('../../hooks/context.tsx');
 
     // unimplemented in jsdom
-    URL.createObjectURL = vi.fn(() => 'object_url:some_rom.sav');
+    URL.createObjectURL = vi.fn(() => 'object_url:rom1.gba');
+    URL.revokeObjectURL = vi.fn();
     // mock to assert click and prevent navigation (unimplemented)
     const anchorClickSpy = vi
       .spyOn(HTMLAnchorElement.prototype, 'click')
@@ -131,6 +132,9 @@ describe('<FileSystemModal />', () => {
     expect(getFileSpy).toHaveBeenCalledWith('/data/games/rom1.gba');
 
     expect(URL.createObjectURL).toHaveBeenCalledWith(expect.anything());
+    expect(URL.revokeObjectURL).toHaveBeenCalledWith(
+      expect.stringMatching(/object_url:rom1\.gba$/)
+    );
     expect(anchorClickSpy).toHaveBeenCalledOnce();
     expect(anchorRemoveSpy).toHaveBeenCalledOnce();
   });

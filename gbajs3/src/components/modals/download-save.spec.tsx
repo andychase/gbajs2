@@ -50,6 +50,7 @@ describe('<DownloadSaveModal />', () => {
     >('../../hooks/context.tsx');
     // unimplemented in jsdom
     URL.createObjectURL = vi.fn(() => 'object_url:some_rom.sav');
+    URL.revokeObjectURL = vi.fn();
     // mock to assert click and prevent navigation (unimplemented)
     const anchorClickSpy = vi
       .spyOn(HTMLAnchorElement.prototype, 'click')
@@ -72,6 +73,9 @@ describe('<DownloadSaveModal />', () => {
     await userEvent.click(downloadButton);
 
     expect(URL.createObjectURL).toHaveBeenCalledWith(expect.anything());
+    expect(URL.revokeObjectURL).toHaveBeenCalledWith(
+      expect.stringMatching(/object_url:some_rom\.sav$/)
+    );
     expect(anchorClickSpy).toHaveBeenCalledOnce();
     expect(anchorRemoveSpy).toHaveBeenCalledOnce();
   });

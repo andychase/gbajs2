@@ -67,6 +67,7 @@ export const DownloadSaveModal = () => {
               link.href = URL.createObjectURL(saveFile);
               link.click();
               link.remove();
+              setTimeout(() => URL.revokeObjectURL(link.href), 0);
             } else {
               setError(true);
             }
