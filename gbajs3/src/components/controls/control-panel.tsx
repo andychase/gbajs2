@@ -41,6 +41,7 @@ import {
 import { GripperHandle } from '../shared/gripper-handle.tsx';
 import { PanelButton, SliderButton } from './control-panel/buttons.tsx';
 import { PanelSlider } from './control-panel/panel-slider.tsx';
+import { useUnloadEmulator } from '../../hooks/emulator/use-unload-emulator.tsx';
 
 import type { EmulatorSettings } from '../modals/emulator-settings.tsx';
 
@@ -139,6 +140,9 @@ export const ControlPanel = () => {
   // pause emulator when document is not visible,
   // resumes if applicable when document is visible
   useBackgroundEmulator({ isPaused });
+
+  // take auto save state when page is hidden (best effort)
+  useUnloadEmulator();
 
   const refSetLayout = useCallback(
     (node: Rnd | null) => {

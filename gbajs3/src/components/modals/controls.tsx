@@ -12,10 +12,10 @@ import {
   useLayoutContext,
   useModalContext
 } from '../../hooks/context.tsx';
-import {
-  EmbeddedProductTour,
-  type TourSteps
-} from '../product-tour/embedded-product-tour.tsx';
+// import {
+//   EmbeddedProductTour,
+//   type TourSteps
+// } from '../product-tour/embedded-product-tour.tsx';
 import { CircleCheckButton } from '../shared/circle-check-button.tsx';
 import { ControlProfiles } from './controls/control-profiles.tsx';
 
@@ -51,12 +51,10 @@ const TabWrapper = styled.div`
   padding: 20px 40px 20px 40px;
 `;
 
-const a11yProps = (index: number) => {
-  return {
-    id: `control-tab-${index}`,
-    'aria-controls': `tabpanel-${index}`
-  };
-};
+const a11yProps = (index: number) => ({
+  id: `control-tab-${index}`,
+  'aria-controls': `tabpanel-${index}`
+});
 
 const TabPanel = ({ children, index, value }: TabPanelProps) => {
   return (
@@ -153,60 +151,61 @@ export const ControlsModal = () => {
   );
   const [isSuccessfulSubmit, setIsSuccessfulSubmit] = useState<boolean>(false);
 
-  const tourSteps: TourSteps = [
-    {
-      content: (
-        <p>
-          Select which virtual controls you wish to enable in this form tab.
-        </p>
-      ),
-      target: `#${CSS.escape(`${baseId}--virtual-controls-form`)}`
-    },
-    {
-      content: (
-        <p>
-          Use this button to reset the positions of the screen, control panel,
-          and all virtual controls.
-        </p>
-      ),
-      target: `#${CSS.escape(`${baseId}--reset-positions-button`)}`
-    },
-    {
-      content: (
-        <>
-          <p>Use the tab panel to change which form you are seeing.</p>
-          <p>
-            Select the <i>KEY BINDINGS</i> tab above, then click next!
-          </p>
-        </>
-      ),
-      placement: 'right',
-      target: `#${CSS.escape(a11yProps(1).id)}`,
-      disableBeacon: true,
-      disableOverlayClose: true,
-      hideCloseButton: false,
-      spotlightClicks: true
-    },
-    {
-      content: (
-        <p>
-          Remap keybindings by selecting a form field and typing your desired
-          input.
-        </p>
-      ),
-      placement: 'top-end',
-      target: `#${CSS.escape(`${baseId}--key-bindings-form`)}`
-    },
-    {
-      content: (
-        <p>
-          Use the <i>Save Changes</i> button to persist changes from the current
-          form tab.
-        </p>
-      ),
-      target: `#${CSS.escape(`${baseId}--save-changes-button`)}`
-    }
-  ];
+  // TODO: break this tour apart, it appears to have been broken for awhile
+  // const tourSteps: TourSteps = [
+  //   {
+  //     content: (
+  //       <p>
+  //         Select which virtual controls you wish to enable in this form tab.
+  //       </p>
+  //     ),
+  //     target: `#${CSS.escape(`${baseId}--virtual-controls-form`)}`
+  //   },
+  //   {
+  //     content: (
+  //       <p>
+  //         Use this button to reset the positions of the screen, control panel,
+  //         and all virtual controls.
+  //       </p>
+  //     ),
+  //     target: `#${CSS.escape(`${baseId}--reset-positions-button`)}`
+  //   },
+  //   {
+  //     content: (
+  //       <>
+  //         <p>Use the tab panel to change which form you are seeing.</p>
+  //         <p>
+  //           Select the <i>KEY BINDINGS</i> tab above, then click next!
+  //         </p>
+  //       </>
+  //     ),
+  //     placement: 'right',
+  //     target: `#${CSS.escape(a11yProps(1).id)}`,
+  //     disableBeacon: true,
+  //     disableOverlayClose: true,
+  //     hideCloseButton: false,
+  //     spotlightClicks: true
+  //   },
+  //   {
+  //     content: (
+  //       <p>
+  //         Remap keybindings by selecting a form field and typing your desired
+  //         input.
+  //       </p>
+  //     ),
+  //     placement: 'top-end',
+  //     target: `#${CSS.escape(`${baseId}--key-bindings-form`)}`
+  //   },
+  //   {
+  //     content: (
+  //       <p>
+  //         Use the <i>Save Changes</i> button to persist changes from the current
+  //         form tab.
+  //       </p>
+  //     ),
+  //     target: `#${CSS.escape(`${baseId}--save-changes-button`)}`
+  //   }
+  // ];
 
   return (
     <>
@@ -235,10 +234,10 @@ export const ControlsModal = () => {
           Close
         </Button>
       </ModalFooter>
-      <EmbeddedProductTour
+      {/* <EmbeddedProductTour
         steps={tourSteps}
         completedProductTourStepName="hasCompletedControlsTour"
-      />
+      /> */}
     </>
   );
 };

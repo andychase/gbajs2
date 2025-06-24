@@ -47,7 +47,9 @@ export const useRunGame = () => {
       audioSync: false,
       threadedVideo: false,
       rewindEnable: true,
-      showFpsCounter: false
+      showFpsCounter: false,
+      autoSaveStateLoadNotificationEnabled: true,
+      autoSaveStateCaptureNotificationEnabled: true
     }
   );
   const { addCallbacks } = useAddCallbacks();
@@ -74,7 +76,11 @@ export const useRunGame = () => {
           saveFileSystemOnInGameSave:
             emulatorSettings?.saveFileSystemOnInGameSave,
           fileSystemNotificationsEnabled:
-            emulatorSettings?.fileSystemNotificationsEnabled
+            emulatorSettings?.fileSystemNotificationsEnabled,
+          autoSaveStateLoadNotificationEnabled:
+            emulatorSettings?.autoSaveStateLoadNotificationEnabled,
+          autoSaveStateCaptureNotificationEnabled:
+            emulatorSettings?.autoSaveStateCaptureNotificationEnabled
         });
 
         emulator?.setCoreSettings({
@@ -90,7 +96,12 @@ export const useRunGame = () => {
           audioSync: emulatorSettings.audioSync,
           threadedVideo: emulatorSettings.threadedVideo,
           rewindEnable: emulatorSettings.rewindEnable,
-          showFpsCounter: emulatorSettings.showFpsCounter
+          showFpsCounter: emulatorSettings.showFpsCounter,
+          autoSaveStateTimerIntervalSeconds:
+            emulatorSettings.autoSaveStateTimerIntervalSeconds,
+          autoSaveStateEnable: emulatorSettings.autoSaveStateEnable,
+          restoreAutoSaveStateOnLoad:
+            emulatorSettings.restoreAutoSaveStateOnLoad
         });
       }
 

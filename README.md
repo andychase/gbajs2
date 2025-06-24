@@ -36,12 +36,13 @@ Do not attempt to log into the server unless you are the server owner or an appr
 - Mobile UI support
 - Offline PWA support
 - Save state support
+- Auto save state support
 - Cheat code support
 - Soft patch support
 - Rewind support
 - Threading support
 - Core support
-  - mGBA support (wasm based)
+  - mGBA (wasm based)
 - Admin UI
 - Postgres support
 - Persistent file system utilizing IndexedDB

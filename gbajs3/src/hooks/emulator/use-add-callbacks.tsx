@@ -9,7 +9,9 @@ import type { EmulatorSettings } from '../../components/modals/emulator-settings
 
 export type CoreCallbackOptions = {
   saveFileSystemOnInGameSave: boolean;
-  fileSystemNotificationsEnabled?: boolean;
+  autoSaveStateLoadNotificationEnabled: boolean;
+  autoSaveStateCaptureNotificationEnabled: boolean;
+  fileSystemNotificationsEnabled: boolean;
 };
 
 type SyncActionIfEnabledProps = {
@@ -52,6 +54,14 @@ export const useAddCallbacks = () => {
             if (options.fileSystemNotificationsEnabled)
               toast.success('Saved File System');
           }
+        ),
+        autoSaveStateLoadedCallback: optionalFunc(
+          options.autoSaveStateLoadNotificationEnabled,
+          () => toast.success('Auto save state loaded')
+        ),
+        autoSaveStateCapturedCallback: optionalFunc(
+          options.autoSaveStateCaptureNotificationEnabled,
+          () => toast.success('Auto save state captured')
         )
       }),
     [emulator]

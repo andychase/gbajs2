@@ -139,7 +139,7 @@ describe('<ControlsModal />', () => {
     expect(setIsModalOpenSpy).toHaveBeenCalledWith(false);
   });
 
-  it('renders tour steps', async () => {
+  it.skip('renders tour steps', async () => {
     const { useModalContext: original } = await vi.importActual<
       typeof contextHooks
     >('../../hooks/context.tsx');

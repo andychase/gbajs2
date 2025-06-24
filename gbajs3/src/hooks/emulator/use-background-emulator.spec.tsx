@@ -19,13 +19,15 @@ describe('useBackgroundEmulator hook', () => {
   it('pauses emulator when entering background if running and not paused', () => {
     const emulatorPauseSpy: () => void = vi.fn();
     const emulatorResumeSpy: () => void = vi.fn();
+    const emulatorForceAutoSaveStateSpy: () => boolean = vi.fn();
 
     vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
       setCanvas: vi.fn(),
       canvas: null,
       emulator: {
         pause: emulatorPauseSpy,
-        resume: emulatorResumeSpy
+        resume: emulatorResumeSpy,
+        forceAutoSaveState: emulatorForceAutoSaveStateSpy
       } as GBAEmulator
     }));
 
@@ -43,6 +45,7 @@ describe('useBackgroundEmulator hook', () => {
     );
 
     expect(emulatorPauseSpy).toHaveBeenCalledOnce();
+    expect(emulatorForceAutoSaveStateSpy).toHaveBeenCalledOnce();
 
     rerender();
 
