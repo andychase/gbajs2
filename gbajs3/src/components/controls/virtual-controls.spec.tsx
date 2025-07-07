@@ -3,7 +3,7 @@ import { userEvent } from '@testing-library/user-event';
 import * as toast from 'react-hot-toast';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { saveStateSlotLocalStorageKey } from './consts.tsx';
+import { saveStateSlotsLocalStorageKey } from './consts.tsx';
 import { VirtualControls } from './virtual-controls.tsx';
 import { renderWithContext } from '../../../test/render-with-context.tsx';
 import { GbaDarkTheme } from '../../context/theme/theme.tsx';
@@ -233,7 +233,7 @@ describe('<VirtualControls />', () => {
 
       const toastSuccessSpy = vi.spyOn(toast.default, 'success');
 
-      localStorage.setItem(saveStateSlotLocalStorageKey, '2');
+      localStorage.setItem(saveStateSlotsLocalStorageKey, '{"some_rom.gba":2}');
 
       renderWithContext(<VirtualControls />);
 
@@ -262,17 +262,44 @@ describe('<VirtualControls />', () => {
 
       const toastErrorSpy = vi.spyOn(toast.default, 'error');
 
-      localStorage.setItem(saveStateSlotLocalStorageKey, '2');
-
       renderWithContext(<VirtualControls />);
 
       await userEvent.click(screen.getByLabelText('Loadstate Button'));
 
       expect(loadSaveStateSpy).toHaveBeenCalledOnce();
-      expect(loadSaveStateSpy).toHaveBeenCalledWith(2);
-      expect(toastErrorSpy).toHaveBeenCalledWith('Failed to load slot: 2', {
+      expect(loadSaveStateSpy).toHaveBeenCalledWith(0);
+      expect(toastErrorSpy).toHaveBeenCalledWith('Failed to load slot: 0', {
         id: expect.anything()
       });
+    });
+
+    it('load save state renders no game toast', async () => {
+      const loadSaveStateSpy: (slot: number) => boolean = vi.fn(() => false);
+      const { useEmulatorContext: original } = await vi.importActual<
+        typeof contextHooks
+      >('../../hooks/context.tsx');
+
+      vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
+        ...original(),
+        emulator: {
+          loadSaveState: loadSaveStateSpy,
+          getCurrentGameName: () => undefined
+        } as GBAEmulator
+      }));
+
+      const toastErrorSpy = vi.spyOn(toast.default, 'error');
+
+      renderWithContext(<VirtualControls />);
+
+      await userEvent.click(screen.getByLabelText('Loadstate Button'));
+
+      expect(loadSaveStateSpy).not.toHaveBeenCalled();
+      expect(toastErrorSpy).toHaveBeenCalledWith(
+        'Load a game to load state slots',
+        {
+          id: expect.anything()
+        }
+      );
     });
 
     it('creates save state', async () => {
@@ -300,7 +327,7 @@ describe('<VirtualControls />', () => {
 
       const toastSuccessSpy = vi.spyOn(toast.default, 'success');
 
-      localStorage.setItem(saveStateSlotLocalStorageKey, '2');
+      localStorage.setItem(saveStateSlotsLocalStorageKey, '{"some_rom.gba":2}');
 
       renderWithContext(<VirtualControls />);
 
@@ -339,18 +366,45 @@ describe('<VirtualControls />', () => {
 
       const toastErrorSpy = vi.spyOn(toast.default, 'error');
 
-      localStorage.setItem(saveStateSlotLocalStorageKey, '2');
-
       renderWithContext(<VirtualControls />);
 
       await userEvent.click(screen.getByLabelText('Savestate Button'));
 
       expect(createSaveStateSpy).toHaveBeenCalledOnce();
-      expect(createSaveStateSpy).toHaveBeenCalledWith(2);
+      expect(createSaveStateSpy).toHaveBeenCalledWith(0);
       expect(syncActionIfEnabledSpy).not.toHaveBeenCalled();
-      expect(toastErrorSpy).toHaveBeenCalledWith('Failed to save slot: 2', {
+      expect(toastErrorSpy).toHaveBeenCalledWith('Failed to save slot: 0', {
         id: expect.anything()
       });
+    });
+
+    it('create save state renders no game toast', async () => {
+      const createSaveStateSpy: (slot: number) => boolean = vi.fn(() => false);
+      const { useEmulatorContext: original } = await vi.importActual<
+        typeof contextHooks
+      >('../../hooks/context.tsx');
+
+      vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
+        ...original(),
+        emulator: {
+          createSaveState: createSaveStateSpy,
+          getCurrentGameName: () => undefined
+        } as GBAEmulator
+      }));
+
+      const toastErrorSpy = vi.spyOn(toast.default, 'error');
+
+      renderWithContext(<VirtualControls />);
+
+      await userEvent.click(screen.getByLabelText('Savestate Button'));
+
+      expect(createSaveStateSpy).not.toHaveBeenCalled();
+      expect(toastErrorSpy).toHaveBeenCalledWith(
+        'Load a game to save state slots',
+        {
+          id: expect.anything()
+        }
+      );
     });
   });
 });

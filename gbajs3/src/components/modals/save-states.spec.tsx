@@ -6,7 +6,7 @@ import { SaveStatesModal } from './save-states.tsx';
 import { renderWithContext } from '../../../test/render-with-context.tsx';
 import * as contextHooks from '../../hooks/context.tsx';
 import * as addCallbackHooks from '../../hooks/emulator/use-add-callbacks.tsx';
-import { saveStateSlotLocalStorageKey } from '../controls/consts.tsx';
+import { saveStateSlotsLocalStorageKey } from '../controls/consts.tsx';
 import { productTourLocalStorageKey } from '../product-tour/consts.tsx';
 
 import type { GBAEmulator } from '../../emulator/mgba/mgba-emulator.tsx';
@@ -22,7 +22,6 @@ describe('<SaveStatesModal />', () => {
   });
 
   it('renders with save states from current game and current slot', async () => {
-    localStorage.setItem(saveStateSlotLocalStorageKey, '2');
     const getSaveStateSpy: (saveStateName: string) => Uint8Array = vi.fn(
       () => new Uint8Array()
     );
@@ -35,9 +34,12 @@ describe('<SaveStatesModal />', () => {
       ...original(),
       emulator: {
         listCurrentSaveStates: () => ['rom0.ss0', 'rom0.ss1'],
+        getCurrentGameName: () => 'rom0.gba',
         getSaveState: getSaveStateSpy
       } as GBAEmulator
     }));
+
+    localStorage.setItem(saveStateSlotsLocalStorageKey, '{"rom0.gba":2}');
 
     renderWithContext(<SaveStatesModal />);
 
@@ -54,11 +56,25 @@ describe('<SaveStatesModal />', () => {
   it('updates current slot', async () => {
     const setItemSpy = vi.spyOn(Storage.prototype, 'setItem');
 
+    const { useEmulatorContext: original } = await vi.importActual<
+      typeof contextHooks
+    >('../../hooks/context.tsx');
+
+    vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
+      ...original(),
+      emulator: {
+        getCurrentGameName: () => 'some_rom.gba'
+      } as GBAEmulator
+    }));
+
     renderWithContext(<SaveStatesModal />);
 
     await userEvent.type(screen.getByLabelText('Current Save State Slot'), '5');
 
-    expect(setItemSpy).toHaveBeenCalledWith(saveStateSlotLocalStorageKey, '5');
+    expect(setItemSpy).toHaveBeenCalledWith(
+      saveStateSlotsLocalStorageKey,
+      '{"some_rom.gba":5}'
+    );
   });
 
   it('creates saves states', async () => {
@@ -80,6 +96,7 @@ describe('<SaveStatesModal />', () => {
     vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
       ...original(),
       emulator: {
+        getCurrentGameName: () => 'rom0.gba',
         listCurrentSaveStates: listCurrentSaveStatesSpy as () => string[],
         getSaveState: getSaveStateSpy as (saveStateName: string) => Uint8Array,
         createSaveState: createSaveStateSpy
@@ -114,6 +131,7 @@ describe('<SaveStatesModal />', () => {
     // must be stable
     const emu = {
       listCurrentSaveStates: () => ['rom0.ss0'],
+      getCurrentGameName: () => 'rom0.gba',
       getSaveState: getSaveStateSpy as (saveStateName: string) => Uint8Array,
       createSaveState: createSaveState
     } as GBAEmulator;
@@ -158,6 +176,7 @@ describe('<SaveStatesModal />', () => {
       return {
         ...original(),
         emulator: {
+          getCurrentGameName: () => 'rom0.gba',
           listCurrentSaveStates: listCurrentSaveStatesSpy as () => string[],
           getSaveState: getSaveStateSpy as (
             saveStateName: string
@@ -193,6 +212,7 @@ describe('<SaveStatesModal />', () => {
     // must be stable
     const emu = {
       listCurrentSaveStates: () => ['some_rom.ss1'],
+      getCurrentGameName: () => 'some_rom.gba',
       loadSaveState: loadSaveStateSpy,
       getSaveState: getSaveStateSpy as (saveStateName: string) => Uint8Array
     } as GBAEmulator;
@@ -230,6 +250,7 @@ describe('<SaveStatesModal />', () => {
       ...original(),
       emulator: {
         listCurrentSaveStates: () => ['rom0.ss0'],
+        getCurrentGameName: () => 'rom0.gba',
         getSaveState: getSaveState,
         loadSaveState: loadSaveState
       } as GBAEmulator
@@ -254,6 +275,7 @@ describe('<SaveStatesModal />', () => {
       ...original(),
       emulator: {
         listCurrentSaveStates: () => ['rom0.ss0', 'rom0.ss1'],
+        getCurrentGameName: () => 'rom0.gba',
         getSaveState: getSaveState
       } as GBAEmulator
     }));

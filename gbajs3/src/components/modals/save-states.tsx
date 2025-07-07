@@ -10,7 +10,7 @@ import { ModalFooter } from './modal-footer.tsx';
 import { ModalHeader } from './modal-header.tsx';
 import { useEmulatorContext, useModalContext } from '../../hooks/context.tsx';
 import { useAddCallbacks } from '../../hooks/emulator/use-add-callbacks.tsx';
-import { saveStateSlotLocalStorageKey } from '../controls/consts.tsx';
+import { saveStateSlotsLocalStorageKey } from '../controls/consts.tsx';
 import {
   EmbeddedProductTour,
   type TourSteps
@@ -18,6 +18,10 @@ import {
 import { ErrorWithIcon } from '../shared/error-with-icon.tsx';
 import { NumberInput } from '../shared/number-input.tsx';
 import { CenteredText, StyledBiPlus } from '../shared/styled.tsx';
+
+export type CurrentSaveStateSlots = {
+  [romName: string]: number;
+};
 
 const LoadSaveStateButton = styled.button`
   padding: 0.5rem 0.5rem;
@@ -102,10 +106,8 @@ export const SaveStatesModal = () => {
     string[] | undefined
   >(emulator?.listCurrentSaveStates);
   const [saveStateError, setSaveStateError] = useState<string | null>(null);
-  const [currentSlot, setCurrentSlot] = useLocalStorage(
-    saveStateSlotLocalStorageKey,
-    0
-  );
+  const [currentSlots, setCurrentSlots] =
+    useLocalStorage<CurrentSaveStateSlots>(saveStateSlotsLocalStorageKey, {});
   const { syncActionIfEnabled } = useAddCallbacks();
   const baseId = useId();
   const [currentSaveStatePreview, setCurrentSaveStatePreview] = useState<
@@ -132,6 +134,19 @@ export const SaveStatesModal = () => {
         .filter((url): url is string => url !== null),
     [emulator, currentSaveStates]
   );
+
+  const currentGameName = emulator?.getCurrentGameName();
+  const currentSaveStateSlot = currentGameName
+    ? currentSlots[currentGameName] ?? 0
+    : 0;
+
+  const setCurrentSaveStateSlot = (slot: number) => {
+    if (currentGameName)
+      setCurrentSlots((prevState) => ({
+        ...prevState,
+        [currentGameName]: slot
+      }));
+  };
 
   const tourSteps: TourSteps = [
     {
@@ -175,11 +190,11 @@ export const SaveStatesModal = () => {
             label="Current Save State Slot"
             size="small"
             min={0}
-            value={currentSlot}
+            value={currentSaveStateSlot}
             slotProps={{
               inputLabel: { shrink: true },
               input: {
-                onChange: (p) => setCurrentSlot(Number(p.target.value))
+                onChange: (p) => setCurrentSaveStateSlot(Number(p.target.value))
               }
             }}
             sx={{ width: '100%' }}
@@ -198,7 +213,7 @@ export const SaveStatesModal = () => {
                       const slot = parseInt(slotString);
                       const hasLoadedSaveState = emulator?.loadSaveState(slot);
                       if (hasLoadedSaveState) {
-                        setCurrentSlot(slot);
+                        setCurrentSaveStateSlot(slot);
                         setSaveStateError(null);
                       } else {
                         setSaveStateError('Failed to load save state');
@@ -257,12 +272,12 @@ export const SaveStatesModal = () => {
           aria-label={`Create new save state`}
           sx={{ padding: 0 }}
           onClick={() => {
-            const hasCreatedSaveState = emulator?.createSaveState(
-              currentSlot + 1
-            );
+            const nextSaveStateSlot = currentSaveStateSlot + 1;
+            const hasCreatedSaveState =
+              emulator?.createSaveState(nextSaveStateSlot);
             if (hasCreatedSaveState) {
               refreshSaveStates();
-              setCurrentSlot((prevState) => prevState + 1);
+              setCurrentSaveStateSlot(nextSaveStateSlot);
               setSaveStateError(null);
               syncActionIfEnabled();
             } else {

@@ -12,7 +12,7 @@ import {
 import { styled, useTheme } from 'styled-components';
 
 import {
-  saveStateSlotLocalStorageKey,
+  saveStateSlotsLocalStorageKey,
   virtualControlsLocalStorageKey
 } from './consts.tsx';
 import { OPad } from './o-pad.tsx';
@@ -31,6 +31,7 @@ import { UploadSaveToServerModal } from '../modals/upload-save-to-server.tsx';
 import { Copy } from '../shared/styled.tsx';
 
 import type { AreVirtualControlsEnabledProps } from '../modals/controls/virtual-controls-form.tsx';
+import type { CurrentSaveStateSlots } from '../modals/save-states.tsx';
 
 const VirtualButtonTextLarge = styled(Copy)`
   text-align: center;
@@ -67,9 +68,9 @@ export const VirtualControls = () => {
   const virtualControlToastId = useId();
   const { quickReload } = useQuickReload();
   const { syncActionIfEnabled } = useAddCallbacks();
-  const [currentSaveStateSlot] = useLocalStorage(
-    saveStateSlotLocalStorageKey,
-    0
+  const [currentSaveStateSlots] = useLocalStorage<CurrentSaveStateSlots>(
+    saveStateSlotsLocalStorageKey,
+    {}
   );
   const [areVirtualControlsEnabled] = useLocalStorage<
     AreVirtualControlsEnabledProps | undefined
@@ -315,6 +316,11 @@ export const VirtualControls = () => {
       );
   };
 
+  const currentGameName = emulator?.getCurrentGameName();
+  const currentSaveStateSlot = currentGameName
+    ? currentSaveStateSlots[currentGameName] ?? 0
+    : 0;
+
   const virtualButtons = [
     {
       keyId: 'A',
@@ -415,6 +421,14 @@ export const VirtualControls = () => {
     {
       children: <BiSolidBookmark />,
       onClick: () => {
+        if (!currentGameName) {
+          toast.error('Load a game to load state slots', {
+            id: virtualControlToastId
+          });
+
+          return;
+        }
+
         const wasSuccessful = emulator?.loadSaveState(currentSaveStateSlot);
 
         toastOnCondition(
@@ -435,6 +449,14 @@ export const VirtualControls = () => {
     {
       children: <BiSave />,
       onClick: () => {
+        if (!currentGameName) {
+          toast.error('Load a game to save state slots', {
+            id: virtualControlToastId
+          });
+
+          return;
+        }
+
         const wasSuccessful = emulator?.createSaveState(currentSaveStateSlot);
 
         if (wasSuccessful) syncActionIfEnabled({ withToast: false });
