@@ -54,12 +54,13 @@ const StyledTreeItem = muiStyled((props: TreeItemProps) => (
     }
   },
   [`& .${treeItemClasses.groupTransition}`]: {
-    marginLeft: 15,
+    marginLeft: 11,
     paddingLeft: 10,
     borderLeft: `1px dashed ${alpha(theme.palette.text.primary, 0.4)}`
   },
   [`& .${treeItemClasses.content}`]: {
-    width: 'auto',
+    padding: theme.spacing(0.5, 0.5),
+    margin: theme.spacing(0.2, 0),
     alignItems: 'baseline'
   }
 }));
