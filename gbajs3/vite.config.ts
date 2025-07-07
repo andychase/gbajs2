@@ -130,30 +130,44 @@ export default defineConfig(({ mode }) => {
     build: {
       rollupOptions: {
         output: {
-          manualChunks: (id) => {
-            const vendorPrefix = 'vendor';
-            if (id.indexOf('node_modules') > -1) {
-              if (id.indexOf('@mui') > -1 || id.indexOf('reselect') > -1) {
-                // vendor mui
-                return vendorPrefix + '_@mui';
-              }
+          manualChunks: {
+            react: ['react', 'react-dom'],
 
-              if (id.indexOf('@thenick775/mgba-wasm') > -1) {
-                // vendor mGBA
-                return vendorPrefix + '_mgba-wasm';
-              }
+            mui: ['@mui/material', '@emotion/react', '@emotion/styled'],
 
-              if (
-                id.indexOf('react-joyride') > -1 ||
-                id.indexOf('react-floater') > -1 ||
-                id.indexOf('popper.js') > -1
-              ) {
-                // vendor react joyride + large deps
-                return vendorPrefix + '_react-joyride';
-              }
+            'mui-x': ['@mui/x-tree-view'],
 
-              return vendorPrefix;
-            }
+            mgba: ['@thenick775/mgba-wasm'],
+
+            styled: ['styled-components'],
+
+            onboarding: [
+              'react-joyride',
+              'react-floater',
+              'react-ios-pwa-prompt-ts'
+            ],
+
+            dnd: ['react-draggable', 'react-dropzone', 'react-rnd'],
+
+            ui: [
+              'react-modal',
+              'react-hot-toast',
+              'react-spinners',
+              'react-animate-height',
+              'react-icons',
+              'react-icons/tb',
+              'react-icons/fa',
+              'react-icons/ai',
+              'react-icons/bi',
+              'react-error-boundary'
+            ],
+
+            hooks: [
+              'react-hook-form',
+              '@uidotdev/usehooks',
+              'jwt-decode',
+              'nanoid'
+            ]
           }
         }
       }
