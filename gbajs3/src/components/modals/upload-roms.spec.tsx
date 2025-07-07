@@ -429,5 +429,17 @@ describe('<UploadRomsModal />', () => {
         'You may drop or select multiple files, once uploaded the selected game will boot!'
       )
     ).toBeVisible();
+
+    // advance tour
+    await userEvent.click(screen.getByRole('button', { name: /Next/ }));
+
+    expect(
+      screen.getByText(
+        'Alternatively, you may load a rom file from an external URL.'
+      )
+    ).toBeVisible();
+
+    // dismiss the popper interface
+    await userEvent.click(screen.getByText('Last'));
   });
 });

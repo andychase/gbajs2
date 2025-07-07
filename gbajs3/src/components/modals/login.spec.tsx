@@ -132,5 +132,8 @@ describe('<LoginModal />', () => {
         'Use this form to login for premium features if you have a registered account.'
       )
     ).toBeVisible();
+
+    // dismiss the popper interface
+    await userEvent.click(screen.getByText('Last'));
   });
 });

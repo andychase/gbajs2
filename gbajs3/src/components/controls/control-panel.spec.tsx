@@ -691,5 +691,8 @@ describe('<ControlPanel />', () => {
         'Your fast forward setting will be saved between refreshes!'
       )
     ).toBeVisible();
+
+    // dismiss the popper interface
+    await userEvent.click(screen.getByText('Last'));
   });
 });

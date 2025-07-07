@@ -242,5 +242,8 @@ describe('<FileSystemModal />', () => {
             'Use the SAVE FILE SYSTEM button to persist all of your files to your device!'
       )
     ).toBeVisible();
+
+    // dismiss the popper interface
+    await userEvent.click(screen.getByText('Last'));
   });
 });

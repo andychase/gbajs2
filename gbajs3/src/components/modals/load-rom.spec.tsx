@@ -173,5 +173,8 @@ describe('<LoadRomModal />', () => {
         'You may load one rom file at a time, once the rom has loaded your game will boot!'
       )
     ).toBeVisible();
+
+    // dismiss the popper interface
+    await userEvent.click(screen.getByText('Last'));
   });
 });

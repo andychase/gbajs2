@@ -357,5 +357,8 @@ describe('<CheatsModal />', () => {
             'Use this button to toggle between viewing parsed cheats or raw cheats in libretro file format.'
       )
     ).toBeVisible();
+
+    // dismiss the popper interface
+    await userEvent.click(screen.getByText('Last'));
   });
 });

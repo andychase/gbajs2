@@ -150,5 +150,8 @@ describe('<LoadLocalRomModal />', () => {
             'To persist roms and other files, use the File System menu item.'
       )
     ).toBeVisible();
+
+    // dismiss the popper interface
+    await userEvent.click(screen.getByText('Last'));
   });
 });

@@ -130,5 +130,8 @@ describe('<UploadSaveToServerModal />', () => {
     expect(
       screen.getByText('Remember to save in game before uploading!')
     ).toBeVisible();
+
+    // dismiss the popper interface
+    await userEvent.click(screen.getByText('Last'));
   });
 });

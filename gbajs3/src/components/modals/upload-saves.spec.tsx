@@ -220,5 +220,8 @@ describe('<UploadSavesModal />', () => {
     expect(
       screen.getByText('You may drop or select multiple files!')
     ).toBeVisible();
+
+    // dismiss the popper interface
+    await userEvent.click(screen.getByText('Last'));
   });
 });

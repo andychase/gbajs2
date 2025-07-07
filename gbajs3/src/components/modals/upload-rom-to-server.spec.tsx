@@ -118,5 +118,8 @@ describe('<UploadRomToServerModal />', () => {
         'Use this button to upload your current rom file to the server.'
       )
     ).toBeVisible();
+
+    // dismiss the popper interface
+    await userEvent.click(screen.getByText('Last'));
   });
 });

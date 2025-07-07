@@ -137,5 +137,8 @@ describe('<DownloadSaveModal />', () => {
     expect(
       screen.getByText('Remember to save in game before downloading!')
     ).toBeVisible();
+
+    // dismiss the popper interface
+    await userEvent.click(screen.getByText('Last'));
   });
 });

@@ -383,5 +383,8 @@ describe('<SaveStatesModal />', () => {
             'Use the plus button to add a new save state. This will automatically increase the current save state number!'
       )
     ).toBeVisible();
+
+    // dismiss the popper interface
+    await userEvent.click(screen.getByText('Last'));
   });
 });

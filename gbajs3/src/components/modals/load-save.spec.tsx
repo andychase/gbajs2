@@ -162,5 +162,8 @@ describe('<LoadSaveModal />', () => {
     expect(
       screen.getByText('You may load multiple save files in a row!')
     ).toBeVisible();
+
+    // dismiss the popper interface
+    await userEvent.click(screen.getByText('Last'));
   });
 });
