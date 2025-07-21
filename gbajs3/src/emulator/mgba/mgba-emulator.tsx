@@ -15,6 +15,7 @@ export type FileNode = {
   path: string;
   isDir: boolean;
   children?: FileNode[];
+  nextNeighbor?: FileNode;
 };
 
 export type ParsedCheats = {
@@ -73,7 +74,10 @@ export type GBAEmulator = {
   setCoreSettings: (coreSettings: coreSettings) => void;
   forceAutoSaveState: () => boolean;
   loadAutoSaveState: () => boolean;
-  getAutoSaveState: () => { autoSaveStateName: string; data: Uint8Array };
+  getAutoSaveState: () => {
+    autoSaveStateName: string;
+    data: Uint8Array;
+  } | null;
   uploadAutoSaveState: (
     autoSaveStateName: string,
     data: Uint8Array
@@ -123,9 +127,20 @@ export const mGBAEmulator = (mGBA: mGBAEmulatorTypeDef): GBAEmulator => {
   };
 
   const listAllFiles = () => {
-    const root: FileNode = { path: paths.root, isDir: true, children: [] };
+    const root: FileNode = {
+      path: paths.root,
+      isDir: true,
+      children: [],
+      nextNeighbor: {
+        path: paths.autosave,
+        isDir: true,
+        children: []
+      }
+    };
 
-    const recursiveRead = ({ path, children }: FileNode) => {
+    const recursiveRead = ({ path, children, nextNeighbor }: FileNode) => {
+      if (nextNeighbor) recursiveRead(nextNeighbor);
+
       for (const name of mGBA.FS.readdir(path)) {
         if (ignorePaths.includes(name)) continue;
 

@@ -23,6 +23,16 @@ export type CurrentSaveStateSlots = {
   [romName: string]: number;
 };
 
+type SaveStateListItemProps = {
+  key: string;
+  saveStateName: string;
+  previewDataUrl?: string;
+  isSaveStatePreviewSelected: boolean;
+  onSaveStatePreviewSelected: () => void;
+  onClick?: () => void;
+  onDelete: () => void;
+};
+
 const LoadSaveStateButton = styled.button`
   padding: 0.5rem 0.5rem;
   width: 100%;
@@ -98,6 +108,61 @@ const SaveStatePreview = styled.img`
   image-rendering: pixelated;
 `;
 
+const uint8ArrayToBase64DataUrl = (binary?: Uint8Array) => {
+  if (binary?.length) {
+    const base64 = btoa(String.fromCharCode(...new Uint8Array(binary)));
+    return `data:image/png;base64,${base64}`;
+  }
+  return undefined;
+};
+
+const parseSaveStateSlot = (saveStateName: string) => {
+  const ext = saveStateName.split('.').pop();
+  const slotString = ext?.replace('ss', '');
+
+  if (!slotString) return null;
+
+  const slot = parseInt(slotString);
+
+  return !isNaN(slot) ? slot : null;
+};
+
+const SaveStateListItem = ({
+  saveStateName,
+  previewDataUrl,
+  isSaveStatePreviewSelected,
+  onSaveStatePreviewSelected,
+  onClick,
+  onDelete
+}: SaveStateListItemProps) => (
+  <StyledLi>
+    <ButtonGrid>
+      <LoadSaveStateButton onClick={onClick}>
+        {saveStateName}
+      </LoadSaveStateButton>
+      <IconButton
+        aria-label={`${
+          isSaveStatePreviewSelected ? 'Close' : 'View'
+        } ${saveStateName}`}
+        sx={{ padding: 0 }}
+        onClick={onSaveStatePreviewSelected}
+      >
+        <StyledFaRegEye />
+      </IconButton>
+      <IconButton
+        aria-label={`Delete ${saveStateName}`}
+        sx={{ padding: 0 }}
+        onClick={onDelete}
+      >
+        <StyledBiTrash />
+      </IconButton>
+    </ButtonGrid>
+    <Collapse in={isSaveStatePreviewSelected}>
+      <SaveStatePreview src={previewDataUrl} alt={`${saveStateName} Preview`} />
+    </Collapse>
+  </StyledLi>
+);
+
 export const SaveStatesModal = () => {
   const theme = useTheme();
   const { setIsModalOpen } = useModalContext();
@@ -125,11 +190,7 @@ export const SaveStatesModal = () => {
       currentSaveStates
         ?.map((saveState) => {
           const binary = emulator?.getSaveState(saveState);
-          if (binary?.length) {
-            const base64 = btoa(String.fromCharCode(...new Uint8Array(binary)));
-            return `data:image/png;base64,${base64}`;
-          }
-          return null;
+          return uint8ArrayToBase64DataUrl(binary);
         })
         .filter((url): url is string => url !== null),
     [emulator, currentSaveStates]
@@ -147,6 +208,17 @@ export const SaveStatesModal = () => {
         [currentGameName]: slot
       }));
   };
+
+  const autoSaveStateData = emulator?.getAutoSaveState();
+  const autoSaveStateNameWithoutPath = autoSaveStateData?.autoSaveStateName
+    .split('/')
+    .pop();
+  const autoSaveStateImage = uint8ArrayToBase64DataUrl(autoSaveStateData?.data);
+
+  const toggleCurrentSaveStatePreview = (saveStateName: string) =>
+    setCurrentSaveStatePreview(
+      currentSaveStatePreview === saveStateName ? null : saveStateName
+    );
 
   const tourSteps: TourSteps = [
     {
@@ -202,66 +274,59 @@ export const SaveStatesModal = () => {
         </StateSlotContainer>
 
         <SaveStatesList id={`${baseId}--save-state-list`}>
-          {currentSaveStates?.map?.((saveState: string, idx: number) => (
-            <StyledLi key={`${saveState}_${idx}`}>
-              <ButtonGrid>
-                <LoadSaveStateButton
-                  onClick={() => {
-                    const ext = saveState.split('.').pop();
-                    const slotString = ext?.replace('ss', '');
-                    if (slotString) {
-                      const slot = parseInt(slotString);
-                      const hasLoadedSaveState = emulator?.loadSaveState(slot);
-                      if (hasLoadedSaveState) {
-                        setCurrentSaveStateSlot(slot);
-                        setSaveStateError(null);
-                      } else {
-                        setSaveStateError('Failed to load save state');
-                      }
-                    }
-                  }}
-                >
-                  {saveState}
-                </LoadSaveStateButton>
-                <IconButton
-                  aria-label={`${
-                    currentSaveStatePreview === saveState ? 'Close' : 'View'
-                  } ${saveState}`}
-                  sx={{ padding: 0 }}
-                  onClick={() =>
-                    setCurrentSaveStatePreview(
-                      currentSaveStatePreview === saveState ? null : saveState
-                    )
+          {autoSaveStateNameWithoutPath && (
+            <SaveStateListItem
+              key={autoSaveStateNameWithoutPath}
+              saveStateName={autoSaveStateNameWithoutPath}
+              previewDataUrl={autoSaveStateImage}
+              isSaveStatePreviewSelected={
+                currentSaveStatePreview === autoSaveStateNameWithoutPath
+              }
+              onSaveStatePreviewSelected={() =>
+                toggleCurrentSaveStatePreview(autoSaveStateNameWithoutPath)
+              }
+              onClick={emulator?.loadAutoSaveState}
+              onDelete={() => {
+                if (autoSaveStateData?.autoSaveStateName)
+                  emulator?.deleteFile(autoSaveStateData.autoSaveStateName);
+              }}
+            />
+          )}
+          {currentSaveStates?.map((saveState: string, idx: number) => (
+            <SaveStateListItem
+              key={`${saveState}_${idx}`}
+              saveStateName={saveState}
+              previewDataUrl={saveStateImageUrls?.[idx]}
+              isSaveStatePreviewSelected={currentSaveStatePreview === saveState}
+              onSaveStatePreviewSelected={() =>
+                toggleCurrentSaveStatePreview(saveState)
+              }
+              onClick={() => {
+                const slot = parseSaveStateSlot(saveState);
+                if (slot !== null) {
+                  const hasLoadedSaveState = emulator?.loadSaveState(slot);
+                  if (hasLoadedSaveState && currentGameName) {
+                    setCurrentSlots((prevState) => ({
+                      ...prevState,
+                      [currentGameName]: slot
+                    }));
+                    setSaveStateError(null);
+                  } else {
+                    setSaveStateError('Failed to load save state');
                   }
-                >
-                  <StyledFaRegEye />
-                </IconButton>
-                <IconButton
-                  aria-label={`Delete ${saveState}`}
-                  sx={{ padding: 0 }}
-                  onClick={() => {
-                    const ext = saveState.split('.').pop();
-                    const slotString = ext?.replace('ss', '');
-                    if (slotString) {
-                      const slot = parseInt(slotString);
-                      emulator?.deleteSaveState(slot);
-                      refreshSaveStates();
-                      syncActionIfEnabled();
-                    }
-                  }}
-                >
-                  <StyledBiTrash />
-                </IconButton>
-              </ButtonGrid>
-              <Collapse in={currentSaveStatePreview === saveState}>
-                <SaveStatePreview
-                  src={saveStateImageUrls?.[idx]}
-                  alt={`${saveState} Preview`}
-                />
-              </Collapse>
-            </StyledLi>
+                }
+              }}
+              onDelete={() => {
+                const slot = parseSaveStateSlot(saveState);
+                if (slot !== null) {
+                  emulator?.deleteSaveState(slot);
+                  refreshSaveStates();
+                  syncActionIfEnabled();
+                }
+              }}
+            />
           ))}
-          {!currentSaveStates?.length && (
+          {!autoSaveStateNameWithoutPath && !currentSaveStates?.length && (
             <li>
               <CenteredText>No save states</CenteredText>
             </li>

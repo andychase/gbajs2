@@ -35,7 +35,8 @@ describe('<SaveStatesModal />', () => {
       emulator: {
         listCurrentSaveStates: () => ['rom0.ss0', 'rom0.ss1'],
         getCurrentGameName: () => 'rom0.gba',
-        getSaveState: getSaveStateSpy
+        getSaveState: getSaveStateSpy,
+        getAutoSaveState: () => null
       } as GBAEmulator
     }));
 
@@ -53,6 +54,38 @@ describe('<SaveStatesModal />', () => {
     expect(getSaveStateSpy).toHaveBeenCalledTimes(2);
   });
 
+  it('renders with auto save state', async () => {
+    const getSaveStateSpy: (saveStateName: string) => Uint8Array = vi.fn(
+      () => new Uint8Array()
+    );
+
+    const { useEmulatorContext: original } = await vi.importActual<
+      typeof contextHooks
+    >('../../hooks/context.tsx');
+
+    vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
+      ...original(),
+      emulator: {
+        listCurrentSaveStates: () => ['rom0.ss0'],
+        getCurrentGameName: () => 'rom0.gba',
+        getSaveState: getSaveStateSpy,
+        getAutoSaveState: () => ({
+          autoSaveStateName: 'rom0_auto.ss',
+          data: new Uint8Array([1, 2, 3])
+        })
+      } as GBAEmulator
+    }));
+
+    renderWithContext(<SaveStatesModal />);
+    expect(
+      screen.getByRole('button', { name: 'rom0_auto.ss' })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'rom0.ss0' })
+    ).toBeInTheDocument();
+    expect(getSaveStateSpy).toHaveBeenCalledTimes(2);
+  });
+
   it('updates current slot', async () => {
     const setItemSpy = vi.spyOn(Storage.prototype, 'setItem');
 
@@ -63,7 +96,8 @@ describe('<SaveStatesModal />', () => {
     vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
       ...original(),
       emulator: {
-        getCurrentGameName: () => 'some_rom.gba'
+        getCurrentGameName: () => 'some_rom.gba',
+        getAutoSaveState: () => null
       } as GBAEmulator
     }));
 
@@ -99,7 +133,8 @@ describe('<SaveStatesModal />', () => {
         getCurrentGameName: () => 'rom0.gba',
         listCurrentSaveStates: listCurrentSaveStatesSpy as () => string[],
         getSaveState: getSaveStateSpy as (saveStateName: string) => Uint8Array,
-        createSaveState: createSaveStateSpy
+        createSaveState: createSaveStateSpy,
+        getAutoSaveState: () => null
       } as GBAEmulator
     }));
 
@@ -133,7 +168,8 @@ describe('<SaveStatesModal />', () => {
       listCurrentSaveStates: () => ['rom0.ss0'],
       getCurrentGameName: () => 'rom0.gba',
       getSaveState: getSaveStateSpy as (saveStateName: string) => Uint8Array,
-      createSaveState: createSaveState
+      createSaveState: createSaveState,
+      getAutoSaveState: () => null
     } as GBAEmulator;
 
     const { useEmulatorContext: original } = await vi.importActual<
@@ -181,7 +217,8 @@ describe('<SaveStatesModal />', () => {
           getSaveState: getSaveStateSpy as (
             saveStateName: string
           ) => Uint8Array,
-          deleteSaveState: deleteSaveStateSpy
+          deleteSaveState: deleteSaveStateSpy,
+          getAutoSaveState: () => null
         } as GBAEmulator
       };
     });
@@ -206,6 +243,34 @@ describe('<SaveStatesModal />', () => {
     expect(getSaveStateSpy).toHaveBeenCalledTimes(1);
   });
 
+  it('deletes auto save state', async () => {
+    const deleteFileSpy: (p: string) => void = vi.fn();
+
+    const { useEmulatorContext: original } = await vi.importActual<
+      typeof contextHooks
+    >('../../hooks/context.tsx');
+
+    vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
+      ...original(),
+      emulator: {
+        listCurrentSaveStates: (): string[] => [],
+        getCurrentGameName: () => 'rom0.gba',
+        getAutoSaveState: () => ({
+          autoSaveStateName: 'rom0_auto.ss',
+          data: new Uint8Array([1, 2, 3])
+        }),
+        deleteFile: deleteFileSpy
+      } as GBAEmulator
+    }));
+
+    renderWithContext(<SaveStatesModal />);
+
+    await userEvent.click(screen.getByLabelText('Delete rom0_auto.ss'));
+
+    expect(deleteFileSpy).toHaveBeenCalledOnce();
+    expect(deleteFileSpy).toHaveBeenCalledWith('rom0_auto.ss');
+  });
+
   it('loads save state', async () => {
     const loadSaveStateSpy: (_: number) => boolean = vi.fn(() => true);
     const getSaveStateSpy = vi.fn(() => new Uint8Array());
@@ -214,7 +279,8 @@ describe('<SaveStatesModal />', () => {
       listCurrentSaveStates: () => ['some_rom.ss1'],
       getCurrentGameName: () => 'some_rom.gba',
       loadSaveState: loadSaveStateSpy,
-      getSaveState: getSaveStateSpy as (saveStateName: string) => Uint8Array
+      getSaveState: getSaveStateSpy as (saveStateName: string) => Uint8Array,
+      getAutoSaveState: () => null
     } as GBAEmulator;
 
     const { useEmulatorContext: original } = await vi.importActual<
@@ -252,7 +318,8 @@ describe('<SaveStatesModal />', () => {
         listCurrentSaveStates: () => ['rom0.ss0'],
         getCurrentGameName: () => 'rom0.gba',
         getSaveState: getSaveState,
-        loadSaveState: loadSaveState
+        loadSaveState: loadSaveState,
+        getAutoSaveState: () => null
       } as GBAEmulator
     }));
 
@@ -276,7 +343,8 @@ describe('<SaveStatesModal />', () => {
       emulator: {
         listCurrentSaveStates: () => ['rom0.ss0', 'rom0.ss1'],
         getCurrentGameName: () => 'rom0.gba',
-        getSaveState: getSaveState
+        getSaveState: getSaveState,
+        getAutoSaveState: () => null
       } as GBAEmulator
     }));
 
@@ -305,6 +373,42 @@ describe('<SaveStatesModal />', () => {
     expect(screen.getByAltText('rom0.ss0 Preview')).not.toBeVisible();
     await waitFor(() =>
       expect(screen.getByAltText('rom0.ss1 Preview')).not.toBeVisible()
+    );
+  });
+
+  it('opens and closes auto save state preview', async () => {
+    const { useEmulatorContext: original } = await vi.importActual<
+      typeof contextHooks
+    >('../../hooks/context.tsx');
+
+    vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
+      ...original(),
+      emulator: {
+        listCurrentSaveStates: (): string[] => [],
+        getCurrentGameName: () => 'rom0.gba',
+        getAutoSaveState: () => ({
+          autoSaveStateName: 'rom0_auto.ss',
+          data: new Uint8Array([1, 2, 3])
+        })
+      } as GBAEmulator
+    }));
+
+    renderWithContext(<SaveStatesModal />);
+
+    expect(screen.getByAltText('rom0_auto.ss Preview')).not.toBeVisible();
+
+    await userEvent.click(
+      screen.getByRole('button', { name: 'View rom0_auto.ss' })
+    );
+
+    expect(screen.getByAltText('rom0_auto.ss Preview')).toBeVisible();
+
+    await userEvent.click(
+      screen.getByRole('button', { name: 'Close rom0_auto.ss' })
+    );
+
+    await waitFor(() =>
+      expect(screen.getByAltText('rom0_auto.ss Preview')).not.toBeVisible()
     );
   });
 

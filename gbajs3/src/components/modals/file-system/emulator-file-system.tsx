@@ -6,6 +6,7 @@ import {
   treeItemClasses,
   type TreeItemProps
 } from '@mui/x-tree-view';
+import { Fragment, type ReactNode } from 'react';
 import { BiCloudDownload, BiTrash } from 'react-icons/bi';
 import { styled } from 'styled-components';
 
@@ -15,7 +16,7 @@ import {
   MinusSquare
 } from '../../shared/action-box-icons.tsx';
 
-import type { FileNode } from '../../../emulator/mgba/mgba-emulator';
+import type { FileNode } from '../../../emulator/mgba/mgba-emulator.tsx';
 
 type EmulatorFileSystemProps = {
   id: string;
@@ -26,7 +27,6 @@ type EmulatorFileSystemProps = {
 
 const LeafLabelWrapper = styled.div`
   display: flex;
-  flex-wrap: wrap;
   gap: 10px;
   align-items: center;
   justify-content: space-between;
@@ -40,7 +40,7 @@ const LeafLabelWrapper = styled.div`
 
 const IconSeparator = styled.div`
   display: flex;
-  gap: 15px;
+  gap: clamp(0.1rem, 2vw, 2rem);
 `;
 
 const StyledTreeItem = muiStyled((props: TreeItemProps) => (
@@ -74,7 +74,7 @@ export const EmulatorFileSystem = ({
 }: EmulatorFileSystemProps) => {
   if (!allFiles) return null;
 
-  const renderTree = (node: FileNode) => {
+  const renderTree = (node: FileNode): ReactNode => {
     const nodeName = node.path.split('/').pop();
 
     const leafLabelNode = (
@@ -100,17 +100,17 @@ export const EmulatorFileSystem = ({
     );
 
     return (
-      <StyledTreeItem
-        key={node.path}
-        itemId={node.path}
-        label={node.isDir ? nodeName : leafLabelNode}
-      >
-        {node.isDir && !!node.children
-          ? node.children.map((node) => {
-              return renderTree(node);
-            })
-          : null}
-      </StyledTreeItem>
+      <Fragment key={node.path}>
+        <StyledTreeItem
+          itemId={node.path}
+          label={node.isDir ? nodeName : leafLabelNode}
+        >
+          {node.isDir && !!node.children
+            ? node.children.map((node) => renderTree(node))
+            : null}
+        </StyledTreeItem>
+        {node.nextNeighbor && renderTree(node.nextNeighbor)}
+      </Fragment>
     );
   };
 

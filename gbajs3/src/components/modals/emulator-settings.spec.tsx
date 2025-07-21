@@ -187,12 +187,12 @@ describe('<EmulatorSettingsModal />', () => {
     const audioSyncCheckbox = screen.getByLabelText('Audio Sync');
     const fpsCounterCheckbox = screen.getByLabelText('FPS Counter');
     const threadedVideoCheckbox = screen.getByLabelText('Threaded Video');
-    const rewindEnabledCheckbox = screen.getByLabelText('Rewind Enabled');
+    const rewindEnabledCheckbox = screen.getByLabelText('Rewind enabled');
     const autoSaveStateEnabledCheckbox = screen.getByLabelText(
-      'Auto Save State Enabled'
+      'Auto save state enabled'
     );
     const restoreAutoSaveStateCheckbox = screen.getByLabelText(
-      'Restore Auto Save State'
+      'Restore auto save state'
     );
     const autoSaveStateCaptureNotificationCheckbox = screen.getByLabelText(
       'Auto save state capture notification'

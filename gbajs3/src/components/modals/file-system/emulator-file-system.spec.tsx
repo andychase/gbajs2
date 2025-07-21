@@ -55,7 +55,23 @@ describe('<EmulatorFileSystem />', () => {
           }
         ]
       }
-    ]
+    ],
+    nextNeighbor: {
+      path: '/autosave',
+      isDir: true,
+      children: [
+        {
+          path: '/autosave/rom1_auto.ss',
+          isDir: false,
+          children: []
+        },
+        {
+          path: '/autosave/rom2_auto.ss',
+          isDir: false,
+          children: []
+        }
+      ]
+    }
   };
 
   const defaultProps = {
@@ -103,6 +119,16 @@ describe('<EmulatorFileSystem />', () => {
 
     // renders all default nodes
     assertFileTree(defaultFSData);
+
+    // expand autosave neighbor mount
+    if (defaultFSData.nextNeighbor?.path) {
+      const path =
+        defaultFSData.nextNeighbor?.path.split('/').pop() ?? 'invalid_path';
+      await userEvent.click(screen.getByText(path));
+    }
+
+    // shows the next neighbor (autosave mount) children
+    if (defaultFSData.nextNeighbor) assertFileTree(defaultFSData.nextNeighbor);
   });
 
   it('calls deleteFile on button click', async () => {

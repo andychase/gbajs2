@@ -18,7 +18,8 @@ describe('mGBAEmulator - Full Functionality Test Suite', () => {
       gamePath: '/data/games',
       savePath: '/data/saves',
       screenshotsPath: '/data/screenshots',
-      patchPath: '/data/patches'
+      patchPath: '/data/patches',
+      autosave: '/autosave'
     })),
     FS: {
       readdir: vi.fn(() => ['file1.sav', 'file2.sav']),

@@ -516,19 +516,19 @@ export const EmulatorSettingsModal = () => {
               />
               <ManagedCheckbox
                 id={`${baseId}--rewind-enabled`}
-                label="Rewind Enabled"
+                label="Rewind enabled"
                 watcher={watch('rewindEnable')}
                 {...register('rewindEnable')}
               />
               <ManagedCheckbox
                 id={`${baseId}--auto-save-state-enabled`}
-                label="Auto Save State Enabled"
+                label="Auto save state enabled"
                 watcher={watch('autoSaveStateEnable')}
                 {...register('autoSaveStateEnable')}
               />
               <ManagedCheckbox
                 id={`${baseId}--restore-auto-save-state-on-load`}
-                label="Restore Auto Save State"
+                label="Restore auto save state"
                 watcher={watch('restoreAutoSaveStateOnLoad')}
                 {...register('restoreAutoSaveStateOnLoad')}
               />
