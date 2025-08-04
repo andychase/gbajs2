@@ -29,7 +29,8 @@ describe('<UploadPatchesModal />', () => {
     vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
       ...originalEmulator(),
       emulator: {
-        uploadPatch: uploadPatchSpy
+        uploadPatch: uploadPatchSpy,
+        getCurrentAutoSaveStatePath: () => null
       } as GBAEmulator
     }));
 
@@ -85,7 +86,8 @@ describe('<UploadPatchesModal />', () => {
     vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
       ...originalEmulator(),
       emulator: {
-        uploadPatch: uploadPatchSpy
+        uploadPatch: uploadPatchSpy,
+        getCurrentAutoSaveStatePath: () => null
       } as GBAEmulator
     }));
 

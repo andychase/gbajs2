@@ -104,7 +104,8 @@ describe('<VirtualControls />', () => {
       vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
         ...original(),
         emulator: {
-          getCurrentGameName: () => 'some_rom.gba'
+          getCurrentGameName: () => 'some_rom.gba',
+          getCurrentAutoSaveStatePath: () => null
         } as GBAEmulator
       }));
 
@@ -132,7 +133,8 @@ describe('<VirtualControls />', () => {
       vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
         ...original(),
         emulator: {
-          getCurrentGameName: () => undefined
+          getCurrentGameName: () => undefined,
+          getCurrentAutoSaveStatePath: () => null
         } as GBAEmulator
       }));
 
@@ -227,7 +229,8 @@ describe('<VirtualControls />', () => {
         ...original(),
         emulator: {
           loadSaveState: loadSaveStateSpy,
-          getCurrentGameName: () => 'some_rom.gba'
+          getCurrentGameName: () => 'some_rom.gba',
+          getCurrentAutoSaveStatePath: () => null
         } as GBAEmulator
       }));
 
@@ -256,7 +259,8 @@ describe('<VirtualControls />', () => {
         ...original(),
         emulator: {
           loadSaveState: loadSaveStateSpy,
-          getCurrentGameName: () => 'some_rom.gba'
+          getCurrentGameName: () => 'some_rom.gba',
+          getCurrentAutoSaveStatePath: () => null
         } as GBAEmulator
       }));
 
@@ -283,7 +287,8 @@ describe('<VirtualControls />', () => {
         ...original(),
         emulator: {
           loadSaveState: loadSaveStateSpy,
-          getCurrentGameName: () => undefined
+          getCurrentGameName: () => undefined,
+          getCurrentAutoSaveStatePath: () => null
         } as GBAEmulator
       }));
 
@@ -316,7 +321,8 @@ describe('<VirtualControls />', () => {
         ...original(),
         emulator: {
           createSaveState: createSaveStateSpy,
-          getCurrentGameName: () => 'some_rom.gba'
+          getCurrentGameName: () => 'some_rom.gba',
+          getCurrentAutoSaveStatePath: () => null
         } as GBAEmulator
       }));
 
@@ -355,7 +361,8 @@ describe('<VirtualControls />', () => {
         ...original(),
         emulator: {
           createSaveState: createSaveStateSpy,
-          getCurrentGameName: () => 'some_rom.gba'
+          getCurrentGameName: () => 'some_rom.gba',
+          getCurrentAutoSaveStatePath: () => null
         } as GBAEmulator
       }));
 
@@ -388,7 +395,8 @@ describe('<VirtualControls />', () => {
         ...original(),
         emulator: {
           createSaveState: createSaveStateSpy,
-          getCurrentGameName: () => undefined
+          getCurrentGameName: () => undefined,
+          getCurrentAutoSaveStatePath: () => null
         } as GBAEmulator
       }));
 

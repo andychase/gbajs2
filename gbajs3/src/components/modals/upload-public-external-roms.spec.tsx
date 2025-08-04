@@ -38,7 +38,8 @@ describe('<UploadPublicExternalRomsModal />', () => {
     vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
       ...originalEmulator(),
       emulator: {
-        uploadRom: uploadRomSpy
+        uploadRom: uploadRomSpy,
+        getCurrentAutoSaveStatePath: () => null
       } as GBAEmulator
     }));
 
@@ -97,7 +98,8 @@ describe('<UploadPublicExternalRomsModal />', () => {
     vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
       ...originalEmulator(),
       emulator: {
-        uploadRom: uploadRomSpy
+        uploadRom: uploadRomSpy,
+        getCurrentAutoSaveStatePath: () => null
       } as GBAEmulator
     }));
 

@@ -45,6 +45,8 @@ export type GBAEmulator = {
   getCurrentSave: () => Uint8Array | null;
   getCurrentSaveName: () => string | undefined;
   getFile: (path: string) => Uint8Array;
+  getStat: (path: string) => FS.Stats;
+  getCurrentAutoSaveStatePath: () => string | null;
   getVolume: () => number;
   isFastForwardEnabled: () => boolean;
   listAllFiles: () => FileNode;
@@ -286,7 +288,10 @@ export const mGBAEmulator = (mGBA: mGBAEmulatorTypeDef): GBAEmulator => {
     getCurrentGameName: () => filepathToFileName(mGBA.gameName),
     getCurrentSave: () => (mGBA.saveName ? mGBA.getSave() : null),
     getCurrentSaveName: () => filepathToFileName(mGBA.saveName),
+    getCurrentAutoSaveStatePath: () =>
+      mGBA.autoSaveStateName ? mGBA.autoSaveStateName : null,
     getFile: (path) => mGBA.FS.readFile(path),
+    getStat: (path) => mGBA.FS.stat(path),
     uploadCheats: mGBA.uploadCheats,
     uploadPatch: mGBA.uploadPatch,
     uploadRom: mGBA.uploadRom,

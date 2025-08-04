@@ -26,7 +26,8 @@ describe('<EmulatorSettingsModal />', () => {
       ...originalEmulator(),
       emulator: {
         defaultAudioSampleRates: () => defaultSampleRates,
-        defaultAudioBufferSizes: () => defaultAudioBufferSizes
+        defaultAudioBufferSizes: () => defaultAudioBufferSizes,
+        getCurrentAutoSaveStatePath: () => null
       } as GBAEmulator
     }));
   });
@@ -76,7 +77,8 @@ describe('<EmulatorSettingsModal />', () => {
       emulator: {
         setCoreSettings: setCoreSettingsSpy,
         defaultAudioSampleRates: () => defaultSampleRates,
-        defaultAudioBufferSizes: () => defaultAudioBufferSizes
+        defaultAudioBufferSizes: () => defaultAudioBufferSizes,
+        getCurrentAutoSaveStatePath: () => null
       } as GBAEmulator
     }));
 
@@ -143,7 +145,8 @@ describe('<EmulatorSettingsModal />', () => {
         setCoreSettings: setCoreSettingsSpy,
         getCurrentSaveName: () => 'current_save.sav',
         defaultAudioSampleRates: () => defaultSampleRates,
-        defaultAudioBufferSizes: () => defaultAudioBufferSizes
+        defaultAudioBufferSizes: () => defaultAudioBufferSizes,
+        getCurrentAutoSaveStatePath: () => null
       } as GBAEmulator
     }));
 
@@ -291,7 +294,8 @@ describe('<EmulatorSettingsModal />', () => {
         setCoreSettings: setCoreSettingsSpy,
         getCurrentSaveName: () => 'current_save.sav',
         defaultAudioSampleRates: () => defaultSampleRates,
-        defaultAudioBufferSizes: () => defaultAudioBufferSizes
+        defaultAudioBufferSizes: () => defaultAudioBufferSizes,
+        getCurrentAutoSaveStatePath: () => null
       } as GBAEmulator
     }));
 
@@ -350,7 +354,8 @@ describe('<EmulatorSettingsModal />', () => {
       emulator: {
         getCurrentSaveName: () => 'current_save.sav',
         defaultAudioSampleRates: () => defaultSampleRates,
-        defaultAudioBufferSizes: () => defaultAudioBufferSizes
+        defaultAudioBufferSizes: () => defaultAudioBufferSizes,
+        getCurrentAutoSaveStatePath: () => null
       } as GBAEmulator
     }));
 

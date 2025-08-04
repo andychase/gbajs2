@@ -38,7 +38,8 @@ describe('<UploadRomsModal />', () => {
     vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
       ...originalEmulator(),
       emulator: {
-        uploadRom: uploadRomSpy
+        uploadRom: uploadRomSpy,
+        getCurrentAutoSaveStatePath: () => null
       } as GBAEmulator
     }));
 
@@ -93,7 +94,8 @@ describe('<UploadRomsModal />', () => {
     vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
       ...originalEmulator(),
       emulator: {
-        uploadRom: uploadRomSpy
+        uploadRom: uploadRomSpy,
+        getCurrentAutoSaveStatePath: () => null
       } as GBAEmulator
     }));
 
@@ -165,7 +167,8 @@ describe('<UploadRomsModal />', () => {
     vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
       ...originalEmulator(),
       emulator: {
-        uploadRom: uploadRomSpy
+        uploadRom: uploadRomSpy,
+        getCurrentAutoSaveStatePath: () => null
       } as GBAEmulator
     }));
 
@@ -240,7 +243,8 @@ describe('<UploadRomsModal />', () => {
 
     // needs to be a consistent object
     const testEmu = {
-      uploadRom: uploadRomSpy
+      uploadRom: uploadRomSpy,
+      getCurrentAutoSaveStatePath: () => null
     } as GBAEmulator;
 
     vi.spyOn(contextHooks, 'useModalContext').mockImplementation(() => ({
@@ -301,7 +305,8 @@ describe('<UploadRomsModal />', () => {
       ...originalEmulator(),
       emulator: {
         uploadRom: uploadRomSpy,
-        run: emulatorRunSpy
+        run: emulatorRunSpy,
+        getCurrentAutoSaveStatePath: () => null
       } as GBAEmulator
     }));
 

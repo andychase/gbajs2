@@ -37,7 +37,8 @@ describe('<LoadRomModal />', () => {
     vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
       ...originalEmulator(),
       emulator: {
-        uploadRom: uploadRomSpy
+        uploadRom: uploadRomSpy,
+        getCurrentAutoSaveStatePath: () => null
       } as GBAEmulator
     }));
 

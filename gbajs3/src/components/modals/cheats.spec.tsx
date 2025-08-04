@@ -61,7 +61,8 @@ describe('<CheatsModal />', () => {
           str && [
             { desc: 'cheat1', code: 'code1', enable: true },
             { desc: 'cheat2', code: 'code2', enable: false }
-          ]
+          ],
+        getCurrentAutoSaveStatePath: () => null
       } as GBAEmulator
     }));
 
@@ -148,7 +149,8 @@ describe('<CheatsModal />', () => {
         autoLoadCheats: autoLoadCheatsSpy,
         getCurrentCheatsFile: () => testCheatsFile,
         parseCheatsString: (str) =>
-          str && [{ desc: 'cheat1', code: 'code1', enable: false }]
+          str && [{ desc: 'cheat1', code: 'code1', enable: false }],
+        getCurrentAutoSaveStatePath: () => null
       } as GBAEmulator
     }));
 
@@ -203,7 +205,8 @@ describe('<CheatsModal />', () => {
         getCurrentCheatsFile: () => testCheatsFile,
         parseCheatsString: (str) =>
           str && [{ desc: 'cheat1', code: 'code1', enable: false }],
-        getCurrentCheatsFileName: getCurrentCheatsFileNameSpy
+        getCurrentCheatsFileName: getCurrentCheatsFileNameSpy,
+        getCurrentAutoSaveStatePath: () => null
       } as GBAEmulator
     }));
 

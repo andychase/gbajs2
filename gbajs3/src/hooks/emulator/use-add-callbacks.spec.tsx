@@ -103,7 +103,8 @@ describe('useAddCallbacks hook', () => {
           setCanvas: vi.fn(),
           canvas: null,
           emulator: {
-            addCoreCallbacks: emulatorAddCoreCallbacksSpy
+            addCoreCallbacks: emulatorAddCoreCallbacksSpy,
+            getCurrentAutoSaveStatePath: () => null
           } as GBAEmulator
         }));
 
@@ -125,7 +126,8 @@ describe('useAddCallbacks hook', () => {
         setCanvas: vi.fn(),
         canvas: null,
         emulator: {
-          fsSync: emulatorFSSyncSpy
+          fsSync: emulatorFSSyncSpy,
+          getCurrentAutoSaveStatePath: () => null
         } as GBAEmulator
       }));
 
@@ -152,7 +154,8 @@ describe('useAddCallbacks hook', () => {
         setCanvas: vi.fn(),
         canvas: null,
         emulator: {
-          fsSync: emulatorFSSyncSpy
+          fsSync: emulatorFSSyncSpy,
+          getCurrentAutoSaveStatePath: () => null
         } as GBAEmulator
       }));
 
@@ -178,7 +181,8 @@ describe('useAddCallbacks hook', () => {
         setCanvas: vi.fn(),
         canvas: null,
         emulator: {
-          fsSync: emulatorFSSyncSpy
+          fsSync: emulatorFSSyncSpy,
+          getCurrentAutoSaveStatePath: () => null
         } as GBAEmulator
       }));
 

@@ -29,7 +29,8 @@ describe('<UploadCheatsModal />', () => {
     vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
       ...originalEmulator(),
       emulator: {
-        uploadCheats: uploadCheatsSpy
+        uploadCheats: uploadCheatsSpy,
+        getCurrentAutoSaveStatePath: () => null
       } as GBAEmulator
     }));
 
@@ -85,7 +86,8 @@ describe('<UploadCheatsModal />', () => {
     vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
       ...originalEmulator(),
       emulator: {
-        uploadCheats: uploadCheatsSpy
+        uploadCheats: uploadCheatsSpy,
+        getCurrentAutoSaveStatePath: () => null
       } as GBAEmulator
     }));
 

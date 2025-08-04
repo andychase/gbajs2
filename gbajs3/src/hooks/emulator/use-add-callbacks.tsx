@@ -4,6 +4,7 @@ import toast from 'react-hot-toast';
 
 import { emulatorSettingsLocalStorageKey } from '../../context/emulator/consts.ts';
 import { useEmulatorContext } from '../context.tsx';
+import { useFileStat } from './use-file-stat.tsx';
 
 import type { EmulatorSettings } from '../../components/modals/emulator-settings.tsx';
 
@@ -28,6 +29,8 @@ export const useAddCallbacks = () => {
   const [emulatorSettings] = useLocalStorage<EmulatorSettings | undefined>(
     emulatorSettingsLocalStorageKey
   );
+  const autoSaveStatePath = emulator?.getCurrentAutoSaveStatePath();
+  const { trigger } = useFileStat(autoSaveStatePath);
 
   const syncActionIfEnabled = useCallback(
     async ({ withToast = true }: SyncActionIfEnabledProps = {}) => {
@@ -61,10 +64,13 @@ export const useAddCallbacks = () => {
         ),
         autoSaveStateCapturedCallback: optionalFunc(
           options.autoSaveStateCaptureNotificationEnabled,
-          () => toast.success('Auto save state captured')
+          () => {
+            toast.success('Auto save state captured');
+            trigger();
+          }
         )
       }),
-    [emulator]
+    [emulator, trigger]
   );
 
   return {

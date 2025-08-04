@@ -41,7 +41,8 @@ describe('<FileSystemModal />', () => {
       return {
         ...original(),
         emulator: {
-          listAllFiles: () => defaultFSData
+          listAllFiles: () => defaultFSData,
+          getCurrentAutoSaveStatePath: () => null
         } as GBAEmulator
       };
     });
@@ -73,7 +74,8 @@ describe('<FileSystemModal />', () => {
         ...original(),
         emulator: {
           listAllFiles: listAllFilesSpy as () => FileNode,
-          deleteFile: deleteFileSpy
+          deleteFile: deleteFileSpy,
+          getCurrentAutoSaveStatePath: () => null
         } as GBAEmulator
       };
     });
@@ -118,7 +120,8 @@ describe('<FileSystemModal />', () => {
         ...original(),
         emulator: {
           listAllFiles: () => defaultFSData,
-          getFile: getFileSpy
+          getFile: getFileSpy,
+          getCurrentAutoSaveStatePath: () => null
         } as GBAEmulator
       };
     });
@@ -149,7 +152,8 @@ describe('<FileSystemModal />', () => {
       ...original(),
       emulator: {
         listAllFiles: () => defaultFSData,
-        fsSync: emulatorFSSyncSpy
+        fsSync: emulatorFSSyncSpy,
+        getCurrentAutoSaveStatePath: () => null
       } as GBAEmulator
     }));
 
@@ -197,7 +201,8 @@ describe('<FileSystemModal />', () => {
       return {
         ...originalEmulator(),
         emulator: {
-          listAllFiles: () => defaultFSData
+          listAllFiles: () => defaultFSData,
+          getCurrentAutoSaveStatePath: () => null
         } as GBAEmulator
       };
     });

@@ -29,7 +29,8 @@ describe('<LoadLocalRomModal />', () => {
     vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
       ...original(),
       emulator: {
-        listRoms: () => ['rom1.gba', 'rom2.gba']
+        listRoms: () => ['rom1.gba', 'rom2.gba'],
+        getCurrentAutoSaveStatePath: () => null
       } as GBAEmulator
     }));
 
@@ -58,7 +59,8 @@ describe('<LoadLocalRomModal />', () => {
     vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
       ...originalEmulator(),
       emulator: {
-        listRoms: () => ['rom1.gba']
+        listRoms: () => ['rom1.gba'],
+        getCurrentAutoSaveStatePath: () => null
       } as GBAEmulator
     }));
 

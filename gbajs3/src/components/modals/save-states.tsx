@@ -10,6 +10,7 @@ import { ModalFooter } from './modal-footer.tsx';
 import { ModalHeader } from './modal-header.tsx';
 import { useEmulatorContext, useModalContext } from '../../hooks/context.tsx';
 import { useAddCallbacks } from '../../hooks/emulator/use-add-callbacks.tsx';
+import { useFileStat } from '../../hooks/emulator/use-file-stat.tsx';
 import { saveStateSlotsLocalStorageKey } from '../controls/consts.tsx';
 import {
   EmbeddedProductTour,
@@ -215,6 +216,9 @@ export const SaveStatesModal = () => {
     .pop();
   const autoSaveStateImage = uint8ArrayToBase64DataUrl(autoSaveStateData?.data);
 
+  const autoSaveStatePath = emulator?.getCurrentAutoSaveStatePath();
+  const { trigger } = useFileStat(autoSaveStatePath);
+
   const toggleCurrentSaveStatePreview = (saveStateName: string) =>
     setCurrentSaveStatePreview(
       currentSaveStatePreview === saveStateName ? null : saveStateName
@@ -287,8 +291,10 @@ export const SaveStatesModal = () => {
               }
               onClick={emulator?.loadAutoSaveState}
               onDelete={() => {
-                if (autoSaveStateData?.autoSaveStateName)
+                if (autoSaveStateData?.autoSaveStateName) {
                   emulator?.deleteFile(autoSaveStateData.autoSaveStateName);
+                  trigger();
+                }
               }}
             />
           )}

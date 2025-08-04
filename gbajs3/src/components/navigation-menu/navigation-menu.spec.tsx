@@ -223,7 +223,8 @@ describe('<NavigationMenu />', () => {
         ...originalEmulator(),
         emulator: {
           screenshot: screenshotSpy,
-          getCurrentGameName: () => '/some_rom.gba'
+          getCurrentGameName: () => '/some_rom.gba',
+          getCurrentAutoSaveStatePath: () => null
         } as GBAEmulator,
         canvas: {} as HTMLCanvasElement
       }));
@@ -259,7 +260,8 @@ describe('<NavigationMenu />', () => {
         ...originalEmulator(),
         emulator: {
           screenshot: () => false,
-          getCurrentGameName: () => '/some_rom.gba'
+          getCurrentGameName: () => '/some_rom.gba',
+          getCurrentAutoSaveStatePath: () => null
         } as GBAEmulator,
         canvas: {} as HTMLCanvasElement
       }));

@@ -20,7 +20,8 @@ describe('useQuickReload hook', () => {
         canvas: null,
         emulator: {
           getCurrentGameName: () => undefined,
-          quickReload: emulatorQuickReloadSpy
+          quickReload: emulatorQuickReloadSpy,
+          getCurrentAutoSaveStatePath: () => null
         } as GBAEmulator
       }));
 
@@ -52,7 +53,8 @@ describe('useQuickReload hook', () => {
         setCanvas: vi.fn(),
         canvas: null,
         emulator: {
-          getCurrentGameName: () => 'some_rom.gba'
+          getCurrentGameName: () => 'some_rom.gba',
+          getCurrentAutoSaveStatePath: () => null
         } as GBAEmulator
       }));
 
@@ -92,7 +94,8 @@ describe('useQuickReload hook', () => {
         setCanvas: vi.fn(),
         canvas: null,
         emulator: {
-          getCurrentGameName: () => undefined
+          getCurrentGameName: () => undefined,
+          getCurrentAutoSaveStatePath: () => null
         } as GBAEmulator
       }));
 
@@ -128,7 +131,8 @@ describe('useQuickReload hook', () => {
         setCanvas: vi.fn(),
         canvas: null,
         emulator: {
-          getCurrentGameName: () => 'some_rom.gba'
+          getCurrentGameName: () => 'some_rom.gba',
+          getCurrentAutoSaveStatePath: () => null
         } as GBAEmulator
       }));
 
@@ -151,7 +155,8 @@ describe('useQuickReload hook', () => {
         setCanvas: vi.fn(),
         canvas: null,
         emulator: {
-          getCurrentGameName: () => 'some_rom.gba'
+          getCurrentGameName: () => 'some_rom.gba',
+          getCurrentAutoSaveStatePath: () => null
         } as GBAEmulator
       }));
 
@@ -176,7 +181,8 @@ describe('useQuickReload hook', () => {
         setCanvas: vi.fn(),
         canvas: null,
         emulator: {
-          getCurrentGameName: () => undefined
+          getCurrentGameName: () => undefined,
+          getCurrentAutoSaveStatePath: () => null
         } as GBAEmulator
       }));
 
@@ -194,7 +200,8 @@ describe('useQuickReload hook', () => {
         setCanvas: vi.fn(),
         canvas: null,
         emulator: {
-          getCurrentGameName: () => undefined
+          getCurrentGameName: () => undefined,
+          getCurrentAutoSaveStatePath: () => null
         } as GBAEmulator
       }));
 
