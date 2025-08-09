@@ -77,13 +77,15 @@ describe('<VirtualControlsForm />', () => {
 
     expect(submitButton).toBeInTheDocument();
 
-    const checkBoxes = screen.getAllByRole('checkbox');
+    const checkboxes = screen.getAllByRole('checkbox');
+    const switches = screen.getAllByRole('switch');
 
-    expect(checkBoxes).toHaveLength(6);
+    expect(checkboxes).toHaveLength(5);
+    expect(switches).toHaveLength(1);
 
-    checkBoxes.forEach(async (checkbox) => {
-      await userEvent.click(checkbox);
-    });
+    for (const el of [...checkboxes, ...switches]) {
+      await userEvent.click(el);
+    }
 
     await userEvent.click(submitButton);
 

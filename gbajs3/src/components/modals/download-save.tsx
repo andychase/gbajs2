@@ -58,7 +58,7 @@ export const DownloadSaveModal = () => {
             const saveName = emulator?.getCurrentSaveName();
 
             if (save && saveName) {
-              const saveFile = new Blob([save], {
+              const saveFile = new Blob([save.slice()], {
                 type: 'data:application/octet-stream'
               });
 

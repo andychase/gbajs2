@@ -98,7 +98,7 @@ export const UploadRomToServerModal = () => {
             const romName = emulator?.getCurrentGameName();
 
             if (romFileBytes && romName) {
-              const romFileBlob = new Blob([romFileBytes]);
+              const romFileBlob = new Blob([romFileBytes.slice()]);
               const romFile = new File([romFileBlob], romName);
               executeUploadRom({ romFile });
             }

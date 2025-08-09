@@ -75,7 +75,7 @@ describe('<CheatsModal />', () => {
     expect(screen.getByRole('list')).toBeVisible();
     expect(screen.getAllByRole('listitem')).toHaveLength(2);
 
-    const enabledCheckboxes = screen.getAllByRole('checkbox', {
+    const enabledCheckboxes = screen.getAllByRole('switch', {
       name: 'Enabled'
     });
 

@@ -18,7 +18,7 @@ const generateScreenshot = (emulator: GBAEmulator | null) => {
 
   emulator?.deleteFile(filePath);
 
-  return new Blob([fileBytes], { type: 'image/png' });
+  return new Blob([fileBytes.slice()], { type: 'image/png' });
 };
 
 export const useQuitGame = () => {

@@ -16,13 +16,20 @@ export default [
   jsxA11Y.flatConfigs.recommended,
   styledA11y.flatConfigs.recommended,
   jestDom.configs['flat/recommended'],
-  testingLibrary.configs['flat/dom'],
   ...tseslint.configs.recommended,
+  {
+    files: ['**/__tests__/**/*.[jt]s?(x)', '**/*.{test,spec}.[jt]s?(x)'],
+    plugins: {
+      'testing-library': testingLibrary
+    },
+    ...testingLibrary.configs['flat/react']
+  },
   {
     files: ['**/*.js', '**/*.ts', '**/*.tsx'],
     plugins: {
       'react-refresh': reactRefresh,
-      'react-hooks': pluginReactHooks
+      'react-hooks': pluginReactHooks,
+      'testing-library': testingLibrary
     },
 
     languageOptions: {
@@ -69,6 +76,7 @@ export default [
           testIdPattern: '^([a-z0-9]+-?:?)+$'
         }
       ],
+
       ...pluginReactHooks.configs.recommended.rules
     }
   }

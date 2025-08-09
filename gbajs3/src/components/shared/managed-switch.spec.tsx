@@ -15,7 +15,7 @@ describe('<ManagedSwitch />', () => {
     render(<ManagedSwitch label="Switch Label" {...mockRegisterProps} />);
 
     expect(mockRegisterProps.ref).toHaveBeenCalled();
-    expect(screen.getByRole('checkbox')).toBeInTheDocument();
+    expect(screen.getByRole('switch')).toBeInTheDocument();
     expect(screen.getByText('Switch Label')).toBeInTheDocument();
   });
 
@@ -43,7 +43,7 @@ describe('<ManagedSwitch />', () => {
       />
     );
 
-    expect(screen.getByRole('checkbox')).toBeChecked();
+    expect(screen.getByRole('switch')).toBeChecked();
   });
 
   it('does not check the switch when watcher prop is false', () => {
@@ -55,6 +55,6 @@ describe('<ManagedSwitch />', () => {
       />
     );
 
-    expect(screen.getByRole('checkbox')).not.toBeChecked();
+    expect(screen.getByRole('switch')).not.toBeChecked();
   });
 });

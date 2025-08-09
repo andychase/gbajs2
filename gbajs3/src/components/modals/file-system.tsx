@@ -55,7 +55,7 @@ export const FileSystemModal = () => {
     const file = emulator?.getFile(path);
 
     if (file && fileName) {
-      const fileDownload = new Blob([file], {
+      const fileDownload = new Blob([file.slice()], {
         type: 'data:application/octet-stream'
       });
 

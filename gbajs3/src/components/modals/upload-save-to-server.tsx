@@ -106,7 +106,7 @@ export const UploadSaveToServerModal = () => {
             const saveName = emulator?.getCurrentSaveName();
 
             if (saveFileBytes && saveName) {
-              const saveFileBlob = new Blob([saveFileBytes]);
+              const saveFileBlob = new Blob([saveFileBytes.slice()]);
               const saveFile = new File([saveFileBlob], saveName);
               executeUploadSave({ saveFile });
             }
