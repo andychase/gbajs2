@@ -1,0 +1,65 @@
+{
+  "projectName": "gbajs3",
+  "projectOwner": "thenick775",
+  "repoType": "github",
+  "commitConvention": "angular",
+  "contributors": [
+    {
+      "login": "thenick775",
+      "name": "Nicholas VanCise",
+      "avatar_url": "https://avatars.githubusercontent.com/u/40526638?v=4",
+      "profile": "https://nicholas-vancise.dev/",
+      "contributions": ["maintenance", "code", "review"]
+    },
+    {
+      "login": "gutenye",
+      "name": "Guten",
+      "avatar_url": "https://avatars.githubusercontent.com/u/377544?v=4",
+      "profile": "https://github.com/gutenye",
+      "contributions": ["code", "bug", "ideas"]
+    },
+    {
+      "login": "sonht-0555",
+      "name": "Son Hoang Tuan",
+      "avatar_url": "https://avatars.githubusercontent.com/u/26568422?v=4",
+      "profile": "https://github.com/sonht-0555",
+      "contributions": ["bug", "ideas"]
+    },
+    {
+      "login": "hunter1026",
+      "name": "hunter1026",
+      "avatar_url": "https://avatars.githubusercontent.com/u/122758962?v=4",
+      "profile": "https://github.com/hunter1026",
+      "contributions": ["ideas"]
+    },
+    {
+      "login": "0dt483e0",
+      "name": "0dt483e0",
+      "avatar_url": "https://avatars.githubusercontent.com/u/161086929?v=4",
+      "profile": "https://github.com/0dt483e0",
+      "contributions": ["ideas"]
+    },
+    {
+      "login": "henry753951",
+      "name": "Henry753951",
+      "avatar_url": "https://avatars.githubusercontent.com/u/31657781?v=4",
+      "profile": "https://github.com/henry753951",
+      "contributions": ["ideas"]
+    },
+    {
+      "login": "Dhy19971",
+      "name": "Dhy19971",
+      "avatar_url": "https://avatars.githubusercontent.com/u/54805023?v=4",
+      "profile": "https://github.com/Dhy19971",
+      "contributions": ["ideas"]
+    },
+    {
+      "login": "KobeOne2",
+      "name": "KobeOne2",
+      "avatar_url": "https://avatars.githubusercontent.com/u/173476135?v=4",
+      "profile": "https://github.com/KobeOne2",
+      "contributions": ["ideas"]
+    }
+  ]
+}
+

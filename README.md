@@ -169,6 +169,33 @@ All control positions can be modified if the default layouts do not suit your de
 
 Feel free to open discussions, issues, and pull requests. Contributions are welcome!
 
+## Contributors
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+<table>
+  <tbody>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://nicholas-vancise.dev/"><img src="https://avatars.githubusercontent.com/u/40526638?v=4?s=100" width="100px;" alt="Nicholas VanCise"/><br /><sub><b>Nicholas VanCise</b></sub></a><br /><a href="#maintenance-thenick775" title="Maintenance">🚧</a> <a href="https://github.com/thenick775/gbajs3/commits?author=thenick775" title="Code">💻</a> <a href="https://github.com/thenick775/gbajs3/pulls?q=is%3Apr+reviewed-by%3Athenick775" title="Reviewed Pull Requests">👀</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/gutenye"><img src="https://avatars.githubusercontent.com/u/377544?v=4?s=100" width="100px;" alt="Guten"/><br /><sub><b>Guten</b></sub></a><br /><a href="https://github.com/thenick775/gbajs3/commits?author=gutenye" title="Code">💻</a> <a href="https://github.com/thenick775/gbajs3/issues?q=author%3Agutenye" title="Bug reports">🐛</a> <a href="#ideas-gutenye" title="Ideas, Planning, & Feedback">🤔</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/sonht-0555"><img src="https://avatars.githubusercontent.com/u/26568422?v=4?s=100" width="100px;" alt="Son Hoang Tuan"/><br /><sub><b>Son Hoang Tuan</b></sub></a><br /><a href="https://github.com/thenick775/gbajs3/issues?q=author%3Asonht-0555" title="Bug reports">🐛</a> <a href="#ideas-sonht-0555" title="Ideas, Planning, & Feedback">🤔</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/hunter1026"><img src="https://avatars.githubusercontent.com/u/122758962?v=4?s=100" width="100px;" alt="hunter1026"/><br /><sub><b>hunter1026</b></sub></a><br /><a href="#ideas-hunter1026" title="Ideas, Planning, & Feedback">🤔</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/0dt483e0"><img src="https://avatars.githubusercontent.com/u/161086929?v=4?s=100" width="100px;" alt="0dt483e0"/><br /><sub><b>0dt483e0</b></sub></a><br /><a href="#ideas-0dt483e0" title="Ideas, Planning, & Feedback">🤔</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/henry753951"><img src="https://avatars.githubusercontent.com/u/31657781?v=4?s=100" width="100px;" alt="Henry753951"/><br /><sub><b>Henry753951</b></sub></a><br /><a href="#ideas-henry753951" title="Ideas, Planning, & Feedback">🤔</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Dhy19971"><img src="https://avatars.githubusercontent.com/u/54805023?v=4?s=100" width="100px;" alt="Dhy19971"/><br /><sub><b>Dhy19971</b></sub></a><br /><a href="#ideas-Dhy19971" title="Ideas, Planning, & Feedback">🤔</a></td>
+    </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/KobeOne2"><img src="https://avatars.githubusercontent.com/u/173476135?v=4?s=100" width="100px;" alt="KobeOne2"/><br /><sub><b>KobeOne2</b></sub></a><br /><a href="#ideas-KobeOne2" title="Ideas, Planning, & Feedback">🤔</a></td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
 ## License
 
 Original work by Endrift. Repo: (Archived / No longer maintained)
