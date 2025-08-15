@@ -19,7 +19,7 @@
     "@emotion/styled": "^11.13.5",
     "@mui/material": "^7.0.1",
     "@mui/x-tree-view": "^8.3.0",
-    "@thenick775/mgba-wasm": "^2.3.2",
+    "@thenick775/mgba-wasm": "^2.3.3",
     "@uidotdev/usehooks": "^2.4.1",
     "jwt-decode": "^4.0.0",
     "nanoid": "^5.0.7",
