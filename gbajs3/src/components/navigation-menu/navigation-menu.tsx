@@ -22,7 +22,9 @@ import {
   BiConversation,
   BiMenu,
   BiFileFind,
-  BiBrain
+  BiBrain,
+  BiRefresh,
+  BiDownload
 } from 'react-icons/bi';
 import { styled, useTheme } from 'styled-components';
 
@@ -241,7 +243,7 @@ export const NavigationMenu = () => {
             <NavLeaf
               title="Upload Saves"
               $disabled={isRunning}
-              icon={<BiCloudUpload />}
+              icon={<BiUpload />}
               onClick={() => {
                 setModalContent(<UploadSavesModal />);
                 setIsModalOpen(true);
@@ -250,7 +252,7 @@ export const NavigationMenu = () => {
             <NavLeaf
               title="Upload Cheats"
               $disabled={isRunning}
-              icon={<BiCloudUpload />}
+              icon={<BiUpload />}
               onClick={() => {
                 setModalContent(<UploadCheatsModal />);
                 setIsModalOpen(true);
@@ -259,7 +261,7 @@ export const NavigationMenu = () => {
             <NavLeaf
               title="Upload Patches"
               $disabled={isRunning}
-              icon={<BiCloudUpload />}
+              icon={<BiUpload />}
               onClick={() => {
                 setModalContent(<UploadPatchesModal />);
                 setIsModalOpen(true);
@@ -277,7 +279,7 @@ export const NavigationMenu = () => {
             <NavLeaf
               title="Load Local Rom"
               $disabled={isRunning}
-              icon={<BiUpload />}
+              icon={<BiRedo />}
               onClick={() => {
                 setModalContent(<LoadLocalRomModal />);
                 setIsModalOpen(true);
@@ -314,7 +316,7 @@ export const NavigationMenu = () => {
             <NavLeaf
               title="Download Save"
               $disabled={!isRunning}
-              icon={<BiCloudDownload />}
+              icon={<BiDownload />}
               onClick={() => {
                 setModalContent(<DownloadSaveModal />);
                 setIsModalOpen(true);
@@ -343,7 +345,7 @@ export const NavigationMenu = () => {
           <NavLeaf
             title="Quick Reload"
             $disabled={!isQuickReloadAvailable}
-            icon={<BiRedo />}
+            icon={<BiRefresh />}
             $withPadding
             onClick={quickReload}
           />
