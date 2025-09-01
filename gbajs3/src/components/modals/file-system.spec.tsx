@@ -7,6 +7,7 @@ import { renderWithContext } from '../../../test/render-with-context.tsx';
 import * as contextHooks from '../../hooks/context.tsx';
 import * as addCallbackHooks from '../../hooks/emulator/use-add-callbacks.tsx';
 import { productTourLocalStorageKey } from '../product-tour/consts.tsx';
+import * as blobUtilities from './file-utilities/blob.ts';
 
 import type {
   FileNode,
@@ -102,18 +103,12 @@ describe('<FileSystemModal />', () => {
     const getFileSpy: (p: string) => Uint8Array = vi.fn(() =>
       new TextEncoder().encode('Some state file contents')
     );
+    const downloadBlobSpy = vi
+      .spyOn(blobUtilities, 'downloadBlob')
+      .mockImplementation(() => {});
     const { useEmulatorContext: original } = await vi.importActual<
       typeof contextHooks
     >('../../hooks/context.tsx');
-
-    // unimplemented in jsdom
-    URL.createObjectURL = vi.fn(() => 'object_url:rom1.gba');
-    URL.revokeObjectURL = vi.fn();
-    // mock to assert click and prevent navigation (unimplemented)
-    const anchorClickSpy = vi
-      .spyOn(HTMLAnchorElement.prototype, 'click')
-      .mockReturnValue();
-    const anchorRemoveSpy = vi.spyOn(HTMLAnchorElement.prototype, 'remove');
 
     vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => {
       return {
@@ -134,12 +129,8 @@ describe('<FileSystemModal />', () => {
     expect(getFileSpy).toHaveBeenCalledOnce();
     expect(getFileSpy).toHaveBeenCalledWith('/data/games/rom1.gba');
 
-    expect(URL.createObjectURL).toHaveBeenCalledWith(expect.anything());
-    expect(URL.revokeObjectURL).toHaveBeenCalledWith(
-      expect.stringMatching(/object_url:rom1\.gba$/)
-    );
-    expect(anchorClickSpy).toHaveBeenCalledOnce();
-    expect(anchorRemoveSpy).toHaveBeenCalledOnce();
+    expect(downloadBlobSpy).toHaveBeenCalledOnce();
+    expect(downloadBlobSpy).toHaveBeenCalledWith('rom1.gba', expect.any(Blob));
   });
 
   it('saves file system', async () => {

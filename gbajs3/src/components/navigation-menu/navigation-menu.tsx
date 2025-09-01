@@ -26,6 +26,7 @@ import {
   BiRefresh,
   BiDownload
 } from 'react-icons/bi';
+import { MdImportExport } from 'react-icons/md';
 import { styled, useTheme } from 'styled-components';
 
 import { NavigationMenuWidth } from './consts.tsx';
@@ -48,6 +49,7 @@ import { ControlsModal } from '../modals/controls.tsx';
 import { DownloadSaveModal } from '../modals/download-save.tsx';
 import { EmulatorSettingsModal } from '../modals/emulator-settings.tsx';
 import { FileSystemModal } from '../modals/file-system.tsx';
+import { ImportExportModal } from '../modals/import-export.tsx';
 import { LegalModal } from '../modals/legal.tsx';
 import { LoadLocalRomModal } from '../modals/load-local-rom.tsx';
 import { LoadRomModal } from '../modals/load-rom.tsx';
@@ -436,6 +438,16 @@ export const NavigationMenu = () => {
               }}
             />
           </NavComponent>
+
+          <NavLeaf
+            title="Import/Export"
+            icon={<MdImportExport />}
+            onClick={() => {
+              setModalContent(<ImportExportModal />);
+              setIsModalOpen(true);
+            }}
+            $withPadding
+          />
 
           <NavLeaf
             title="Legal"

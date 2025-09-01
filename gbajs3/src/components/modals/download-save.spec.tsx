@@ -6,6 +6,7 @@ import { DownloadSaveModal } from './download-save.tsx';
 import { renderWithContext } from '../../../test/render-with-context.tsx';
 import * as contextHooks from '../../hooks/context.tsx';
 import { productTourLocalStorageKey } from '../product-tour/consts.tsx';
+import * as blobUtilities from './file-utilities/blob.ts';
 
 import type { GBAEmulator } from '../../emulator/mgba/mgba-emulator.tsx';
 
@@ -48,14 +49,9 @@ describe('<DownloadSaveModal />', () => {
     const { useEmulatorContext: original } = await vi.importActual<
       typeof contextHooks
     >('../../hooks/context.tsx');
-    // unimplemented in jsdom
-    URL.createObjectURL = vi.fn(() => 'object_url:some_rom.sav');
-    URL.revokeObjectURL = vi.fn();
-    // mock to assert click and prevent navigation (unimplemented)
-    const anchorClickSpy = vi
-      .spyOn(HTMLAnchorElement.prototype, 'click')
-      .mockReturnValue();
-    const anchorRemoveSpy = vi.spyOn(HTMLAnchorElement.prototype, 'remove');
+    const downloadBlobSpy = vi
+      .spyOn(blobUtilities, 'downloadBlob')
+      .mockImplementation(() => {});
 
     vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
       ...original(),
@@ -72,12 +68,11 @@ describe('<DownloadSaveModal />', () => {
     const downloadButton = screen.getByText('Download', { selector: 'button' });
     await userEvent.click(downloadButton);
 
-    expect(URL.createObjectURL).toHaveBeenCalledWith(expect.anything());
-    expect(URL.revokeObjectURL).toHaveBeenCalledWith(
-      expect.stringMatching(/object_url:some_rom\.sav$/)
+    expect(downloadBlobSpy).toHaveBeenCalledOnce();
+    expect(downloadBlobSpy).toHaveBeenCalledWith(
+      'some_rom.sav',
+      expect.any(Blob)
     );
-    expect(anchorClickSpy).toHaveBeenCalledOnce();
-    expect(anchorRemoveSpy).toHaveBeenCalledOnce();
   });
 
   it('closes modal using the close button', async () => {

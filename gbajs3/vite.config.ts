@@ -167,7 +167,8 @@ export default defineConfig(({ mode }) => {
               '@uidotdev/usehooks',
               'jwt-decode',
               'nanoid'
-            ]
+            ],
+            zip: ['@zip.js/zip.js']
           }
         }
       }

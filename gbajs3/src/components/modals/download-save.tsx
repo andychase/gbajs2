@@ -13,6 +13,7 @@ import {
 } from '../product-tour/embedded-product-tour.tsx';
 import { ErrorWithIcon } from '../shared/error-with-icon.tsx';
 import { CenteredText } from '../shared/styled.tsx';
+import { downloadBlob } from './file-utilities/blob.ts';
 
 export const DownloadSaveModal = () => {
   const theme = useTheme();
@@ -62,12 +63,7 @@ export const DownloadSaveModal = () => {
                 type: 'data:application/octet-stream'
               });
 
-              const link = document.createElement('a');
-              link.download = saveName;
-              link.href = URL.createObjectURL(saveFile);
-              link.click();
-              link.remove();
-              setTimeout(() => URL.revokeObjectURL(link.href), 0);
+              downloadBlob(saveName, saveFile);
             } else {
               setError(true);
             }

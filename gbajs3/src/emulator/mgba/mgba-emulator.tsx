@@ -72,6 +72,7 @@ export type GBAEmulator = {
   uploadPatch: (file: File, callback?: () => void) => void;
   uploadRom: (file: File, callback?: () => void) => void;
   uploadSaveOrSaveState: (file: File, callback?: () => void) => void;
+  uploadScreenshot: (file: File, callback?: () => void) => void;
   toggleRewind: (enabled: boolean) => void;
   setCoreSettings: (coreSettings: coreSettings) => void;
   forceAutoSaveState: () => boolean;
@@ -302,6 +303,7 @@ export const mGBAEmulator = (mGBA: mGBAEmulatorTypeDef): GBAEmulator => {
 
       mGBA.FS.unlink(saveStatePath);
     },
+    uploadScreenshot: mGBA.uploadScreenshot,
     deleteFile: mGBA.FS.unlink,
     pause: mGBA.pauseGame,
     resume: async () => {

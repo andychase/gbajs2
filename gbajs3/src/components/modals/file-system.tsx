@@ -14,6 +14,7 @@ import {
   type TourSteps
 } from '../product-tour/embedded-product-tour.tsx';
 import { CircleCheckButton } from '../shared/circle-check-button.tsx';
+import { downloadBlob } from './file-utilities/blob.ts';
 
 import type { FileNode } from '../../emulator/mgba/mgba-emulator.tsx';
 
@@ -59,12 +60,7 @@ export const FileSystemModal = () => {
         type: 'data:application/octet-stream'
       });
 
-      const link = document.createElement('a');
-      link.download = fileName;
-      link.href = URL.createObjectURL(fileDownload);
-      link.click();
-      link.remove();
-      setTimeout(() => URL.revokeObjectURL(link.href), 0);
+      downloadBlob(fileName, fileDownload);
     }
   };
 
