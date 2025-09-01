@@ -148,7 +148,13 @@ export const ImportExportModal = () => {
   const { setIsModalOpen } = useModalContext();
   const { emulator } = useEmulatorContext();
   const { syncActionIfEnabled } = useAddCallbacks();
-  const { reset, handleSubmit, setValue, control } = useForm<InputProps>();
+  const {
+    reset,
+    handleSubmit,
+    setValue,
+    control,
+    formState: { isSubmitting }
+  } = useForm<InputProps>();
   const [isExportLoading, setIsExportLoading] = useState(false);
   const importFormId = useId();
   const buttonBaseId = useId();
@@ -238,6 +244,7 @@ export const ImportExportModal = () => {
           form={importFormId}
           type="submit"
           variant="contained"
+          loading={isSubmitting}
         >
           Import
         </Button>
