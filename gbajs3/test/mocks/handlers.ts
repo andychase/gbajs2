@@ -23,7 +23,7 @@ export const handlers = [
       const romName = url.searchParams.get('rom');
 
       if (romName) {
-        await delay();
+        await delay(100);
 
         return new HttpResponse(`test ${romName} rom`, {
           headers: {
@@ -47,7 +47,7 @@ export const handlers = [
       const saveName = url.searchParams.get('save');
 
       if (saveName) {
-        await delay();
+        await delay(100);
 
         return new HttpResponse(`test ${saveName} save`, {
           headers: {
@@ -90,7 +90,7 @@ export const handlers = [
       const rom = formData.get('rom') as File;
       const romName = rom.name;
 
-      await delay();
+      await delay(100);
 
       return new HttpResponse(null, { status: romName == '400' ? 400 : 200 });
     }
@@ -103,7 +103,7 @@ export const handlers = [
       const save = formData.get('save') as File;
       const saveName = save.name;
 
-      await delay();
+      await delay(100);
 
       return new HttpResponse(null, { status: saveName == '400' ? 400 : 200 });
     }
