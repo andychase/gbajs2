@@ -58,6 +58,8 @@ const defaultFileUrl: { url: string; type: keyof FileTypes } = {
   type: 'rom'
 };
 
+const defaultNoSelectedRom = 'none';
+
 const GridContainer = styled.div`
   display: grid;
 `;
@@ -189,6 +191,10 @@ export const UploadFilesModal = () => {
     emulator?.defaultFileTypes() ?? {}
   ).flatMap((_) => _);
 
+  const findFirstRomFile = (files?: File[]) =>
+    files?.find((file) => emulator?.isFileExtensionOfType(file.name, 'rom'))
+      ?.name;
+
   const onDrop = useCallback(
     (acceptedFiles: File[]) =>
       setValue('files', acceptedFiles, { shouldValidate: true }),
@@ -229,15 +235,15 @@ export const UploadFilesModal = () => {
 
     await syncActionIfEnabled();
 
-    if (romFileToRun) runGame(romFileToRun);
+    const gameToRun = romFileToRun ?? findFirstRomFile(files);
+
+    if (gameToRun !== defaultNoSelectedRom && gameToRun) runGame(gameToRun);
 
     setIsModalOpen(false);
   };
 
   const files = watch('files');
-  const firstRomName = files?.find((file) =>
-    emulator?.isFileExtensionOfType(file.name, 'rom')
-  )?.name;
+  const firstRomName = findFirstRomFile(files);
   const romFileToRun = watch('romFileToRun');
 
   const handleUploadType = (
@@ -289,7 +295,7 @@ export const UploadFilesModal = () => {
                       <AdditionalFileActions
                         selectedFileName={watch('romFileToRun')}
                         setSelectedFileName={(name) =>
-                          setValue('romFileToRun', name ?? 'none')
+                          setValue('romFileToRun', name ?? defaultNoSelectedRom)
                         }
                         isRomFile={
                           emulator?.isFileExtensionOfType(fileName, 'rom') ??

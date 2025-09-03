@@ -12,6 +12,7 @@ import {
 } from '../../emulator/mgba/mgba-emulator.tsx';
 import * as contextHooks from '../../hooks/context.tsx';
 import * as addCallbackHooks from '../../hooks/emulator/use-add-callbacks.tsx';
+import * as runGameHooks from '../../hooks/emulator/use-run-game.tsx';
 import * as writeFileHooks from '../../hooks/emulator/use-write-file-to-emulator.tsx';
 
 describe('<UploadFilesModal />', () => {
@@ -24,6 +25,16 @@ describe('<UploadFilesModal />', () => {
         typeof e === 'string' ? e === fileExtension : !!e.regex.exec(fileName)
       );
     },
+    filePaths: () => ({
+      root: '/data',
+      saveStatePath: '/data/states',
+      cheatsPath: '/data/cheats',
+      gamePath: '/data/games',
+      savePath: '/data/saves',
+      screenshotsPath: '/data/screenshots',
+      patchPath: '/data/patches',
+      autosave: '/autosave'
+    }),
     getCurrentAutoSaveStatePath: () => null
   };
 
@@ -36,6 +47,7 @@ describe('<UploadFilesModal />', () => {
 
     const setIsModalOpenSpy = vi.fn();
     const syncActionIfEnabledSpy = vi.fn();
+    const runGameSpy = vi.fn();
 
     const writeFileToEmulatorSpy = vi.fn().mockResolvedValue(undefined);
 
@@ -57,6 +69,8 @@ describe('<UploadFilesModal />', () => {
     vi.spyOn(writeFileHooks, 'useWriteFileToEmulator').mockReturnValue(
       writeFileToEmulatorSpy
     );
+
+    vi.spyOn(runGameHooks, 'useRunGame').mockReturnValue(runGameSpy);
 
     renderWithContext(<UploadFilesModal />);
 
@@ -85,6 +99,8 @@ describe('<UploadFilesModal />', () => {
     );
 
     expect(syncActionIfEnabledSpy).toHaveBeenCalledOnce();
+    expect(runGameSpy).toHaveBeenCalledOnce();
+    expect(runGameSpy).toHaveBeenCalledWith('rom1.gba');
     expect(setIsModalOpenSpy).toHaveBeenCalledWith(false);
   });
 
@@ -93,10 +109,19 @@ describe('<UploadFilesModal />', () => {
       typeof contextHooks
     >('../../hooks/context.tsx');
 
+    const runGameSpy = vi.fn();
+    const writeFileToEmulatorSpy = vi.fn().mockResolvedValue(undefined);
+
     vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
       ...originalEmu(),
       emulator: emulatorForFiles as GBAEmulator
     }));
+
+    vi.spyOn(writeFileHooks, 'useWriteFileToEmulator').mockReturnValue(
+      writeFileToEmulatorSpy
+    );
+
+    vi.spyOn(runGameHooks, 'useRunGame').mockReturnValue(runGameSpy);
 
     renderWithContext(<UploadFilesModal />);
 
@@ -127,6 +152,16 @@ describe('<UploadFilesModal />', () => {
     expect(
       screen.queryByRole('checkbox', { name: /run rom3\.sav/i })
     ).not.toBeInTheDocument();
+
+    expect(screen.queryAllByRole('checkbox', { checked: true })).toHaveLength(
+      0
+    );
+
+    await userEvent.click(screen.getByRole('button', { name: 'Upload' }));
+
+    expect(writeFileToEmulatorSpy).toHaveBeenCalledTimes(3);
+
+    expect(runGameSpy).not.toHaveBeenCalled();
   });
 
   it('submits a valid external rom URL and closes', async () => {
