@@ -171,7 +171,6 @@ export const UploadFilesModal = () => {
   const [uploadType, setUploadType] = useState<'files' | 'urls'>('files');
   const uploadFilesFormId = useId();
   const {
-    reset,
     handleSubmit,
     setValue,
     control,
@@ -191,11 +190,9 @@ export const UploadFilesModal = () => {
   ).flatMap((_) => _);
 
   const onDrop = useCallback(
-    (acceptedFiles: File[]) => {
-      reset();
-      setValue('files', acceptedFiles, { shouldValidate: true });
-    },
-    [reset, setValue]
+    (acceptedFiles: File[]) =>
+      setValue('files', acceptedFiles, { shouldValidate: true }),
+    [setValue]
   );
 
   const onSubmit: SubmitHandler<InputProps> = async ({
