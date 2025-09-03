@@ -1,4 +1,4 @@
-import { act } from 'react';
+import { act } from '@testing-library/react';
 import * as toast from 'react-hot-toast';
 import { describe, expect, it, vi } from 'vitest';
 

@@ -22,12 +22,9 @@ import { LoadRomModal } from '../modals/load-rom.tsx';
 import { LoadSaveModal } from '../modals/load-save.tsx';
 import { LoginModal } from '../modals/login.tsx';
 import { SaveStatesModal } from '../modals/save-states.tsx';
-import { UploadCheatsModal } from '../modals/upload-cheats.tsx';
-import { UploadPatchesModal } from '../modals/upload-patches.tsx';
+import { UploadFilesModal } from '../modals/upload-files.tsx';
 import { UploadRomToServerModal } from '../modals/upload-rom-to-server.tsx';
-import { UploadRomsModal } from '../modals/upload-roms.tsx';
 import { UploadSaveToServerModal } from '../modals/upload-save-to-server.tsx';
-import { UploadSavesModal } from '../modals/upload-saves.tsx';
 
 import type { GBAEmulator } from '../../emulator/mgba/mgba-emulator.tsx';
 
@@ -39,7 +36,7 @@ describe('<NavigationMenu />', () => {
     expect(screen.getByLabelText('Menu Toggle')).toBeInTheDocument();
     expect(screen.getByLabelText('Menu Dismiss')).toBeInTheDocument();
     // renders default mounted menu items
-    expect(screen.getAllByRole('listitem')).toHaveLength(16);
+    expect(screen.getAllByRole('listitem')).toHaveLength(13);
   });
 
   it('toggles menu with button', async () => {
@@ -89,10 +86,7 @@ describe('<NavigationMenu />', () => {
   describe('menu nodes', () => {
     it.each([
       ['About', <AboutModal />],
-      ['Upload Saves', <UploadSavesModal />],
-      ['Upload Cheats', <UploadCheatsModal />],
-      ['Upload Patches', <UploadPatchesModal />],
-      ['Upload Roms', <UploadRomsModal />],
+      ['Upload Files', <UploadFilesModal />],
       ['Load Local Rom', <LoadLocalRomModal />],
       ['Controls', <ControlsModal />],
       ['File System', <FileSystemModal />],

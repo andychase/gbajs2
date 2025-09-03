@@ -4,7 +4,7 @@ export type InitialBounds = {
   [key: string]: DOMRect | undefined;
 };
 
-export type InitialBoundsContextProps = {
+type InitialBoundsContextProps = {
   initialBounds?: InitialBounds;
   clearInitialBounds: () => void;
   setInitialBound: (key: string, bounds?: DOMRect) => void;

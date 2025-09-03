@@ -24,6 +24,7 @@ import {
   stripLeadingSlashes,
   zipOptions
 } from './file-utilities/zip.ts';
+import { useWriteFileToEmulator } from '../../hooks/emulator/use-write-file-to-emulator.tsx';
 
 import type {
   FileNode,
@@ -70,56 +71,10 @@ const exportEmscriptenFsAsZip = async (
   await finalize();
 };
 
-const writeFileToEmulator = async (
-  emulator: GBAEmulator | null,
-  file: File
+const importZipToEmulatorFs = (
+  zipFile: File,
+  writeFileToEmulator: (file: File) => Promise<void>
 ) => {
-  const name = file.name;
-  const nameLower = name.toLowerCase();
-
-  if (
-    nameLower.endsWith('.gba') ||
-    nameLower.endsWith('.gbc') ||
-    nameLower.endsWith('.gb') ||
-    nameLower.endsWith('.zip') ||
-    nameLower.endsWith('.7z')
-  ) {
-    emulator?.uploadRom(file);
-    return;
-  }
-  if (nameLower.endsWith('_auto.ss')) {
-    const arrayBuffer = await file.arrayBuffer();
-    await emulator?.uploadAutoSaveState(
-      `${emulator?.filePaths().autosave}/${name}`,
-      new Uint8Array(arrayBuffer)
-    );
-    return;
-  }
-  if (nameLower.endsWith('.sav') || nameLower.match(/\.ss[0-9]+/)) {
-    emulator?.uploadSaveOrSaveState(file);
-    return;
-  }
-  if (nameLower.endsWith('.cheats')) {
-    emulator?.uploadCheats(file);
-    return;
-  }
-  if (
-    nameLower.endsWith('.ips') ||
-    nameLower.endsWith('.ups') ||
-    nameLower.endsWith('.bps')
-  ) {
-    emulator?.uploadPatch(file);
-    return;
-  }
-  if (nameLower.endsWith('.png')) {
-    emulator?.uploadScreenshot(file);
-    return;
-  }
-
-  console.warn(`No supported write path for ${name}`);
-};
-
-const importZipToEmulatorFs = (emulator: GBAEmulator | null, zipFile: File) => {
   const writeEntryToEmulator = async (entry: Entry) => {
     if (!entry || !entry.filename) return;
     if (entry.directory) return;
@@ -132,13 +87,13 @@ const importZipToEmulatorFs = (emulator: GBAEmulator | null, zipFile: File) => {
     }
 
     if (normalized === 'local-storage.json') {
-      restoreLocalStorageFromZip(entry);
+      await restoreLocalStorageFromZip(entry);
       return;
     }
 
     const file = await readFileFromZipEntry(entry);
 
-    if (file) await writeFileToEmulator(emulator, file);
+    if (file) await writeFileToEmulator(file);
   };
 
   return readZipEntriesFromBlob(zipFile, writeEntryToEmulator);
@@ -147,6 +102,7 @@ const importZipToEmulatorFs = (emulator: GBAEmulator | null, zipFile: File) => {
 export const ImportExportModal = () => {
   const { setIsModalOpen } = useModalContext();
   const { emulator } = useEmulatorContext();
+  const writeFileToEmulator = useWriteFileToEmulator();
   const { syncActionIfEnabled } = useAddCallbacks();
   const {
     reset,
@@ -168,7 +124,7 @@ export const ImportExportModal = () => {
   );
 
   const onSubmit: SubmitHandler<InputProps> = async ({ zipFile }) => {
-    await importZipToEmulatorFs(emulator, zipFile);
+    await importZipToEmulatorFs(zipFile, writeFileToEmulator);
     await syncActionIfEnabled();
     setIsModalOpen(false);
   };

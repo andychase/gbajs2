@@ -6,18 +6,14 @@ import { styled, useTheme } from 'styled-components';
 
 import { ErrorWithIcon } from './error-with-icon.tsx';
 
-type Extension = RegexValidator | string;
-
-type RegexValidator = {
-  regex: RegExp;
-  displayText: string;
-};
+import type { Extension } from '../../emulator/mgba/mgba-emulator.tsx';
 
 type DragAndDropInputProps = {
   ariaLabel: string;
   children: ReactNode;
   error?: string;
   hideAcceptedFiles?: boolean;
+  sortAcceptedFiles?: (a: string, b: string) => number;
   hideErrors?: boolean;
   id: string;
   multiple?: boolean;
@@ -170,6 +166,7 @@ export const DragAndDropInput = ({
   children,
   error,
   hideAcceptedFiles,
+  sortAcceptedFiles,
   hideErrors,
   id,
   multiple = false,
@@ -208,7 +205,9 @@ export const DragAndDropInput = ({
     onDrop(files);
   };
 
-  const acceptedFileNames = acceptedFiles.map((file) => file.name);
+  const acceptedFileNames = acceptedFiles
+    .map((file) => file.name)
+    .toSorted(sortAcceptedFiles ?? (() => 0));
 
   return (
     <>

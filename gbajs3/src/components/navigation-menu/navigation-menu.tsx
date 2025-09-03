@@ -56,12 +56,9 @@ import { LoadRomModal } from '../modals/load-rom.tsx';
 import { LoadSaveModal } from '../modals/load-save.tsx';
 import { LoginModal } from '../modals/login.tsx';
 import { SaveStatesModal } from '../modals/save-states.tsx';
-import { UploadCheatsModal } from '../modals/upload-cheats.tsx';
-import { UploadPatchesModal } from '../modals/upload-patches.tsx';
+import { UploadFilesModal } from '../modals/upload-files.tsx';
 import { UploadRomToServerModal } from '../modals/upload-rom-to-server.tsx';
-import { UploadRomsModal } from '../modals/upload-roms.tsx';
 import { UploadSaveToServerModal } from '../modals/upload-save-to-server.tsx';
-import { UploadSavesModal } from '../modals/upload-saves.tsx';
 import { ButtonBase } from '../shared/custom-button-base.tsx';
 
 type ExpandableComponentProps = {
@@ -243,38 +240,11 @@ export const NavigationMenu = () => {
             icon={<BiFolderPlus />}
           >
             <NavLeaf
-              title="Upload Saves"
+              title="Upload Files"
               $disabled={isRunning}
               icon={<BiUpload />}
               onClick={() => {
-                setModalContent(<UploadSavesModal />);
-                setIsModalOpen(true);
-              }}
-            />
-            <NavLeaf
-              title="Upload Cheats"
-              $disabled={isRunning}
-              icon={<BiUpload />}
-              onClick={() => {
-                setModalContent(<UploadCheatsModal />);
-                setIsModalOpen(true);
-              }}
-            />
-            <NavLeaf
-              title="Upload Patches"
-              $disabled={isRunning}
-              icon={<BiUpload />}
-              onClick={() => {
-                setModalContent(<UploadPatchesModal />);
-                setIsModalOpen(true);
-              }}
-            />
-            <NavLeaf
-              title="Upload Roms"
-              $disabled={isRunning}
-              icon={<BiUpload />}
-              onClick={() => {
-                setModalContent(<UploadRomsModal />);
+                setModalContent(<UploadFilesModal />);
                 setIsModalOpen(true);
               }}
             />

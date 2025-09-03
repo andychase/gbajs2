@@ -18,7 +18,7 @@ export type Layouts = {
   };
 };
 
-export type LayoutContextProps = {
+type LayoutContextProps = {
   layouts: Layouts;
   getLayout: (layoutKey: string) => Layout | undefined;
   clearLayouts: () => void;

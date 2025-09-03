@@ -24,6 +24,18 @@ export type ParsedCheats = {
   enable: boolean;
 };
 
+export type Extension = RegexValidator | string;
+
+type RegexValidator = {
+  regex: RegExp;
+  displayText: string;
+};
+
+export type FileTypes = Record<
+  'rom' | 'save' | 'autosave' | 'cheat' | 'patch' | 'screenshot',
+  Extension[]
+>;
+
 export type GBAEmulator = {
   addCoreCallbacks: (coreCallbacks: coreCallbacks) => void;
   autoLoadCheats: () => boolean;
@@ -32,6 +44,7 @@ export type GBAEmulator = {
   defaultKeyBindings: () => KeyBinding[];
   defaultAudioSampleRates: () => number[];
   defaultAudioBufferSizes: () => number[];
+  defaultFileTypes: () => FileTypes;
   deleteFile: (path: string) => void;
   deleteSaveState: (slot: number) => void;
   disableKeyboardInput: () => void;
@@ -49,6 +62,10 @@ export type GBAEmulator = {
   getCurrentAutoSaveStatePath: () => string | null;
   getVolume: () => number;
   isFastForwardEnabled: () => boolean;
+  isFileExtensionOfType: (
+    fileName: string,
+    type: keyof typeof fileTypes
+  ) => boolean;
   listAllFiles: () => FileNode;
   listRoms: () => string[];
   listCurrentSaveStates: () => string[];
@@ -90,6 +107,15 @@ export type GBAEmulator = {
 export const KEY_LOCATION_STANDARD = 0;
 export const KEY_LOCATION_NUMPAD = 3;
 
+export const fileTypes: FileTypes = {
+  rom: ['.gba', '.gbc', '.gb', '.zip', '.7z'],
+  patch: ['.ips', '.ups', '.bps'],
+  autosave: [{ regex: /_auto\.ss$/, displayText: '_auto.ss' }],
+  save: ['.sav', { regex: /\.ss[0-9]+/, displayText: '.ss' }],
+  cheat: ['.cheats'],
+  screenshot: ['.png']
+};
+
 const defaultSampleRates = [22050, 32000, 44100, 48000];
 const defaultAudioBufferSizes = [256, 512, 768, 1024, 1536, 2048, 3072, 4096];
 const defaultKeyBindings = [
@@ -106,6 +132,17 @@ const defaultKeyBindings = [
 ];
 
 const ignorePaths = ['.', '..'];
+
+const isFileExtensionOfType = (
+  fileName: string,
+  type: keyof typeof fileTypes
+) => {
+  const fileExtension = `.${fileName.split('.').pop()}`;
+
+  return fileTypes[type].some((e) =>
+    typeof e === 'string' ? e === fileExtension : !!e.regex.exec(fileName)
+  );
+};
 
 const filterSaveStates =
   (baseSaveStateName?: string) => (saveStateName: string) =>
@@ -260,6 +297,7 @@ export const mGBAEmulator = (mGBA: mGBAEmulatorTypeDef): GBAEmulator => {
     defaultKeyBindings: () => defaultKeyBindings,
     defaultAudioSampleRates: () => defaultSampleRates,
     defaultAudioBufferSizes: () => defaultAudioBufferSizes,
+    defaultFileTypes: () => fileTypes,
     loadSaveState: mGBA.loadState,
     listCurrentSaveStates: () => {
       const baseSaveStateName = filepathToFileName(mGBA.gameName, '.ss');
@@ -283,6 +321,7 @@ export const mGBAEmulator = (mGBA: mGBAEmulatorTypeDef): GBAEmulator => {
     simulateKeyUp: mGBA.buttonUnpress,
     setFastForwardMultiplier: mGBA.setFastForwardMultiplier,
     isFastForwardEnabled: () => mGBA.getFastForwardMultiplier() > 1,
+    isFileExtensionOfType,
     run: mGBA.loadGame,
     getCurrentRom: () =>
       mGBA.gameName ? mGBA.FS.readFile(mGBA.gameName) : null,
