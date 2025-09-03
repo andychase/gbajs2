@@ -30,12 +30,11 @@ const LeafLabelWrapper = styled.div`
   gap: 10px;
   align-items: center;
   justify-content: space-between;
+`;
 
-  > p {
-    margin: 0;
-    word-wrap: break-word;
-    max-width: 100%;
-  }
+const LeafText = styled.p`
+  margin: 0;
+  overflow-wrap: anywhere;
 `;
 
 const IconSeparator = styled.div`
@@ -79,7 +78,7 @@ export const EmulatorFileSystem = ({
 
     const leafLabelNode = (
       <LeafLabelWrapper>
-        <p>{nodeName}</p>
+        <LeafText>{nodeName}</LeafText>
         <IconSeparator>
           <IconButton
             aria-label={`Download ${nodeName}`}
