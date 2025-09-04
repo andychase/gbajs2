@@ -45,7 +45,7 @@ Got visuals? Screenshots or recordings are super helpful.
 
 ### 💡 Additional Context
 
-Anything else we should know? Logs, configs, or other details.
+Anything else we should know? Logs, configs, problematic files, or other details.
 
 ---
 
