@@ -48,6 +48,7 @@ Do not attempt to log into the server unless you are the server owner or an appr
 - Persistent file system utilizing IndexedDB
 - Interactive product tour
 - Load public rom files from query string
+- Full import/export support
 
 ## Existing Feature List
 
