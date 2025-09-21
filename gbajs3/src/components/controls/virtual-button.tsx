@@ -23,7 +23,7 @@ type VirtualButtonProps = {
     x: string | number;
     y: string | number;
   };
-  onClick?: () => void;
+  onPointerDown?: () => void;
   enabled?: boolean;
   ariaLabel: string;
 };
@@ -96,7 +96,7 @@ export const VirtualButton = ({
   children,
   keyId,
   inputName,
-  onClick,
+  onPointerDown,
   initialPosition,
   initialOffset,
   enabled = false,
@@ -109,7 +109,8 @@ export const VirtualButton = ({
 
   if (!enabled) return null;
 
-  const pointerEvents =
+  // used for "virtual controls" that go direct to the emulator and have a keyId
+  const emulatorPointerEvents =
     keyId && !areItemsDraggable
       ? {
           onPointerDown: () => {
@@ -129,6 +130,7 @@ export const VirtualButton = ({
           }
         }
       : undefined;
+
   // due to using pointer events for the buttons without a click handler,
   // we need to manage key events ourselves for buttons with an emulator keyId
   const keyboardEvents = keyId
@@ -146,6 +148,17 @@ export const VirtualButton = ({
   const layout = getLayout(inputName);
   const position = layout?.position ?? { x: 0, y: 0 };
 
+  const commonProps = {
+    ref: dragRef,
+    $initialPosition: initialPosition,
+    $areItemsDraggable: areItemsDraggable,
+    'aria-label': ariaLabel,
+    // used for "virtual controls" that don't interface with the emulator
+    onPointerDown,
+    ...emulatorPointerEvents,
+    ...keyboardEvents
+  };
+
   return (
     <Draggable
       nodeRef={dragRef}
@@ -157,28 +170,9 @@ export const VirtualButton = ({
       }
     >
       {isRectangular ? (
-        <RectangularButton
-          ref={dragRef}
-          $initialPosition={initialPosition}
-          $areItemsDraggable={areItemsDraggable}
-          aria-label={ariaLabel}
-          onClick={onClick}
-          {...pointerEvents}
-          {...keyboardEvents}
-        >
-          {children}
-        </RectangularButton>
+        <RectangularButton {...commonProps}>{children}</RectangularButton>
       ) : (
-        <CircularButton
-          ref={dragRef}
-          $initialPosition={initialPosition}
-          $diameter={width}
-          $areItemsDraggable={areItemsDraggable}
-          aria-label={ariaLabel}
-          onClick={onClick}
-          {...pointerEvents}
-          {...keyboardEvents}
-        >
+        <CircularButton {...commonProps} $diameter={width}>
           {children}
         </CircularButton>
       )}

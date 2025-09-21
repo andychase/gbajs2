@@ -382,7 +382,7 @@ export const VirtualControls = () => {
     },
     {
       children: <BiRefresh />,
-      onClick: () => {
+      onPointerDown: () => {
         quickReload();
 
         if (!emulator?.getCurrentGameName() && areNotificationsEnabled)
@@ -397,7 +397,7 @@ export const VirtualControls = () => {
     },
     {
       children: <BiSolidCloudUpload />,
-      onClick: () => {
+      onPointerDown: () => {
         if (isAuthenticated() && isRunning) {
           setModalContent(<UploadSaveToServerModal />);
           setIsModalOpen(true);
@@ -420,7 +420,7 @@ export const VirtualControls = () => {
     },
     {
       children: <BiSolidBookmark />,
-      onClick: () => {
+      onPointerDown: () => {
         if (!currentGameName) {
           toast.error('Load a game to load state slots', {
             id: virtualControlToastId
@@ -448,7 +448,7 @@ export const VirtualControls = () => {
     },
     {
       children: <BiSave />,
-      onClick: () => {
+      onPointerDown: () => {
         if (!currentGameName) {
           toast.error('Load a game to save state slots', {
             id: virtualControlToastId
