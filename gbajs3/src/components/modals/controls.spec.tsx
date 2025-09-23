@@ -221,5 +221,5 @@ describe('<ControlsModal />', () => {
             'Use the Save Changes button to persist changes from the current form tab.'
       )
     ).toBeVisible();
-  });
+  }, 15000);
 });

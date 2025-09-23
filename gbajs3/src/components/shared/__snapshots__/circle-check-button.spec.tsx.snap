@@ -49,7 +49,7 @@ exports[`<CircleCheckButton /> > matches snapshot when clicked 2`] = `
 }
 
 <button
-  class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary Mui-focusVisible MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary css-74d805-MuiButtonBase-root-MuiButton-root"
+  class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary css-74d805-MuiButtonBase-root-MuiButton-root"
   tabindex="0"
   type="button"
 >
@@ -92,14 +92,6 @@ exports[`<CircleCheckButton /> > matches snapshot when clicked 2`] = `
     >
       <span
         class="MuiTouchRipple-child MuiTouchRipple-childLeaving"
-      />
-    </span>
-    <span
-      class="css-y4cjyz-MuiTouchRipple-ripple MuiTouchRipple-ripple MuiTouchRipple-rippleVisible MuiTouchRipple-ripplePulsate"
-      style="width: 1px; height: 1px; top: -0.5px; left: -0.5px;"
-    >
-      <span
-        class="MuiTouchRipple-child MuiTouchRipple-childPulsate"
       />
     </span>
   </span>

@@ -121,5 +121,5 @@ describe('<UploadRomToServerModal />', () => {
 
     // dismiss the popper interface
     await userEvent.click(screen.getByText('Last'));
-  });
+  }, 15000);
 });

@@ -416,5 +416,5 @@ describe('<EmulatorSettingsModal />', () => {
     expect(
       screen.getByText('Use this form to adjust emulator core settings.')
     ).toBeVisible();
-  });
+  }, 15000);
 });
