@@ -343,6 +343,8 @@ export const ControlPanel = () => {
             controlled={isControlled}
             $gridArea="rewind"
             onPointerDown={() => {
+              if (areItemsDraggable) return;
+
               emulator?.toggleRewind(true);
               if (
                 emulatorSettings?.muteOnRewind &&
@@ -351,6 +353,8 @@ export const ControlPanel = () => {
                 muteAndPreserveVolume('rewind');
             }}
             onPointerUp={() => {
+              if (areItemsDraggable) return;
+
               emulator?.toggleRewind(false);
               if (emulatorSettings?.muteOnRewind) restoreVolume('rewind');
             }}
