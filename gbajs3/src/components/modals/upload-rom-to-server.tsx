@@ -8,10 +8,6 @@ import { ModalFooter } from './modal-footer.tsx';
 import { ModalHeader } from './modal-header.tsx';
 import { useEmulatorContext, useModalContext } from '../../hooks/context.tsx';
 import { useUpLoadRom } from '../../hooks/use-upload-rom.tsx';
-import {
-  EmbeddedProductTour,
-  type TourSteps
-} from '../product-tour/embedded-product-tour.tsx';
 import { ErrorWithIcon } from '../shared/error-with-icon.tsx';
 import { PacmanIndicator } from '../shared/loading-indicator.tsx';
 import { CenteredText } from '../shared/styled.tsx';
@@ -69,16 +65,6 @@ export const UploadRomToServerModal = () => {
   const uploadRomToServerButtonId = useId();
   const { data, isLoading, error, execute: executeUploadRom } = useUpLoadRom();
 
-  const tourSteps: TourSteps = [
-    {
-      content: (
-        <p>Use this button to upload your current rom file to the server.</p>
-      ),
-      placement: 'right',
-      target: `#${CSS.escape(uploadRomToServerButtonId)}`
-    }
-  ];
-
   return (
     <>
       <ModalHeader title="Send Rom to Server" />
@@ -110,10 +96,6 @@ export const UploadRomToServerModal = () => {
           Close
         </Button>
       </ModalFooter>
-      <EmbeddedProductTour
-        steps={tourSteps}
-        completedProductTourStepName="hasCompletedUploadRomToServerTour"
-      />
     </>
   );
 };

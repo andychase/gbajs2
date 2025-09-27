@@ -3,10 +3,9 @@ import { userEvent } from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
 import { DownloadSaveModal } from './download-save.tsx';
+import * as blobUtilities from './file-utilities/blob.ts';
 import { renderWithContext } from '../../../test/render-with-context.tsx';
 import * as contextHooks from '../../hooks/context.tsx';
-import { productTourLocalStorageKey } from '../product-tour/consts.tsx';
-import * as blobUtilities from './file-utilities/blob.ts';
 
 import type { GBAEmulator } from '../../emulator/mgba/mgba-emulator.tsx';
 
@@ -94,46 +93,4 @@ describe('<DownloadSaveModal />', () => {
 
     expect(setIsModalOpenSpy).toHaveBeenCalledWith(false);
   });
-
-  it('renders tour steps', async () => {
-    const { useModalContext: original } = await vi.importActual<
-      typeof contextHooks
-    >('../../hooks/context.tsx');
-
-    vi.spyOn(contextHooks, 'useModalContext').mockImplementation(() => ({
-      ...original(),
-      isModalOpen: true
-    }));
-
-    localStorage.setItem(
-      productTourLocalStorageKey,
-      '{"hasCompletedProductTourIntro":"finished"}'
-    );
-
-    renderWithContext(<DownloadSaveModal />);
-
-    expect(
-      await screen.findByText(
-        'Use this button to download your current save file.'
-      )
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText('Remember to save in game before downloading!')
-    ).toBeInTheDocument();
-
-    // click joyride floater
-    await userEvent.click(
-      screen.getByRole('button', { name: 'Open the dialog' })
-    );
-
-    expect(
-      screen.getByText('Use this button to download your current save file.')
-    ).toBeVisible();
-    expect(
-      screen.getByText('Remember to save in game before downloading!')
-    ).toBeVisible();
-
-    // dismiss the popper interface
-    await userEvent.click(screen.getByText('Last'));
-  }, 15000);
 });

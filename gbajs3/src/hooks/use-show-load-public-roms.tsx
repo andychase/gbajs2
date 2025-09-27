@@ -4,9 +4,6 @@ import toast from 'react-hot-toast';
 
 import { useModalContext } from './context.tsx';
 import { UploadPublicExternalRomsModal } from '../components/modals/upload-public-external-roms.tsx';
-import { productTourLocalStorageKey } from '../components/product-tour/consts.tsx';
-
-import type { CompletedProductTourSteps } from '../components/product-tour/product-tour-intro.tsx';
 
 export type PublicRomUploadStatus =
   | 'loaded'
@@ -27,9 +24,6 @@ export const usePublicRoms = () => {
   const [hasLoadedPublicRoms, setHasLoadedPublicRoms] = useLocalStorage<
     HasLoadedPublicRoms | undefined
   >(loadedPublicRomsLocalStorageKey);
-  const [hasCompletedProductTourSteps] = useLocalStorage<
-    CompletedProductTourSteps | undefined
-  >(productTourLocalStorageKey);
   const isFirstRender = useIsFirstRender();
 
   const params = new URLSearchParams(window?.location?.search);
@@ -39,8 +33,7 @@ export const usePublicRoms = () => {
     !!romURL &&
     hasLoadedPublicRoms?.[romURL] != 'loaded' &&
     hasLoadedPublicRoms?.[romURL] != 'skipped' &&
-    hasLoadedPublicRoms?.[romURL] != 'temporarily-dismissed' &&
-    !!hasCompletedProductTourSteps?.hasCompletedProductTourIntro;
+    hasLoadedPublicRoms?.[romURL] != 'temporarily-dismissed';
 
   if (isFirstRender)
     setHasLoadedPublicRoms((prevState) =>

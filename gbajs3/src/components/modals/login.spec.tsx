@@ -5,7 +5,6 @@ import { describe, expect, it, vi } from 'vitest';
 import { LoginModal } from './login.tsx';
 import { renderWithContext } from '../../../test/render-with-context.tsx';
 import * as contextHooks from '../../hooks/context.tsx';
-import { productTourLocalStorageKey } from '../product-tour/consts.tsx';
 
 describe('<LoginModal />', () => {
   it('renders login form', () => {
@@ -98,42 +97,4 @@ describe('<LoginModal />', () => {
 
     expect(setIsModalOpenSpy).toHaveBeenCalledWith(false);
   });
-
-  it('renders tour steps', async () => {
-    const { useModalContext: original } = await vi.importActual<
-      typeof contextHooks
-    >('../../hooks/context.tsx');
-
-    vi.spyOn(contextHooks, 'useModalContext').mockImplementation(() => ({
-      ...original(),
-      isModalOpen: true
-    }));
-
-    localStorage.setItem(
-      productTourLocalStorageKey,
-      '{"hasCompletedProductTourIntro":"finished"}'
-    );
-
-    renderWithContext(<LoginModal />);
-
-    expect(
-      await screen.findByText(
-        'Use this form to login for premium features if you have a registered account.'
-      )
-    ).toBeInTheDocument();
-
-    // click joyride floater
-    await userEvent.click(
-      screen.getByRole('button', { name: 'Open the dialog' })
-    );
-
-    expect(
-      screen.getByText(
-        'Use this form to login for premium features if you have a registered account.'
-      )
-    ).toBeVisible();
-
-    // dismiss the popper interface
-    await userEvent.click(screen.getByText('Last'));
-  }, 15000);
 });

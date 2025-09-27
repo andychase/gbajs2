@@ -1,6 +1,6 @@
 import { Button, Collapse, IconButton } from '@mui/material';
 import { useLocalStorage } from '@uidotdev/usehooks';
-import { useCallback, useId, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { BiError, BiTrash } from 'react-icons/bi';
 import { FaRegEye } from 'react-icons/fa';
 import { styled, useTheme } from 'styled-components';
@@ -12,10 +12,6 @@ import { useEmulatorContext, useModalContext } from '../../hooks/context.tsx';
 import { useAddCallbacks } from '../../hooks/emulator/use-add-callbacks.tsx';
 import { useFileStat } from '../../hooks/emulator/use-file-stat.tsx';
 import { saveStateSlotsLocalStorageKey } from '../controls/consts.tsx';
-import {
-  EmbeddedProductTour,
-  type TourSteps
-} from '../product-tour/embedded-product-tour.tsx';
 import { ErrorWithIcon } from '../shared/error-with-icon.tsx';
 import { NumberInput } from '../shared/number-input.tsx';
 import { CenteredText, StyledBiPlus } from '../shared/styled.tsx';
@@ -175,7 +171,6 @@ export const SaveStatesModal = () => {
   const [currentSlots, setCurrentSlots] =
     useLocalStorage<CurrentSaveStateSlots>(saveStateSlotsLocalStorageKey, {});
   const { syncActionIfEnabled } = useAddCallbacks();
-  const baseId = useId();
   const [currentSaveStatePreview, setCurrentSaveStatePreview] = useState<
     string | null
   >(null);
@@ -224,45 +219,12 @@ export const SaveStatesModal = () => {
       currentSaveStatePreview === saveStateName ? null : saveStateName
     );
 
-  const tourSteps: TourSteps = [
-    {
-      content: (
-        <p>
-          Use this input to manually update the current save state slot in use.
-        </p>
-      ),
-      placementBeacon: 'bottom-end',
-      target: `#${CSS.escape(`${baseId}--save-state-slot`)}`
-    },
-    {
-      content: (
-        <p>
-          Tap a row to load a save state, or use the trash can icon to delete a
-          save state.
-        </p>
-      ),
-      placementBeacon: 'bottom-end',
-      target: `#${CSS.escape(`${baseId}--save-state-list`)}`
-    },
-    {
-      content: (
-        <p>
-          Use the <i>plus</i> button to add a new save state. This will
-          automatically increase the current save state number!
-        </p>
-      ),
-      placementBeacon: 'bottom-end',
-      target: `#${CSS.escape(`${baseId}--add-state-button`)}`
-    }
-  ];
-
   return (
     <>
       <ModalHeader title="Manage Save States" />
       <ModalBody>
         <StateSlotContainer>
           <NumberInput
-            id={`${baseId}--save-state-slot`}
             label="Current Save State Slot"
             size="small"
             min={0}
@@ -277,7 +239,7 @@ export const SaveStatesModal = () => {
           />
         </StateSlotContainer>
 
-        <SaveStatesList id={`${baseId}--save-state-list`}>
+        <SaveStatesList>
           {autoSaveStateNameWithoutPath && (
             <SaveStateListItem
               key={autoSaveStateNameWithoutPath}
@@ -339,7 +301,6 @@ export const SaveStatesModal = () => {
           )}
         </SaveStatesList>
         <IconButton
-          id={`${baseId}--add-state-button`}
           aria-label={`Create new save state`}
           sx={{ padding: 0 }}
           onClick={() => {
@@ -370,10 +331,6 @@ export const SaveStatesModal = () => {
           Close
         </Button>
       </ModalFooter>
-      <EmbeddedProductTour
-        steps={tourSteps}
-        completedProductTourStepName="hasCompletedSaveStatesTour"
-      />
     </>
   );
 };

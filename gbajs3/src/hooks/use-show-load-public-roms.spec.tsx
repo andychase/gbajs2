@@ -5,7 +5,6 @@ import * as contextHooks from './context.tsx';
 import { useShowLoadPublicRoms } from './use-show-load-public-roms.tsx';
 import { testRomLocation } from '../../test/mocks/handlers.ts';
 import { renderHookWithContext } from '../../test/render-hook-with-context.tsx';
-import { productTourLocalStorageKey } from '../components/product-tour/consts.tsx';
 
 const valid_url = `${testRomLocation}/good_rom.gba`;
 const invalid_url = `bad url`;
@@ -19,11 +18,6 @@ describe('useShowLoadPublicRoms', () => {
       typeof contextHooks
     >('./context.tsx');
 
-    // tour intro must be completed
-    localStorage.setItem(
-      productTourLocalStorageKey,
-      '{"hasCompletedProductTourIntro":"finished"}'
-    );
     // pwa prompt must also have appeared if iOS and been dismissed if so
     localStorage.setItem(PromptLocalStorageKey, '{"isiOS":"true","visits":2}');
 
@@ -51,11 +45,6 @@ describe('useShowLoadPublicRoms', () => {
       typeof contextHooks
     >('./context.tsx');
 
-    // tour intro must be completed
-    localStorage.setItem(
-      productTourLocalStorageKey,
-      '{"hasCompletedProductTourIntro":"finished"}'
-    );
     // pwa prompt must also have appeared if iOS and been dismissed if so
     localStorage.setItem(PromptLocalStorageKey, '{"isiOS":"true","visits":2}');
 

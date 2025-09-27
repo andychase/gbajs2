@@ -1,5 +1,4 @@
 import { Button, Chip } from '@mui/material';
-import { useLocalStorage } from '@uidotdev/usehooks';
 import { BiCheckCircle } from 'react-icons/bi';
 import { styled } from 'styled-components';
 
@@ -7,9 +6,6 @@ import { ModalBody } from './modal-body.tsx';
 import { ModalFooter } from './modal-footer.tsx';
 import { ModalHeader } from './modal-header.tsx';
 import { useModalContext } from '../../hooks/context.tsx';
-import { productTourLocalStorageKey } from '../product-tour/consts.tsx';
-
-import type { CompletedProductTourSteps } from '../product-tour/product-tour-intro.tsx';
 
 const FlexWrapper = styled.div`
   display: flex;
@@ -20,9 +16,6 @@ const FlexWrapper = styled.div`
 
 export const AboutModal = () => {
   const { setIsModalOpen } = useModalContext();
-  const [, setHasCompletedProductTourSteps] = useLocalStorage<
-    CompletedProductTourSteps | undefined
-  >(productTourLocalStorageKey);
   const releaseVersion = import.meta.env.VITE_GBA_RELEASE_VERSION;
 
   return (
@@ -70,15 +63,6 @@ export const AboutModal = () => {
         )}
       </ModalBody>
       <ModalFooter>
-        <Button
-          variant="contained"
-          onClick={() => {
-            setHasCompletedProductTourSteps({});
-            setIsModalOpen(false);
-          }}
-        >
-          Take a tour
-        </Button>
         <Button variant="outlined" onClick={() => setIsModalOpen(false)}>
           Close
         </Button>

@@ -8,7 +8,6 @@ import * as contextHooks from '../../hooks/context.tsx';
 import * as addCallbackHooks from '../../hooks/emulator/use-add-callbacks.tsx';
 import * as listSaveHooks from '../../hooks/use-list-saves.tsx';
 import * as loadSaveHooks from '../../hooks/use-load-save.tsx';
-import { productTourLocalStorageKey } from '../product-tour/consts.tsx';
 
 import type { GBAEmulator } from '../../emulator/mgba/mgba-emulator.tsx';
 
@@ -123,48 +122,4 @@ describe('<LoadSaveModal />', () => {
 
     expect(setIsModalOpenSpy).toHaveBeenCalledWith(false);
   });
-
-  it('renders tour steps', async () => {
-    const { useModalContext: original } = await vi.importActual<
-      typeof contextHooks
-    >('../../hooks/context.tsx');
-
-    vi.spyOn(contextHooks, 'useModalContext').mockImplementation(() => ({
-      ...original(),
-      isModalOpen: true
-    }));
-
-    localStorage.setItem(
-      productTourLocalStorageKey,
-      '{"hasCompletedProductTourIntro":"finished"}'
-    );
-
-    renderWithContext(<LoadSaveModal />);
-
-    expect(
-      await screen.findByText(
-        'Use this area to load save files from the server. Once the list has loaded, click a row to load the save.'
-      )
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText('You may load multiple save files in a row!')
-    ).toBeInTheDocument();
-
-    // click joyride floater
-    await userEvent.click(
-      screen.getByRole('button', { name: 'Open the dialog' })
-    );
-
-    expect(
-      screen.getByText(
-        'Use this area to load save files from the server. Once the list has loaded, click a row to load the save.'
-      )
-    ).toBeVisible();
-    expect(
-      screen.getByText('You may load multiple save files in a row!')
-    ).toBeVisible();
-
-    // dismiss the popper interface
-    await userEvent.click(screen.getByText('Last'));
-  }, 15000);
 });

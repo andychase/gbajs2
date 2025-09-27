@@ -141,11 +141,7 @@ export default defineConfig(({ mode }) => {
 
             styled: ['styled-components'],
 
-            onboarding: [
-              'react-joyride',
-              'react-floater',
-              'react-ios-pwa-prompt-ts'
-            ],
+            onboarding: ['react-ios-pwa-prompt-ts'],
 
             dnd: ['react-draggable', 'react-dropzone', 'react-rnd'],
 

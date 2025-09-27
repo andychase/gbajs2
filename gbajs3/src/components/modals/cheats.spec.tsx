@@ -6,7 +6,6 @@ import { CheatsModal } from './cheats.tsx';
 import { renderWithContext } from '../../../test/render-with-context.tsx';
 import * as contextHooks from '../../hooks/context.tsx';
 import * as addCallbackHooks from '../../hooks/emulator/use-add-callbacks.tsx';
-import { productTourLocalStorageKey } from '../product-tour/consts.tsx';
 
 import type {
   GBAEmulator,
@@ -262,106 +261,4 @@ describe('<CheatsModal />', () => {
 
     expect(setIsModalOpenSpy).toHaveBeenCalledWith(false);
   });
-
-  it('renders tour steps', async () => {
-    const { useModalContext: original } = await vi.importActual<
-      typeof contextHooks
-    >('../../hooks/context.tsx');
-
-    vi.spyOn(contextHooks, 'useModalContext').mockImplementation(() => ({
-      ...original(),
-      isModalOpen: true
-    }));
-
-    localStorage.setItem(
-      productTourLocalStorageKey,
-      '{"hasCompletedProductTourIntro":"finished"}'
-    );
-
-    renderWithContext(<CheatsModal />);
-
-    expect(
-      await screen.findByText('Use this form to enter, add, and remove cheats.')
-    ).toBeInTheDocument();
-
-    // click joyride floater
-    await userEvent.click(
-      screen.getByRole('button', { name: 'Open the dialog' })
-    );
-
-    expect(
-      screen.getByText('Use this form to enter, add, and remove cheats.')
-    ).toBeVisible();
-
-    // advance tour
-    await userEvent.click(screen.getByRole('button', { name: /Next/ }));
-
-    expect(
-      screen.getByText('This form field is for the name of the cheat.')
-    ).toBeVisible();
-
-    // advance tour
-    await userEvent.click(screen.getByRole('button', { name: /Next/ }));
-
-    expect(
-      screen.getByText('Put your cheat code into this field.')
-    ).toBeVisible();
-    expect(
-      screen.getByText(
-        "Remember to separate multi-line cheats with the '+' character!"
-      )
-    ).toBeVisible();
-
-    // advance tour
-    await userEvent.click(screen.getByRole('button', { name: /Next/ }));
-
-    expect(
-      screen.getByText('Use the switch to enable/disable a cheat.')
-    ).toBeVisible();
-
-    // advance tour
-    await userEvent.click(screen.getByRole('button', { name: /Next/ }));
-
-    expect(
-      screen.getByText('Use the trash button to remove a cheat entirely.')
-    ).toBeVisible();
-
-    // advance tour
-    await userEvent.click(screen.getByRole('button', { name: /Next/ }));
-
-    expect(
-      screen.getByText(
-        (_, element) =>
-          element?.nodeName === 'P' &&
-          element?.textContent === 'Use the plus button to add a new cheat.'
-      )
-    ).toBeVisible();
-
-    // advance tour
-    await userEvent.click(screen.getByRole('button', { name: /Next/ }));
-
-    expect(
-      screen.getByText(
-        (_, element) =>
-          element?.nodeName === 'P' &&
-          element?.textContent ===
-            'Use the Submit button to save your cheats, and convert them to libretro format.'
-      )
-    ).toBeVisible();
-
-    // advance tour
-    await userEvent.click(screen.getByRole('button', { name: /Next/ }));
-
-    expect(
-      screen.getByText(
-        (_, element) =>
-          element?.nodeName === 'P' &&
-          element?.textContent ===
-            'Use this button to toggle between viewing parsed cheats or raw cheats in libretro file format.'
-      )
-    ).toBeVisible();
-
-    // dismiss the popper interface
-    await userEvent.click(screen.getByText('Last'));
-  }, 15000);
 });

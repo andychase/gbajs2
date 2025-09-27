@@ -5,7 +5,6 @@ import { describe, expect, it, vi } from 'vitest';
 import { UploadRomToServerModal } from './upload-rom-to-server.tsx';
 import { renderWithContext } from '../../../test/render-with-context.tsx';
 import * as contextHooks from '../../hooks/context.tsx';
-import { productTourLocalStorageKey } from '../product-tour/consts.tsx';
 
 import type { GBAEmulator } from '../../emulator/mgba/mgba-emulator.tsx';
 
@@ -84,42 +83,4 @@ describe('<UploadRomToServerModal />', () => {
 
     expect(setIsModalOpenSpy).toHaveBeenCalledWith(false);
   });
-
-  it('renders tour steps', async () => {
-    const { useModalContext: original } = await vi.importActual<
-      typeof contextHooks
-    >('../../hooks/context.tsx');
-
-    vi.spyOn(contextHooks, 'useModalContext').mockImplementation(() => ({
-      ...original(),
-      isModalOpen: true
-    }));
-
-    localStorage.setItem(
-      productTourLocalStorageKey,
-      '{"hasCompletedProductTourIntro":"finished"}'
-    );
-
-    renderWithContext(<UploadRomToServerModal />);
-
-    expect(
-      await screen.findByText(
-        'Use this button to upload your current rom file to the server.'
-      )
-    ).toBeInTheDocument();
-
-    // click joyride floater
-    await userEvent.click(
-      screen.getByRole('button', { name: 'Open the dialog' })
-    );
-
-    expect(
-      screen.getByText(
-        'Use this button to upload your current rom file to the server.'
-      )
-    ).toBeVisible();
-
-    // dismiss the popper interface
-    await userEvent.click(screen.getByText('Last'));
-  }, 15000);
 });

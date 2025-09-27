@@ -88,7 +88,7 @@ export const Screen = () => {
   const { initialBounds, setInitialBound } = useInitialBoundsContext();
   const screenWrapperXStart = isLargerThanPhone ? NavigationMenuWidth + 10 : 0;
   const screenWrapperYStart = isLargerThanPhone && !isMobileLandscape ? 15 : 0;
-  const rndRef = useRef<Rnd | null>();
+  const rndRef = useRef<Rnd | null>(null);
 
   const screenLayout = getLayout('screen');
 

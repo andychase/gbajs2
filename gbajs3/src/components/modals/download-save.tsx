@@ -7,10 +7,6 @@ import { ModalBody } from './modal-body.tsx';
 import { ModalFooter } from './modal-footer.tsx';
 import { ModalHeader } from './modal-header.tsx';
 import { useEmulatorContext, useModalContext } from '../../hooks/context.tsx';
-import {
-  EmbeddedProductTour,
-  type TourSteps
-} from '../product-tour/embedded-product-tour.tsx';
 import { ErrorWithIcon } from '../shared/error-with-icon.tsx';
 import { CenteredText } from '../shared/styled.tsx';
 import { downloadBlob } from './file-utilities/blob.ts';
@@ -21,19 +17,6 @@ export const DownloadSaveModal = () => {
   const { emulator } = useEmulatorContext();
   const downloadSaveButtonId = useId();
   const [error, setError] = useState(false);
-
-  const tourSteps: TourSteps = [
-    {
-      content: (
-        <>
-          <p>Use this button to download your current save file.</p>
-          <p>Remember to save in game before downloading!</p>
-        </>
-      ),
-      placement: 'right',
-      target: `#${CSS.escape(downloadSaveButtonId)}`
-    }
-  ];
 
   return (
     <>
@@ -75,10 +58,6 @@ export const DownloadSaveModal = () => {
           Close
         </Button>
       </ModalFooter>
-      <EmbeddedProductTour
-        steps={tourSteps}
-        completedProductTourStepName="hasCompletedDownloadSaveTour"
-      />
     </>
   );
 };

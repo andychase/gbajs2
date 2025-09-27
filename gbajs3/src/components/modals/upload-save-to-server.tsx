@@ -8,10 +8,6 @@ import { ModalFooter } from './modal-footer.tsx';
 import { ModalHeader } from './modal-header.tsx';
 import { useEmulatorContext, useModalContext } from '../../hooks/context.tsx';
 import { useUpLoadSave } from '../../hooks/use-upload-save.tsx';
-import {
-  EmbeddedProductTour,
-  type TourSteps
-} from '../product-tour/embedded-product-tour.tsx';
 import { ErrorWithIcon } from '../shared/error-with-icon.tsx';
 import { PacmanIndicator } from '../shared/loading-indicator.tsx';
 import { CenteredText } from '../shared/styled.tsx';
@@ -74,19 +70,6 @@ export const UploadSaveToServerModal = () => {
     execute: executeUploadSave
   } = useUpLoadSave();
 
-  const tourSteps: TourSteps = [
-    {
-      content: (
-        <>
-          <p>Use this button to upload your current save file to the server.</p>
-          <p>Remember to save in game before uploading!</p>
-        </>
-      ),
-      placement: 'right',
-      target: `#${CSS.escape(uploadSaveToServerButtonId)}`
-    }
-  ];
-
   return (
     <>
       <ModalHeader title="Send Save to Server" />
@@ -118,10 +101,6 @@ export const UploadSaveToServerModal = () => {
           Close
         </Button>
       </ModalFooter>
-      <EmbeddedProductTour
-        steps={tourSteps}
-        completedProductTourStepName="hasCompletedUploadSaveToServerTour"
-      />
     </>
   );
 };

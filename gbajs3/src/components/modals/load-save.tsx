@@ -10,10 +10,6 @@ import { useEmulatorContext, useModalContext } from '../../hooks/context.tsx';
 import { useAddCallbacks } from '../../hooks/emulator/use-add-callbacks.tsx';
 import { useListSaves } from '../../hooks/use-list-saves.tsx';
 import { useLoadSave } from '../../hooks/use-load-save.tsx';
-import {
-  EmbeddedProductTour,
-  type TourSteps
-} from '../product-tour/embedded-product-tour.tsx';
 import { ErrorWithIcon } from '../shared/error-with-icon.tsx';
 import {
   LoadingIndicator,
@@ -104,21 +100,6 @@ export const LoadSaveModal = () => {
     }
   }, [emulator, shouldUploadSave, saveFile, syncActionIfEnabled]);
 
-  const tourSteps: TourSteps = [
-    {
-      content: (
-        <>
-          <p>
-            Use this area to load save files from the server. Once the list has
-            loaded, click a row to load the save.
-          </p>
-          <p>You may load multiple save files in a row!</p>
-        </>
-      ),
-      target: `#${CSS.escape(saveListId)}`
-    }
-  ];
-
   return (
     <>
       <ModalHeader title="Load Save" />
@@ -175,13 +156,6 @@ export const LoadSaveModal = () => {
           Close
         </Button>
       </ModalFooter>
-      <EmbeddedProductTour
-        skipRenderCondition={
-          saveLoading || saveListLoading || !!saveListError || !!saveLoadError
-        }
-        steps={tourSteps}
-        completedProductTourStepName="hasCompletedLoadSaveTour"
-      />
     </>
   );
 };

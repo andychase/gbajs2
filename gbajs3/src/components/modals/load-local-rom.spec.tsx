@@ -6,7 +6,6 @@ import { LoadLocalRomModal } from './load-local-rom.tsx';
 import { renderWithContext } from '../../../test/render-with-context.tsx';
 import * as contextHooks from '../../hooks/context.tsx';
 import * as runGameHooks from '../../hooks/emulator/use-run-game.tsx';
-import { productTourLocalStorageKey } from '../product-tour/consts.tsx';
 
 import type { GBAEmulator } from '../../emulator/mgba/mgba-emulator.tsx';
 
@@ -96,64 +95,4 @@ describe('<LoadLocalRomModal />', () => {
 
     expect(setIsModalOpenSpy).toHaveBeenCalledWith(false);
   });
-
-  it('renders tour steps', async () => {
-    const { useModalContext: original } = await vi.importActual<
-      typeof contextHooks
-    >('../../hooks/context.tsx');
-
-    vi.spyOn(contextHooks, 'useModalContext').mockImplementation(() => ({
-      ...original(),
-      isModalOpen: true
-    }));
-
-    localStorage.setItem(
-      productTourLocalStorageKey,
-      '{"hasCompletedProductTourIntro":"finished"}'
-    );
-
-    renderWithContext(<LoadLocalRomModal />);
-
-    expect(
-      await screen.findByText(
-        'Use this area to load local roms that have been saved to your device.'
-      )
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText('Tap the name of your rom file and your game will boot!')
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText(
-        (_, element) =>
-          element?.nodeName === 'P' &&
-          element?.textContent ===
-            'To persist roms and other files, use the File System menu item.'
-      )
-    ).toBeInTheDocument();
-
-    // click joyride floater
-    await userEvent.click(
-      screen.getByRole('button', { name: 'Open the dialog' })
-    );
-
-    expect(
-      screen.getByText(
-        'Use this area to load local roms that have been saved to your device.'
-      )
-    ).toBeVisible();
-    expect(
-      screen.getByText('Tap the name of your rom file and your game will boot!')
-    ).toBeVisible();
-    expect(
-      screen.getByText(
-        (_, element) =>
-          element?.nodeName === 'P' &&
-          element?.textContent ===
-            'To persist roms and other files, use the File System menu item.'
-      )
-    ).toBeVisible();
-
-    // dismiss the popper interface
-    await userEvent.click(screen.getByText('Last'));
-  }, 15000);
 });

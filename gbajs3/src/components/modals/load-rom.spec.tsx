@@ -9,7 +9,6 @@ import * as addCallbackHooks from '../../hooks/emulator/use-add-callbacks.tsx';
 import * as runGameHooks from '../../hooks/emulator/use-run-game.tsx';
 import * as listRomHooks from '../../hooks/use-list-roms.tsx';
 import * as loadRomHooks from '../../hooks/use-load-rom.tsx';
-import { productTourLocalStorageKey } from '../product-tour/consts.tsx';
 
 import type { GBAEmulator } from '../../emulator/mgba/mgba-emulator.tsx';
 
@@ -130,52 +129,4 @@ describe('<LoadRomModal />', () => {
 
     expect(setIsModalOpenSpy).toHaveBeenCalledWith(false);
   });
-
-  it('renders tour steps', async () => {
-    const { useModalContext: original } = await vi.importActual<
-      typeof contextHooks
-    >('../../hooks/context.tsx');
-
-    vi.spyOn(contextHooks, 'useModalContext').mockImplementation(() => ({
-      ...original(),
-      isModalOpen: true
-    }));
-
-    localStorage.setItem(
-      productTourLocalStorageKey,
-      '{"hasCompletedProductTourIntro":"finished"}'
-    );
-
-    renderWithContext(<LoadRomModal />);
-
-    expect(
-      await screen.findByText(
-        'Use this area to load rom files from the server. Once the list has loaded, click a row to load the rom.'
-      )
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText(
-        'You may load one rom file at a time, once the rom has loaded your game will boot!'
-      )
-    ).toBeInTheDocument();
-
-    // click joyride floater
-    await userEvent.click(
-      screen.getByRole('button', { name: 'Open the dialog' })
-    );
-
-    expect(
-      screen.getByText(
-        'Use this area to load rom files from the server. Once the list has loaded, click a row to load the rom.'
-      )
-    ).toBeVisible();
-    expect(
-      screen.getByText(
-        'You may load one rom file at a time, once the rom has loaded your game will boot!'
-      )
-    ).toBeVisible();
-
-    // dismiss the popper interface
-    await userEvent.click(screen.getByText('Last'));
-  }, 15000);
 });

@@ -7,10 +7,6 @@ import { ModalFooter } from './modal-footer.tsx';
 import { ModalHeader } from './modal-header.tsx';
 import { useEmulatorContext, useModalContext } from '../../hooks/context.tsx';
 import { useRunGame } from '../../hooks/emulator/use-run-game.tsx';
-import {
-  EmbeddedProductTour,
-  type TourSteps
-} from '../product-tour/embedded-product-tour.tsx';
 import { CenteredText } from '../shared/styled.tsx';
 
 const LoadRomButton = styled.button`
@@ -64,25 +60,6 @@ export const LoadLocalRomModal = () => {
     ?.listRoms?.()
     ?.filter((romName) => !ignorePaths.includes(romName));
 
-  const tourSteps: TourSteps = [
-    {
-      content: (
-        <>
-          <p>
-            Use this area to load local roms that have been saved to your
-            device.
-          </p>
-          <p>Tap the name of your rom file and your game will boot!</p>
-          <p>
-            To persist roms and other files, use the <i>File System</i> menu
-            item.
-          </p>
-        </>
-      ),
-      target: `#${CSS.escape(romListId)}`
-    }
-  ];
-
   return (
     <>
       <ModalHeader title="Load Local Rom" />
@@ -114,10 +91,6 @@ export const LoadLocalRomModal = () => {
           Close
         </Button>
       </ModalFooter>
-      <EmbeddedProductTour
-        steps={tourSteps}
-        completedProductTourStepName="hasCompletedLoadLocalRomTour"
-      />
     </>
   );
 };

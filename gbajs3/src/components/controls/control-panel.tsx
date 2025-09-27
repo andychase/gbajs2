@@ -34,10 +34,6 @@ import {
 } from '../../hooks/context.tsx';
 import { useBackgroundEmulator } from '../../hooks/emulator/use-background-emulator.tsx';
 import { useQuitGame } from '../../hooks/emulator/use-quit-game.tsx';
-import {
-  EmbeddedProductTour,
-  type TourSteps
-} from '../product-tour/embedded-product-tour.tsx';
 import { GripperHandle } from '../shared/gripper-handle.tsx';
 import { PanelButton, SliderButton } from './control-panel/buttons.tsx';
 import { PanelSlider } from './control-panel/panel-slider.tsx';
@@ -114,7 +110,7 @@ export const ControlPanel = () => {
     useLocalStorage<
       { volumeBeforeMute: number; type: 'rewind' | 'fastForward' } | undefined
     >('emulatorVolumeBeforeAutoMuteLocalStorageKey');
-  const rndRef = useRef<Rnd | null>();
+  const rndRef = useRef<Rnd | null>(null);
 
   const muteAndPreserveVolume = (type: 'rewind' | 'fastForward') => {
     if (currentEmulatorVolume > 0) {
@@ -205,76 +201,6 @@ export const ControlPanel = () => {
     setFastForward(ffMultiplier);
   };
 
-  const tourSteps: TourSteps = [
-    {
-      content: (
-        <>
-          <p>
-            Use the control panel to quickly perform in game actions and
-            reposition controls.
-          </p>
-          <p>Click next to take a tour of the controls!</p>
-        </>
-      ),
-      placementBeacon: 'bottom',
-      target: `#${CSS.escape(controlPanelId)}`
-    },
-    {
-      content: (
-        <p>
-          Use the this button to pause and resume your game if it is running.
-        </p>
-      ),
-      placementBeacon: 'bottom',
-      target: `#${CSS.escape(`${controlPanelId}--play`)}`
-    },
-    {
-      content: <p>Use this button to quit your current game.</p>,
-      placementBeacon: 'bottom',
-      target: `#${CSS.escape(`${controlPanelId}--quit-game`)}`
-    },
-    {
-      content: (
-        <p>
-          Use this button to enable dragging and repositioning of the screen,
-          controls, and control panel.
-        </p>
-      ),
-      placement: isLargerThanPhone ? 'auto' : 'right',
-      placementBeacon: 'bottom',
-      target: `#${CSS.escape(`${controlPanelId}--drag`)}`
-    },
-    {
-      content: <p>Use this button to resize the screen and control panel.</p>,
-      placement: isLargerThanPhone ? 'auto' : 'right',
-      placementBeacon: 'bottom',
-      target: `#${CSS.escape(`${controlPanelId}--resize`)}`
-    },
-    {
-      content: (
-        <>
-          <p>Use this slider to increase and decrease the emulator volume.</p>
-          <p>Your volume setting will be saved between refreshes!</p>
-        </>
-      ),
-      placementBeacon: 'bottom',
-      target: `#${CSS.escape(`${controlPanelId}--volume-slider`)}`
-    },
-    {
-      content: (
-        <>
-          <p>
-            Use this slider to increase and decrease the fast forward speed.
-          </p>
-          <p>Your fast forward setting will be saved between refreshes!</p>
-        </>
-      ),
-      placement: isLargerThanPhone ? 'auto' : 'right',
-      placementBeacon: 'bottom',
-      target: `#${CSS.escape(`${controlPanelId}--fast-forward`)}`
-    }
-  ];
-
   const defaultPosition = isMobileLandscape
     ? { x: Math.floor(canvasBounds.left + canvasBounds.width), y: 0 }
     : {
@@ -303,203 +229,194 @@ export const ControlPanel = () => {
   };
 
   return (
-    <>
-      <Rnd
-        data-testid="control-panel-wrapper"
-        id={controlPanelId}
-        disableDragging={!areItemsDraggable}
-        enableResizing={areItemsResizable}
-        resizeHandleComponent={{
-          bottomRight: <GripperHandle variation="bottomRight" />,
-          bottomLeft: <GripperHandle variation="bottomLeft" />
-        }}
-        resizeHandleStyles={{
-          bottomRight: { marginBottom: '15px', marginRight: '15px' },
-          bottomLeft: { marginBottom: '15px', marginLeft: '15px' }
-        }}
-        ref={refSetLayout}
-        cancel=".noDrag"
-        position={position}
-        size={size}
-        onDragStart={() => {
-          if (!controlPanelLayout?.originalBounds)
-            setLayout('controlPanel', {
-              originalBounds:
-                rndRef.current?.resizableElement.current?.getBoundingClientRect()
-            });
-        }}
-        onDragStop={(_, data) => {
-          setLayout('controlPanel', { position: { x: data.x, y: data.y } });
-        }}
-        onResizeStart={() => {
-          setIsResizing(true);
-          if (!controlPanelLayout?.originalBounds)
-            setLayout('controlPanel', {
-              originalBounds:
-                rndRef.current?.resizableElement.current?.getBoundingClientRect()
-            });
-        }}
-        onResizeStop={(_1, _2, ref, _3, position) => {
+    <Rnd
+      data-testid="control-panel-wrapper"
+      id={controlPanelId}
+      disableDragging={!areItemsDraggable}
+      enableResizing={areItemsResizable}
+      resizeHandleComponent={{
+        bottomRight: <GripperHandle variation="bottomRight" />,
+        bottomLeft: <GripperHandle variation="bottomLeft" />
+      }}
+      resizeHandleStyles={{
+        bottomRight: { marginBottom: '15px', marginRight: '15px' },
+        bottomLeft: { marginBottom: '15px', marginLeft: '15px' }
+      }}
+      ref={refSetLayout}
+      cancel=".noDrag"
+      position={position}
+      size={size}
+      onDragStart={() => {
+        if (!controlPanelLayout?.originalBounds)
           setLayout('controlPanel', {
-            size: { width: ref.clientWidth, height: ref.clientHeight },
-            position: { ...position }
+            originalBounds:
+              rndRef.current?.resizableElement.current?.getBoundingClientRect()
           });
-          setIsResizing(false);
-        }}
-        default={{
-          ...defaultPosition,
-          ...defaultSize
-        }}
+      }}
+      onDragStop={(_, data) => {
+        setLayout('controlPanel', { position: { x: data.x, y: data.y } });
+      }}
+      onResizeStart={() => {
+        setIsResizing(true);
+        if (!controlPanelLayout?.originalBounds)
+          setLayout('controlPanel', {
+            originalBounds:
+              rndRef.current?.resizableElement.current?.getBoundingClientRect()
+          });
+      }}
+      onResizeStop={(_1, _2, ref, _3, position) => {
+        setLayout('controlPanel', {
+          size: { width: ref.clientWidth, height: ref.clientHeight },
+          position: { ...position }
+        });
+        setIsResizing(false);
+      }}
+      default={{
+        ...defaultPosition,
+        ...defaultSize
+      }}
+    >
+      <Panel
+        $controlled={isControlled}
+        $isLargerThanPhone={isLargerThanPhone}
+        $areItemsDraggable={areItemsDraggable}
       >
-        <Panel
-          $controlled={isControlled}
-          $isLargerThanPhone={isLargerThanPhone}
-          $areItemsDraggable={areItemsDraggable}
-        >
-          <IconContext.Provider value={{ size: '2em' }}>
-            <PanelButton
-              id={`${controlPanelId}--play`}
-              ariaLabel={isPaused || !isRunning ? 'Play' : 'Pause'}
-              onClick={togglePlay}
-              controlled={isControlled}
-              $gridArea="play"
-            >
-              {isPaused || !isRunning ? <BiPlay /> : <BiPause />}
-            </PanelButton>
-            <PanelButton
-              id={`${controlPanelId}--quit-game`}
-              ariaLabel="Quit Game"
-              onClick={() => {
-                quitGame();
-                setIsPaused(false);
-              }}
-              controlled={isControlled}
-              $gridArea="quit"
-            >
-              <BiUndo />
-            </PanelButton>
-            <PanelButton
-              id={`${controlPanelId}--drag`}
-              className="noDrag"
-              ariaLabel={areItemsDraggable ? 'Anchor Items' : 'Drag Items'}
-              onClick={() => {
-                setAreItemsDraggable((prevState) => !prevState);
-              }}
-              controlled={isControlled}
-              $gridArea="drag"
-            >
-              {areItemsDraggable ? (
-                <BiMove color={theme.gbaThemeBlue} />
-              ) : (
-                <BiMove />
-              )}
-            </PanelButton>
-            <PanelButton
-              id={`${controlPanelId}--resize`}
-              className="noDrag"
-              ariaLabel={
-                areItemsResizable ? 'Stop Resizing Items' : 'Resize Items'
-              }
-              onClick={() => {
-                setAreItemsResizable((prevState) => !prevState);
-              }}
-              controlled={isControlled}
-              $gridArea="resize"
-            >
-              {areItemsResizable ? (
-                <TbResize color={theme.gbaThemeBlue} />
-              ) : (
-                <TbResize />
-              )}
-            </PanelButton>
-            <PanelButton
-              id={`${controlPanelId}--rewind`}
-              ariaLabel={'Rewind Emulator'}
-              controlled={isControlled}
-              $gridArea="rewind"
-              onPointerDown={() => {
-                emulator?.toggleRewind(true);
-                if (
-                  emulatorSettings?.muteOnRewind &&
-                  !emulatorVolumeBeforeAutoMute
-                )
-                  muteAndPreserveVolume('rewind');
-              }}
-              onPointerUp={() => {
-                emulator?.toggleRewind(false);
-                if (emulatorSettings?.muteOnRewind) restoreVolume('rewind');
-              }}
-            >
-              <AiOutlineBackward style={{ maxHeight: '100%' }} />
-            </PanelButton>
-            <PanelSlider
-              id={`${controlPanelId}--volume-slider`}
-              aria-label="Volume Slider"
-              gridArea="volume"
-              controlled={isControlled}
-              disablePointerEvents={areItemsDraggable}
-              value={currentEmulatorVolume}
-              step={0.1}
-              min={0}
-              max={1}
-              minIcon={
-                <SliderButton
-                  aria-label="Mute Volume"
-                  icon={<BiVolumeMute style={{ maxHeight: '100%' }} />}
-                  onClick={() => setVolume(0)}
-                />
-              }
-              maxIcon={
-                <SliderButton
-                  aria-label="Max Volume"
-                  icon={<BiVolumeFull style={{ maxHeight: '100%' }} />}
-                  onClick={() => setVolume(1)}
-                />
-              }
-              valueLabelFormat={`${currentEmulatorVolume * 100}`}
-              onChange={setVolumeFromEvent}
-              ButtonIcon={BiVolumeFull}
-              {...defaultSliderEvents}
-            />
-            <PanelSlider
-              id={`${controlPanelId}--fast-forward`}
-              aria-label="Fast Forward Slider"
-              gridArea="fastForward"
-              controlled={isControlled}
-              disablePointerEvents={areItemsDraggable}
-              value={fastForwardMultiplier}
-              step={1}
-              min={1}
-              max={5}
-              minIcon={
-                <SliderButton
-                  aria-label="Regular Speed"
-                  icon={<AiOutlineForward style={{ maxHeight: '100%' }} />}
-                  onClick={() => setFastForward(1)}
-                />
-              }
-              maxIcon={
-                <SliderButton
-                  aria-label="Max Fast Forward"
-                  icon={<AiOutlineFastForward style={{ maxHeight: '100%' }} />}
-                  onClick={() => setFastForward(5)}
-                />
-              }
-              valueLabelFormat={`x${fastForwardMultiplier}`}
-              onChange={setFastForwardFromEvent}
-              ButtonIcon={AiOutlineFastForward}
-              {...defaultSliderEvents}
-            />
-          </IconContext.Provider>
-        </Panel>
-      </Rnd>
-      <EmbeddedProductTour
-        steps={tourSteps}
-        completedProductTourStepName="hasCompletedControlPanelTour"
-        zIndex={isLargerThanPhone ? 160 : 0}
-        renderWithoutDelay
-        isNotInModal
-      />
-    </>
+        <IconContext.Provider value={{ size: '2em' }}>
+          <PanelButton
+            id={`${controlPanelId}--play`}
+            ariaLabel={isPaused || !isRunning ? 'Play' : 'Pause'}
+            onClick={togglePlay}
+            controlled={isControlled}
+            $gridArea="play"
+          >
+            {isPaused || !isRunning ? <BiPlay /> : <BiPause />}
+          </PanelButton>
+          <PanelButton
+            id={`${controlPanelId}--quit-game`}
+            ariaLabel="Quit Game"
+            onClick={() => {
+              quitGame();
+              setIsPaused(false);
+            }}
+            controlled={isControlled}
+            $gridArea="quit"
+          >
+            <BiUndo />
+          </PanelButton>
+          <PanelButton
+            id={`${controlPanelId}--drag`}
+            className="noDrag"
+            ariaLabel={areItemsDraggable ? 'Anchor Items' : 'Drag Items'}
+            onClick={() => {
+              setAreItemsDraggable((prevState) => !prevState);
+            }}
+            controlled={isControlled}
+            $gridArea="drag"
+          >
+            {areItemsDraggable ? (
+              <BiMove color={theme.gbaThemeBlue} />
+            ) : (
+              <BiMove />
+            )}
+          </PanelButton>
+          <PanelButton
+            id={`${controlPanelId}--resize`}
+            className="noDrag"
+            ariaLabel={
+              areItemsResizable ? 'Stop Resizing Items' : 'Resize Items'
+            }
+            onClick={() => {
+              setAreItemsResizable((prevState) => !prevState);
+            }}
+            controlled={isControlled}
+            $gridArea="resize"
+          >
+            {areItemsResizable ? (
+              <TbResize color={theme.gbaThemeBlue} />
+            ) : (
+              <TbResize />
+            )}
+          </PanelButton>
+          <PanelButton
+            id={`${controlPanelId}--rewind`}
+            ariaLabel={'Rewind Emulator'}
+            controlled={isControlled}
+            $gridArea="rewind"
+            onPointerDown={() => {
+              emulator?.toggleRewind(true);
+              if (
+                emulatorSettings?.muteOnRewind &&
+                !emulatorVolumeBeforeAutoMute
+              )
+                muteAndPreserveVolume('rewind');
+            }}
+            onPointerUp={() => {
+              emulator?.toggleRewind(false);
+              if (emulatorSettings?.muteOnRewind) restoreVolume('rewind');
+            }}
+          >
+            <AiOutlineBackward style={{ maxHeight: '100%' }} />
+          </PanelButton>
+          <PanelSlider
+            id={`${controlPanelId}--volume-slider`}
+            aria-label="Volume Slider"
+            gridArea="volume"
+            controlled={isControlled}
+            disablePointerEvents={areItemsDraggable}
+            value={currentEmulatorVolume}
+            step={0.1}
+            min={0}
+            max={1}
+            minIcon={
+              <SliderButton
+                aria-label="Mute Volume"
+                icon={<BiVolumeMute style={{ maxHeight: '100%' }} />}
+                onClick={() => setVolume(0)}
+              />
+            }
+            maxIcon={
+              <SliderButton
+                aria-label="Max Volume"
+                icon={<BiVolumeFull style={{ maxHeight: '100%' }} />}
+                onClick={() => setVolume(1)}
+              />
+            }
+            valueLabelFormat={`${currentEmulatorVolume * 100}`}
+            onChange={setVolumeFromEvent}
+            ButtonIcon={BiVolumeFull}
+            {...defaultSliderEvents}
+          />
+          <PanelSlider
+            id={`${controlPanelId}--fast-forward`}
+            aria-label="Fast Forward Slider"
+            gridArea="fastForward"
+            controlled={isControlled}
+            disablePointerEvents={areItemsDraggable}
+            value={fastForwardMultiplier}
+            step={1}
+            min={1}
+            max={5}
+            minIcon={
+              <SliderButton
+                aria-label="Regular Speed"
+                icon={<AiOutlineForward style={{ maxHeight: '100%' }} />}
+                onClick={() => setFastForward(1)}
+              />
+            }
+            maxIcon={
+              <SliderButton
+                aria-label="Max Fast Forward"
+                icon={<AiOutlineFastForward style={{ maxHeight: '100%' }} />}
+                onClick={() => setFastForward(5)}
+              />
+            }
+            valueLabelFormat={`x${fastForwardMultiplier}`}
+            onChange={setFastForwardFromEvent}
+            ButtonIcon={AiOutlineFastForward}
+            {...defaultSliderEvents}
+          />
+        </IconContext.Provider>
+      </Panel>
+    </Rnd>
   );
 };

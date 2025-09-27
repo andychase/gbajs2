@@ -11,10 +11,6 @@ import { useAddCallbacks } from '../../hooks/emulator/use-add-callbacks.tsx';
 import { useRunGame } from '../../hooks/emulator/use-run-game.tsx';
 import { useListRoms } from '../../hooks/use-list-roms.tsx';
 import { useLoadRom } from '../../hooks/use-load-rom.tsx';
-import {
-  EmbeddedProductTour,
-  type TourSteps
-} from '../product-tour/embedded-product-tour.tsx';
 import { ErrorWithIcon } from '../shared/error-with-icon.tsx';
 import {
   LoadingIndicator,
@@ -111,24 +107,6 @@ export const LoadRomModal = () => {
     }
   }, [emulator, shouldUploadRom, romFile, runGame, syncActionIfEnabled]);
 
-  const tourSteps: TourSteps = [
-    {
-      content: (
-        <>
-          <p>
-            Use this area to load rom files from the server. Once the list has
-            loaded, click a row to load the rom.
-          </p>
-          <p>
-            You may load one rom file at a time, once the rom has loaded your
-            game will boot!
-          </p>
-        </>
-      ),
-      target: `#${CSS.escape(romListId)}`
-    }
-  ];
-
   return (
     <>
       <ModalHeader title="Load Rom" />
@@ -185,13 +163,6 @@ export const LoadRomModal = () => {
           Close
         </Button>
       </ModalFooter>
-      <EmbeddedProductTour
-        skipRenderCondition={
-          romLoading || romListLoading || !!romListError || !!romLoadError
-        }
-        steps={tourSteps}
-        completedProductTourStepName="hasCompletedLoadRomTour"
-      />
     </>
   );
 };

@@ -1,5 +1,6 @@
-import { forwardRef, type ButtonHTMLAttributes } from 'react';
 import { styled } from 'styled-components';
+
+import type { ComponentProps } from 'react';
 
 const StyledButton = styled.button`
   font-size: inherit;
@@ -8,11 +9,12 @@ const StyledButton = styled.button`
   padding: inherit;
 `;
 
-export const ButtonBase = forwardRef<
-  HTMLButtonElement,
-  ButtonHTMLAttributes<HTMLButtonElement>
->(({ children, ...rest }, ref) => (
+export const ButtonBase = ({
+  children,
+  ref,
+  ...rest
+}: ComponentProps<'button'>) => (
   <StyledButton ref={ref} {...rest}>
     {children}
   </StyledButton>
-));
+);

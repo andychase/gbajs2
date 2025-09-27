@@ -115,7 +115,7 @@ describe('<NumberInput />', () => {
   });
 
   it('forwards ref', () => {
-    const ref = { current: null } as RefObject<HTMLInputElement>;
+    const ref = { current: null } as RefObject<HTMLInputElement | null>;
 
     render(<NumberInput ref={ref} />);
 

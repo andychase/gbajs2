@@ -5,7 +5,6 @@ import { describe, expect, it, vi } from 'vitest';
 import { ControlsModal } from './controls.tsx';
 import { renderWithContext } from '../../../test/render-with-context.tsx';
 import * as contextHooks from '../../hooks/context.tsx';
-import { productTourLocalStorageKey } from '../product-tour/consts.tsx';
 
 describe('<ControlsModal />', () => {
   it('switches controls tabs', async () => {
@@ -138,88 +137,4 @@ describe('<ControlsModal />', () => {
 
     expect(setIsModalOpenSpy).toHaveBeenCalledWith(false);
   });
-
-  it.skip('renders tour steps', async () => {
-    const { useModalContext: original } = await vi.importActual<
-      typeof contextHooks
-    >('../../hooks/context.tsx');
-
-    vi.spyOn(contextHooks, 'useModalContext').mockImplementation(() => ({
-      ...original(),
-      isModalOpen: true
-    }));
-
-    localStorage.setItem(
-      productTourLocalStorageKey,
-      '{"hasCompletedProductTourIntro":"finished"}'
-    );
-
-    renderWithContext(<ControlsModal />);
-
-    expect(
-      await screen.findByText(
-        'Select which virtual controls you wish to enable in this form tab.'
-      )
-    ).toBeInTheDocument();
-
-    // click joyride floater
-    await userEvent.click(
-      screen.getByRole('button', { name: 'Open the dialog' })
-    );
-
-    expect(
-      screen.getByText(
-        'Select which virtual controls you wish to enable in this form tab.'
-      )
-    ).toBeVisible();
-
-    // advance tour
-    await userEvent.click(screen.getByRole('button', { name: /Next/ }));
-
-    expect(
-      screen.getByText(
-        'Use this button to reset the positions of the screen, control panel, and all virtual controls.'
-      )
-    ).toBeVisible();
-
-    // advance tour
-    await userEvent.click(screen.getByRole('button', { name: /Next/ }));
-
-    expect(
-      screen.getByText('Use the tab panel to change which form you are seeing.')
-    ).toBeVisible();
-
-    expect(
-      screen.getByText(
-        (_, element) =>
-          element?.nodeName === 'P' &&
-          element?.textContent ===
-            'Select the KEY BINDINGS tab above, then click next!'
-      )
-    ).toBeVisible();
-
-    await userEvent.click(
-      screen.getByRole('tab', { name: 'Key Bindings', selected: false })
-    );
-    // advance tour
-    await userEvent.click(screen.getByRole('button', { name: /Next/ }));
-
-    expect(
-      screen.getByText(
-        'Remap keybindings by selecting a form field and typing your desired input.'
-      )
-    ).toBeVisible();
-
-    // advance tour
-    await userEvent.click(screen.getByRole('button', { name: /Next/ }));
-
-    expect(
-      screen.getByText(
-        (_, element) =>
-          element?.nodeName === 'P' &&
-          element?.textContent ===
-            'Use the Save Changes button to persist changes from the current form tab.'
-      )
-    ).toBeVisible();
-  }, 15000);
 });

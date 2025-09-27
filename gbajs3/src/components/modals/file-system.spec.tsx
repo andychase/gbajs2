@@ -3,11 +3,10 @@ import { userEvent } from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
 import { FileSystemModal } from './file-system.tsx';
+import * as blobUtilities from './file-utilities/blob.ts';
 import { renderWithContext } from '../../../test/render-with-context.tsx';
 import * as contextHooks from '../../hooks/context.tsx';
 import * as addCallbackHooks from '../../hooks/emulator/use-add-callbacks.tsx';
-import { productTourLocalStorageKey } from '../product-tour/consts.tsx';
-import * as blobUtilities from './file-utilities/blob.ts';
 
 import type {
   FileNode,
@@ -181,65 +180,4 @@ describe('<FileSystemModal />', () => {
 
     expect(setIsModalOpenSpy).toHaveBeenCalledWith(false);
   });
-
-  it('renders tour steps', async () => {
-    const {
-      useModalContext: originalModal,
-      useEmulatorContext: originalEmulator
-    } = await vi.importActual<typeof contextHooks>('../../hooks/context.tsx');
-
-    vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => {
-      return {
-        ...originalEmulator(),
-        emulator: {
-          listAllFiles: () => defaultFSData,
-          getCurrentAutoSaveStatePath: () => null
-        } as GBAEmulator
-      };
-    });
-
-    vi.spyOn(contextHooks, 'useModalContext').mockImplementation(() => ({
-      ...originalModal(),
-      isModalOpen: true
-    }));
-
-    localStorage.setItem(
-      productTourLocalStorageKey,
-      '{"hasCompletedProductTourIntro":"finished"}'
-    );
-
-    renderWithContext(<FileSystemModal />);
-
-    expect(
-      await screen.findByText(
-        'Use this area to view your current file tree, download files, and delete files from the tree.'
-      )
-    ).toBeInTheDocument();
-
-    // click joyride floater
-    await userEvent.click(
-      screen.getByRole('button', { name: 'Open the dialog' })
-    );
-
-    expect(
-      screen.getByText(
-        'Use this area to view your current file tree, download files, and delete files from the tree.'
-      )
-    ).toBeVisible();
-
-    // advance tour
-    await userEvent.click(screen.getByRole('button', { name: /Next/ }));
-
-    expect(
-      screen.getByText(
-        (_, element) =>
-          element?.nodeName === 'P' &&
-          element?.textContent ===
-            'Use the SAVE FILE SYSTEM button to persist all of your files to your device!'
-      )
-    ).toBeVisible();
-
-    // dismiss the popper interface
-    await userEvent.click(screen.getByText('Last'));
-  }, 15000);
 });

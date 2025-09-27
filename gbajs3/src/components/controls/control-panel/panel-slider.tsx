@@ -4,7 +4,7 @@ import {
   ClickAwayListener,
   useMediaQuery
 } from '@mui/material';
-import { forwardRef, useState } from 'react';
+import { useState } from 'react';
 import { useTheme } from 'styled-components';
 
 import {
@@ -50,43 +50,35 @@ const popperStyles = {
     }
 };
 
-const Slider = forwardRef<HTMLSpanElement, SliderProps>(
-  (
-    {
-      controlled,
-      disablePointerEvents,
-      gridArea,
-      id,
-      maxIcon,
-      minIcon,
-      ...rest
-    },
-    ref
-  ) => (
-    <PanelControlWrapper>
-      <ContentSpan ref={ref}>
-        <PanelControlSlider
-          id={id}
-          $gridArea={gridArea}
-          $controlled={controlled}
-        >
-          {minIcon}
-          <MutedMarkSlider
-            marks
-            sx={{
-              width: '85px',
-              margin: '0 10px',
-              maxHeight: '40px',
-              pointerEvents: disablePointerEvents ? 'none' : undefined
-            }}
-            valueLabelDisplay="auto"
-            {...rest}
-          />
-          {maxIcon}
-        </PanelControlSlider>
-      </ContentSpan>
-    </PanelControlWrapper>
-  )
+const Slider = ({
+  controlled,
+  disablePointerEvents,
+  gridArea,
+  id,
+  maxIcon,
+  minIcon,
+  ref,
+  ...rest
+}: SliderProps) => (
+  <PanelControlWrapper>
+    <ContentSpan ref={ref}>
+      <PanelControlSlider id={id} $gridArea={gridArea} $controlled={controlled}>
+        {minIcon}
+        <MutedMarkSlider
+          marks
+          sx={{
+            width: '85px',
+            margin: '0 10px',
+            maxHeight: '40px',
+            pointerEvents: disablePointerEvents ? 'none' : undefined
+          }}
+          valueLabelDisplay="auto"
+          {...rest}
+        />
+        {maxIcon}
+      </PanelControlSlider>
+    </ContentSpan>
+  </PanelControlWrapper>
 );
 
 export const PanelSlider = ({ ButtonIcon, ...rest }: PanelSliderProps) => {

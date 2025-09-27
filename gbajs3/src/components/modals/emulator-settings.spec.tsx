@@ -7,7 +7,6 @@ import { renderWithContext } from '../../../test/render-with-context.tsx';
 import { emulatorSettingsLocalStorageKey } from '../../context/emulator/consts.ts';
 import * as contextHooks from '../../hooks/context.tsx';
 import * as addCallbackHooks from '../../hooks/emulator/use-add-callbacks.tsx';
-import { productTourLocalStorageKey } from '../product-tour/consts.tsx';
 
 import type { GBAEmulator } from '../../emulator/mgba/mgba-emulator.tsx';
 import type { CoreCallbackOptions } from '../../hooks/emulator/use-add-callbacks.tsx';
@@ -386,35 +385,4 @@ describe('<EmulatorSettingsModal />', () => {
 
     expect(setIsModalOpenSpy).toHaveBeenCalledWith(false);
   });
-
-  it.skip('renders tour steps', async () => {
-    const { useModalContext: original } = await vi.importActual<
-      typeof contextHooks
-    >('../../hooks/context.tsx');
-
-    vi.spyOn(contextHooks, 'useModalContext').mockImplementation(() => ({
-      ...original(),
-      isModalOpen: true
-    }));
-
-    localStorage.setItem(
-      productTourLocalStorageKey,
-      '{"hasCompletedProductTourIntro":"finished"}'
-    );
-
-    renderWithContext(<EmulatorSettingsModal />);
-
-    expect(
-      await screen.findByText('Use this form to adjust emulator core settings.')
-    ).toBeInTheDocument();
-
-    // click joyride floater
-    await userEvent.click(
-      screen.getByRole('button', { name: 'Open the dialog' })
-    );
-
-    expect(
-      screen.getByText('Use this form to adjust emulator core settings.')
-    ).toBeVisible();
-  }, 15000);
 });

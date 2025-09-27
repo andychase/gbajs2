@@ -19,7 +19,6 @@ import {
 import type { FileNode } from '../../../emulator/mgba/mgba-emulator.tsx';
 
 type EmulatorFileSystemProps = {
-  id: string;
   allFiles?: FileNode;
   deleteFile: (path: string) => void;
   downloadFile: (path: string) => void;
@@ -66,7 +65,6 @@ const StyledTreeItem = muiStyled((props: TreeItemProps) => (
 
 // renders a tree of emulator files, with actions to delete and download specified by the caller
 export const EmulatorFileSystem = ({
-  id,
   allFiles,
   deleteFile,
   downloadFile
@@ -115,7 +113,6 @@ export const EmulatorFileSystem = ({
 
   return (
     <SimpleTreeView
-      id={id}
       aria-label="File System"
       defaultExpandedItems={[allFiles.path]}
       slots={{

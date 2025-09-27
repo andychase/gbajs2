@@ -12,7 +12,6 @@ import {
 import { GbaDarkTheme } from '../../context/theme/theme.tsx';
 import * as contextHooks from '../../hooks/context.tsx';
 import * as quitGameHooks from '../../hooks/emulator/use-quit-game.tsx';
-import { productTourLocalStorageKey } from '../product-tour/consts.tsx';
 
 import type { GBAEmulator } from '../../emulator/mgba/mgba-emulator.tsx';
 
@@ -594,105 +593,4 @@ describe('<ControlPanel />', () => {
     expect(setVolumeSpy).toHaveBeenCalledTimes(2);
     expect(setVolumeSpy).toHaveBeenLastCalledWith(1);
   });
-
-  it('renders tour steps', async () => {
-    const { useModalContext: original } = await vi.importActual<
-      typeof contextHooks
-    >('../../hooks/context.tsx');
-
-    vi.spyOn(contextHooks, 'useModalContext').mockImplementation(() => ({
-      ...original(),
-      isModalOpen: true
-    }));
-
-    localStorage.setItem(
-      productTourLocalStorageKey,
-      '{"hasCompletedProductTourIntro":"finished"}'
-    );
-
-    renderWithContext(<ControlPanel />);
-
-    expect(
-      await screen.findByText(
-        'Use the control panel to quickly perform in game actions and reposition controls.'
-      )
-    ).toBeInTheDocument();
-
-    // click joyride floater
-    await userEvent.click(
-      screen.getByRole('button', { name: 'Open the dialog' })
-    );
-
-    expect(
-      screen.getByText(
-        'Use the control panel to quickly perform in game actions and reposition controls.'
-      )
-    ).toBeVisible();
-    expect(
-      screen.getByText('Click next to take a tour of the controls!')
-    ).toBeVisible();
-
-    // advance tour
-    await userEvent.click(screen.getByRole('button', { name: /Next/ }));
-
-    expect(
-      screen.getByText(
-        'Use the this button to pause and resume your game if it is running.'
-      )
-    ).toBeVisible();
-
-    // advance tour
-    await userEvent.click(screen.getByRole('button', { name: /Next/ }));
-
-    expect(
-      screen.getByText('Use this button to quit your current game.')
-    ).toBeVisible();
-
-    // advance tour
-    await userEvent.click(screen.getByRole('button', { name: /Next/ }));
-
-    expect(
-      screen.getByText(
-        'Use this button to enable dragging and repositioning of the screen, controls, and control panel.'
-      )
-    ).toBeVisible();
-
-    // advance tour
-    await userEvent.click(screen.getByRole('button', { name: /Next/ }));
-
-    expect(
-      screen.getByText(
-        'Use this button to resize the screen and control panel.'
-      )
-    ).toBeVisible();
-
-    // advance tour
-    await userEvent.click(screen.getByRole('button', { name: /Next/ }));
-
-    expect(
-      screen.getByText(
-        'Use this slider to increase and decrease the emulator volume.'
-      )
-    ).toBeVisible();
-    expect(
-      screen.getByText('Your volume setting will be saved between refreshes!')
-    ).toBeVisible();
-
-    // advance tour
-    await userEvent.click(screen.getByRole('button', { name: /Next/ }));
-
-    expect(
-      screen.getByText(
-        'Use this slider to increase and decrease the fast forward speed.'
-      )
-    ).toBeVisible();
-    expect(
-      screen.getByText(
-        'Your fast forward setting will be saved between refreshes!'
-      )
-    ).toBeVisible();
-
-    // dismiss the popper interface
-    await userEvent.click(screen.getByText('Last'));
-  }, 15000);
 });

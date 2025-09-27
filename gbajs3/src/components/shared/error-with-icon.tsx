@@ -2,6 +2,8 @@ import { styled } from 'styled-components';
 
 import { Copy } from './styled.tsx';
 
+import type { JSX } from 'react';
+
 type ErrorWithIconProps = {
   text: string;
   icon: JSX.Element;

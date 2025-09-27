@@ -8,10 +8,6 @@ import { ModalFooter } from './modal-footer.tsx';
 import { ModalHeader } from './modal-header.tsx';
 import { useEmulatorContext, useModalContext } from '../../hooks/context.tsx';
 import { useAddCallbacks } from '../../hooks/emulator/use-add-callbacks.tsx';
-import {
-  EmbeddedProductTour,
-  type TourSteps
-} from '../product-tour/embedded-product-tour.tsx';
 import { DragAndDropInput } from '../shared/drag-and-drop-input.tsx';
 import {
   addLocalStorageToZip,
@@ -113,7 +109,6 @@ export const ImportExportModal = () => {
   } = useForm<InputProps>();
   const [isExportLoading, setIsExportLoading] = useState(false);
   const importFormId = useId();
-  const buttonBaseId = useId();
 
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
@@ -128,37 +123,6 @@ export const ImportExportModal = () => {
     await syncActionIfEnabled();
     setIsModalOpen(false);
   };
-
-  const tourSteps: TourSteps = [
-    {
-      content: (
-        <>
-          <p>
-            Use this area to drag and drop the exported zip file, or click to
-            select a file.
-          </p>
-          <p>
-            Uploaded exports should have an extension of:{' '}
-            {validFileExtensions.map((ext) => `'${ext}'`).join(', ')}.
-          </p>
-        </>
-      ),
-      target: `#${CSS.escape(`${importFormId}--drag-and-drop`)}`
-    },
-    {
-      content: <p>Use this button to import your zip file once loaded.</p>,
-      target: `#${CSS.escape(`${buttonBaseId}-import`)}`
-    },
-    {
-      content: (
-        <p>
-          Use this button to export a zip file containing your file system, and
-          all emulator related settings/state.
-        </p>
-      ),
-      target: `#${CSS.escape(`${buttonBaseId}-export`)}`
-    }
-  ];
 
   return (
     <>
@@ -196,7 +160,6 @@ export const ImportExportModal = () => {
       </ModalBody>
       <ModalFooter>
         <Button
-          id={`${buttonBaseId}-import`}
           form={importFormId}
           type="submit"
           variant="contained"
@@ -205,7 +168,6 @@ export const ImportExportModal = () => {
           Import
         </Button>
         <Button
-          id={`${buttonBaseId}-export`}
           variant="contained"
           color="secondary"
           onClick={async () => {
@@ -221,10 +183,6 @@ export const ImportExportModal = () => {
           Close
         </Button>
       </ModalFooter>
-      <EmbeddedProductTour
-        steps={tourSteps}
-        completedProductTourStepName="hasCompletedImportExportTour"
-      />
     </>
   );
 };

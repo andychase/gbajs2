@@ -12,17 +12,16 @@ import {
 } from '@zip.js/zip.js';
 import { describe, expect, it, vi } from 'vitest';
 
-import { renderWithContext } from '../../../test/render-with-context.tsx';
-import * as contextHooks from '../../hooks/context.tsx';
-import * as addCallbackHooks from '../../hooks/emulator/use-add-callbacks.tsx';
-import { productTourLocalStorageKey } from '../product-tour/consts.tsx';
 import * as zipUtils from './file-utilities/zip.ts';
 import { ImportExportModal } from './import-export.tsx';
+import { renderWithContext } from '../../../test/render-with-context.tsx';
 import {
   fileTypes,
   type GBAEmulator,
   type FileNode
 } from '../../emulator/mgba/mgba-emulator.tsx';
+import * as contextHooks from '../../hooks/context.tsx';
+import * as addCallbackHooks from '../../hooks/emulator/use-add-callbacks.tsx';
 
 type GenericFileUploadSpy = (_file: File, cb?: () => void) => void;
 
@@ -355,63 +354,5 @@ describe('<ImportExportModal />', () => {
     await userEvent.click(closeButton);
 
     expect(setIsModalOpenSpy).toHaveBeenCalledWith(false);
-  });
-
-  it('renders product tour steps', async () => {
-    const { useModalContext: original } = await vi.importActual<
-      typeof contextHooks
-    >('../../hooks/context.tsx');
-
-    vi.spyOn(contextHooks, 'useModalContext').mockImplementation(() => ({
-      ...original(),
-      isModalOpen: true
-    }));
-
-    localStorage.setItem(
-      productTourLocalStorageKey,
-      '{"hasCompletedProductTourIntro":"finished"}'
-    );
-
-    renderWithContext(<ImportExportModal />);
-
-    expect(
-      await screen.findByText(
-        'Use this area to drag and drop the exported zip file, or click to select a file.'
-      )
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText("Uploaded exports should have an extension of: '.zip'.")
-    ).toBeInTheDocument();
-
-    await userEvent.click(
-      screen.getByRole('button', { name: 'Open the dialog' })
-    );
-
-    expect(
-      screen.getByText(
-        'Use this area to drag and drop the exported zip file, or click to select a file.'
-      )
-    ).toBeVisible();
-    expect(
-      screen.getByText("Uploaded exports should have an extension of: '.zip'.")
-    ).toBeVisible();
-
-    // advance tour
-    await userEvent.click(screen.getByRole('button', { name: /Next/ }));
-
-    expect(
-      screen.getByText('Use this button to import your zip file once loaded.')
-    ).toBeVisible();
-
-    // advance tour
-    await userEvent.click(screen.getByRole('button', { name: /Next/ }));
-
-    expect(
-      screen.getByText(
-        'Use this button to export a zip file containing your file system, and all emulator related settings/state.'
-      )
-    ).toBeVisible();
-
-    await userEvent.click(screen.getByText('Last'));
   });
 });
