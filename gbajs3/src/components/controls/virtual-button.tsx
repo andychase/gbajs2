@@ -154,7 +154,7 @@ export const VirtualButton = ({
     $areItemsDraggable: areItemsDraggable,
     'aria-label': ariaLabel,
     // used for "virtual controls" that don't interface with the emulator
-    onPointerDown,
+    onPointerDown: !areItemsDraggable ? onPointerDown : undefined,
     ...emulatorPointerEvents,
     ...keyboardEvents
   };
