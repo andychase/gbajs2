@@ -287,7 +287,7 @@ describe('<UploadFilesModal />', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Upload' }));
 
-    expect(await screen.findByText('Invalid url')).toBeVisible();
+    expect(await screen.findByText('Invalid url - empty')).toBeVisible();
   });
 
   it('renders files validation error when there are no files', async () => {

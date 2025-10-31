@@ -353,10 +353,13 @@ export const UploadFilesModal = () => {
                           }}
                           {...register(`fileUrls.${index}.url`, {
                             validate: (fileUrl) => {
-                              try {
-                                if (uploadType === 'urls') new URL(fileUrl);
-                              } catch {
-                                return 'Invalid url';
+                              if (uploadType === 'urls') {
+                                try {
+                                  if (fileUrl) new URL(fileUrl);
+                                  else return 'Invalid url - empty';
+                                } catch {
+                                  return 'Invalid url';
+                                }
                               }
                             }
                           })}

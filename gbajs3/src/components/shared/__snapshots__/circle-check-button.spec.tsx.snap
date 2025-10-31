@@ -54,14 +54,14 @@ exports[`<CircleCheckButton /> > matches snapshot when clicked 2`] = `
   type="button"
 >
   <svg
-    aria-labelledby="«r0»"
+    aria-labelledby="_r_0_"
     class="c0"
     role="graphics-symbol"
     viewBox="0 0 52 52"
     xmlns="http://www.w3.org/2000/svg"
   >
     <title
-      id="«r0»"
+      id="_r_0_"
     >
       Circle Check
     </title>

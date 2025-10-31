@@ -297,7 +297,7 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
 <div
   class="react-draggable"
   data-testid="control-panel-wrapper"
-  id="«ra»"
+  id="_r_a_"
   style="position: absolute; user-select: auto; width: auto; height: auto; display: inline-block; top: 0px; left: 0px; cursor: auto; transform: translate(0px,10px); max-width: 9007199254740991px; max-height: 9007199254740991px; box-sizing: border-box; flex-shrink: 0;"
 >
   <ul
@@ -309,7 +309,7 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
       <button
         aria-label="Play"
         class="c2 c3"
-        id="«ra»--play"
+        id="_r_a_--play"
       >
         <svg
           fill="currentColor"
@@ -332,7 +332,7 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
       <button
         aria-label="Quit Game"
         class="c2 c4"
-        id="«ra»--quit-game"
+        id="_r_a_--quit-game"
       >
         <svg
           fill="currentColor"
@@ -355,7 +355,7 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
       <button
         aria-label="Drag Items"
         class="c2 c5 noDrag"
-        id="«ra»--drag"
+        id="_r_a_--drag"
       >
         <svg
           fill="currentColor"
@@ -378,7 +378,7 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
       <button
         aria-label="Resize Items"
         class="c2 c6 noDrag"
-        id="«ra»--resize"
+        id="_r_a_--resize"
       >
         <svg
           fill="none"
@@ -406,7 +406,7 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
       <button
         aria-label="Rewind Emulator"
         class="c2 c7"
-        id="«ra»--rewind"
+        id="_r_a_--rewind"
       >
         <svg
           fill="currentColor"
@@ -432,7 +432,7 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
       >
         <div
           class="c9"
-          id="«ra»--volume-slider"
+          id="_r_a_--volume-slider"
         >
           <button
             aria-label="Mute Volume"
@@ -590,7 +590,7 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
       >
         <div
           class="c11"
-          id="«ra»--fast-forward"
+          id="_r_a_--fast-forward"
         >
           <button
             aria-label="Regular Speed"
@@ -1004,7 +1004,7 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
 <div
   class="react-draggable"
   data-testid="control-panel-wrapper"
-  id="«r5»"
+  id="_r_5_"
   style="position: absolute; user-select: auto; width: 100dvw; height: auto; display: inline-block; top: 0px; left: 0px; cursor: auto; transform: translate(0px,0px); max-width: 9007199254740991px; max-height: 9007199254740991px; box-sizing: border-box; flex-shrink: 0;"
 >
   <ul
@@ -1016,7 +1016,7 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
       <button
         aria-label="Play"
         class="c2 c3"
-        id="«r5»--play"
+        id="_r_5_--play"
       >
         <svg
           fill="currentColor"
@@ -1039,7 +1039,7 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
       <button
         aria-label="Quit Game"
         class="c2 c4"
-        id="«r5»--quit-game"
+        id="_r_5_--quit-game"
       >
         <svg
           fill="currentColor"
@@ -1062,7 +1062,7 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
       <button
         aria-label="Drag Items"
         class="c2 c5 noDrag"
-        id="«r5»--drag"
+        id="_r_5_--drag"
       >
         <svg
           fill="currentColor"
@@ -1085,7 +1085,7 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
       <button
         aria-label="Resize Items"
         class="c2 c6 noDrag"
-        id="«r5»--resize"
+        id="_r_5_--resize"
       >
         <svg
           fill="none"
@@ -1113,7 +1113,7 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
       <button
         aria-label="Rewind Emulator"
         class="c2 c7"
-        id="«r5»--rewind"
+        id="_r_5_--rewind"
       >
         <svg
           fill="currentColor"
@@ -1139,7 +1139,7 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
       >
         <div
           class="c9"
-          id="«r5»--volume-slider"
+          id="_r_5_--volume-slider"
         >
           <button
             aria-label="Mute Volume"
@@ -1297,7 +1297,7 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
       >
         <div
           class="c11"
-          id="«r5»--fast-forward"
+          id="_r_5_--fast-forward"
         >
           <button
             aria-label="Regular Speed"
