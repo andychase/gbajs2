@@ -105,13 +105,12 @@ const SaveStatePreview = styled.img`
   image-rendering: pixelated;
 `;
 
-const uint8ArrayToBase64DataUrl = (binary?: Uint8Array) => {
-  if (binary?.length) {
-    const base64 = btoa(String.fromCharCode(...new Uint8Array(binary)));
-    return `data:image/png;base64,${base64}`;
-  }
-  return undefined;
-};
+const uint8ArrayToBase64DataUrl = (binary?: Uint8Array) =>
+  binary?.length
+    ? `data:image/png;base64,${btoa(
+        binary.reduce((acc, byte) => acc + String.fromCharCode(byte), '')
+      )}`
+    : undefined;
 
 const parseSaveStateSlot = (saveStateName: string) => {
   const ext = saveStateName.split('.').pop();
