@@ -39,7 +39,7 @@ func TestHelloWorld(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			req, err := http.NewRequest("GET", "/", nil)
 			if err != nil {
-				t.Errorf(err.Error())
+				t.Errorf("%s", err.Error())
 			}
 
 			req.Header.Set("Authorization", "Bearer "+tt.tokenString)
@@ -118,7 +118,7 @@ func TestDownloadSave(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			req, err := http.NewRequest("GET", "/api/save/download"+tt.queryString, nil)
 			if err != nil {
-				t.Errorf(err.Error())
+				t.Errorf("%s", err.Error())
 			}
 
 			req.Header.Set("Authorization", "Bearer "+tt.tokenString)
@@ -197,7 +197,7 @@ func TestDownloadRom(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			req, err := http.NewRequest("GET", "/api/rom/download"+tt.queryString, nil)
 			if err != nil {
-				t.Errorf(err.Error())
+				t.Errorf("%s", err.Error())
 			}
 
 			req.Header.Set("Authorization", "Bearer "+tt.tokenString)
@@ -291,7 +291,7 @@ func TestUploadRom(t *testing.T) {
 
 			req, err := http.NewRequest("POST", "/api/rom/upload", body)
 			if err != nil {
-				t.Errorf(err.Error())
+				t.Errorf("%s", err.Error())
 			}
 
 			req.Header.Set("Authorization", "Bearer "+tt.tokenString)
@@ -394,7 +394,7 @@ func TestUploadSave(t *testing.T) {
 
 			req, err := http.NewRequest("POST", "/api/save/upload", body)
 			if err != nil {
-				t.Errorf(err.Error())
+				t.Errorf("%s", err.Error())
 			}
 
 			req.Header.Set("Authorization", "Bearer "+tt.tokenString)
@@ -486,7 +486,7 @@ func TestListAllRoms(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			req, err := http.NewRequest("GET", "/api/rom/list", nil)
 			if err != nil {
-				t.Errorf(err.Error())
+				t.Errorf("%s", err.Error())
 			}
 
 			req.Header.Set("Authorization", "Bearer "+tt.tokenString)
@@ -564,7 +564,7 @@ func TestListAllSaves(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			req, err := http.NewRequest("GET", "/api/save/list", nil)
 			if err != nil {
-				t.Errorf(err.Error())
+				t.Errorf("%s", err.Error())
 			}
 
 			req.Header.Set("Authorization", "Bearer "+tt.tokenString)

@@ -58,7 +58,7 @@ func TestAuthorize(t *testing.T) {
 
 			req, err := http.NewRequest("GET", "http://testing", nil)
 			if err != nil {
-				t.Errorf(err.Error())
+				t.Errorf("%s", err.Error())
 			}
 
 			if tt.hasAuthHeader {
@@ -139,7 +139,7 @@ func TestTokenRefresh(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			req, err := http.NewRequest("POST", "/api/tokens/refresh", nil)
 			if err != nil {
-				t.Errorf(err.Error())
+				t.Errorf("%s", err.Error())
 			}
 
 			if tt.refreshToken != nil {
@@ -221,7 +221,7 @@ func TestLogin(t *testing.T) {
 
 			req, err := http.NewRequest("POST", "/api/account/login", bytes.NewReader(body))
 			if err != nil {
-				t.Errorf(err.Error())
+				t.Errorf("%s", err.Error())
 			}
 
 			rr := httptest.NewRecorder()
@@ -299,7 +299,7 @@ func TestLogout(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			req, err := http.NewRequest("POST", "/api/account/logout", nil)
 			if err != nil {
-				t.Errorf(err.Error())
+				t.Errorf("%s", err.Error())
 			}
 
 			req.Header.Set("Authorization", "Bearer "+tt.tokenString)
