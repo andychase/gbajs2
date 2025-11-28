@@ -187,6 +187,7 @@ Feel free to open discussions, issues, and pull requests. Contributions are welc
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/KobeOne2"><img src="https://avatars.githubusercontent.com/u/173476135?v=4?s=100" width="100px;" alt="KobeOne2"/><br /><sub><b>KobeOne2</b></sub></a><br /><a href="#ideas-KobeOne2" title="Ideas, Planning, & Feedback">🤔</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/evennss"><img src="https://avatars.githubusercontent.com/u/241830523?v=4?s=100" width="100px;" alt="evennss"/><br /><sub><b>evennss</b></sub></a><br /><a href="https://github.com/thenick775/gbajs3/issues?q=author%3Aevennss" title="Bug reports">🐛</a></td>
     </tr>
   </tbody>
 </table>
