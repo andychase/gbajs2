@@ -1,31 +1,31 @@
-import { useCallback } from 'react';
+import { useQuery, type UseQueryOptions } from '@tanstack/react-query';
 
 import { useAuthContext } from './context.tsx';
-import { useAsyncData } from './use-async-data.tsx';
 
-export const useListSaves = ({ loadOnMount = false } = {}) => {
+type saveName = string;
+export type SaveListResponse = saveName[];
+
+export const useListSaves = (
+  options?: UseQueryOptions<SaveListResponse, Error>
+) => {
   const apiLocation = import.meta.env.VITE_GBA_SERVER_LOCATION;
   const { accessToken } = useAuthContext();
 
-  const executeListSaves = useCallback(async () => {
-    const url = `${apiLocation}/api/save/list`;
-    const options: RequestInit = {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${accessToken}`
-      }
-    };
+  return useQuery<SaveListResponse, Error>({
+    queryKey: ['gbaSaves', accessToken, apiLocation],
+    queryFn: async () => {
+      const url = `${apiLocation}/api/save/list`;
+      const options: RequestInit = {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`
+        }
+      };
 
-    const res = await fetch(url, options);
-    return res.json();
-  }, [apiLocation, accessToken]);
-
-  const { data, isLoading, error, execute } = useAsyncData({
-    fetchFn: executeListSaves,
-    clearDataOnLoad: true,
-    loadOnMount
+      const res = await fetch(url, options);
+      return res.json();
+    },
+    ...options
   });
-
-  return { data, isLoading, error, execute };
 };

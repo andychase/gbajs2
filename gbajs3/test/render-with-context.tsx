@@ -4,6 +4,5 @@ import { AllTheProviders } from './providers.tsx';
 
 import type { ReactNode } from 'react';
 
-export const renderWithContext = (testNode: ReactNode) => {
-  return render(<AllTheProviders>{testNode}</AllTheProviders>);
-};
+export const renderWithContext = (testNode: ReactNode) =>
+  render(<AllTheProviders>{testNode}</AllTheProviders>);

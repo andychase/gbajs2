@@ -173,7 +173,7 @@ export const NavigationMenu = () => {
   const { isAuthenticated } = useAuthContext();
   const { canvas, emulator } = useEmulatorContext();
   const { isRunning } = useRunningContext();
-  const { execute: executeLogout } = useLogout();
+  const { mutate: executeLogout } = useLogout();
   const { areItemsDraggable } = useDragContext();
   const { getLayout, setLayout } = useLayoutContext();
   const menuButtonLayout = getLayout('menuButton');

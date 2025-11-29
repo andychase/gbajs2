@@ -17,8 +17,7 @@ describe('<LoginModal />', () => {
 
   it('logs user into the server and closes modal', async () => {
     const setIsModalOpenSpy = vi.fn();
-    const setAccessTokenSpy = vi.fn();
-    const setAccessTokenSourceSpy = vi.fn();
+    const setLoginTokenSpy = vi.fn();
     const { useModalContext: originalModal, useAuthContext: originalAuth } =
       await vi.importActual<typeof contextHooks>('../../hooks/context.tsx');
 
@@ -29,8 +28,7 @@ describe('<LoginModal />', () => {
 
     vi.spyOn(contextHooks, 'useAuthContext').mockImplementation(() => ({
       ...originalAuth(),
-      setAccessToken: setAccessTokenSpy,
-      setAccessTokenSource: setAccessTokenSourceSpy
+      setLoginToken: setLoginTokenSpy
     }));
 
     renderWithContext(<LoginModal />);
@@ -46,12 +44,12 @@ describe('<LoginModal />', () => {
 
     await waitForElementToBeRemoved(screen.queryByTestId('login-spinner'));
 
-    expect(setAccessTokenSpy).toHaveBeenCalledOnce();
-    expect(setAccessTokenSourceSpy).toHaveBeenCalledOnce();
+    expect(setLoginTokenSpy).toHaveBeenCalledOnce();
     expect(setIsModalOpenSpy).toHaveBeenCalledOnce();
 
-    expect(setAccessTokenSpy).toHaveBeenCalledWith('some token');
-    expect(setAccessTokenSourceSpy).toHaveBeenCalledWith('login');
+    expect(setLoginTokenSpy).toHaveBeenCalledWith(
+      expect.stringMatching(/^.+$/)
+    );
     expect(setIsModalOpenSpy).toHaveBeenCalledWith(false);
   });
 

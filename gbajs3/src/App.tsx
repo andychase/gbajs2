@@ -1,3 +1,4 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from 'styled-components';
 
 import './App.css';
@@ -16,26 +17,30 @@ import { LayoutProvider } from './context/layout/layout-provider.tsx';
 import { ModalProvider } from './context/modal/modal-provider.tsx';
 import { GbaDarkTheme } from './context/theme/theme.tsx';
 
+const queryClient = new QueryClient();
+
 export const App = () => (
   <ThemeProvider theme={GbaDarkTheme}>
     <AppErrorBoundary>
       <ToasterWithDefaults />
-      <AuthProvider>
-        <EmulatorContextProvider>
-          <InitialBoundsProvider>
-            <LayoutProvider>
-              <ModalProvider>
-                <PwaPrompt />
-                <NavigationMenu />
-                <Screen />
-                <ControlPanel />
-                <VirtualControls />
-                <ModalContainer />
-              </ModalProvider>
-            </LayoutProvider>
-          </InitialBoundsProvider>
-        </EmulatorContextProvider>
-      </AuthProvider>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <EmulatorContextProvider>
+            <InitialBoundsProvider>
+              <LayoutProvider>
+                <ModalProvider>
+                  <PwaPrompt />
+                  <NavigationMenu />
+                  <Screen />
+                  <ControlPanel />
+                  <VirtualControls />
+                  <ModalContainer />
+                </ModalProvider>
+              </LayoutProvider>
+            </InitialBoundsProvider>
+          </EmulatorContextProvider>
+        </AuthProvider>
+      </QueryClientProvider>
     </AppErrorBoundary>
   </ThemeProvider>
 );

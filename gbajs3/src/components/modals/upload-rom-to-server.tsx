@@ -63,7 +63,12 @@ export const UploadRomToServerModal = () => {
   const { setIsModalOpen } = useModalContext();
   const { emulator } = useEmulatorContext();
   const uploadRomToServerButtonId = useId();
-  const { data, isLoading, error, execute: executeUploadRom } = useUpLoadRom();
+  const {
+    data,
+    isPending: isLoading,
+    error,
+    mutate: executeUploadRom
+  } = useUpLoadRom();
 
   return (
     <>
@@ -86,6 +91,7 @@ export const UploadRomToServerModal = () => {
             if (romFileBytes && romName) {
               const romFileBlob = new Blob([romFileBytes.slice()]);
               const romFile = new File([romFileBlob], romName);
+
               executeUploadRom({ romFile });
             }
           }}

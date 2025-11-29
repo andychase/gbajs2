@@ -1,5 +1,5 @@
 import { Button } from '@mui/material';
-import { useEffect, useState, useId } from 'react';
+import { useState, useId } from 'react';
 import { BiError } from 'react-icons/bi';
 import { styled, useTheme } from 'styled-components';
 
@@ -68,6 +68,7 @@ const SaveError = styled(ErrorWithIcon)<SaveErrorProps>`
     `
     margin-top: 15px;
     `}
+  justify-content: center;
 `;
 
 export const LoadSaveModal = () => {
@@ -78,27 +79,23 @@ export const LoadSaveModal = () => {
   const { syncActionIfEnabled } = useAddCallbacks();
   const {
     data: saveList,
-    isLoading: saveListLoading,
-    error: saveListError
-  } = useListSaves({ loadOnMount: true });
+    isPending: saveListLoading,
+    error: saveListError,
+    isPaused: saveListPaused
+  } = useListSaves();
   const {
-    data: saveFile,
-    isLoading: saveLoading,
+    isPending: saveLoading,
     error: saveLoadError,
-    execute: executeLoadSave
-  } = useLoadSave();
+    mutate: executeLoadSave
+  } = useLoadSave({
+    onSuccess: (file) => {
+      emulator?.uploadSaveOrSaveState(file, syncActionIfEnabled);
+      setCurrentSaveLoading(null);
+    }
+  });
   const [currentSaveLoading, setCurrentSaveLoading] = useState<string | null>(
     null
   );
-
-  const shouldUploadSave = !saveLoading && !!saveFile && !!currentSaveLoading;
-
-  useEffect(() => {
-    if (shouldUploadSave) {
-      emulator?.uploadSaveOrSaveState(saveFile, syncActionIfEnabled);
-      setCurrentSaveLoading(null);
-    }
-  }, [emulator, shouldUploadSave, saveFile, syncActionIfEnabled]);
 
   return (
     <>
@@ -118,8 +115,9 @@ export const LoadSaveModal = () => {
                 <StyledLi key={`${save}_${idx}`}>
                   <LoadSaveButton
                     onClick={() => {
-                      executeLoadSave({ saveName: save });
                       setCurrentSaveLoading(save);
+
+                      executeLoadSave({ saveName: save });
                     }}
                   >
                     {save}
@@ -136,6 +134,12 @@ export const LoadSaveModal = () => {
               )}
             </SaveList>
           </LoadingIndicator>
+        )}
+        {saveListPaused && (
+          <SaveError
+            icon={<BiError style={{ color: theme.errorRed }} />}
+            text="Requests will resume once online"
+          />
         )}
         {!!saveListError && (
           <SaveError

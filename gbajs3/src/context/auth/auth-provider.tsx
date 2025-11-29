@@ -1,83 +1,73 @@
+import { useQueryClient } from '@tanstack/react-query';
 import { jwtDecode, type JwtPayload } from 'jwt-decode';
-import { useState, useEffect, useCallback, type ReactNode } from 'react';
+import { useCallback, type ReactNode } from 'react';
 
+import { AuthContext } from './auth-context.tsx';
 import {
-  AuthContext,
-  type AuthContextProps,
-  type AccessTokenSource
-} from './auth-context.tsx';
-import { useInterval } from '../../hooks/use-interval.ts';
-import { useRefreshAccessToken } from '../../hooks/use-refresh.tsx';
+  refreshAccessTokenQueryKey,
+  useRefreshAccessToken
+} from '../../hooks/use-refresh.tsx';
 
 type AuthProviderProps = { children: ReactNode };
 
+const fourMinutesInMS = 240 * 1000;
+
+const isTokenAuthenticated = (accessToken?: string | null) => {
+  if (!accessToken) return false;
+
+  const { exp } = jwtDecode<JwtPayload>(accessToken);
+  return !!exp && Date.now() <= exp * 1000;
+};
+
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-  const fourMinutesInMS = 240 * 1000;
-  const hasApiLocation = !!import.meta.env.VITE_GBA_SERVER_LOCATION;
-  const [accessToken, setAccessToken] =
-    useState<AuthContextProps['accessToken']>(null);
-  const [accessTokenSource, setAccessTokenSource] =
-    useState<AccessTokenSource>(null);
+  const queryClient = useQueryClient();
 
-  // generate initial access token
-  const {
-    data: accessTokenResp,
-    isLoading: refreshLoading,
-    execute: executeRefresh,
-    error: refreshTokenError,
-    clearError: refreshClearError
-  } = useRefreshAccessToken({ loadOnMount: hasApiLocation });
+  const setLoginToken = useCallback(
+    (token: string) =>
+      queryClient.setQueryData([refreshAccessTokenQueryKey], token),
+    [queryClient]
+  );
 
-  const shouldSetAccessToken = !refreshLoading && !!accessTokenResp;
+  const logout = useCallback(
+    () => queryClient.setQueryData([refreshAccessTokenQueryKey], null),
+    [queryClient]
+  );
 
-  // assign token to context
-  useEffect(() => {
-    if (shouldSetAccessToken) {
-      setAccessToken(accessTokenResp);
-      setAccessTokenSource('refresh');
+  const { data: accessToken } = useRefreshAccessToken({
+    retry: 0,
+    refetchOnWindowFocus: (query) =>
+      !isTokenAuthenticated(accessToken) &&
+      query.state.data !== null &&
+      !query.state.error
+        ? 'always'
+        : false,
+    refetchOnReconnect: (query) =>
+      !isTokenAuthenticated(accessToken) &&
+      query.state.data !== null &&
+      !query.state.error
+        ? 'always'
+        : false,
+    refetchInterval: (query) => {
+      const shouldRefresh =
+        isTokenAuthenticated(query.state.data) ||
+        (query.state.data !== null && !query.state.error);
+
+      return shouldRefresh ? fourMinutesInMS : false;
     }
-  }, [shouldSetAccessToken, accessTokenResp]);
+  });
 
-  // convenience callback to determine if token is expired
-  const isAuthenticated = useCallback(() => {
-    if (accessToken) {
-      const { exp } = jwtDecode<JwtPayload>(accessToken);
-
-      if (exp && Date.now() <= exp * 1000) {
-        return true;
-      }
-    }
-
-    return false;
-  }, [accessToken]);
-
-  const shouldClearRefreshTokenError =
-    isAuthenticated() && !accessTokenResp && accessTokenSource !== 'refresh';
-
-  useEffect(() => {
-    // if access token has changed from login, clear refresh errors.
-    // resume attempts to periodically refresh the token
-    if (shouldClearRefreshTokenError) {
-      refreshClearError();
-    }
-  }, [shouldClearRefreshTokenError, refreshClearError]);
-
-  // refresh access token every 4 minutes
-  useInterval(
-    async () => {
-      await executeRefresh();
-    },
-    // TODO: re-evaluate whether or not auth check is desired
-    isAuthenticated() && !refreshTokenError ? fourMinutesInMS : null
+  const isAuthenticated = useCallback(
+    () => isTokenAuthenticated(accessToken),
+    [accessToken]
   );
 
   return (
     <AuthContext.Provider
       value={{
         accessToken,
-        setAccessToken,
-        setAccessTokenSource,
-        isAuthenticated
+        isAuthenticated,
+        setLoginToken,
+        logout
       }}
     >
       {children}

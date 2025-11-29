@@ -146,6 +146,8 @@ export default defineConfig(({ mode }) => {
 
             dnd: ['react-draggable', 'react-dropzone', 'react-rnd'],
 
+            tanstack: ['@tanstack/react-query'],
+
             ui: [
               'react-modal',
               'react-hot-toast',

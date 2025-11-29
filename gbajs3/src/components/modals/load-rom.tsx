@@ -1,5 +1,5 @@
 import { Button } from '@mui/material';
-import { useEffect, useState, useId } from 'react';
+import { useState, useId } from 'react';
 import { BiError } from 'react-icons/bi';
 import { styled, useTheme } from 'styled-components';
 
@@ -20,6 +20,7 @@ import { CenteredText } from '../shared/styled.tsx';
 
 type RomErrorProps = {
   $withMarginTop?: boolean;
+  $isCentered?: boolean;
 };
 
 const LoadRomButton = styled.button`
@@ -69,6 +70,12 @@ const RomError = styled(ErrorWithIcon)<RomErrorProps>`
     `
     margin-top: 15px;
     `}
+
+  ${({ $isCentered = false }) =>
+    $isCentered &&
+    `
+      justify-content: center;
+      `}
 `;
 
 export const LoadRomModal = () => {
@@ -77,35 +84,31 @@ export const LoadRomModal = () => {
   const { emulator } = useEmulatorContext();
   const romListId = useId();
   const runGame = useRunGame();
-  const {
-    data: romList,
-    isLoading: romListLoading,
-    error: romListError
-  } = useListRoms({ loadOnMount: true });
-  const {
-    data: romFile,
-    isLoading: romLoading,
-    error: romLoadError,
-    execute: executeLoadRom
-  } = useLoadRom();
   const [currentRomLoading, setCurrentRomLoading] = useState<string | null>(
     null
   );
   const { syncActionIfEnabled } = useAddCallbacks();
-
-  const shouldUploadRom = !romLoading && !!romFile && !!currentRomLoading;
-
-  useEffect(() => {
-    if (shouldUploadRom) {
+  const {
+    data: romList,
+    isPending: romListLoading,
+    error: romListError,
+    isPaused: romListPaused
+  } = useListRoms();
+  const {
+    isPending: romLoading,
+    error: romLoadError,
+    mutate: executeLoadRom
+  } = useLoadRom({
+    onSuccess: (file) => {
       const runCallback = () => {
         syncActionIfEnabled();
-        runGame(romFile.name);
+        runGame(file.name);
       };
 
-      emulator?.uploadRom(romFile, runCallback);
+      emulator?.uploadRom(file, runCallback);
       setCurrentRomLoading(null);
     }
-  }, [emulator, shouldUploadRom, romFile, runGame, syncActionIfEnabled]);
+  });
 
   return (
     <>
@@ -125,8 +128,8 @@ export const LoadRomModal = () => {
                 <StyledLi key={`${rom}_${idx}`}>
                   <LoadRomButton
                     onClick={() => {
-                      executeLoadRom({ romName: rom });
                       setCurrentRomLoading(rom);
+                      executeLoadRom({ romName: rom });
                     }}
                   >
                     {rom}
@@ -143,6 +146,13 @@ export const LoadRomModal = () => {
               )}
             </RomList>
           </LoadingIndicator>
+        )}
+        {romListPaused && (
+          <RomError
+            $isCentered
+            icon={<BiError style={{ color: theme.errorRed }} />}
+            text="Requests will resume once online"
+          />
         )}
         {!!romListError && (
           <RomError

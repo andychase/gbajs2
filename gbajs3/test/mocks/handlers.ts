@@ -1,7 +1,11 @@
+import jwt from 'jsonwebtoken';
 import { HttpResponse, delay, http } from 'msw';
 
 export const gbaServerLocationPlaceholder = 'https://server_location.test';
 export const testRomLocation = 'https://rom_location.test';
+
+const generateMockJwt = () =>
+  jwt.sign({}, 'test-fake-key', { expiresIn: '1s' });
 
 export const handlers = [
   http.post(`${gbaServerLocationPlaceholder}/api/tokens/refresh`, () => {
@@ -74,7 +78,7 @@ export const handlers = [
       await delay(100);
 
       if (isValidUser) {
-        return HttpResponse.json('some token', {
+        return HttpResponse.json(generateMockJwt(), {
           status: 200
         });
       } else {

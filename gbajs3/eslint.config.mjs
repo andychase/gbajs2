@@ -9,6 +9,7 @@ import styledA11y from 'eslint-plugin-styled-components-a11y';
 import testingLibrary from 'eslint-plugin-testing-library';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
+import pluginQuery from '@tanstack/eslint-plugin-query';
 
 export default [
   js.configs.recommended,
@@ -17,6 +18,7 @@ export default [
   styledA11y.flatConfigs.recommended,
   jestDom.configs['flat/recommended'],
   ...tseslint.configs.recommended,
+  ...pluginQuery.configs['flat/recommended'],
   {
     files: ['**/__tests__/**/*.[jt]s?(x)', '**/*.{test,spec}.[jt]s?(x)'],
     plugins: {

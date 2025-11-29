@@ -11,6 +11,9 @@ import * as listRomHooks from '../../hooks/use-list-roms.tsx';
 import * as loadRomHooks from '../../hooks/use-load-rom.tsx';
 
 import type { GBAEmulator } from '../../emulator/mgba/mgba-emulator.tsx';
+import type { RomListResponse } from '../../hooks/use-list-roms.tsx';
+import type { LoadRomProps } from '../../hooks/use-load-rom.tsx';
+import type { UseMutationResult, UseQueryResult } from '@tanstack/react-query';
 
 describe('<LoadRomModal />', () => {
   it('renders with list of roms from the server', async () => {
@@ -68,11 +71,10 @@ describe('<LoadRomModal />', () => {
 
   it('renders message when there are no roms', () => {
     vi.spyOn(listRomHooks, 'useListRoms').mockReturnValue({
-      data: [],
-      isLoading: false,
-      error: undefined,
-      execute: vi.fn()
-    });
+      data: [] as string[],
+      isPending: false,
+      error: null
+    } as UseQueryResult<RomListResponse, Error>);
 
     renderWithContext(<LoadRomModal />);
 
@@ -86,10 +88,9 @@ describe('<LoadRomModal />', () => {
   it('renders error message failure to list roms', () => {
     vi.spyOn(listRomHooks, 'useListRoms').mockReturnValue({
       data: undefined,
-      isLoading: false,
-      error: 'some error',
-      execute: vi.fn()
-    });
+      isPending: false,
+      error: new Error('Fetch failed')
+    } as UseQueryResult<RomListResponse, Error>);
 
     renderWithContext(<LoadRomModal />);
 
@@ -98,11 +99,10 @@ describe('<LoadRomModal />', () => {
 
   it('renders error message failure to load rom', () => {
     vi.spyOn(loadRomHooks, 'useLoadRom').mockReturnValue({
-      data: null,
-      isLoading: false,
-      error: 'some error',
-      execute: vi.fn()
-    });
+      data: undefined,
+      isPaused: false,
+      error: new Error('some error')
+    } as UseMutationResult<File, Error, LoadRomProps, unknown>);
 
     renderWithContext(<LoadRomModal />);
 

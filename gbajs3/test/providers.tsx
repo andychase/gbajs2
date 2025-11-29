@@ -1,3 +1,4 @@
+import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { ThemeProvider } from 'styled-components';
 
 import { AuthProvider } from '../src/context/auth/auth-provider.tsx';
@@ -9,16 +10,20 @@ import { GbaDarkTheme } from '../src/context/theme/theme.tsx';
 
 import type { ReactNode } from 'react';
 
+const queryClient = new QueryClient();
+
 export const AllTheProviders = ({ children }: { children: ReactNode }) => (
   <ThemeProvider theme={GbaDarkTheme}>
-    <AuthProvider>
-      <EmulatorContextProvider>
-        <InitialBoundsProvider>
-          <LayoutProvider>
-            <ModalProvider>{children}</ModalProvider>
-          </LayoutProvider>
-        </InitialBoundsProvider>
-      </EmulatorContextProvider>
-    </AuthProvider>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <EmulatorContextProvider>
+          <InitialBoundsProvider>
+            <LayoutProvider>
+              <ModalProvider>{children}</ModalProvider>
+            </LayoutProvider>
+          </InitialBoundsProvider>
+        </EmulatorContextProvider>
+      </AuthProvider>
+    </QueryClientProvider>
   </ThemeProvider>
 );

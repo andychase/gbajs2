@@ -65,9 +65,9 @@ export const UploadSaveToServerModal = () => {
   const uploadSaveToServerButtonId = useId();
   const {
     data,
-    isLoading,
+    isPending: isLoading,
     error,
-    execute: executeUploadSave
+    mutate: executeUploadSave
   } = useUpLoadSave();
 
   return (
@@ -91,6 +91,7 @@ export const UploadSaveToServerModal = () => {
             if (saveFileBytes && saveName) {
               const saveFileBlob = new Blob([saveFileBytes.slice()]);
               const saveFile = new File([saveFileBlob], saveName);
+
               executeUploadSave({ saveFile });
             }
           }}

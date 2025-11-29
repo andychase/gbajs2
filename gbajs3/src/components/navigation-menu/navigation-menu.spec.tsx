@@ -27,6 +27,10 @@ import { UploadRomToServerModal } from '../modals/upload-rom-to-server.tsx';
 import { UploadSaveToServerModal } from '../modals/upload-save-to-server.tsx';
 
 import type { GBAEmulator } from '../../emulator/mgba/mgba-emulator.tsx';
+import type {
+  UseMutateFunction,
+  UseMutationResult
+} from '@tanstack/react-query';
 
 describe('<NavigationMenu />', () => {
   it('renders menu and dismiss buttons', () => {
@@ -360,10 +364,15 @@ describe('<NavigationMenu />', () => {
       }));
 
       vi.spyOn(logoutHooks, 'useLogout').mockReturnValue({
-        isLoading: false,
-        error: false,
-        execute: executeLogoutSpy
-      });
+        isPending: false,
+        error: null,
+        mutate: executeLogoutSpy as UseMutateFunction<
+          void,
+          Error,
+          void,
+          unknown
+        >
+      } as UseMutationResult<void, Error, void, unknown>);
 
       renderWithContext(<NavigationMenu />);
 

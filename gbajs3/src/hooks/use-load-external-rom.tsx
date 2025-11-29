@@ -1,19 +1,18 @@
-import { useCallback } from 'react';
-
-import { useAsyncData } from './use-async-data.tsx';
+import { useMutation, type UseMutationOptions } from '@tanstack/react-query';
 
 type LoadExternalRomProps = {
   url: URL;
 };
 
-export const useLoadExternalRom = () => {
-  const executeLoadExternalRom = useCallback(
-    async (fetchProps?: LoadExternalRomProps) => {
-      const options: RequestInit = {
-        method: 'GET'
-      };
+export const useLoadExternalRom = (
+  options?: UseMutationOptions<File, Error, LoadExternalRomProps>
+) => {
+  return useMutation<File, Error, LoadExternalRomProps>({
+    mutationKey: ['loadExternalRom'],
+    mutationFn: async (fetchProps?: LoadExternalRomProps) => {
+      if (!fetchProps) throw new Error('Missing URL for external rom load');
 
-      if (!fetchProps) return;
+      const options: RequestInit = { method: 'GET' };
 
       const res = await fetch(fetchProps.url, options);
 
@@ -39,13 +38,6 @@ export const useLoadExternalRom = () => {
 
       return file;
     },
-    []
-  );
-
-  const { data, isLoading, error, execute } = useAsyncData({
-    fetchFn: executeLoadExternalRom,
-    clearDataOnLoad: true
+    ...options
   });
-
-  return { data, isLoading, error, execute };
 };

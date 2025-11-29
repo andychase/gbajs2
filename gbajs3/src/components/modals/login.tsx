@@ -1,5 +1,5 @@
 import { TextField, Button } from '@mui/material';
-import { useEffect, useId } from 'react';
+import { useId } from 'react';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { BiError } from 'react-icons/bi';
 import { styled, useTheme } from 'styled-components';
@@ -31,41 +31,29 @@ const StyledForm = styled.form`
 export const LoginModal = () => {
   const theme = useTheme();
   const { setIsModalOpen } = useModalContext();
-  const { setAccessToken, setAccessTokenSource } = useAuthContext();
+  const { setLoginToken } = useAuthContext();
   const loginFormId = useId();
-  const {
-    execute: executeLogin,
-    data: accessToken,
-    isLoading: loginLoading,
-    error: loginError
-  } = useLogin();
   const {
     register,
     reset,
     handleSubmit,
     formState: { errors }
   } = useForm<InputProps>();
-
-  const shouldSetAccessToken = !loginLoading && !loginError && !!accessToken;
-
-  useEffect(() => {
-    if (shouldSetAccessToken) {
-      setAccessToken(accessToken);
-      setAccessTokenSource('login');
+  const {
+    mutate: executeLogin,
+    isPending: loginLoading,
+    isPaused: loginPaused,
+    error: loginError
+  } = useLogin({
+    onSuccess: (token) => {
+      setLoginToken(token);
       setIsModalOpen(false);
+      reset();
     }
-  }, [
-    shouldSetAccessToken,
-    accessToken,
-    setAccessToken,
-    setAccessTokenSource,
-    setIsModalOpen
-  ]);
+  });
 
-  const onSubmit: SubmitHandler<InputProps> = async (formData) => {
-    await executeLogin(formData);
-    reset();
-  };
+  const onSubmit: SubmitHandler<InputProps> = (formData) =>
+    executeLogin(formData);
 
   return (
     <>
@@ -108,6 +96,12 @@ export const LoginModal = () => {
               />
             )}
           </StyledForm>
+        )}
+        {loginPaused && (
+          <ErrorWithIcon
+            icon={<BiError style={{ color: theme.errorRed }} />}
+            text="Requests will resume once online"
+          />
         )}
       </ModalBody>
       <ModalFooter>

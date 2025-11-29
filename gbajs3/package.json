@@ -19,6 +19,7 @@
     "@emotion/styled": "^11.13.5",
     "@mui/material": "^7.0.1",
     "@mui/x-tree-view": "^8.3.0",
+    "@tanstack/react-query": "^5.90.7",
     "@thenick775/mgba-wasm": "^2.3.4",
     "@uidotdev/usehooks": "^2.4.1",
     "@zip.js/zip.js": "^2.7.72",
@@ -43,10 +44,12 @@
     "react-draggable": "^4.5.0"
   },
   "devDependencies": {
+    "@tanstack/eslint-plugin-query": "^5.91.2",
     "@testing-library/jest-dom": "^6.1.6",
     "@testing-library/react": "^16.0.0",
     "@testing-library/user-event": "^14.5.2",
     "@types/emscripten": "^1.39.6",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/react": "^19.1.13",
     "@types/react-dom": "^19.1.9",
     "@types/react-modal": "^3.16.0",
@@ -66,6 +69,7 @@
     "globals": "^16.0.0",
     "jest-styled-components": "^7.2.0",
     "jsdom": "^27.0.0",
+    "jsonwebtoken": "^9.0.2",
     "msw": "^2.7.0",
     "rollup-plugin-visualizer": "^6.0.0",
     "typescript": "^5.1.3",

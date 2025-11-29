@@ -7,12 +7,11 @@ import type {
   RenderHookResult
 } from '@testing-library/react';
 
-export function renderHookWithContext<P, R>(
+export const renderHookWithContext = <P, R>(
   callback: (props: P) => R,
   renderHookOptions?: RenderHookOptions<P>
-): RenderHookResult<R, P> {
-  return renderHook(callback, {
+): RenderHookResult<R, P> =>
+  renderHook(callback, {
     ...renderHookOptions,
     wrapper: AllTheProviders
   });
-}
