@@ -14,10 +14,8 @@ export const useLoadRom = (
 
   return useMutation<File, Error, LoadRomProps>({
     mutationKey: ['loadRom', accessToken],
-    mutationFn: async (fetchProps: LoadRomProps) => {
-      const url = `${apiLocation}/api/rom/download?rom=${
-        fetchProps?.romName ?? ''
-      }`;
+    mutationFn: async (fetchProps) => {
+      const url = `${apiLocation}/api/rom/download?rom=${fetchProps.romName}`;
       const options: RequestInit = {
         method: 'GET',
         headers: {
@@ -33,7 +31,7 @@ export const useLoadRom = (
       }
 
       const blob = await res.blob();
-      const file = new File([blob], fetchProps?.romName ?? '');
+      const file = new File([blob], fetchProps.romName);
 
       return file;
     },

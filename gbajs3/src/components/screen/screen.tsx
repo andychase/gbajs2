@@ -95,8 +95,8 @@ export const Screen = () => {
   const refUpdateDefaultPosition = useCallback(
     (node: Rnd | null) => {
       if (!screenLayout?.size) {
-        node?.resizableElement?.current?.style?.removeProperty('width');
-        node?.resizableElement?.current?.style?.removeProperty('height');
+        node?.resizableElement.current?.style.removeProperty('width');
+        node?.resizableElement.current?.style.removeProperty('height');
       }
 
       if (!initialBounds?.screen && node)
@@ -116,7 +116,7 @@ export const Screen = () => {
   );
 
   const currentDimensions =
-    rndRef?.current?.resizableElement?.current?.getBoundingClientRect();
+    rndRef.current?.resizableElement.current?.getBoundingClientRect();
   const width = currentDimensions?.width ?? 0;
   const height = currentDimensions?.height ?? 0;
   const position =

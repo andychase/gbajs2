@@ -6,9 +6,10 @@ describe('downloadBlob', () => {
   it('should click anchor and download file', async () => {
     vi.useFakeTimers();
 
-    // unimplemented in jsdom
-    URL.createObjectURL = vi.fn(() => 'object_url:test-download.txt');
-    URL.revokeObjectURL = vi.fn();
+    const createObjectURLSpy = vi
+      .spyOn(URL, 'createObjectURL')
+      .mockReturnValue('object_url:test-download.txt');
+    const revokeObjectURLSpy = vi.spyOn(URL, 'revokeObjectURL');
 
     const anchorClickSpy = vi
       .spyOn(HTMLAnchorElement.prototype, 'click')
@@ -23,8 +24,8 @@ describe('downloadBlob', () => {
 
     await vi.runAllTimersAsync();
 
-    expect(URL.createObjectURL).toHaveBeenCalledWith(blob);
-    expect(URL.revokeObjectURL).toHaveBeenCalledWith(
+    expect(createObjectURLSpy).toHaveBeenCalledWith(blob);
+    expect(revokeObjectURLSpy).toHaveBeenCalledWith(
       expect.stringMatching(/object_url:test-download\.txt$/)
     );
 

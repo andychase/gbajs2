@@ -65,7 +65,7 @@ describe('useFadeCanvas', () => {
     expect(setIntervalSpy).not.toHaveBeenCalled();
   });
 
-  it('clears interval after drawCountMax', async () => {
+  it('clears interval after drawCountMax', () => {
     const clearIntervalSpy = vi.spyOn(globalThis, 'clearInterval');
 
     const canvas = document.createElement('canvas');
@@ -82,7 +82,9 @@ describe('useFadeCanvas', () => {
     const blob = new Blob();
     const { result } = renderHook(() => useFadeCanvas());
 
-    act(() => result.current.startFade(canvas, blob));
+    act(() => {
+      result.current.startFade(canvas, blob);
+    });
 
     vi.advanceTimersByTime(50 * 41); // drawIntervalTimeout * drawCountMax + 1
 

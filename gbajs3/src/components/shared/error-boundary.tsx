@@ -107,8 +107,10 @@ const fallbackRender = ({
         <Button
           color="info"
           variant="contained"
-          onClick={() => {
-            navigator.clipboard.writeText(error.stack ?? 'No stack available');
+          onClick={async () => {
+            await navigator.clipboard.writeText(
+              error.stack ?? 'No stack available'
+            );
           }}
         >
           Copy trace

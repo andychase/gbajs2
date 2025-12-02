@@ -25,7 +25,7 @@ describe('<LoadRomModal />', () => {
 
   it('loads rom from the server', async () => {
     const uploadRomSpy: (file: File, cb?: () => void) => void = vi.fn(
-      (_file, cb) => cb && cb()
+      (_file: File, cb?: () => void) => cb && cb()
     );
     const runGameSpy = vi.fn();
     const syncActionIfEnabledSpy = vi.fn();

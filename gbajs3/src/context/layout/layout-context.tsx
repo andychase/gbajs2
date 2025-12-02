@@ -13,9 +13,9 @@ export type Layout = {
 };
 
 export type Layouts = {
-  [key: string]: {
-    [key in 'portrait' | 'landscape' | 'desktop']: Layout | undefined;
-  };
+  [key: string]: Partial<
+    Record<'portrait' | 'landscape' | 'desktop', Layout> | undefined
+  >;
 };
 
 type LayoutContextProps = {

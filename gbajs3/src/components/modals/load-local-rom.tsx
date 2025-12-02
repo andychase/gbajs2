@@ -57,15 +57,15 @@ export const LoadLocalRomModal = () => {
   const runGame = useRunGame();
   const ignorePaths = ['.', '..'];
   const localRoms = emulator
-    ?.listRoms?.()
-    ?.filter((romName) => !ignorePaths.includes(romName));
+    ?.listRoms()
+    .filter((romName) => !ignorePaths.includes(romName));
 
   return (
     <>
       <ModalHeader title="Load Local Rom" />
       <ModalBody>
         <RomList id={romListId}>
-          {localRoms?.map?.((romName: string, idx: number) => (
+          {localRoms?.map((romName: string, idx: number) => (
             <StyledLi key={`${romName}_${idx}`}>
               <LoadRomButton
                 onClick={() => {

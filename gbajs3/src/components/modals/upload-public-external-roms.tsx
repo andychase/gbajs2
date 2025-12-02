@@ -66,8 +66,8 @@ export const UploadPublicExternalRomsModal = ({
     mutate: executeLoadExternalRom
   } = useLoadExternalRom({
     onSuccess: (file) => {
-      const runCallback = () => {
-        syncActionIfEnabled();
+      const runCallback = async () => {
+        await syncActionIfEnabled();
         const hasSucceeded = runGame(file.name);
         if (hasSucceeded) {
           onLoadOrDismiss('loaded');

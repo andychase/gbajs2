@@ -328,12 +328,12 @@ export const UploadFilesModal = () => {
                       <UrlInputsContainer>
                         <TextField
                           id={`${uploadFilesFormId}--file-url-${index}`}
-                          error={!!errors?.fileUrls?.[index]?.url}
+                          error={!!errors.fileUrls?.[index]?.url}
                           label="URL"
                           size="small"
                           autoComplete="url"
                           variant="filled"
-                          helperText={errors?.fileUrls?.[index]?.url?.message}
+                          helperText={errors.fileUrls?.[index]?.url?.message}
                           aria-label="Upload File From URL"
                           fullWidth
                           slotProps={{

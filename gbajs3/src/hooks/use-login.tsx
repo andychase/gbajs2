@@ -13,8 +13,8 @@ export const useLogin = (
   return useMutation<string, Error, LoginProps, string>({
     mutationKey: ['login'],
     mutationFn: async (fetchProps) => {
-      const username = fetchProps?.username || '';
-      const password = fetchProps?.password || '';
+      const username = fetchProps.username;
+      const password = fetchProps.password;
 
       const url = `${apiLocation}/api/account/login`;
       const options: RequestInit = {
@@ -29,7 +29,7 @@ export const useLogin = (
         throw new Error(`Received unexpected status code: ${res.status}`);
       }
 
-      return res.json();
+      return res.json() as Promise<string>;
     },
     ...options
   });

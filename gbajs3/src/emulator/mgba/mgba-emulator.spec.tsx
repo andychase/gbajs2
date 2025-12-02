@@ -146,7 +146,7 @@ cheat1_code = "XYZ789"`;
     expect(content).toBe(expectedContent);
   });
 
-  it('should return null if current game path is invalid', async () => {
+  it('should return null if current game path is invalid', () => {
     const emulator = createEmulator({ gameName: '/data/games/' });
     const cheatsList = [
       { desc: 'Infinite Lives', enable: true, code: 'ABC123' },

@@ -38,7 +38,7 @@ describe('<ControlPanel />', () => {
     );
   });
 
-  it('renders panel controls', async () => {
+  it('renders panel controls', () => {
     renderWithContext(<ControlPanel />);
 
     expect(screen.getByRole('list')).toBeVisible();

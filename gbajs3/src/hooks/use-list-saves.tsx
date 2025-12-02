@@ -24,7 +24,7 @@ export const useListSaves = (
       };
 
       const res = await fetch(url, options);
-      return res.json();
+      return res.json() as Promise<SaveListResponse>;
     },
     ...options
   });

@@ -4,7 +4,7 @@ import { useTheme } from 'styled-components';
 import { PanelControlWrapper, PanelControlButton } from './styled.tsx';
 
 import type { IconButtonProps } from '@mui/material';
-import type { ReactNode } from 'react';
+import type { MouseEventHandler, PointerEventHandler, ReactNode } from 'react';
 
 type PanelButtonProps = {
   ariaLabel: string;
@@ -13,9 +13,9 @@ type PanelButtonProps = {
   controlled: boolean;
   id: string;
   $gridArea?: string;
-  onClick?: () => void;
-  onPointerDown?: () => void;
-  onPointerUp?: () => void;
+  onClick?: MouseEventHandler<HTMLButtonElement>;
+  onPointerDown?: PointerEventHandler<HTMLButtonElement>;
+  onPointerUp?: PointerEventHandler<HTMLButtonElement>;
 };
 
 type SliderButtonProps = {

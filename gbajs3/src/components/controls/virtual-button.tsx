@@ -1,4 +1,9 @@
-import { useRef, type ReactNode, type KeyboardEvent } from 'react';
+import {
+  useRef,
+  type ReactNode,
+  type KeyboardEvent,
+  type PointerEventHandler
+} from 'react';
 import Draggable from 'react-draggable';
 import { styled } from 'styled-components';
 
@@ -23,7 +28,7 @@ type VirtualButtonProps = {
     x: string | number;
     y: string | number;
   };
-  onPointerDown?: () => void;
+  onPointerDown?: PointerEventHandler<HTMLButtonElement>;
   enabled?: boolean;
   ariaLabel: string;
 };

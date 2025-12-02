@@ -100,8 +100,8 @@ export const LoadRomModal = () => {
     mutate: executeLoadRom
   } = useLoadRom({
     onSuccess: (file) => {
-      const runCallback = () => {
-        syncActionIfEnabled();
+      const runCallback = async () => {
+        await syncActionIfEnabled();
         runGame(file.name);
       };
 
@@ -124,7 +124,7 @@ export const LoadRomModal = () => {
             loadingCopy="Loading rom:"
           >
             <RomList id={romListId}>
-              {romList?.map?.((rom: string, idx: number) => (
+              {romList?.map((rom: string, idx: number) => (
                 <StyledLi key={`${rom}_${idx}`}>
                   <LoadRomButton
                     onClick={() => {

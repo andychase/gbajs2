@@ -111,7 +111,7 @@ export const LoadSaveModal = () => {
             loadingCopy="Loading save:"
           >
             <SaveList id={saveListId}>
-              {saveList?.map?.((save: string, idx: number) => (
+              {saveList?.map((save: string, idx: number) => (
                 <StyledLi key={`${save}_${idx}`}>
                   <LoadSaveButton
                     onClick={() => {

@@ -14,10 +14,8 @@ export const useLoadSave = (
 
   return useMutation<File, Error, LoadSaveProps>({
     mutationKey: ['loadSave', accessToken],
-    mutationFn: async (fetchProps?: LoadSaveProps) => {
-      const url = `${apiLocation}/api/save/download?save=${
-        fetchProps?.saveName ?? ''
-      }`;
+    mutationFn: async (fetchProps) => {
+      const url = `${apiLocation}/api/save/download?save=${fetchProps.saveName}`;
       const options: RequestInit = {
         method: 'GET',
         headers: {
@@ -33,7 +31,7 @@ export const useLoadSave = (
       }
 
       const blob = await res.blob();
-      const file = new File([blob], fetchProps?.saveName ?? '');
+      const file = new File([blob], fetchProps.saveName);
 
       return file;
     },

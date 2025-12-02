@@ -51,7 +51,7 @@ export const LayoutProvider = ({ children }: LayoutProviderProps) => {
   );
 
   const getLayout = useCallback(
-    (layoutKey: string) => layouts?.[layoutKey]?.[layoutType],
+    (layoutKey: string) => layouts[layoutKey]?.[layoutType],
     [layouts, layoutType]
   );
 

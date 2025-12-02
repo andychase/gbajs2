@@ -3,7 +3,10 @@ import { expect, it } from 'vitest';
 
 import { MinusSquare, PlusSquare, CloseSquare } from './action-box-icons.tsx';
 
-const components = [
+import type { SvgIconProps } from '@mui/material';
+import type { JSX } from 'react';
+
+const components: [string, (props: SvgIconProps) => JSX.Element][] = [
   ['minus', MinusSquare],
   ['plus', PlusSquare],
   ['close', CloseSquare]

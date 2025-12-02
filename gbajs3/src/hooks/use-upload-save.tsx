@@ -14,10 +14,10 @@ export const useUpLoadSave = (
 
   return useMutation<Response, Error, UploadSaveProps>({
     mutationKey: ['uploadSave', accessToken],
-    mutationFn: async (fetchProps?: UploadSaveProps) => {
+    mutationFn: async (fetchProps) => {
       const url = `${apiLocation}/api/save/upload`;
       const formData = new FormData();
-      formData.append('save', fetchProps?.saveFile ?? '');
+      formData.append('save', fetchProps.saveFile);
       const options: RequestInit = {
         method: 'POST',
         headers: {

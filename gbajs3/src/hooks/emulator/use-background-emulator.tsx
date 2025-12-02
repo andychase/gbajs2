@@ -32,7 +32,7 @@ export const useBackgroundEmulator = ({
         emulator?.forceAutoSaveState();
         setPausedForBackground(true);
       } else if (isDocumentVisible && pausedForBackground) {
-        emulator?.resume();
+        void emulator?.resume();
         setPausedForBackground(false);
       }
     }

@@ -9,9 +9,7 @@ export const useLoadExternalRom = (
 ) => {
   return useMutation<File, Error, LoadExternalRomProps>({
     mutationKey: ['loadExternalRom'],
-    mutationFn: async (fetchProps?: LoadExternalRomProps) => {
-      if (!fetchProps) throw new Error('Missing URL for external rom load');
-
+    mutationFn: async (fetchProps) => {
       const options: RequestInit = { method: 'GET' };
 
       const res = await fetch(fetchProps.url, options);

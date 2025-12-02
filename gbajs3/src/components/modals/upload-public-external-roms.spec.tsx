@@ -17,7 +17,7 @@ describe('<UploadPublicExternalRomsModal />', () => {
     const onLoadOrDismissSpy = vi.fn();
     const setIsModalOpenSpy = vi.fn();
     const uploadRomSpy: (file: File, cb?: () => void) => void = vi.fn(
-      (_file, cb) => cb && cb()
+      (_file: File, cb?: () => void) => cb && cb()
     );
     const syncActionIfEnabledSpy = vi.fn();
 
@@ -88,7 +88,7 @@ describe('<UploadPublicExternalRomsModal />', () => {
     const runGameSpy = vi.fn(() => true);
     const onLoadOrDismissSpy = vi.fn();
     const uploadRomSpy: (file: File, cb?: () => void) => void = vi.fn(
-      (_file, cb) => cb && cb()
+      (_file: File, cb?: () => void) => cb && cb()
     );
 
     const { useEmulatorContext: originalEmulator } = await vi.importActual<

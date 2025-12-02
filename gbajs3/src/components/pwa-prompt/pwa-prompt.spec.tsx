@@ -20,7 +20,7 @@ describe('<PwaPrompt />', () => {
     expect(screen.getByText('Add to Home Screen')).toBeVisible();
   });
 
-  it('does not render prompt if public rom modal should render', async () => {
+  it('does not render prompt if public rom modal should render', () => {
     vi.spyOn(publicRomHooks, 'usePublicRoms').mockReturnValue({
       shouldShowPublicRomModal: true,
       setHasLoadedPublicRoms: vi.fn(),

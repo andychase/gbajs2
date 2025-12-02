@@ -23,7 +23,7 @@ describe('<LoadSaveModal />', () => {
 
   it('loads save from the server', async () => {
     const uploadSaveOrSaveStateSpy: (file: File, cb?: () => void) => void =
-      vi.fn((_file, cb) => cb && cb());
+      vi.fn((_file: File, cb?: () => void) => cb && cb());
     const syncActionIfEnabledSpy = vi.fn();
     const { useEmulatorContext: originalEmulator } = await vi.importActual<
       typeof contextHooks

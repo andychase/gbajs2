@@ -125,12 +125,10 @@ describe('<CheatsModal />', () => {
   it('submits parsed cheats', async () => {
     const testCheatsFile = new TextEncoder().encode('Some cheat file contents');
     const uploadCheatsSpy: (file: File, cb?: () => void) => void = vi.fn(
-      (_file, cb) => cb && cb()
+      (_file: File, cb?: () => void) => cb && cb()
     );
     const parsedCheatsToFileSpy: (cheatsList: ParsedCheats[]) => File | null =
-      vi.fn(
-        (cheatsList) => cheatsList && new File([testCheatsFile], 'rom1.cheats')
-      );
+      vi.fn(() => new File([testCheatsFile], 'rom1.cheats'));
     const { useEmulatorContext: original } = await vi.importActual<
       typeof contextHooks
     >('../../hooks/context.tsx');
@@ -182,7 +180,7 @@ describe('<CheatsModal />', () => {
   it('submits raw cheats', async () => {
     const testCheatsFile = new TextEncoder().encode('Some cheat file contents');
     const uploadCheatsSpy: (file: File, cb?: () => void) => void = vi.fn(
-      (_file, cb) => cb && cb()
+      (_file: File, cb?: () => void) => cb && cb()
     );
     const getCurrentCheatsFileNameSpy: () => string = vi.fn(
       () => 'rom1.cheats'

@@ -221,7 +221,7 @@ export const VirtualControls = () => {
       },
       mobileLandscape: {
         top: '5px',
-        left: `calc(${canvasBounds?.left}px - 50px)`
+        left: `calc(${canvasBounds.left}px - 50px)`
       }
     },
     'uploadsave-button': {
@@ -235,7 +235,7 @@ export const VirtualControls = () => {
       },
       mobileLandscape: {
         top: '55px',
-        left: `calc(${canvasBounds?.left}px - 5px)`
+        left: `calc(${canvasBounds.left}px - 5px)`
       }
     },
     'loadstate-button': {
@@ -252,7 +252,7 @@ export const VirtualControls = () => {
       },
       mobileLandscape: {
         top: '105px',
-        left: `calc(${canvasBounds?.left}px - 5px)`
+        left: `calc(${canvasBounds.left}px - 5px)`
       }
     },
     'savestate-button': {
@@ -269,7 +269,7 @@ export const VirtualControls = () => {
       },
       mobileLandscape: {
         top: '155px',
-        left: `calc(${canvasBounds?.left}px - 5px)`
+        left: `calc(${canvasBounds.left}px - 5px)`
       }
     },
     'o-pad': {
@@ -290,12 +290,12 @@ export const VirtualControls = () => {
 
   const initialPositionForKey = (key: string) => {
     let variation = undefined;
-    if (isMobileWithUrlBar && positionVariations[key]?.mobileWithUrlBar) {
-      variation = positionVariations[key]?.mobileWithUrlBar;
-    } else if (isMobileLandscape && positionVariations[key]?.mobileLandscape) {
-      variation = positionVariations[key]?.mobileLandscape;
-    } else if (isLargerThanPhone && positionVariations[key]?.largerThanPhone) {
-      variation = positionVariations[key]?.largerThanPhone;
+    if (isMobileWithUrlBar && positionVariations[key].mobileWithUrlBar) {
+      variation = positionVariations[key].mobileWithUrlBar;
+    } else if (isMobileLandscape && positionVariations[key].mobileLandscape) {
+      variation = positionVariations[key].mobileLandscape;
+    } else if (isLargerThanPhone && positionVariations[key].largerThanPhone) {
+      variation = positionVariations[key].largerThanPhone;
     }
 
     return {
@@ -448,7 +448,7 @@ export const VirtualControls = () => {
     },
     {
       children: <BiSave />,
-      onPointerDown: () => {
+      onPointerDown: async () => {
         if (!currentGameName) {
           toast.error('Load a game to save state slots', {
             id: virtualControlToastId
@@ -459,7 +459,7 @@ export const VirtualControls = () => {
 
         const wasSuccessful = emulator?.createSaveState(currentSaveStateSlot);
 
-        if (wasSuccessful) syncActionIfEnabled({ withToast: false });
+        if (wasSuccessful) await syncActionIfEnabled({ withToast: false });
 
         toastOnCondition(
           !!wasSuccessful,

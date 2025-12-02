@@ -14,10 +14,10 @@ export const useUpLoadRom = (
 
   return useMutation<Response, Error, UploadRomProps>({
     mutationKey: ['uploadRom', accessToken],
-    mutationFn: async (fetchProps?: UploadRomProps) => {
+    mutationFn: async (fetchProps) => {
       const url = `${apiLocation}/api/rom/upload`;
       const formData = new FormData();
-      formData.append('rom', fetchProps?.romFile ?? '');
+      formData.append('rom', fetchProps.romFile);
       const options: RequestInit = {
         method: 'POST',
         headers: {

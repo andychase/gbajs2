@@ -27,10 +27,10 @@ export const FileSystemModal = () => {
   const [allFiles, setAllFiles] = useState<FileNode | undefined>();
 
   const deleteFile = useCallback(
-    (path: string) => {
+    async (path: string) => {
       emulator?.deleteFile(path);
       setAllFiles(emulator?.listAllFiles());
-      syncActionIfEnabled();
+      await syncActionIfEnabled();
     },
     [emulator, syncActionIfEnabled]
   );

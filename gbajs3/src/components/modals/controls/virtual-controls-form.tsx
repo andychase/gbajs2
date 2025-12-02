@@ -62,7 +62,7 @@ export const VirtualControlsForm = ({
     }
   });
 
-  const onSubmit: SubmitHandler<ControlsInputProps> = async (formData) => {
+  const onSubmit: SubmitHandler<ControlsInputProps> = (formData) => {
     setAreVirtualControlsEnabled((prevState) => ({
       ...prevState,
       ...formData

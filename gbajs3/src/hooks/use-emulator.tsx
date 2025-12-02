@@ -26,7 +26,7 @@ export const useEmulator = (canvas: HTMLCanvasElement | null) => {
       }
     };
 
-    initialize();
+    void initialize();
   }, [canvas]);
 
   return emulator;

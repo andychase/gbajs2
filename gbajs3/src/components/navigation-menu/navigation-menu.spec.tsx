@@ -507,7 +507,7 @@ describe('<NavigationMenu />', () => {
       });
     });
 
-    it('renders with existing layout', async () => {
+    it('renders with existing layout', () => {
       localStorage.setItem(
         'componentLayoutsV2',
         `{

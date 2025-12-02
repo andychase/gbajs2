@@ -84,8 +84,8 @@ export const restoreLocalStorageFromZip = async (
 ): Promise<void> => {
   const textJson = await entry.getData(new TextWriter());
 
-  Object.entries(JSON.parse(textJson)).forEach(([k, v]) =>
-    localStorage.setItem(k, String(v))
+  Object.entries(JSON.parse(textJson) as Record<string, unknown>).forEach(
+    ([k, v]) => localStorage.setItem(k, String(v))
   );
 };
 

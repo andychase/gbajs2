@@ -20,7 +20,7 @@ import type { FileNode } from '../../../emulator/mgba/mgba-emulator.tsx';
 
 type EmulatorFileSystemProps = {
   allFiles?: FileNode;
-  deleteFile: (path: string) => void;
+  deleteFile: (path: string) => Promise<void>;
   downloadFile: (path: string) => void;
 };
 

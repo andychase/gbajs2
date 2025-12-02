@@ -187,7 +187,7 @@ export const SaveStatesModal = () => {
           const binary = emulator?.getSaveState(saveState);
           return uint8ArrayToBase64DataUrl(binary);
         })
-        .filter((url): url is string => url !== null),
+        .filter((url): url is string => url !== undefined),
     [emulator, currentSaveStates]
   );
 
@@ -283,12 +283,12 @@ export const SaveStatesModal = () => {
                   }
                 }
               }}
-              onDelete={() => {
+              onDelete={async () => {
                 const slot = parseSaveStateSlot(saveState);
                 if (slot !== null) {
                   emulator?.deleteSaveState(slot);
                   refreshSaveStates();
-                  syncActionIfEnabled();
+                  await syncActionIfEnabled();
                 }
               }}
             />
@@ -302,7 +302,7 @@ export const SaveStatesModal = () => {
         <IconButton
           aria-label={`Create new save state`}
           sx={{ padding: 0 }}
-          onClick={() => {
+          onClick={async () => {
             const nextSaveStateSlot = currentSaveStateSlot + 1;
             const hasCreatedSaveState =
               emulator?.createSaveState(nextSaveStateSlot);
@@ -310,7 +310,7 @@ export const SaveStatesModal = () => {
               refreshSaveStates();
               setCurrentSaveStateSlot(nextSaveStateSlot);
               setSaveStateError(null);
-              syncActionIfEnabled();
+              await syncActionIfEnabled();
             } else {
               setSaveStateError('Failed to create save state');
             }

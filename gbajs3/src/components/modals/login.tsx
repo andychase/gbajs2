@@ -68,23 +68,23 @@ export const LoginModal = () => {
             onSubmit={handleSubmit(onSubmit)}
           >
             <TextField
-              error={!!errors?.username}
+              error={!!errors.username}
               label="Username"
               autoComplete="username"
               variant="filled"
-              helperText={errors?.username?.message}
+              helperText={errors.username?.message}
               {...register('username', {
                 required: { value: true, message: 'Username is required' }
               })}
             />
 
             <TextField
-              error={!!errors?.password}
+              error={!!errors.password}
               label="Password"
               type="password"
               autoComplete="current-password"
               variant="filled"
-              helperText={errors?.password?.message}
+              helperText={errors.password?.message}
               {...register('password', {
                 required: { value: true, message: 'Password is required' }
               })}

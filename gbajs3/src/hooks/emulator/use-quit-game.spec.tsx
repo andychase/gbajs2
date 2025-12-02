@@ -9,7 +9,7 @@ import * as fadeCanvasHooks from '../../hooks/use-fade-canvas.tsx';
 import type { GBAEmulator } from '../../emulator/mgba/mgba-emulator.tsx';
 
 describe('useQuitGame hook', () => {
-  it('quits game if the emulator exists', async () => {
+  it('quits game if the emulator exists', () => {
     const emulatorQuitGameSpy: () => void = vi.fn();
     const screenshotSpy: (fileName?: string) => boolean = vi.fn(() => true);
     const getFileSpy: (p: string) => Uint8Array = vi.fn(() =>

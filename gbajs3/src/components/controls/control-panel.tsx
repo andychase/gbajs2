@@ -126,10 +126,9 @@ export const ControlPanel = () => {
   const restoreVolume = (type: 'rewind' | 'fastForward') => {
     if (type !== emulatorVolumeBeforeAutoMute?.type) return;
 
-    if (emulatorVolumeBeforeAutoMute) {
-      emulator?.setVolume(emulatorVolumeBeforeAutoMute.volumeBeforeMute);
-      setCurrentEmulatorVolume(emulatorVolumeBeforeAutoMute.volumeBeforeMute);
-    }
+    emulator?.setVolume(emulatorVolumeBeforeAutoMute.volumeBeforeMute);
+    setCurrentEmulatorVolume(emulatorVolumeBeforeAutoMute.volumeBeforeMute);
+
     setEmulatorVolumeBeforeAutoMute(undefined);
   };
 
@@ -163,10 +162,10 @@ export const ControlPanel = () => {
   const dragWrapperPadding = isLargerThanPhone ? 5 : 0;
   const isControlled = !!controlPanelLayout?.size || isResizing;
 
-  const togglePlay = () => {
+  const togglePlay = async () => {
     if (!isRunning) return;
 
-    if (isPaused) emulator?.resume();
+    if (isPaused) await emulator?.resume();
     else emulator?.pause();
 
     setIsPaused((prevState) => !prevState);
@@ -176,11 +175,6 @@ export const ControlPanel = () => {
     emulator?.setVolume(volumePercent);
     setCurrentEmulatorVolume(volumePercent);
     setEmulatorVolumeBeforeAutoMute(undefined);
-  };
-
-  const setVolumeFromEvent = (event: Event) => {
-    const volumePercent = Number((event.target as HTMLInputElement)?.value);
-    setVolume(volumePercent);
   };
 
   const setFastForward = (ffMultiplier: number) => {
@@ -194,11 +188,6 @@ export const ControlPanel = () => {
         restoreVolume('fastForward');
       }
     }
-  };
-
-  const setFastForwardFromEvent = (event: Event) => {
-    const ffMultiplier = Number((event.target as HTMLInputElement)?.value);
-    setFastForward(ffMultiplier);
   };
 
   const defaultPosition = isMobileLandscape
@@ -386,7 +375,10 @@ export const ControlPanel = () => {
               />
             }
             valueLabelFormat={`${currentEmulatorVolume * 100}`}
-            onChange={setVolumeFromEvent}
+            onChange={(_, value) => {
+              const volumePercent = Number(value);
+              setVolume(volumePercent);
+            }}
             ButtonIcon={BiVolumeFull}
             {...defaultSliderEvents}
           />
@@ -415,7 +407,10 @@ export const ControlPanel = () => {
               />
             }
             valueLabelFormat={`x${fastForwardMultiplier}`}
-            onChange={setFastForwardFromEvent}
+            onChange={(_, value) => {
+              const ffMultiplier = Number(value);
+              setFastForward(ffMultiplier);
+            }}
             ButtonIcon={AiOutlineFastForward}
             {...defaultSliderEvents}
           />

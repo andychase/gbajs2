@@ -150,7 +150,7 @@ describe('<ImportExportModal />', () => {
 
   it('dispatches imported entries to the correct emulator handlers', async () => {
     const uploadRomSpy = vi.fn((_file: File, cb?: () => void) => cb?.());
-    const uploadAutoSaveStateSpy = vi.fn(async () => undefined);
+    const uploadAutoSaveStateSpy = vi.fn(() => Promise.resolve(undefined));
     const uploadSaveOrSaveStateSpy = vi.fn((_file: File, cb?: () => void) =>
       cb?.()
     );
@@ -231,7 +231,7 @@ describe('<ImportExportModal />', () => {
     );
 
     vi.spyOn(zipUtils, 'readFileFromZipEntry').mockImplementation(
-      async (entry: FileEntry) => new File(['bytes'], entry.filename)
+      (entry: FileEntry) => Promise.resolve(new File(['bytes'], entry.filename))
     );
 
     const testZip = new File(['zip-bytes'], 'export.zip', {
@@ -271,10 +271,12 @@ describe('<ImportExportModal />', () => {
     );
     const setupZipTargetSpy = vi
       .spyOn(zipUtils, 'setupZipTarget')
-      .mockImplementation(async () => ({
-        writer: new ZipWriter<Blob>(new BlobWriter('application/zip')),
-        finalize: finalizeSpy
-      }));
+      .mockImplementation(() =>
+        Promise.resolve({
+          writer: new ZipWriter<Blob>(new BlobWriter('application/zip')),
+          finalize: finalizeSpy
+        })
+      );
     const addUint8ArrayToZipSpy = vi.spyOn(zipUtils, 'addUint8ArrayToZip');
     const addLocalStorageToZipSpy = vi.spyOn(zipUtils, 'addLocalStorageToZip');
     const listAllFilesSpy: () => FileNode = vi.fn(

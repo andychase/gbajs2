@@ -79,8 +79,8 @@ describe('useUnloadEmulator hook', () => {
     expect(parsed).toMatchObject({
       filename: 'autosave.ss0',
       data: uint8ArrayToBase64(new Uint8Array([116, 101, 115, 116])), // "test"
-      event: 'pagehide'
+      event: 'pagehide',
+      timestamp: expect.any(String)
     });
-    expect(typeof parsed.timestamp).toBe('string');
   });
 });

@@ -11,7 +11,7 @@ import type { GBAEmulator } from '../../emulator/mgba/mgba-emulator.tsx';
 
 describe('useQuickReload hook', () => {
   describe('quickReload', () => {
-    it('quick reloads using the emulator if running', async () => {
+    it('quick reloads using the emulator if running', () => {
       const emulatorQuickReloadSpy: () => void = vi.fn();
       const setIsRunningSpy = vi.fn();
 
@@ -44,7 +44,7 @@ describe('useQuickReload hook', () => {
       expect(setIsRunningSpy).not.toHaveBeenCalled();
     });
 
-    it('quick reloads last game name from the emulator', async () => {
+    it('quick reloads last game name from the emulator', () => {
       const emulatorQuickReloadSpy: () => void = vi.fn();
       const runGameSpy = vi.fn(() => true);
       const setIsRunningSpy = vi.fn();
@@ -83,7 +83,7 @@ describe('useQuickReload hook', () => {
       expect(setIsRunningSpy).toHaveBeenCalledWith(true);
     });
 
-    it('quick reloads last stored game name from localStorage', async () => {
+    it('quick reloads last stored game name from localStorage', () => {
       const emulatorQuickReloadSpy: () => void = vi.fn();
       const runGameSpy = vi.fn(() => true);
       const setIsRunningSpy = vi.fn();

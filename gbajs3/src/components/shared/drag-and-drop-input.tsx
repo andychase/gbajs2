@@ -150,7 +150,7 @@ const validateFile = (validFileExtensions: Extension[], multiple: boolean) => {
   return (file?: File | DataTransferItem) => {
     if (
       !(file instanceof File) ||
-      (!!file && hasValidFileExtension(file, validFileExtensions))
+      hasValidFileExtension(file, validFileExtensions)
     )
       return null;
 

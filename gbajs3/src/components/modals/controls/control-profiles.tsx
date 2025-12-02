@@ -216,7 +216,7 @@ export const ControlProfiles = ({ id }: ControlProfilesProps) => {
   return (
     <>
       <ProfilesList id={id} aria-label="Profiles List">
-        {virtualControlProfiles?.map?.(
+        {virtualControlProfiles?.map(
           (profile: VirtualControlProfile, idx: number) => (
             <StyledLi key={`${profile.name}_${idx}_action_list_item`}>
               <EditableProfileLoadButton

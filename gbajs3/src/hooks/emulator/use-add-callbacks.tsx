@@ -36,7 +36,7 @@ export const useAddCallbacks = () => {
     async ({ withToast = true }: SyncActionIfEnabledProps = {}) => {
       if (emulatorSettings?.saveFileSystemOnCreateUpdateDelete) {
         await emulator?.fsSync();
-        if (emulatorSettings?.fileSystemNotificationsEnabled && withToast)
+        if (emulatorSettings.fileSystemNotificationsEnabled && withToast)
           toast.success('Saved File System');
       }
     },

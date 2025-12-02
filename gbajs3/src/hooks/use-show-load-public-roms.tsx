@@ -26,7 +26,7 @@ export const usePublicRoms = () => {
   >(loadedPublicRomsLocalStorageKey);
   const isFirstRender = useIsFirstRender();
 
-  const params = new URLSearchParams(window?.location?.search);
+  const params = new URLSearchParams(window.location.search);
   const romURL = params.get(romURLQueryParamName);
 
   const shouldShowPublicRomModal =

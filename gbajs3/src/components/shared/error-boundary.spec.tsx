@@ -10,7 +10,7 @@ const ThrowError = () => {
 };
 
 describe('<AppErrorBoundary/>', () => {
-  it('renders children', async () => {
+  it('renders children', () => {
     renderWithContext(
       <AppErrorBoundary>
         <p>Everything is fine</p>

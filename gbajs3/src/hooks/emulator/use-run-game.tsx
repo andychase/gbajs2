@@ -57,8 +57,8 @@ export const useRunGame = () => {
   const run = useCallback(
     (romName: string) => {
       const romPath = `${emulator?.filePaths().gamePath}/${romName}`;
-      const saveOverridePath = emulatorSettings?.saveFileName
-        ? `${emulator?.filePaths().savePath}/${emulatorSettings?.saveFileName}`
+      const saveOverridePath = emulatorSettings.saveFileName
+        ? `${emulator?.filePaths().savePath}/${emulatorSettings.saveFileName}`
         : undefined;
       const isSuccessfulRun = emulator?.run(romPath, saveOverridePath);
       setIsRunning(!!isSuccessfulRun);
@@ -74,13 +74,13 @@ export const useRunGame = () => {
 
         addCallbacks({
           saveFileSystemOnInGameSave:
-            emulatorSettings?.saveFileSystemOnInGameSave,
+            emulatorSettings.saveFileSystemOnInGameSave,
           fileSystemNotificationsEnabled:
-            emulatorSettings?.fileSystemNotificationsEnabled,
+            emulatorSettings.fileSystemNotificationsEnabled,
           autoSaveStateLoadNotificationEnabled:
-            emulatorSettings?.autoSaveStateLoadNotificationEnabled,
+            emulatorSettings.autoSaveStateLoadNotificationEnabled,
           autoSaveStateCaptureNotificationEnabled:
-            emulatorSettings?.autoSaveStateCaptureNotificationEnabled
+            emulatorSettings.autoSaveStateCaptureNotificationEnabled
         });
 
         emulator?.setCoreSettings({

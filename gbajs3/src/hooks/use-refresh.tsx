@@ -23,7 +23,7 @@ export const useRefreshAccessToken = (
         throw new Error(`Received unexpected status code: ${res.status}`);
       }
 
-      return res.json();
+      return res.json() as Promise<string>;
     },
     ...options
   });

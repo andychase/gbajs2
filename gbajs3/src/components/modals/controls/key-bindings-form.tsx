@@ -46,9 +46,9 @@ export const KeyBindingsForm = ({
   >(emulatorKeyBindingsLocalStorageKey);
 
   const onSubmit = (formData: KeyBindingInputProps) => {
-    const keyBindings = Object.entries(formData)
-      .filter(([, v]) => !!v)
-      .map(([, k]) => k);
+    const keyBindings = Object.entries(formData).map(
+      ([, keyBinding]) => keyBinding
+    );
 
     if (isRunning) emulator?.remapKeyBindings(keyBindings);
 
@@ -76,7 +76,7 @@ export const KeyBindingsForm = ({
                 value.key !== ' ' ||
                 'Space is reserved for accessibility requirements',
               noTab: (value) =>
-                value.key?.toLowerCase() !== 'tab' ||
+                value.key.toLowerCase() !== 'tab' ||
                 'Tab is reserved for accessibility requirements'
             }
           }}
@@ -97,7 +97,7 @@ export const KeyBindingsForm = ({
                 keyboardEvent.preventDefault();
               }}
               error={!!errors[keyBinding.gbaInput]}
-              helperText={errors?.[keyBinding.gbaInput]?.message}
+              helperText={errors[keyBinding.gbaInput]?.message}
             />
           )}
         />
