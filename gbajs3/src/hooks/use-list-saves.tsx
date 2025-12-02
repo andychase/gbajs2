@@ -1,9 +1,10 @@
 import { useQuery, type UseQueryOptions } from '@tanstack/react-query';
+import { z } from 'zod';
 
 import { useAuthContext } from './context.tsx';
 
-type saveName = string;
-export type SaveListResponse = saveName[];
+const SaveListSchema = z.array(z.string());
+export type SaveListResponse = z.infer<typeof SaveListSchema>;
 
 export const useListSaves = (
   options?: UseQueryOptions<SaveListResponse, Error>
@@ -24,7 +25,7 @@ export const useListSaves = (
       };
 
       const res = await fetch(url, options);
-      return res.json() as Promise<SaveListResponse>;
+      return SaveListSchema.parse(await res.json());
     },
     ...options
   });

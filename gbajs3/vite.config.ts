@@ -132,7 +132,14 @@ export default defineConfig(({ mode }) => {
       rollupOptions: {
         output: {
           manualChunks: {
-            react: ['react', 'react-dom'],
+            react: [
+              'react',
+              'react-dom',
+              'react-dom/client',
+              'react/jsx-runtime',
+              'react/jsx-dev-runtime',
+              'scheduler'
+            ],
 
             mui: ['@mui/material', '@emotion/react', '@emotion/styled'],
 
@@ -146,7 +153,7 @@ export default defineConfig(({ mode }) => {
 
             dnd: ['react-draggable', 'react-dropzone', 'react-rnd'],
 
-            tanstack: ['@tanstack/react-query'],
+            query: ['@tanstack/react-query', 'zod'],
 
             ui: [
               'react-modal',

@@ -38,7 +38,8 @@
     "react-modal": "^3.16.1",
     "react-rnd": "^10.5.2",
     "react-spinners": "^0.17.0",
-    "styled-components": "^6.1.1"
+    "styled-components": "^6.1.1",
+    "zod": "^4.1.13"
   },
   "overrides": {
     "react-draggable": "^4.5.0"

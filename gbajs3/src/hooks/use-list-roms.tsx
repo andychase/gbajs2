@@ -1,9 +1,10 @@
 import { useQuery, type UseQueryOptions } from '@tanstack/react-query';
+import { z } from 'zod';
 
 import { useAuthContext } from './context.tsx';
 
-type romName = string;
-export type RomListResponse = romName[];
+const RomListSchema = z.array(z.string());
+export type RomListResponse = z.infer<typeof RomListSchema>;
 
 export const useListRoms = (
   options?: UseQueryOptions<RomListResponse, Error>
@@ -24,7 +25,7 @@ export const useListRoms = (
       };
 
       const res = await fetch(url, options);
-      return res.json() as Promise<RomListResponse>;
+      return RomListSchema.parse(await res.json());
     },
     ...options
   });

@@ -1,4 +1,7 @@
 import { useMutation, type UseMutationOptions } from '@tanstack/react-query';
+import { z } from 'zod';
+
+const TokenSchema = z.string();
 
 type LoginProps = {
   username: string;
@@ -29,7 +32,7 @@ export const useLogin = (
         throw new Error(`Received unexpected status code: ${res.status}`);
       }
 
-      return res.json() as Promise<string>;
+      return TokenSchema.parse(await res.json());
     },
     ...options
   });

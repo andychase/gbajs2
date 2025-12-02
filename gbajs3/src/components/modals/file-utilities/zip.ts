@@ -12,6 +12,7 @@ import {
   type FileEntry,
   type ZipWriterConstructorOptions
 } from '@zip.js/zip.js';
+import { z } from 'zod';
 
 import { downloadBlob } from './blob.ts';
 
@@ -31,6 +32,8 @@ export const zipOptions = {
   level: 6,
   bufferedWrite: true
 };
+
+const storageSchema = z.record(z.string(), z.unknown());
 
 export const generateExportZipName = (prefix = 'gbajs-files') =>
   `${prefix}-${new Date()
@@ -83,10 +86,9 @@ export const restoreLocalStorageFromZip = async (
   entry: FileEntry
 ): Promise<void> => {
   const textJson = await entry.getData(new TextWriter());
+  const json = storageSchema.parse(JSON.parse(textJson));
 
-  Object.entries(JSON.parse(textJson) as Record<string, unknown>).forEach(
-    ([k, v]) => localStorage.setItem(k, String(v))
-  );
+  Object.entries(json).forEach(([k, v]) => localStorage.setItem(k, String(v)));
 };
 
 export const addUint8ArrayToZip = (
