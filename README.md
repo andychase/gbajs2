@@ -191,6 +191,7 @@ Feel free to open discussions, issues, and pull requests. Contributions are welc
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/KobeOne2"><img src="https://avatars.githubusercontent.com/u/173476135?v=4?s=100" width="100px;" alt="KobeOne2"/><br /><sub><b>KobeOne2</b></sub></a><br /><a href="#ideas-KobeOne2" title="Ideas, Planning, & Feedback">🤔</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/evennss"><img src="https://avatars.githubusercontent.com/u/241830523?v=4?s=100" width="100px;" alt="evennss"/><br /><sub><b>evennss</b></sub></a><br /><a href="https://github.com/thenick775/gbajs3/issues?q=author%3Aevennss" title="Bug reports">🐛</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/heze01"><img src="https://avatars.githubusercontent.com/u/34407097?v=4?s=100" width="100px;" alt="heze01"/><br /><sub><b>heze01</b></sub></a><br /><a href="https://github.com/thenick775/gbajs3/commits?author=heze01" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/dedwardstech"><img src="https://avatars.githubusercontent.com/u/50801476?v=4?s=100" width="100px;" alt="dedwardstech"/><br /><sub><b>dedwardstech</b></sub></a><br /><a href="https://github.com/thenick775/gbajs3/issues?q=author%3Adedwardstech" title="Bug reports">🐛</a></td>
     </tr>
   </tbody>
 </table>
