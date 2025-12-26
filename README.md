@@ -161,7 +161,14 @@ All control positions can be modified if the default layouts do not suit your de
 
 - The Admin UI can be found at https://localhost/admin
 
-  - The default password for all admin users is `admin`, **please log in to the admin portal and change the default passwords immediately**
+  - The default admin user credentials from the provided sample database dump are:
+
+  ```
+  username: admin
+  password: admin
+  ```
+
+  **please modify the database dump or log in to the admin portal and change the default username/password immediately in hosted installations**
 
 - Golang api swagger UI can be found at https://localhost/api/documentation/
 
