@@ -3,9 +3,6 @@ name: Build Gbajs3
 on:
   workflow_call:
 
-permissions:
-  contents: read
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -37,6 +34,18 @@ jobs:
         run: |
           npm run lint
 
-      - name: Test
+      - name: Test/Coverage
         run: |
-          npm run test
+          npm run coverage -- --test-timeout=10000
+
+      - name: Upload Visualizer Report
+        uses: actions/upload-artifact@v6
+        with:
+          name: bundle-stats
+          path: ./gbajs3/stats.html
+
+      - name: Upload test artifacts
+        uses: davelosert/vitest-coverage-report-action@v2.9.0
+        with:
+          working-directory: ./gbajs3
+          threshold-icons: "{0: '🔴', 70: '🟠', 85: '🟢'}"

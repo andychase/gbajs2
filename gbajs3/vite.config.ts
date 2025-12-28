@@ -187,6 +187,7 @@ export default defineConfig(({ mode }) => {
       coverage: {
         provider: 'v8',
         include: ['src'],
+        reporter: ['html', 'json-summary', 'json'],
         exclude: [
           ...coverageConfigDefaults.exclude,
           'test/**',
