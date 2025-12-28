@@ -28,6 +28,7 @@ export const useRefreshAccessToken = (
 
       return TokenSchema.parse(await res.json());
     },
+    enabled: !!apiLocation,
     ...options
   });
 };
