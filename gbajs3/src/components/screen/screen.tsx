@@ -1,7 +1,7 @@
 import { useMediaQuery } from '@mui/material';
+import { useTheme, styled } from '@mui/material/styles';
 import { useCallback, useRef } from 'react';
 import { Rnd, type Props as RndProps } from 'react-rnd';
-import { styled, useTheme } from 'styled-components';
 
 import {
   useDragContext,
@@ -18,7 +18,7 @@ type ScreenWrapperProps = RndProps & { $areItemsDraggable: boolean };
 const defaultGBACanvasWidth = 240;
 const defaultGBACanvasHeight = 160;
 
-const RenderCanvas = styled.canvas`
+const RenderCanvas = styled('canvas')`
   background-color: ${({ theme }) => theme.pureBlack};
   image-rendering: -webkit-optimize-contrast;
   image-rendering: -moz-crisp-edges;
@@ -33,7 +33,9 @@ const RenderCanvas = styled.canvas`
   image-rendering: pixelated;
 `;
 
-const ScreenWrapper = styled(Rnd)<ScreenWrapperProps>`
+const ScreenWrapper = styled(Rnd, {
+  shouldForwardProp: (propName) => propName !== '$areItemsDraggable'
+})<ScreenWrapperProps>`
   background-color: ${({ theme }) => theme.pureBlack};
   overflow: visible;
   width: 100dvw;

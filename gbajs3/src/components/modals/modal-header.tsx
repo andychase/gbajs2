@@ -1,4 +1,4 @@
-import { styled } from 'styled-components';
+import { styled } from '@mui/material/styles';
 
 import { useModalContext } from '../../hooks/context.tsx';
 import { HeaderWrapper, Header } from '../shared/styled.tsx';
@@ -9,7 +9,7 @@ type ModalHeaderProps = {
   onClose?: () => void;
 };
 
-const CloseButton = styled.button`
+const CloseButton = styled('button')`
   width: 1em;
   height: 1em;
   padding: 1rem;

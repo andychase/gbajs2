@@ -1,8 +1,8 @@
-import { styled } from 'styled-components';
+import { styled } from '@mui/material/styles';
 
 import type { ComponentProps } from 'react';
 
-const StyledButton = styled.button`
+const StyledButton = styled('button')`
   font-size: inherit;
   font-family: inherit;
   line-height: inherit;

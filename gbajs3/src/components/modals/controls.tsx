@@ -1,6 +1,6 @@
 import { Button, Tabs, Tab } from '@mui/material';
+import { styled } from '@mui/material/styles';
 import { useId, useState, type Dispatch, type ReactNode } from 'react';
-import { styled } from 'styled-components';
 
 import { KeyBindingsForm } from './controls/key-bindings-form.tsx';
 import { VirtualControlsForm } from './controls/virtual-controls-form.tsx';
@@ -43,7 +43,7 @@ const TabsWithBorder = styled(Tabs)`
   }
 `;
 
-const TabWrapper = styled.div`
+const TabWrapper = styled('div')`
   padding: 20px 40px 20px 40px;
 `;
 

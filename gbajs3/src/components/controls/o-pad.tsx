@@ -1,3 +1,4 @@
+import { styled } from '@mui/material/styles';
 import {
   useCallback,
   useEffect,
@@ -6,7 +7,6 @@ import {
   type PointerEvent
 } from 'react';
 import Draggable from 'react-draggable';
-import { styled } from 'styled-components';
 
 import {
   useDragContext,
@@ -42,14 +42,9 @@ type KeyState = {
   RIGHT?: number;
 };
 
-const BackgroundContainer = styled.section.attrs<BackgroundContainerProps>(
-  (props) => ({
-    style: {
-      top: props.$initialPosition?.top || '0',
-      left: props.$initialPosition?.left || '0'
-    }
-  })
-)`
+const BackgroundContainer = styled('section', {
+  shouldForwardProp: (propName) => propName !== '$areItemsDraggable'
+})<BackgroundContainerProps>`
   position: absolute;
   background-color: red;
   border-radius: 50%;
@@ -72,7 +67,7 @@ const BackgroundContainer = styled.section.attrs<BackgroundContainerProps>(
   }
 `;
 
-const CenterKnob = styled.div<CenterKnobProps>`
+const CenterKnob = styled('div')<CenterKnobProps>`
   position: absolute;
   height: 4rem;
   width: 4rem;
@@ -98,7 +93,7 @@ const CenterKnob = styled.div<CenterKnobProps>`
   }
 `;
 
-const DirectionArrow = styled.div`
+const DirectionArrow = styled('div')`
   width: 0;
   height: 0;
   border-style: solid;
@@ -282,7 +277,10 @@ export const OPad = ({ initialPosition }: OPadProps) => {
       <BackgroundContainer
         aria-label="O-Pad"
         ref={containerDragRef}
-        $initialPosition={initialPosition}
+        style={{
+          top: initialPosition?.top ?? '0',
+          left: initialPosition?.left ?? '0'
+        }}
         $areItemsDraggable={areItemsDraggable}
         {...pointerEvents}
       >

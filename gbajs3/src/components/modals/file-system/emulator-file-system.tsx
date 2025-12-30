@@ -1,5 +1,5 @@
 import { IconButton } from '@mui/material';
-import { alpha, styled as muiStyled } from '@mui/material/styles';
+import { alpha, styled } from '@mui/material/styles';
 import {
   SimpleTreeView,
   TreeItem,
@@ -8,7 +8,6 @@ import {
 } from '@mui/x-tree-view';
 import { Fragment, type ReactNode } from 'react';
 import { BiCloudDownload, BiTrash } from 'react-icons/bi';
-import { styled } from 'styled-components';
 
 import {
   CloseSquare,
@@ -24,24 +23,24 @@ type EmulatorFileSystemProps = {
   downloadFile: (path: string) => void;
 };
 
-const LeafLabelWrapper = styled.div`
+const LeafLabelWrapper = styled('div')`
   display: flex;
   gap: 10px;
   align-items: center;
   justify-content: space-between;
 `;
 
-const LeafText = styled.p`
+const LeafText = styled('p')`
   margin: 0;
   overflow-wrap: anywhere;
 `;
 
-const IconSeparator = styled.div`
+const IconSeparator = styled('div')`
   display: flex;
   gap: clamp(0.1rem, 2vw, 2rem);
 `;
 
-const StyledTreeItem = muiStyled((props: TreeItemProps) => (
+const StyledTreeItem = styled((props: TreeItemProps) => (
   <TreeItem {...props} />
 ))(({ theme }) => ({
   marginTop: 5,

@@ -4,10 +4,10 @@ import {
   AccordionSummary,
   Button
 } from '@mui/material';
+import { useTheme, styled } from '@mui/material/styles';
 import { useId, useState } from 'react';
 import { BiError } from 'react-icons/bi';
 import { FaArrowDown } from 'react-icons/fa';
-import { styled, useTheme } from 'styled-components';
 
 import { ModalBody } from './modal-body.tsx';
 import { ModalFooter } from './modal-footer.tsx';
@@ -30,7 +30,7 @@ type UploadPublicExternalRomsModalProps = {
   onLoadOrDismiss: (statusMsg: PublicRomUploadStatus) => void;
 };
 
-const LinkBreakWord = styled.a`
+const LinkBreakWord = styled('a')`
   word-break: break-all;
 `;
 

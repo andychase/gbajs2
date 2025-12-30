@@ -1,7 +1,7 @@
 import { Button } from '@mui/material';
+import { useTheme, styled } from '@mui/material/styles';
 import { useState, useId } from 'react';
 import { BiError } from 'react-icons/bi';
-import { styled, useTheme } from 'styled-components';
 
 import { ModalBody } from './modal-body.tsx';
 import { ModalFooter } from './modal-footer.tsx';
@@ -21,7 +21,7 @@ type SaveErrorProps = {
   $withMarginTop?: boolean;
 };
 
-const LoadSaveButton = styled.button`
+const LoadSaveButton = styled('button')`
   padding: 0.5rem 1rem;
   width: 100%;
   color: ${({ theme }) => theme.blueCharcoal};
@@ -36,18 +36,18 @@ const LoadSaveButton = styled.button`
   }
 `;
 
-const StyledLi = styled.li`
+const StyledLi = styled('li')`
   cursor: pointer;
 `;
 
-const SaveList = styled.ul`
+const SaveList = styled('ul')`
   list-style-type: none;
   display: flex;
   flex-direction: column;
   margin: 0;
   padding: 0;
 
-  & > ${StyledLi}:first-child > ${LoadSaveButton} {
+  & > ${StyledLi}:first-of-type > ${LoadSaveButton} {
     border-top-left-radius: 4px;
     border-top-right-radius: 4px;
   }
@@ -57,7 +57,7 @@ const SaveList = styled.ul`
     border-bottom-right-radius: 4px;
   }
 
-  & > ${StyledLi}:not(:first-child) > ${LoadSaveButton} {
+  & > ${StyledLi}:not(:first-of-type) > ${LoadSaveButton} {
     border-top-width: 0;
   }
 `;

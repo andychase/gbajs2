@@ -1,7 +1,7 @@
 import { Button } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 import { useId } from 'react';
 import { BiError } from 'react-icons/bi';
-import { useTheme } from 'styled-components';
 
 import { ModalBody } from './modal-body.tsx';
 import { ModalFooter } from './modal-footer.tsx';

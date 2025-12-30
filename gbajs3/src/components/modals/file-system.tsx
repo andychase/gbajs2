@@ -1,6 +1,6 @@
 import { Button } from '@mui/material';
+import { styled } from '@mui/material/styles';
 import { useCallback, useEffect, useState } from 'react';
-import { styled } from 'styled-components';
 
 import { EmulatorFileSystem } from './file-system/emulator-file-system.tsx';
 import { ModalBody } from './modal-body.tsx';

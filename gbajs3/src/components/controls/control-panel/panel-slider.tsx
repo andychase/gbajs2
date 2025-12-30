@@ -4,8 +4,8 @@ import {
   ClickAwayListener,
   useMediaQuery
 } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 import { useState } from 'react';
-import { useTheme } from 'styled-components';
 
 import {
   ContentSpan,

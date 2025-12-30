@@ -1,4 +1,5 @@
 import { useMediaQuery } from '@mui/material';
+import { useTheme, styled } from '@mui/material/styles';
 import { useLocalStorage } from '@uidotdev/usehooks';
 import { useId } from 'react';
 import toast from 'react-hot-toast';
@@ -9,7 +10,6 @@ import {
   BiSave,
   BiSolidBookmark
 } from 'react-icons/bi';
-import { styled, useTheme } from 'styled-components';
 
 import {
   saveStateSlotsLocalStorageKey,
@@ -41,7 +41,7 @@ const VirtualButtonTextLarge = styled(Copy)`
   font-size: 1.5em;
 `;
 
-const VirtualButtonTextSmall = styled.p`
+const VirtualButtonTextSmall = styled('p')`
   color: ${({ theme }) => theme.pureWhite};
   margin: 4px 5px;
 `;

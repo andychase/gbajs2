@@ -1,7 +1,43 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`<Screen /> > renders with default desktop position and size 1`] = `
-.c1 {
+.emotion-0 {
+  background-color: #000;
+  overflow: visible;
+  width: 100dvw;
+  height: calc(100dvw * 2 / 3);
+}
+
+@media only screen and (min-width: 600px) {
+  .emotion-0 {
+    width: min(
+          calc(100dvw - 285px),calc(85dvh * 3 / 2)
+        );
+    height: 85dvh;
+  }
+}
+
+@media only screen and (max-height: 450px) and (max-width: 1000px) and (orientation: landscape) {
+  .emotion-0 {
+    width: calc(100dvh * (3 / 2));
+    height: 100dvh;
+  }
+}
+
+.emotion-0::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  margin: 2px;
+  pointer-events: none;
+  border: 2px dashed #1c76fd;
+  visibility: hidden;
+}
+
+.emotion-2 {
   background-color: #000;
   image-rendering: -webkit-optimize-contrast;
   image-rendering: -moz-crisp-edges;
@@ -16,47 +52,13 @@ exports[`<Screen /> > renders with default desktop position and size 1`] = `
   image-rendering: pixelated;
 }
 
-.c0 {
-  background-color: #000;
-  overflow: visible;
-  width: 100dvw;
-  height: calc(100dvw * 2 / 3);
-}
-
-.c0::after {
-  content: '';
-  position: absolute;
-  top: -2px;
-  left: -2px;
-  right: -2px;
-  bottom: -2px;
-  margin: 2px;
-  pointer-events: none;
-  border: 2px dashed #1c76fd;
-  visibility: hidden;
-}
-
-@media only screen and (min-width: 600px) {
-  .c0 {
-    width: min(       calc(100dvw - 285px),       calc(85dvh * 3 / 2)     );
-    height: 85dvh;
-  }
-}
-
-@media only screen and (max-height: 450px) and (max-width: 1000px) and (orientation: landscape) {
-  .c0 {
-    width: calc(100dvh * (3 / 2));
-    height: 100dvh;
-  }
-}
-
 <div
-  class="c0 react-draggable"
+  class="emotion-0 emotion-1 react-draggable"
   data-testid="screen-wrapper"
   style="position: absolute; user-select: auto; display: inline-block; top: 0px; left: 0px; cursor: auto; transform: translate(520px,30px); max-width: 9007199254740991px; max-height: 9007199254740991px; box-sizing: border-box; flex-shrink: 0;"
 >
   <canvas
-    class="c1"
+    class="emotion-2 emotion-3"
     data-testid="screen-wrapper:render-canvas"
     height="160"
     width="240"
@@ -66,7 +68,43 @@ exports[`<Screen /> > renders with default desktop position and size 1`] = `
 `;
 
 exports[`<Screen /> > renders with default mobile position and size 1`] = `
-.c1 {
+.emotion-0 {
+  background-color: #000;
+  overflow: visible;
+  width: 100dvw;
+  height: calc(100dvw * 2 / 3);
+}
+
+@media only screen and (min-width: 600px) {
+  .emotion-0 {
+    width: min(
+          calc(100dvw - 285px),calc(85dvh * 3 / 2)
+        );
+    height: 85dvh;
+  }
+}
+
+@media only screen and (max-height: 450px) and (max-width: 1000px) and (orientation: landscape) {
+  .emotion-0 {
+    width: calc(100dvh * (3 / 2));
+    height: 100dvh;
+  }
+}
+
+.emotion-0::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  margin: 2px;
+  pointer-events: none;
+  border: 2px dashed #1c76fd;
+  visibility: hidden;
+}
+
+.emotion-2 {
   background-color: #000;
   image-rendering: -webkit-optimize-contrast;
   image-rendering: -moz-crisp-edges;
@@ -81,47 +119,13 @@ exports[`<Screen /> > renders with default mobile position and size 1`] = `
   image-rendering: pixelated;
 }
 
-.c0 {
-  background-color: #000;
-  overflow: visible;
-  width: 100dvw;
-  height: calc(100dvw * 2 / 3);
-}
-
-.c0::after {
-  content: '';
-  position: absolute;
-  top: -2px;
-  left: -2px;
-  right: -2px;
-  bottom: -2px;
-  margin: 2px;
-  pointer-events: none;
-  border: 2px dashed #1c76fd;
-  visibility: hidden;
-}
-
-@media only screen and (min-width: 600px) {
-  .c0 {
-    width: min(       calc(100dvw - 285px),       calc(85dvh * 3 / 2)     );
-    height: 85dvh;
-  }
-}
-
-@media only screen and (max-height: 450px) and (max-width: 1000px) and (orientation: landscape) {
-  .c0 {
-    width: calc(100dvh * (3 / 2));
-    height: 100dvh;
-  }
-}
-
 <div
-  class="c0 react-draggable"
+  class="emotion-0 emotion-1 react-draggable"
   data-testid="screen-wrapper"
   style="position: absolute; user-select: auto; display: inline-block; top: 0px; left: 0px; cursor: auto; transform: translate(0px,0px); max-width: 9007199254740991px; max-height: 9007199254740991px; box-sizing: border-box; flex-shrink: 0;"
 >
   <canvas
-    class="c1"
+    class="emotion-2 emotion-3"
     data-testid="screen-wrapper:render-canvas"
     height="160"
     width="240"

@@ -1,4 +1,5 @@
 import { useMediaQuery } from '@mui/material';
+import { useTheme, styled } from '@mui/material/styles';
 import { useId, useRef, useState } from 'react';
 import Draggable from 'react-draggable';
 import toast from 'react-hot-toast';
@@ -27,7 +28,6 @@ import {
   BiDownload
 } from 'react-icons/bi';
 import { MdImportExport } from 'react-icons/md';
-import { styled, useTheme } from 'styled-components';
 
 import { NavigationMenuWidth } from './consts.tsx';
 import { NavComponent } from './nav-component.tsx';
@@ -65,7 +65,7 @@ type ExpandableComponentProps = {
   $isExpanded?: boolean;
 };
 
-const NavigationMenuWrapper = styled.div<ExpandableComponentProps>`
+const NavigationMenuWrapper = styled('div')<ExpandableComponentProps>`
   display: flex;
   flex-direction: column;
   width: ${NavigationMenuWidth}px;
@@ -86,7 +86,7 @@ const NavigationMenuWrapper = styled.div<ExpandableComponentProps>`
   `};
 `;
 
-const StyledMenuHeader = styled.h2`
+const StyledMenuHeader = styled('h2')`
   color: ${({ theme }) => theme.pureWhite};
   padding: 0.5rem 1rem;
   font-size: calc(1.3rem + 0.6vw);
@@ -100,7 +100,7 @@ const StyledMenuHeader = styled.h2`
   }
 `;
 
-const MenuItemWrapper = styled.ul`
+const MenuItemWrapper = styled('ul')`
   margin-bottom: 0;
   margin-top: 0;
   list-style: none;
@@ -156,7 +156,7 @@ const HamburgerButton = styled(ButtonBase)<
   `}
 `;
 
-const NavigationMenuClearDismiss = styled.button`
+const NavigationMenuClearDismiss = styled('button')`
   position: absolute;
   width: calc(100dvw - ${NavigationMenuWidth}px);
   left: ${NavigationMenuWidth}px;

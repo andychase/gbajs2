@@ -1,6 +1,6 @@
 import { Button } from '@mui/material';
+import { styled } from '@mui/material/styles';
 import { ErrorBoundary } from 'react-error-boundary';
-import { styled } from 'styled-components';
 
 import {
   BodyWrapper,
@@ -16,7 +16,7 @@ type FallbackRendererProps = {
   resetErrorBoundary: () => void;
 };
 
-const ErrorWrapper = styled.div`
+const ErrorWrapper = styled('div')`
   background-color: ${({ theme }) => theme.pureWhite};
   border-radius: 4px;
   display: flex;
@@ -37,7 +37,7 @@ const ErrorWrapper = styled.div`
   }
 `;
 
-const Overlay = styled.div`
+const Overlay = styled('div')`
   background-color: rgba(0, 0, 0, 0.5);
   width: 100dvw;
   height: 100dvh;
@@ -52,7 +52,7 @@ const PaddedBodyWrapper = styled(BodyWrapper)`
   padding: 1em 1em 0 1em;
 `;
 
-const ErrorImage = styled.img`
+const ErrorImage = styled('img')`
   object-fit: contain;
   max-width: 100%;
 `;
@@ -62,11 +62,11 @@ const CenteredFooter = styled(FooterWrapper)`
   flex-wrap: wrap;
 `;
 
-const ImageWrapper = styled.div`
+const ImageWrapper = styled('div')`
   position: relative;
 `;
 
-const AttributionLink = styled.a`
+const AttributionLink = styled('a')`
   font-size: 5px;
   position: absolute;
   right: 15%;

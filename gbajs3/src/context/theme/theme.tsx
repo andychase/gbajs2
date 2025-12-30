@@ -1,6 +1,6 @@
-import type { DefaultTheme } from 'styled-components';
+import type { ThemeOptions } from '@mui/material/styles';
 
-export const GbaDarkTheme: DefaultTheme = {
+export const GbaDarkTheme: ThemeOptions = {
   // media queries
   isLargerThanPhone: 'only screen and (min-width: 600px)',
   isMobileLandscape:

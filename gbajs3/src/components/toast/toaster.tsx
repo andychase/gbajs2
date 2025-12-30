@@ -1,5 +1,5 @@
+import { useTheme } from '@mui/material/styles';
 import { Toaster } from 'react-hot-toast';
-import { useTheme } from 'styled-components';
 
 export const ToasterWithDefaults = () => {
   const theme = useTheme();

@@ -13,6 +13,7 @@ import {
   ToggleButtonGroup,
   type CheckboxProps
 } from '@mui/material';
+import { styled } from '@mui/material/styles';
 import { useId, useCallback, useState } from 'react';
 import {
   Controller,
@@ -21,7 +22,6 @@ import {
   type SubmitHandler
 } from 'react-hook-form';
 import { BiTrash } from 'react-icons/bi';
-import { styled } from 'styled-components';
 
 import { ModalBody } from './modal-body.tsx';
 import { ModalFooter } from './modal-footer.tsx';
@@ -60,23 +60,23 @@ const defaultFileUrl: { url: string; type: keyof FileTypes } = {
 
 const defaultNoSelectedRom = 'none';
 
-const GridContainer = styled.div`
+const GridContainer = styled('div')`
   display: grid;
 `;
 
-const GridItem = styled.div<{ $isVisible: boolean }>`
+const GridItem = styled('div')<{ $isVisible: boolean }>`
   grid-area: 1 / 1;
   visibility: ${({ $isVisible }) => ($isVisible ? 'visible' : 'hidden')};
   min-width: 0;
 `;
 
-const UrlFieldContainer = styled.div`
+const UrlFieldContainer = styled('div')`
   display: flex;
   flex-direction: column;
   gap: 10px;
 `;
 
-const UrlInputsContainer = styled.div`
+const UrlInputsContainer = styled('div')`
   display: flex;
   flex-direction: column;
   gap: 1em;

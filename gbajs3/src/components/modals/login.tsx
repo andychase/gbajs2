@@ -1,8 +1,8 @@
 import { TextField, Button } from '@mui/material';
+import { useTheme, styled } from '@mui/material/styles';
 import { useId } from 'react';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { BiError } from 'react-icons/bi';
-import { styled, useTheme } from 'styled-components';
 
 import { ModalBody } from './modal-body.tsx';
 import { ModalFooter } from './modal-footer.tsx';
@@ -17,7 +17,7 @@ type InputProps = {
   password: string;
 };
 
-const StyledForm = styled.form`
+const StyledForm = styled('form')`
   display: flex;
   flex-direction: column;
   gap: 15px;

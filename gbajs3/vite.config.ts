@@ -1,18 +1,38 @@
 /// <reference types="vitest/config" />
-import { defineConfig } from 'vite';
-import { coverageConfigDefaults } from 'vitest/config';
-import react from '@vitejs/plugin-react';
-import { VitePWA } from 'vite-plugin-pwa';
+import react from '@vitejs/plugin-react-swc';
 import { visualizer } from 'rollup-plugin-visualizer';
+import { defineConfig } from 'vite';
 import { createHtmlPlugin } from 'vite-plugin-html';
+import { VitePWA } from 'vite-plugin-pwa';
+import { coverageConfigDefaults } from 'vitest/config';
 
+// eslint-disable-next-line import/no-default-export
 export default defineConfig(({ mode }) => {
   const withCOIServiceWorker = mode === 'with-coi-serviceworker';
 
   return {
     base: './',
     plugins: [
-      react(),
+      react({
+        plugins: [
+          [
+            '@swc/plugin-emotion',
+            {
+              // items for component selectors with MUI+SWC
+              autoLabel: 'dev-only',
+              labelFormat: '[local]',
+              importMap: {
+                '@mui/material/styles': {
+                  styled: {
+                    canonicalImport: ['@emotion/styled', 'default'],
+                    styledBaseImport: ['@mui/material/styles', 'styled']
+                  }
+                }
+              }
+            }
+          ]
+        ]
+      }),
       withCOIServiceWorker
         ? [
             createHtmlPlugin({
@@ -147,8 +167,6 @@ export default defineConfig(({ mode }) => {
 
             mgba: ['@thenick775/mgba-wasm'],
 
-            styled: ['styled-components'],
-
             onboarding: ['react-ios-pwa-prompt-ts'],
 
             dnd: ['react-draggable', 'react-dropzone', 'react-rnd'],
@@ -183,7 +201,7 @@ export default defineConfig(({ mode }) => {
       globals: true,
       restoreMocks: true,
       environment: 'jsdom',
-      setupFiles: ['./test/setup.ts', 'jest-styled-components'],
+      setupFiles: ['./test/setup.ts'],
       coverage: {
         provider: 'v8',
         include: ['src'],

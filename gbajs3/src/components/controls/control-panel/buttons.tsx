@@ -1,5 +1,5 @@
 import { IconButton } from '@mui/material';
-import { useTheme } from 'styled-components';
+import { useTheme } from '@mui/material/styles';
 
 import { PanelControlWrapper, PanelControlButton } from './styled.tsx';
 

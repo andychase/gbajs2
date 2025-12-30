@@ -1,5 +1,5 @@
+import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
-import { ThemeProvider } from 'styled-components';
 
 import { AuthProvider } from '../src/context/auth/auth-provider.tsx';
 import { EmulatorContextProvider } from '../src/context/emulator/emulator-context-provider.tsx';
@@ -12,8 +12,10 @@ import type { ReactNode } from 'react';
 
 const queryClient = new QueryClient();
 
+const theme = createTheme(GbaDarkTheme);
+
 export const AllTheProviders = ({ children }: { children: ReactNode }) => (
-  <ThemeProvider theme={GbaDarkTheme}>
+  <ThemeProvider theme={theme}>
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <EmulatorContextProvider>

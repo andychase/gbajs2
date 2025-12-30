@@ -1,4 +1,4 @@
-import { styled } from 'styled-components';
+import { styled } from '@mui/material/styles';
 
 import { ButtonBase } from '../shared/custom-button-base.tsx';
 
@@ -25,7 +25,7 @@ type NavLeafButtonProps = {
   $withPadding: boolean;
 };
 
-const NavLeafWrapper = styled.li<LeafWrapperProps>`
+const NavLeafWrapper = styled('li')<LeafWrapperProps>`
   cursor: pointer;
   color: ${({ theme }) => theme.gbaThemeBlue};
   list-style-type: none;
@@ -59,11 +59,11 @@ const NavLeafButton = styled(ButtonBase)<NavLeafButtonProps>`
   cursor: pointer;
 `;
 
-const NavTitle = styled.span`
+const NavTitle = styled('span')`
   margin-left: 0.5rem;
 `;
 
-const NavLink = styled.a<NavLinkProps>`
+const NavLink = styled('a')<NavLinkProps>`
   display: block;
   text-decoration: none;
   color: unset;

@@ -1,4 +1,5 @@
 import { useMediaQuery } from '@mui/material';
+import { useTheme, styled } from '@mui/material/styles';
 import { useLocalStorage } from '@uidotdev/usehooks';
 import { useCallback, useId, useRef, useState } from 'react';
 import { IconContext } from 'react-icons';
@@ -17,7 +18,6 @@ import {
 } from 'react-icons/bi';
 import { TbResize } from 'react-icons/tb';
 import { Rnd } from 'react-rnd';
-import { styled, useTheme } from 'styled-components';
 
 import {
   emulatorFFMultiplierLocalStorageKey,
@@ -47,7 +47,9 @@ type PanelProps = {
   $areItemsDraggable: boolean;
 };
 
-const Panel = styled.ul<PanelProps>`
+const Panel = styled('ul', {
+  shouldForwardProp: (propName) => !propName.toString().startsWith('$')
+})<PanelProps>`
   background-color: ${({ theme }) => theme.panelBlueGray};
   list-style: none;
   padding: 10px;

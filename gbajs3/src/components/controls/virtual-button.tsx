@@ -1,3 +1,4 @@
+import { styled } from '@mui/material/styles';
 import {
   useRef,
   type ReactNode,
@@ -5,7 +6,6 @@ import {
   type PointerEventHandler
 } from 'react';
 import Draggable from 'react-draggable';
-import { styled } from 'styled-components';
 
 import {
   useDragContext,
@@ -61,14 +61,9 @@ const VirtualButtonBase = styled(ButtonBase)`
   }
 `;
 
-const CircularButton = styled(VirtualButtonBase).attrs<CircularButtonProps>(
-  (props) => ({
-    style: {
-      top: props.$initialPosition?.top || '0',
-      left: props.$initialPosition?.left || '0'
-    }
-  })
-)<CircularButtonProps>`
+const CircularButton = styled(VirtualButtonBase, {
+  shouldForwardProp: (propName) => propName !== '$areItemsDraggable'
+})<CircularButtonProps>`
   width: ${({ $diameter = 60 }) => $diameter}px;
   height: ${({ $diameter = 60 }) => $diameter}px;
   border-radius: 100px;
@@ -78,14 +73,9 @@ const CircularButton = styled(VirtualButtonBase).attrs<CircularButtonProps>(
     $areItemsDraggable ? 'dashed' : 'solid'};
 `;
 
-const RectangularButton = styled(
-  VirtualButtonBase
-).attrs<RectangularButtonProps>((props) => ({
-  style: {
-    top: props.$initialPosition?.top ?? '0',
-    left: props.$initialPosition?.left ?? '0'
-  }
-}))`
+const RectangularButton = styled(VirtualButtonBase, {
+  shouldForwardProp: (propName) => propName !== '$areItemsDraggable'
+})<RectangularButtonProps>`
   border-radius: 16px;
   width: fit-content;
   min-width: 85px;
@@ -160,6 +150,10 @@ export const VirtualButton = ({
     'aria-label': ariaLabel,
     // used for "virtual controls" that don't interface with the emulator
     onPointerDown: !areItemsDraggable ? onPointerDown : undefined,
+    style: {
+      top: initialPosition?.top ?? '0',
+      left: initialPosition?.left ?? '0'
+    },
     ...emulatorPointerEvents,
     ...keyboardEvents
   };

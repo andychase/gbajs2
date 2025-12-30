@@ -1,7 +1,7 @@
 import { useMediaQuery } from '@mui/material';
+import { useTheme, styled } from '@mui/material/styles';
 import { useLocalStorage } from '@uidotdev/usehooks';
 import { useForm, type SubmitHandler } from 'react-hook-form';
-import { styled, useTheme } from 'styled-components';
 
 import { virtualControlsLocalStorageKey } from '../../controls/consts.tsx';
 import { ManagedCheckbox } from '../../shared/managed-checkbox.tsx';
@@ -23,7 +23,7 @@ export type AreVirtualControlsEnabledProps = {
 
 type ControlsInputProps = AreVirtualControlsEnabledProps;
 
-const StyledForm = styled.form`
+const StyledForm = styled('form')`
   display: flex;
   flex-direction: column;
 `;

@@ -1,6 +1,6 @@
 import { Button } from '@mui/material';
+import { styled } from '@mui/material/styles';
 import { useId } from 'react';
-import { styled } from 'styled-components';
 
 import { ModalBody } from './modal-body.tsx';
 import { ModalFooter } from './modal-footer.tsx';
@@ -9,7 +9,7 @@ import { useEmulatorContext, useModalContext } from '../../hooks/context.tsx';
 import { useRunGame } from '../../hooks/emulator/use-run-game.tsx';
 import { CenteredText } from '../shared/styled.tsx';
 
-const LoadRomButton = styled.button`
+const LoadRomButton = styled('button')`
   padding: 0.5rem 1rem;
   width: 100%;
   color: ${({ theme }) => theme.blueCharcoal};
@@ -24,18 +24,18 @@ const LoadRomButton = styled.button`
   }
 `;
 
-const StyledLi = styled.li`
+const StyledLi = styled('li')`
   cursor: pointer;
 `;
 
-const RomList = styled.ul`
+const RomList = styled('ul')`
   list-style-type: none;
   display: flex;
   flex-direction: column;
   margin: 0;
   padding: 0;
 
-  & > ${StyledLi}:first-child > ${LoadRomButton} {
+  & > ${StyledLi}:first-of-type > ${LoadRomButton} {
     border-top-left-radius: 4px;
     border-top-right-radius: 4px;
   }
@@ -45,7 +45,7 @@ const RomList = styled.ul`
     border-bottom-right-radius: 4px;
   }
 
-  & > ${StyledLi}:not(:first-child) > ${LoadRomButton} {
+  & > ${StyledLi}:not(:first-of-type) > ${LoadRomButton} {
     border-top-width: 0;
   }
 `;

@@ -1,5 +1,5 @@
+import { useTheme } from '@mui/material/styles';
 import { FaGripLines } from 'react-icons/fa';
-import { useTheme } from 'styled-components';
 
 type GripperHandleProps = {
   variation?: 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight';

@@ -8,10 +8,10 @@ import {
   Tabs,
   TextField
 } from '@mui/material';
+import { styled } from '@mui/material/styles';
 import { useLocalStorage } from '@uidotdev/usehooks';
 import { useId, useState, type ReactNode } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { styled } from 'styled-components';
 
 import { ModalBody } from './modal-body.tsx';
 import { ModalFooter } from './modal-footer.tsx';
@@ -62,7 +62,7 @@ type TabPanelProps = {
   value: number;
 };
 
-const StyledForm = styled.form`
+const StyledForm = styled('form')`
   display: flex;
   flex-direction: column;
   gap: 15px;
@@ -72,14 +72,14 @@ const StyledModalBody = styled(ModalBody)`
   padding: 0;
 `;
 
-const TabWrapper = styled.div`
+const TabWrapper = styled('div')`
   display: flex;
   flex-direction: column;
   gap: 1rem;
   padding: 1rem;
 `;
 
-const TabFlexWrapper = styled.div`
+const TabFlexWrapper = styled('div')`
   flex-grow: 1;
   display: flex;
 `;

@@ -1,31 +1,377 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`<ControlPanel /> > renders with default desktop position and size 1`] = `
-.c2 {
+.emotion-0 {
+  background-color: #4f555a;
+  list-style: none;
+  padding: 10px;
+  margin: 0;
+  max-width: 100%;
+  display: grid;
+  grid-template-columns: repeat(10,1fr);
+  grid-template-rows: 1fr 1fr;
+  gap: 10px 10px;
+  grid-template-areas: 'play play quit quit drag drag resize resize rewind rewind' 'volume volume volume volume volume fastForward fastForward fastForward fastForward fastForward';
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-box-flex-wrap: wrap;
+  -webkit-flex-wrap: wrap;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+  -webkit-box-pack: space-evenly;
+  -ms-flex-pack: space-evenly;
+  -webkit-justify-content: space-evenly;
+  justify-content: space-evenly;
+  gap: 10px;
+}
+
+.emotion-2 {
+  display: contents;
+}
+
+.emotion-5 {
   font-size: inherit;
   font-family: inherit;
   line-height: inherit;
   padding: inherit;
-}
-
-.c1 {
-  display: contents;
-}
-
-.c8 {
-  display: contents;
-}
-
-.c9 {
   cursor: pointer;
   background-color: #a9a9a9;
   border-radius: 0.25rem;
   min-width: 40px;
   min-height: 40px;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
   width: fit-content;
+  height: -webkit-fit-content;
+  height: -moz-fit-content;
   height: fit-content;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
   align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  color: #000;
+  width: 100%;
+  grid-area: play;
+  border: none;
+  -webkit-box-flex: 1;
+  -webkit-flex-grow: 1;
+  -ms-flex-positive: 1;
+  flex-grow: 1;
+  margin: 0;
+  padding: 0;
+}
+
+@media only screen and (min-width: 600px) {
+  .emotion-5 {
+    width: auto;
+  }
+}
+
+.emotion-5:focus {
+  box-shadow: 0 0 0 0.25rem rgba(13,110,253,0.25);
+}
+
+.emotion-5:active {
+  color: #1c76fd;
+}
+
+@media only screen and (max-height: 450px) and (max-width: 1000px) and (orientation: landscape) {
+  .emotion-5 {
+    -webkit-flex-shrink: 1;
+    -ms-flex-negative: 1;
+    flex-shrink: 1;
+    min-width: unset;
+  }
+}
+
+.emotion-10 {
+  font-size: inherit;
+  font-family: inherit;
+  line-height: inherit;
+  padding: inherit;
+  cursor: pointer;
+  background-color: #a9a9a9;
+  border-radius: 0.25rem;
+  min-width: 40px;
+  min-height: 40px;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+  height: -webkit-fit-content;
+  height: -moz-fit-content;
+  height: fit-content;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  color: #000;
+  width: 100%;
+  grid-area: quit;
+  border: none;
+  -webkit-box-flex: 1;
+  -webkit-flex-grow: 1;
+  -ms-flex-positive: 1;
+  flex-grow: 1;
+  margin: 0;
+  padding: 0;
+}
+
+@media only screen and (min-width: 600px) {
+  .emotion-10 {
+    width: auto;
+  }
+}
+
+.emotion-10:focus {
+  box-shadow: 0 0 0 0.25rem rgba(13,110,253,0.25);
+}
+
+.emotion-10:active {
+  color: #1c76fd;
+}
+
+@media only screen and (max-height: 450px) and (max-width: 1000px) and (orientation: landscape) {
+  .emotion-10 {
+    -webkit-flex-shrink: 1;
+    -ms-flex-negative: 1;
+    flex-shrink: 1;
+    min-width: unset;
+  }
+}
+
+.emotion-15 {
+  font-size: inherit;
+  font-family: inherit;
+  line-height: inherit;
+  padding: inherit;
+  cursor: pointer;
+  background-color: #a9a9a9;
+  border-radius: 0.25rem;
+  min-width: 40px;
+  min-height: 40px;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+  height: -webkit-fit-content;
+  height: -moz-fit-content;
+  height: fit-content;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  color: #000;
+  width: 100%;
+  grid-area: drag;
+  border: none;
+  -webkit-box-flex: 1;
+  -webkit-flex-grow: 1;
+  -ms-flex-positive: 1;
+  flex-grow: 1;
+  margin: 0;
+  padding: 0;
+}
+
+@media only screen and (min-width: 600px) {
+  .emotion-15 {
+    width: auto;
+  }
+}
+
+.emotion-15:focus {
+  box-shadow: 0 0 0 0.25rem rgba(13,110,253,0.25);
+}
+
+.emotion-15:active {
+  color: #1c76fd;
+}
+
+@media only screen and (max-height: 450px) and (max-width: 1000px) and (orientation: landscape) {
+  .emotion-15 {
+    -webkit-flex-shrink: 1;
+    -ms-flex-negative: 1;
+    flex-shrink: 1;
+    min-width: unset;
+  }
+}
+
+.emotion-20 {
+  font-size: inherit;
+  font-family: inherit;
+  line-height: inherit;
+  padding: inherit;
+  cursor: pointer;
+  background-color: #a9a9a9;
+  border-radius: 0.25rem;
+  min-width: 40px;
+  min-height: 40px;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+  height: -webkit-fit-content;
+  height: -moz-fit-content;
+  height: fit-content;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  color: #000;
+  width: 100%;
+  grid-area: resize;
+  border: none;
+  -webkit-box-flex: 1;
+  -webkit-flex-grow: 1;
+  -ms-flex-positive: 1;
+  flex-grow: 1;
+  margin: 0;
+  padding: 0;
+}
+
+@media only screen and (min-width: 600px) {
+  .emotion-20 {
+    width: auto;
+  }
+}
+
+.emotion-20:focus {
+  box-shadow: 0 0 0 0.25rem rgba(13,110,253,0.25);
+}
+
+.emotion-20:active {
+  color: #1c76fd;
+}
+
+@media only screen and (max-height: 450px) and (max-width: 1000px) and (orientation: landscape) {
+  .emotion-20 {
+    -webkit-flex-shrink: 1;
+    -ms-flex-negative: 1;
+    flex-shrink: 1;
+    min-width: unset;
+  }
+}
+
+.emotion-25 {
+  font-size: inherit;
+  font-family: inherit;
+  line-height: inherit;
+  padding: inherit;
+  cursor: pointer;
+  background-color: #a9a9a9;
+  border-radius: 0.25rem;
+  min-width: 40px;
+  min-height: 40px;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+  height: -webkit-fit-content;
+  height: -moz-fit-content;
+  height: fit-content;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  color: #000;
+  width: 100%;
+  grid-area: rewind;
+  border: none;
+  -webkit-box-flex: 1;
+  -webkit-flex-grow: 1;
+  -ms-flex-positive: 1;
+  flex-grow: 1;
+  margin: 0;
+  padding: 0;
+}
+
+@media only screen and (min-width: 600px) {
+  .emotion-25 {
+    width: auto;
+  }
+}
+
+.emotion-25:focus {
+  box-shadow: 0 0 0 0.25rem rgba(13,110,253,0.25);
+}
+
+.emotion-25:active {
+  color: #1c76fd;
+}
+
+@media only screen and (max-height: 450px) and (max-width: 1000px) and (orientation: landscape) {
+  .emotion-25 {
+    -webkit-flex-shrink: 1;
+    -ms-flex-negative: 1;
+    flex-shrink: 1;
+    min-width: unset;
+  }
+}
+
+.emotion-31 {
+  cursor: pointer;
+  background-color: #a9a9a9;
+  border-radius: 0.25rem;
+  min-width: 40px;
+  min-height: 40px;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+  height: -webkit-fit-content;
+  height: -moz-fit-content;
+  height: fit-content;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
   justify-content: center;
   color: #000;
   width: 100%;
@@ -33,16 +379,349 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
   max-height: 40px;
 }
 
-.c11 {
+@media only screen and (min-width: 600px) {
+  .emotion-31 {
+    width: auto;
+  }
+}
+
+.emotion-33 {
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  position: relative;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  background-color: transparent;
+  outline: 0;
+  border: 0;
+  margin: 0;
+  border-radius: 0;
+  padding: 0;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  vertical-align: middle;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  -webkit-text-decoration: none;
+  text-decoration: none;
+  color: inherit;
+  text-align: center;
+  -webkit-flex: 0 0 auto;
+  -ms-flex: 0 0 auto;
+  flex: 0 0 auto;
+  font-size: 1.5rem;
+  padding: 8px;
+  border-radius: 50%;
+  color: rgba(0, 0, 0, 0.54);
+  -webkit-transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  --IconButton-hoverBg: rgba(0, 0, 0, 0.04);
+  padding: 5px;
+  font-size: 1.125rem;
+  padding: 0px;
+  color: #000;
+}
+
+.emotion-33::-moz-focus-inner {
+  border-style: none;
+}
+
+.emotion-33.Mui-disabled {
+  pointer-events: none;
+  cursor: default;
+}
+
+@media print {
+  .emotion-33 {
+    -webkit-print-color-adjust: exact;
+    color-adjust: exact;
+  }
+}
+
+.emotion-33:hover {
+  background-color: var(--IconButton-hoverBg);
+}
+
+@media (hover: none) {
+  .emotion-33:hover {
+    background-color: transparent;
+  }
+}
+
+.emotion-33.Mui-disabled {
+  background-color: transparent;
+  color: rgba(0, 0, 0, 0.26);
+}
+
+.emotion-33.MuiIconButton-loading {
+  color: transparent;
+}
+
+.emotion-33:active {
+  color: #1c76fd;
+}
+
+.emotion-35 {
+  border-radius: 12px;
+  box-sizing: content-box;
+  display: inline-block;
+  position: relative;
+  cursor: pointer;
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+  color: #1976d2;
+  height: 4px;
+  width: 100%;
+  padding: 13px 0;
+  -webkit-box-flex: 1;
+  -webkit-flex-grow: 1;
+  -ms-flex-positive: 1;
+  flex-grow: 1;
+  width: 85px;
+  margin: 0 10px;
+  max-height: 40px;
+}
+
+@media print {
+  .emotion-35 {
+    -webkit-print-color-adjust: exact;
+    color-adjust: exact;
+  }
+}
+
+.emotion-35.Mui-disabled {
+  pointer-events: none;
+  cursor: default;
+  color: #bdbdbd;
+}
+
+.emotion-35.MuiSlider-dragging .MuiSlider-thumb,
+.emotion-35.MuiSlider-dragging .MuiSlider-track {
+  -webkit-transition: none;
+  transition: none;
+}
+
+@media (pointer: coarse) {
+  .emotion-35 {
+    padding: 20px 0;
+  }
+}
+
+.emotion-35>.MuiSlider-markActive {
+  opacity: 1;
+  background-color: currentColor;
+}
+
+.emotion-36 {
+  display: block;
+  position: absolute;
+  border-radius: inherit;
+  background-color: currentColor;
+  opacity: 0.38;
+  width: 100%;
+  height: inherit;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+  -moz-transform: translateY(-50%);
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
+
+.emotion-37 {
+  display: block;
+  position: absolute;
+  border-radius: inherit;
+  border: 1px solid currentColor;
+  background-color: currentColor;
+  -webkit-transition: left 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,width 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,bottom 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,height 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  transition: left 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,width 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,bottom 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,height 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  height: inherit;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+  -moz-transform: translateY(-50%);
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
+
+.emotion-38 {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  border-radius: 1px;
+  background-color: currentColor;
+  top: 50%;
+  -webkit-transform: translate(-1px, -50%);
+  -moz-transform: translate(-1px, -50%);
+  -ms-transform: translate(-1px, -50%);
+  transform: translate(-1px, -50%);
+  background-color: #fff;
+  opacity: 0.8;
+}
+
+.emotion-49 {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  box-sizing: border-box;
+  border-radius: 50%;
+  outline: 0;
+  background-color: currentColor;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  -webkit-transition: box-shadow 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,left 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,bottom 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  transition: box-shadow 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,left 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,bottom 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  top: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  -moz-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}
+
+.emotion-49::before {
+  position: absolute;
+  content: "";
+  border-radius: inherit;
+  width: 100%;
+  height: 100%;
+  box-shadow: 0px 3px 1px -2px rgba(0,0,0,0.2),0px 2px 2px 0px rgba(0,0,0,0.14),0px 1px 5px 0px rgba(0,0,0,0.12);
+}
+
+.emotion-49::after {
+  position: absolute;
+  content: "";
+  border-radius: 50%;
+  width: 42px;
+  height: 42px;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  -moz-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}
+
+.emotion-49.Mui-disabled:hover {
+  box-shadow: none;
+}
+
+.emotion-49:hover,
+.emotion-49.Mui-focusVisible {
+  box-shadow: 0px 0px 0px 8px rgba(25, 118, 210, 0.16);
+}
+
+@media (hover: none) {
+  .emotion-49:hover,
+  .emotion-49.Mui-focusVisible {
+    box-shadow: none;
+  }
+}
+
+.emotion-49.Mui-active {
+  box-shadow: 0px 0px 0px 14px rgba(25, 118, 210, 0.16);
+}
+
+.emotion-50 {
+  z-index: 1;
+  white-space: nowrap;
+  font-family: "Roboto","Helvetica","Arial",sans-serif;
+  font-weight: 500;
+  font-size: 0.875rem;
+  line-height: 1.43;
+  letter-spacing: 0.01071em;
+  -webkit-transition: -webkit-transform 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  transition: transform 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  position: absolute;
+  background-color: #757575;
+  border-radius: 2px;
+  color: #fff;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  padding: 0.25rem 0.75rem;
+  -webkit-transform: translateY(-100%) scale(0);
+  -moz-transform: translateY(-100%) scale(0);
+  -ms-transform: translateY(-100%) scale(0);
+  transform: translateY(-100%) scale(0);
+  top: -10px;
+  transform-origin: bottom center;
+}
+
+.emotion-50::before {
+  position: absolute;
+  content: "";
+  width: 8px;
+  height: 8px;
+  -webkit-transform: translate(-50%, 50%) rotate(45deg);
+  -moz-transform: translate(-50%, 50%) rotate(45deg);
+  -ms-transform: translate(-50%, 50%) rotate(45deg);
+  transform: translate(-50%, 50%) rotate(45deg);
+  background-color: inherit;
+  bottom: 0;
+  left: 50%;
+}
+
+.emotion-50.MuiSlider-valueLabelOpen {
+  -webkit-transform: translateY(-100%) scale(1);
+  -moz-transform: translateY(-100%) scale(1);
+  -ms-transform: translateY(-100%) scale(1);
+  transform: translateY(-100%) scale(1);
+}
+
+.emotion-56 {
   cursor: pointer;
   background-color: #a9a9a9;
   border-radius: 0.25rem;
   min-width: 40px;
   min-height: 40px;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
   width: fit-content;
+  height: -webkit-fit-content;
+  height: -moz-fit-content;
   height: fit-content;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
   align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
   justify-content: center;
   color: #000;
   width: 100%;
@@ -50,266 +729,41 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
   max-height: 40px;
 }
 
-.c10 {
-  flex-grow: 1;
+@media only screen and (min-width: 600px) {
+  .emotion-56 {
+    width: auto;
+  }
 }
 
-.c10 >.MuiSlider-markActive {
-  opacity: 1;
+.emotion-64 {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  border-radius: 1px;
   background-color: currentColor;
-}
-
-.c3 {
-  cursor: pointer;
-  background-color: #a9a9a9;
-  border-radius: 0.25rem;
-  min-width: 40px;
-  min-height: 40px;
-  width: fit-content;
-  height: fit-content;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #000;
-  width: 100%;
-  grid-area: play;
-  border: none;
-  flex-grow: 1;
-  margin: 0;
-  padding: 0;
-}
-
-.c3:focus {
-  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-}
-
-.c3:active {
-  color: #1c76fd;
-}
-
-.c4 {
-  cursor: pointer;
-  background-color: #a9a9a9;
-  border-radius: 0.25rem;
-  min-width: 40px;
-  min-height: 40px;
-  width: fit-content;
-  height: fit-content;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #000;
-  width: 100%;
-  grid-area: quit;
-  border: none;
-  flex-grow: 1;
-  margin: 0;
-  padding: 0;
-}
-
-.c4:focus {
-  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-}
-
-.c4:active {
-  color: #1c76fd;
-}
-
-.c5 {
-  cursor: pointer;
-  background-color: #a9a9a9;
-  border-radius: 0.25rem;
-  min-width: 40px;
-  min-height: 40px;
-  width: fit-content;
-  height: fit-content;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #000;
-  width: 100%;
-  grid-area: drag;
-  border: none;
-  flex-grow: 1;
-  margin: 0;
-  padding: 0;
-}
-
-.c5:focus {
-  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-}
-
-.c5:active {
-  color: #1c76fd;
-}
-
-.c6 {
-  cursor: pointer;
-  background-color: #a9a9a9;
-  border-radius: 0.25rem;
-  min-width: 40px;
-  min-height: 40px;
-  width: fit-content;
-  height: fit-content;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #000;
-  width: 100%;
-  grid-area: resize;
-  border: none;
-  flex-grow: 1;
-  margin: 0;
-  padding: 0;
-}
-
-.c6:focus {
-  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-}
-
-.c6:active {
-  color: #1c76fd;
-}
-
-.c7 {
-  cursor: pointer;
-  background-color: #a9a9a9;
-  border-radius: 0.25rem;
-  min-width: 40px;
-  min-height: 40px;
-  width: fit-content;
-  height: fit-content;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #000;
-  width: 100%;
-  grid-area: rewind;
-  border: none;
-  flex-grow: 1;
-  margin: 0;
-  padding: 0;
-}
-
-.c7:focus {
-  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-}
-
-.c7:active {
-  color: #1c76fd;
-}
-
-.c0 {
-  background-color: #4f555a;
-  list-style: none;
-  padding: 10px;
-  margin: 0;
-  max-width: 100%;
-  display: grid;
-  grid-template-columns: repeat(10, 1fr);
-  grid-template-rows: 1fr 1fr;
-  gap: 10px 10px;
-  grid-template-areas: 'play play quit quit drag drag resize resize rewind rewind' 'volume volume volume volume volume fastForward fastForward fastForward fastForward fastForward';
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: space-evenly;
-  gap: 10px;
-}
-
-@media only screen and (min-width: 600px) {
-  .c9 {
-    width: auto;
-  }
-}
-
-@media only screen and (min-width: 600px) {
-  .c11 {
-    width: auto;
-  }
-}
-
-@media only screen and (min-width: 600px) {
-  .c3 {
-    width: auto;
-  }
-}
-
-@media only screen and (max-height: 450px) and (max-width: 1000px) and (orientation: landscape) {
-  .c3 {
-    flex-shrink: 1;
-    min-width: unset;
-  }
-}
-
-@media only screen and (min-width: 600px) {
-  .c4 {
-    width: auto;
-  }
-}
-
-@media only screen and (max-height: 450px) and (max-width: 1000px) and (orientation: landscape) {
-  .c4 {
-    flex-shrink: 1;
-    min-width: unset;
-  }
-}
-
-@media only screen and (min-width: 600px) {
-  .c5 {
-    width: auto;
-  }
-}
-
-@media only screen and (max-height: 450px) and (max-width: 1000px) and (orientation: landscape) {
-  .c5 {
-    flex-shrink: 1;
-    min-width: unset;
-  }
-}
-
-@media only screen and (min-width: 600px) {
-  .c6 {
-    width: auto;
-  }
-}
-
-@media only screen and (max-height: 450px) and (max-width: 1000px) and (orientation: landscape) {
-  .c6 {
-    flex-shrink: 1;
-    min-width: unset;
-  }
-}
-
-@media only screen and (min-width: 600px) {
-  .c7 {
-    width: auto;
-  }
-}
-
-@media only screen and (max-height: 450px) and (max-width: 1000px) and (orientation: landscape) {
-  .c7 {
-    flex-shrink: 1;
-    min-width: unset;
-  }
+  top: 50%;
+  -webkit-transform: translate(-1px, -50%);
+  -moz-transform: translate(-1px, -50%);
+  -ms-transform: translate(-1px, -50%);
+  transform: translate(-1px, -50%);
 }
 
 <div
   class="react-draggable"
   data-testid="control-panel-wrapper"
-  id="_r_a_"
+  id="_r_d_"
   style="position: absolute; user-select: auto; width: auto; height: auto; display: inline-block; top: 0px; left: 0px; cursor: auto; transform: translate(0px,10px); max-width: 9007199254740991px; max-height: 9007199254740991px; box-sizing: border-box; flex-shrink: 0;"
 >
   <ul
-    class="c0"
+    class="emotion-0 emotion-1"
   >
     <li
-      class="c1"
+      class="emotion-2 emotion-3"
     >
       <button
         aria-label="Play"
-        class="c2 c3"
-        id="_r_a_--play"
+        class="emotion-4 emotion-5 emotion-6"
+        id="_r_d_--play"
       >
         <svg
           fill="currentColor"
@@ -327,12 +781,12 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
       </button>
     </li>
     <li
-      class="c1"
+      class="emotion-2 emotion-3"
     >
       <button
         aria-label="Quit Game"
-        class="c2 c4"
-        id="_r_a_--quit-game"
+        class="emotion-4 emotion-10 emotion-6"
+        id="_r_d_--quit-game"
       >
         <svg
           fill="currentColor"
@@ -350,12 +804,12 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
       </button>
     </li>
     <li
-      class="c1"
+      class="emotion-2 emotion-3"
     >
       <button
         aria-label="Drag Items"
-        class="c2 c5 noDrag"
-        id="_r_a_--drag"
+        class="noDrag emotion-4 emotion-15 emotion-6"
+        id="_r_d_--drag"
       >
         <svg
           fill="currentColor"
@@ -373,12 +827,12 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
       </button>
     </li>
     <li
-      class="c1"
+      class="emotion-2 emotion-3"
     >
       <button
         aria-label="Resize Items"
-        class="c2 c6 noDrag"
-        id="_r_a_--resize"
+        class="noDrag emotion-4 emotion-20 emotion-6"
+        id="_r_d_--resize"
       >
         <svg
           fill="none"
@@ -401,12 +855,12 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
       </button>
     </li>
     <li
-      class="c1"
+      class="emotion-2 emotion-3"
     >
       <button
         aria-label="Rewind Emulator"
-        class="c2 c7"
-        id="_r_a_--rewind"
+        class="emotion-4 emotion-25 emotion-6"
+        id="_r_d_--rewind"
       >
         <svg
           fill="currentColor"
@@ -425,18 +879,18 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
       </button>
     </li>
     <li
-      class="c1"
+      class="emotion-2 emotion-3"
     >
       <span
-        class="c8"
+        class="emotion-2 emotion-30"
       >
         <div
-          class="c9"
-          id="_r_a_--volume-slider"
+          class="emotion-31 emotion-32"
+          id="_r_d_--volume-slider"
         >
           <button
             aria-label="Mute Volume"
-            class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-dhaj44-MuiButtonBase-root-MuiIconButton-root"
+            class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall emotion-33"
             tabindex="0"
             type="button"
           >
@@ -456,72 +910,72 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
             </svg>
           </button>
           <span
-            class="MuiSlider-root MuiSlider-colorPrimary MuiSlider-sizeMedium c10 css-1uesrtc-MuiSlider-root"
+            class="MuiSlider-root MuiSlider-colorPrimary MuiSlider-sizeMedium emotion-34 emotion-35"
           >
             <span
-              class="MuiSlider-rail css-r64h58-MuiSlider-rail"
+              class="MuiSlider-rail emotion-36"
             />
             <span
-              class="MuiSlider-track css-xvk2i-MuiSlider-track"
+              class="MuiSlider-track emotion-37"
               style="left: 0%; width: 100%;"
             />
             <span
-              class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
+              class="MuiSlider-mark MuiSlider-markActive emotion-38"
               data-index="0"
               style="left: 0%;"
             />
             <span
-              class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
+              class="MuiSlider-mark MuiSlider-markActive emotion-38"
               data-index="1"
               style="left: 10%;"
             />
             <span
-              class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
+              class="MuiSlider-mark MuiSlider-markActive emotion-38"
               data-index="2"
               style="left: 20%;"
             />
             <span
-              class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
+              class="MuiSlider-mark MuiSlider-markActive emotion-38"
               data-index="3"
               style="left: 30.000000000000004%;"
             />
             <span
-              class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
+              class="MuiSlider-mark MuiSlider-markActive emotion-38"
               data-index="4"
               style="left: 40%;"
             />
             <span
-              class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
+              class="MuiSlider-mark MuiSlider-markActive emotion-38"
               data-index="5"
               style="left: 50%;"
             />
             <span
-              class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
+              class="MuiSlider-mark MuiSlider-markActive emotion-38"
               data-index="6"
               style="left: 60.00000000000001%;"
             />
             <span
-              class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
+              class="MuiSlider-mark MuiSlider-markActive emotion-38"
               data-index="7"
               style="left: 70%;"
             />
             <span
-              class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
+              class="MuiSlider-mark MuiSlider-markActive emotion-38"
               data-index="8"
               style="left: 80%;"
             />
             <span
-              class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
+              class="MuiSlider-mark MuiSlider-markActive emotion-38"
               data-index="9"
               style="left: 90%;"
             />
             <span
-              class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
+              class="MuiSlider-mark MuiSlider-markActive emotion-38"
               data-index="10"
               style="left: 100%;"
             />
             <span
-              class="MuiSlider-thumb MuiSlider-thumbSizeMedium MuiSlider-thumbColorPrimary MuiSlider-thumb MuiSlider-thumbSizeMedium MuiSlider-thumbColorPrimary css-1xcmt9q-MuiSlider-thumb"
+              class="MuiSlider-thumb MuiSlider-thumbSizeMedium MuiSlider-thumbColorPrimary MuiSlider-thumb MuiSlider-thumbSizeMedium MuiSlider-thumbColorPrimary emotion-49"
               data-index="0"
               style="left: 100%;"
             >
@@ -541,7 +995,7 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
               />
               <span
                 aria-hidden="true"
-                class="MuiSlider-valueLabel css-1asissc-MuiSlider-valueLabel"
+                class="MuiSlider-valueLabel emotion-50"
               >
                 <span
                   class="MuiSlider-valueLabelCircle"
@@ -557,7 +1011,7 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
           </span>
           <button
             aria-label="Max Volume"
-            class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-dhaj44-MuiButtonBase-root-MuiIconButton-root"
+            class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall emotion-33"
             tabindex="0"
             type="button"
           >
@@ -583,18 +1037,18 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
       </span>
     </li>
     <li
-      class="c1"
+      class="emotion-2 emotion-3"
     >
       <span
-        class="c8"
+        class="emotion-2 emotion-30"
       >
         <div
-          class="c11"
-          id="_r_a_--fast-forward"
+          class="emotion-56 emotion-32"
+          id="_r_d_--fast-forward"
         >
           <button
             aria-label="Regular Speed"
-            class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-dhaj44-MuiButtonBase-root-MuiIconButton-root"
+            class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall emotion-33"
             tabindex="0"
             type="button"
           >
@@ -614,42 +1068,42 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
             </svg>
           </button>
           <span
-            class="MuiSlider-root MuiSlider-colorPrimary MuiSlider-sizeMedium c10 css-1uesrtc-MuiSlider-root"
+            class="MuiSlider-root MuiSlider-colorPrimary MuiSlider-sizeMedium emotion-34 emotion-35"
           >
             <span
-              class="MuiSlider-rail css-r64h58-MuiSlider-rail"
+              class="MuiSlider-rail emotion-36"
             />
             <span
-              class="MuiSlider-track css-xvk2i-MuiSlider-track"
+              class="MuiSlider-track emotion-37"
               style="left: 0%; width: 0%;"
             />
             <span
-              class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
+              class="MuiSlider-mark MuiSlider-markActive emotion-38"
               data-index="0"
               style="left: 0%;"
             />
             <span
-              class="MuiSlider-mark css-lq5hqx-MuiSlider-mark"
+              class="MuiSlider-mark emotion-64"
               data-index="1"
               style="left: 25%;"
             />
             <span
-              class="MuiSlider-mark css-lq5hqx-MuiSlider-mark"
+              class="MuiSlider-mark emotion-64"
               data-index="2"
               style="left: 50%;"
             />
             <span
-              class="MuiSlider-mark css-lq5hqx-MuiSlider-mark"
+              class="MuiSlider-mark emotion-64"
               data-index="3"
               style="left: 75%;"
             />
             <span
-              class="MuiSlider-mark css-lq5hqx-MuiSlider-mark"
+              class="MuiSlider-mark emotion-64"
               data-index="4"
               style="left: 100%;"
             />
             <span
-              class="MuiSlider-thumb MuiSlider-thumbSizeMedium MuiSlider-thumbColorPrimary MuiSlider-thumb MuiSlider-thumbSizeMedium MuiSlider-thumbColorPrimary css-1xcmt9q-MuiSlider-thumb"
+              class="MuiSlider-thumb MuiSlider-thumbSizeMedium MuiSlider-thumbColorPrimary MuiSlider-thumb MuiSlider-thumbSizeMedium MuiSlider-thumbColorPrimary emotion-49"
               data-index="0"
               style="left: 0%;"
             >
@@ -669,7 +1123,7 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
               />
               <span
                 aria-hidden="true"
-                class="MuiSlider-valueLabel css-1asissc-MuiSlider-valueLabel"
+                class="MuiSlider-valueLabel emotion-50"
               >
                 <span
                   class="MuiSlider-valueLabelCircle"
@@ -685,7 +1139,7 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
           </span>
           <button
             aria-label="Max Fast Forward"
-            class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-dhaj44-MuiButtonBase-root-MuiIconButton-root"
+            class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall emotion-33"
             tabindex="0"
             type="button"
           >
@@ -713,31 +1167,361 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
 `;
 
 exports[`<ControlPanel /> > renders with default mobile position and size 1`] = `
-.c2 {
+.emotion-0 {
+  background-color: #4f555a;
+  list-style: none;
+  padding: 10px;
+  margin: 0;
+  max-width: 100%;
+  display: grid;
+  grid-template-columns: repeat(10,1fr);
+  grid-template-rows: 1fr 1fr;
+  gap: 10px 10px;
+  grid-template-areas: 'play play quit quit drag drag resize resize rewind rewind' 'volume volume volume volume volume fastForward fastForward fastForward fastForward fastForward';
+}
+
+.emotion-2 {
+  display: contents;
+}
+
+.emotion-5 {
   font-size: inherit;
   font-family: inherit;
   line-height: inherit;
   padding: inherit;
-}
-
-.c1 {
-  display: contents;
-}
-
-.c8 {
-  display: contents;
-}
-
-.c9 {
   cursor: pointer;
   background-color: #a9a9a9;
   border-radius: 0.25rem;
   min-width: 40px;
   min-height: 40px;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
   width: fit-content;
+  height: -webkit-fit-content;
+  height: -moz-fit-content;
   height: fit-content;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
   align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  color: #000;
+  width: 100%;
+  grid-area: play;
+  border: none;
+  -webkit-box-flex: 1;
+  -webkit-flex-grow: 1;
+  -ms-flex-positive: 1;
+  flex-grow: 1;
+  margin: 0;
+  padding: 0;
+}
+
+@media only screen and (min-width: 600px) {
+  .emotion-5 {
+    width: auto;
+  }
+}
+
+.emotion-5:focus {
+  box-shadow: 0 0 0 0.25rem rgba(13,110,253,0.25);
+}
+
+.emotion-5:active {
+  color: #1c76fd;
+}
+
+@media only screen and (max-height: 450px) and (max-width: 1000px) and (orientation: landscape) {
+  .emotion-5 {
+    -webkit-flex-shrink: 1;
+    -ms-flex-negative: 1;
+    flex-shrink: 1;
+    min-width: unset;
+  }
+}
+
+.emotion-10 {
+  font-size: inherit;
+  font-family: inherit;
+  line-height: inherit;
+  padding: inherit;
+  cursor: pointer;
+  background-color: #a9a9a9;
+  border-radius: 0.25rem;
+  min-width: 40px;
+  min-height: 40px;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+  height: -webkit-fit-content;
+  height: -moz-fit-content;
+  height: fit-content;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  color: #000;
+  width: 100%;
+  grid-area: quit;
+  border: none;
+  -webkit-box-flex: 1;
+  -webkit-flex-grow: 1;
+  -ms-flex-positive: 1;
+  flex-grow: 1;
+  margin: 0;
+  padding: 0;
+}
+
+@media only screen and (min-width: 600px) {
+  .emotion-10 {
+    width: auto;
+  }
+}
+
+.emotion-10:focus {
+  box-shadow: 0 0 0 0.25rem rgba(13,110,253,0.25);
+}
+
+.emotion-10:active {
+  color: #1c76fd;
+}
+
+@media only screen and (max-height: 450px) and (max-width: 1000px) and (orientation: landscape) {
+  .emotion-10 {
+    -webkit-flex-shrink: 1;
+    -ms-flex-negative: 1;
+    flex-shrink: 1;
+    min-width: unset;
+  }
+}
+
+.emotion-15 {
+  font-size: inherit;
+  font-family: inherit;
+  line-height: inherit;
+  padding: inherit;
+  cursor: pointer;
+  background-color: #a9a9a9;
+  border-radius: 0.25rem;
+  min-width: 40px;
+  min-height: 40px;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+  height: -webkit-fit-content;
+  height: -moz-fit-content;
+  height: fit-content;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  color: #000;
+  width: 100%;
+  grid-area: drag;
+  border: none;
+  -webkit-box-flex: 1;
+  -webkit-flex-grow: 1;
+  -ms-flex-positive: 1;
+  flex-grow: 1;
+  margin: 0;
+  padding: 0;
+}
+
+@media only screen and (min-width: 600px) {
+  .emotion-15 {
+    width: auto;
+  }
+}
+
+.emotion-15:focus {
+  box-shadow: 0 0 0 0.25rem rgba(13,110,253,0.25);
+}
+
+.emotion-15:active {
+  color: #1c76fd;
+}
+
+@media only screen and (max-height: 450px) and (max-width: 1000px) and (orientation: landscape) {
+  .emotion-15 {
+    -webkit-flex-shrink: 1;
+    -ms-flex-negative: 1;
+    flex-shrink: 1;
+    min-width: unset;
+  }
+}
+
+.emotion-20 {
+  font-size: inherit;
+  font-family: inherit;
+  line-height: inherit;
+  padding: inherit;
+  cursor: pointer;
+  background-color: #a9a9a9;
+  border-radius: 0.25rem;
+  min-width: 40px;
+  min-height: 40px;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+  height: -webkit-fit-content;
+  height: -moz-fit-content;
+  height: fit-content;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  color: #000;
+  width: 100%;
+  grid-area: resize;
+  border: none;
+  -webkit-box-flex: 1;
+  -webkit-flex-grow: 1;
+  -ms-flex-positive: 1;
+  flex-grow: 1;
+  margin: 0;
+  padding: 0;
+}
+
+@media only screen and (min-width: 600px) {
+  .emotion-20 {
+    width: auto;
+  }
+}
+
+.emotion-20:focus {
+  box-shadow: 0 0 0 0.25rem rgba(13,110,253,0.25);
+}
+
+.emotion-20:active {
+  color: #1c76fd;
+}
+
+@media only screen and (max-height: 450px) and (max-width: 1000px) and (orientation: landscape) {
+  .emotion-20 {
+    -webkit-flex-shrink: 1;
+    -ms-flex-negative: 1;
+    flex-shrink: 1;
+    min-width: unset;
+  }
+}
+
+.emotion-25 {
+  font-size: inherit;
+  font-family: inherit;
+  line-height: inherit;
+  padding: inherit;
+  cursor: pointer;
+  background-color: #a9a9a9;
+  border-radius: 0.25rem;
+  min-width: 40px;
+  min-height: 40px;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+  height: -webkit-fit-content;
+  height: -moz-fit-content;
+  height: fit-content;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  color: #000;
+  width: 100%;
+  grid-area: rewind;
+  border: none;
+  -webkit-box-flex: 1;
+  -webkit-flex-grow: 1;
+  -ms-flex-positive: 1;
+  flex-grow: 1;
+  margin: 0;
+  padding: 0;
+}
+
+@media only screen and (min-width: 600px) {
+  .emotion-25 {
+    width: auto;
+  }
+}
+
+.emotion-25:focus {
+  box-shadow: 0 0 0 0.25rem rgba(13,110,253,0.25);
+}
+
+.emotion-25:active {
+  color: #1c76fd;
+}
+
+@media only screen and (max-height: 450px) and (max-width: 1000px) and (orientation: landscape) {
+  .emotion-25 {
+    -webkit-flex-shrink: 1;
+    -ms-flex-negative: 1;
+    flex-shrink: 1;
+    min-width: unset;
+  }
+}
+
+.emotion-31 {
+  cursor: pointer;
+  background-color: #a9a9a9;
+  border-radius: 0.25rem;
+  min-width: 40px;
+  min-height: 40px;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+  height: -webkit-fit-content;
+  height: -moz-fit-content;
+  height: fit-content;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
   justify-content: center;
   color: #000;
   width: 100%;
@@ -745,16 +1529,349 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
   max-height: 40px;
 }
 
-.c11 {
+@media only screen and (min-width: 600px) {
+  .emotion-31 {
+    width: auto;
+  }
+}
+
+.emotion-33 {
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  position: relative;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  background-color: transparent;
+  outline: 0;
+  border: 0;
+  margin: 0;
+  border-radius: 0;
+  padding: 0;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  vertical-align: middle;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  -webkit-text-decoration: none;
+  text-decoration: none;
+  color: inherit;
+  text-align: center;
+  -webkit-flex: 0 0 auto;
+  -ms-flex: 0 0 auto;
+  flex: 0 0 auto;
+  font-size: 1.5rem;
+  padding: 8px;
+  border-radius: 50%;
+  color: rgba(0, 0, 0, 0.54);
+  -webkit-transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  --IconButton-hoverBg: rgba(0, 0, 0, 0.04);
+  padding: 5px;
+  font-size: 1.125rem;
+  padding: 0px;
+  color: #000;
+}
+
+.emotion-33::-moz-focus-inner {
+  border-style: none;
+}
+
+.emotion-33.Mui-disabled {
+  pointer-events: none;
+  cursor: default;
+}
+
+@media print {
+  .emotion-33 {
+    -webkit-print-color-adjust: exact;
+    color-adjust: exact;
+  }
+}
+
+.emotion-33:hover {
+  background-color: var(--IconButton-hoverBg);
+}
+
+@media (hover: none) {
+  .emotion-33:hover {
+    background-color: transparent;
+  }
+}
+
+.emotion-33.Mui-disabled {
+  background-color: transparent;
+  color: rgba(0, 0, 0, 0.26);
+}
+
+.emotion-33.MuiIconButton-loading {
+  color: transparent;
+}
+
+.emotion-33:active {
+  color: #1c76fd;
+}
+
+.emotion-35 {
+  border-radius: 12px;
+  box-sizing: content-box;
+  display: inline-block;
+  position: relative;
+  cursor: pointer;
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+  color: #1976d2;
+  height: 4px;
+  width: 100%;
+  padding: 13px 0;
+  -webkit-box-flex: 1;
+  -webkit-flex-grow: 1;
+  -ms-flex-positive: 1;
+  flex-grow: 1;
+  width: 85px;
+  margin: 0 10px;
+  max-height: 40px;
+}
+
+@media print {
+  .emotion-35 {
+    -webkit-print-color-adjust: exact;
+    color-adjust: exact;
+  }
+}
+
+.emotion-35.Mui-disabled {
+  pointer-events: none;
+  cursor: default;
+  color: #bdbdbd;
+}
+
+.emotion-35.MuiSlider-dragging .MuiSlider-thumb,
+.emotion-35.MuiSlider-dragging .MuiSlider-track {
+  -webkit-transition: none;
+  transition: none;
+}
+
+@media (pointer: coarse) {
+  .emotion-35 {
+    padding: 20px 0;
+  }
+}
+
+.emotion-35>.MuiSlider-markActive {
+  opacity: 1;
+  background-color: currentColor;
+}
+
+.emotion-36 {
+  display: block;
+  position: absolute;
+  border-radius: inherit;
+  background-color: currentColor;
+  opacity: 0.38;
+  width: 100%;
+  height: inherit;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+  -moz-transform: translateY(-50%);
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
+
+.emotion-37 {
+  display: block;
+  position: absolute;
+  border-radius: inherit;
+  border: 1px solid currentColor;
+  background-color: currentColor;
+  -webkit-transition: left 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,width 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,bottom 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,height 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  transition: left 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,width 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,bottom 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,height 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  height: inherit;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+  -moz-transform: translateY(-50%);
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
+
+.emotion-38 {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  border-radius: 1px;
+  background-color: currentColor;
+  top: 50%;
+  -webkit-transform: translate(-1px, -50%);
+  -moz-transform: translate(-1px, -50%);
+  -ms-transform: translate(-1px, -50%);
+  transform: translate(-1px, -50%);
+  background-color: #fff;
+  opacity: 0.8;
+}
+
+.emotion-49 {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  box-sizing: border-box;
+  border-radius: 50%;
+  outline: 0;
+  background-color: currentColor;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  -webkit-transition: box-shadow 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,left 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,bottom 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  transition: box-shadow 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,left 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,bottom 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  top: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  -moz-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}
+
+.emotion-49::before {
+  position: absolute;
+  content: "";
+  border-radius: inherit;
+  width: 100%;
+  height: 100%;
+  box-shadow: 0px 3px 1px -2px rgba(0,0,0,0.2),0px 2px 2px 0px rgba(0,0,0,0.14),0px 1px 5px 0px rgba(0,0,0,0.12);
+}
+
+.emotion-49::after {
+  position: absolute;
+  content: "";
+  border-radius: 50%;
+  width: 42px;
+  height: 42px;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  -moz-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}
+
+.emotion-49.Mui-disabled:hover {
+  box-shadow: none;
+}
+
+.emotion-49:hover,
+.emotion-49.Mui-focusVisible {
+  box-shadow: 0px 0px 0px 8px rgba(25, 118, 210, 0.16);
+}
+
+@media (hover: none) {
+  .emotion-49:hover,
+  .emotion-49.Mui-focusVisible {
+    box-shadow: none;
+  }
+}
+
+.emotion-49.Mui-active {
+  box-shadow: 0px 0px 0px 14px rgba(25, 118, 210, 0.16);
+}
+
+.emotion-50 {
+  z-index: 1;
+  white-space: nowrap;
+  font-family: "Roboto","Helvetica","Arial",sans-serif;
+  font-weight: 500;
+  font-size: 0.875rem;
+  line-height: 1.43;
+  letter-spacing: 0.01071em;
+  -webkit-transition: -webkit-transform 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  transition: transform 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  position: absolute;
+  background-color: #757575;
+  border-radius: 2px;
+  color: #fff;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  padding: 0.25rem 0.75rem;
+  -webkit-transform: translateY(-100%) scale(0);
+  -moz-transform: translateY(-100%) scale(0);
+  -ms-transform: translateY(-100%) scale(0);
+  transform: translateY(-100%) scale(0);
+  top: -10px;
+  transform-origin: bottom center;
+}
+
+.emotion-50::before {
+  position: absolute;
+  content: "";
+  width: 8px;
+  height: 8px;
+  -webkit-transform: translate(-50%, 50%) rotate(45deg);
+  -moz-transform: translate(-50%, 50%) rotate(45deg);
+  -ms-transform: translate(-50%, 50%) rotate(45deg);
+  transform: translate(-50%, 50%) rotate(45deg);
+  background-color: inherit;
+  bottom: 0;
+  left: 50%;
+}
+
+.emotion-50.MuiSlider-valueLabelOpen {
+  -webkit-transform: translateY(-100%) scale(1);
+  -moz-transform: translateY(-100%) scale(1);
+  -ms-transform: translateY(-100%) scale(1);
+  transform: translateY(-100%) scale(1);
+}
+
+.emotion-56 {
   cursor: pointer;
   background-color: #a9a9a9;
   border-radius: 0.25rem;
   min-width: 40px;
   min-height: 40px;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
   width: fit-content;
+  height: -webkit-fit-content;
+  height: -moz-fit-content;
   height: fit-content;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
   align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
   justify-content: center;
   color: #000;
   width: 100%;
@@ -762,261 +1879,41 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
   max-height: 40px;
 }
 
-.c10 {
-  flex-grow: 1;
+@media only screen and (min-width: 600px) {
+  .emotion-56 {
+    width: auto;
+  }
 }
 
-.c10 >.MuiSlider-markActive {
-  opacity: 1;
+.emotion-64 {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  border-radius: 1px;
   background-color: currentColor;
-}
-
-.c3 {
-  cursor: pointer;
-  background-color: #a9a9a9;
-  border-radius: 0.25rem;
-  min-width: 40px;
-  min-height: 40px;
-  width: fit-content;
-  height: fit-content;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #000;
-  width: 100%;
-  grid-area: play;
-  border: none;
-  flex-grow: 1;
-  margin: 0;
-  padding: 0;
-}
-
-.c3:focus {
-  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-}
-
-.c3:active {
-  color: #1c76fd;
-}
-
-.c4 {
-  cursor: pointer;
-  background-color: #a9a9a9;
-  border-radius: 0.25rem;
-  min-width: 40px;
-  min-height: 40px;
-  width: fit-content;
-  height: fit-content;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #000;
-  width: 100%;
-  grid-area: quit;
-  border: none;
-  flex-grow: 1;
-  margin: 0;
-  padding: 0;
-}
-
-.c4:focus {
-  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-}
-
-.c4:active {
-  color: #1c76fd;
-}
-
-.c5 {
-  cursor: pointer;
-  background-color: #a9a9a9;
-  border-radius: 0.25rem;
-  min-width: 40px;
-  min-height: 40px;
-  width: fit-content;
-  height: fit-content;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #000;
-  width: 100%;
-  grid-area: drag;
-  border: none;
-  flex-grow: 1;
-  margin: 0;
-  padding: 0;
-}
-
-.c5:focus {
-  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-}
-
-.c5:active {
-  color: #1c76fd;
-}
-
-.c6 {
-  cursor: pointer;
-  background-color: #a9a9a9;
-  border-radius: 0.25rem;
-  min-width: 40px;
-  min-height: 40px;
-  width: fit-content;
-  height: fit-content;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #000;
-  width: 100%;
-  grid-area: resize;
-  border: none;
-  flex-grow: 1;
-  margin: 0;
-  padding: 0;
-}
-
-.c6:focus {
-  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-}
-
-.c6:active {
-  color: #1c76fd;
-}
-
-.c7 {
-  cursor: pointer;
-  background-color: #a9a9a9;
-  border-radius: 0.25rem;
-  min-width: 40px;
-  min-height: 40px;
-  width: fit-content;
-  height: fit-content;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #000;
-  width: 100%;
-  grid-area: rewind;
-  border: none;
-  flex-grow: 1;
-  margin: 0;
-  padding: 0;
-}
-
-.c7:focus {
-  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-}
-
-.c7:active {
-  color: #1c76fd;
-}
-
-.c0 {
-  background-color: #4f555a;
-  list-style: none;
-  padding: 10px;
-  margin: 0;
-  max-width: 100%;
-  display: grid;
-  grid-template-columns: repeat(10, 1fr);
-  grid-template-rows: 1fr 1fr;
-  gap: 10px 10px;
-  grid-template-areas: 'play play quit quit drag drag resize resize rewind rewind' 'volume volume volume volume volume fastForward fastForward fastForward fastForward fastForward';
-}
-
-@media only screen and (min-width: 600px) {
-  .c9 {
-    width: auto;
-  }
-}
-
-@media only screen and (min-width: 600px) {
-  .c11 {
-    width: auto;
-  }
-}
-
-@media only screen and (min-width: 600px) {
-  .c3 {
-    width: auto;
-  }
-}
-
-@media only screen and (max-height: 450px) and (max-width: 1000px) and (orientation: landscape) {
-  .c3 {
-    flex-shrink: 1;
-    min-width: unset;
-  }
-}
-
-@media only screen and (min-width: 600px) {
-  .c4 {
-    width: auto;
-  }
-}
-
-@media only screen and (max-height: 450px) and (max-width: 1000px) and (orientation: landscape) {
-  .c4 {
-    flex-shrink: 1;
-    min-width: unset;
-  }
-}
-
-@media only screen and (min-width: 600px) {
-  .c5 {
-    width: auto;
-  }
-}
-
-@media only screen and (max-height: 450px) and (max-width: 1000px) and (orientation: landscape) {
-  .c5 {
-    flex-shrink: 1;
-    min-width: unset;
-  }
-}
-
-@media only screen and (min-width: 600px) {
-  .c6 {
-    width: auto;
-  }
-}
-
-@media only screen and (max-height: 450px) and (max-width: 1000px) and (orientation: landscape) {
-  .c6 {
-    flex-shrink: 1;
-    min-width: unset;
-  }
-}
-
-@media only screen and (min-width: 600px) {
-  .c7 {
-    width: auto;
-  }
-}
-
-@media only screen and (max-height: 450px) and (max-width: 1000px) and (orientation: landscape) {
-  .c7 {
-    flex-shrink: 1;
-    min-width: unset;
-  }
+  top: 50%;
+  -webkit-transform: translate(-1px, -50%);
+  -moz-transform: translate(-1px, -50%);
+  -ms-transform: translate(-1px, -50%);
+  transform: translate(-1px, -50%);
 }
 
 <div
   class="react-draggable"
   data-testid="control-panel-wrapper"
-  id="_r_5_"
+  id="_r_7_"
   style="position: absolute; user-select: auto; width: 100dvw; height: auto; display: inline-block; top: 0px; left: 0px; cursor: auto; transform: translate(0px,0px); max-width: 9007199254740991px; max-height: 9007199254740991px; box-sizing: border-box; flex-shrink: 0;"
 >
   <ul
-    class="c0"
+    class="emotion-0 emotion-1"
   >
     <li
-      class="c1"
+      class="emotion-2 emotion-3"
     >
       <button
         aria-label="Play"
-        class="c2 c3"
-        id="_r_5_--play"
+        class="emotion-4 emotion-5 emotion-6"
+        id="_r_7_--play"
       >
         <svg
           fill="currentColor"
@@ -1034,12 +1931,12 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
       </button>
     </li>
     <li
-      class="c1"
+      class="emotion-2 emotion-3"
     >
       <button
         aria-label="Quit Game"
-        class="c2 c4"
-        id="_r_5_--quit-game"
+        class="emotion-4 emotion-10 emotion-6"
+        id="_r_7_--quit-game"
       >
         <svg
           fill="currentColor"
@@ -1057,12 +1954,12 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
       </button>
     </li>
     <li
-      class="c1"
+      class="emotion-2 emotion-3"
     >
       <button
         aria-label="Drag Items"
-        class="c2 c5 noDrag"
-        id="_r_5_--drag"
+        class="noDrag emotion-4 emotion-15 emotion-6"
+        id="_r_7_--drag"
       >
         <svg
           fill="currentColor"
@@ -1080,12 +1977,12 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
       </button>
     </li>
     <li
-      class="c1"
+      class="emotion-2 emotion-3"
     >
       <button
         aria-label="Resize Items"
-        class="c2 c6 noDrag"
-        id="_r_5_--resize"
+        class="noDrag emotion-4 emotion-20 emotion-6"
+        id="_r_7_--resize"
       >
         <svg
           fill="none"
@@ -1108,12 +2005,12 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
       </button>
     </li>
     <li
-      class="c1"
+      class="emotion-2 emotion-3"
     >
       <button
         aria-label="Rewind Emulator"
-        class="c2 c7"
-        id="_r_5_--rewind"
+        class="emotion-4 emotion-25 emotion-6"
+        id="_r_7_--rewind"
       >
         <svg
           fill="currentColor"
@@ -1132,18 +2029,18 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
       </button>
     </li>
     <li
-      class="c1"
+      class="emotion-2 emotion-3"
     >
       <span
-        class="c8"
+        class="emotion-2 emotion-30"
       >
         <div
-          class="c9"
-          id="_r_5_--volume-slider"
+          class="emotion-31 emotion-32"
+          id="_r_7_--volume-slider"
         >
           <button
             aria-label="Mute Volume"
-            class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-dhaj44-MuiButtonBase-root-MuiIconButton-root"
+            class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall emotion-33"
             tabindex="0"
             type="button"
           >
@@ -1163,72 +2060,72 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
             </svg>
           </button>
           <span
-            class="MuiSlider-root MuiSlider-colorPrimary MuiSlider-sizeMedium c10 css-1uesrtc-MuiSlider-root"
+            class="MuiSlider-root MuiSlider-colorPrimary MuiSlider-sizeMedium emotion-34 emotion-35"
           >
             <span
-              class="MuiSlider-rail css-r64h58-MuiSlider-rail"
+              class="MuiSlider-rail emotion-36"
             />
             <span
-              class="MuiSlider-track css-xvk2i-MuiSlider-track"
+              class="MuiSlider-track emotion-37"
               style="left: 0%; width: 100%;"
             />
             <span
-              class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
+              class="MuiSlider-mark MuiSlider-markActive emotion-38"
               data-index="0"
               style="left: 0%;"
             />
             <span
-              class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
+              class="MuiSlider-mark MuiSlider-markActive emotion-38"
               data-index="1"
               style="left: 10%;"
             />
             <span
-              class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
+              class="MuiSlider-mark MuiSlider-markActive emotion-38"
               data-index="2"
               style="left: 20%;"
             />
             <span
-              class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
+              class="MuiSlider-mark MuiSlider-markActive emotion-38"
               data-index="3"
               style="left: 30.000000000000004%;"
             />
             <span
-              class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
+              class="MuiSlider-mark MuiSlider-markActive emotion-38"
               data-index="4"
               style="left: 40%;"
             />
             <span
-              class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
+              class="MuiSlider-mark MuiSlider-markActive emotion-38"
               data-index="5"
               style="left: 50%;"
             />
             <span
-              class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
+              class="MuiSlider-mark MuiSlider-markActive emotion-38"
               data-index="6"
               style="left: 60.00000000000001%;"
             />
             <span
-              class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
+              class="MuiSlider-mark MuiSlider-markActive emotion-38"
               data-index="7"
               style="left: 70%;"
             />
             <span
-              class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
+              class="MuiSlider-mark MuiSlider-markActive emotion-38"
               data-index="8"
               style="left: 80%;"
             />
             <span
-              class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
+              class="MuiSlider-mark MuiSlider-markActive emotion-38"
               data-index="9"
               style="left: 90%;"
             />
             <span
-              class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
+              class="MuiSlider-mark MuiSlider-markActive emotion-38"
               data-index="10"
               style="left: 100%;"
             />
             <span
-              class="MuiSlider-thumb MuiSlider-thumbSizeMedium MuiSlider-thumbColorPrimary MuiSlider-thumb MuiSlider-thumbSizeMedium MuiSlider-thumbColorPrimary css-1xcmt9q-MuiSlider-thumb"
+              class="MuiSlider-thumb MuiSlider-thumbSizeMedium MuiSlider-thumbColorPrimary MuiSlider-thumb MuiSlider-thumbSizeMedium MuiSlider-thumbColorPrimary emotion-49"
               data-index="0"
               style="left: 100%;"
             >
@@ -1248,7 +2145,7 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
               />
               <span
                 aria-hidden="true"
-                class="MuiSlider-valueLabel css-1asissc-MuiSlider-valueLabel"
+                class="MuiSlider-valueLabel emotion-50"
               >
                 <span
                   class="MuiSlider-valueLabelCircle"
@@ -1264,7 +2161,7 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
           </span>
           <button
             aria-label="Max Volume"
-            class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-dhaj44-MuiButtonBase-root-MuiIconButton-root"
+            class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall emotion-33"
             tabindex="0"
             type="button"
           >
@@ -1290,18 +2187,18 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
       </span>
     </li>
     <li
-      class="c1"
+      class="emotion-2 emotion-3"
     >
       <span
-        class="c8"
+        class="emotion-2 emotion-30"
       >
         <div
-          class="c11"
-          id="_r_5_--fast-forward"
+          class="emotion-56 emotion-32"
+          id="_r_7_--fast-forward"
         >
           <button
             aria-label="Regular Speed"
-            class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-dhaj44-MuiButtonBase-root-MuiIconButton-root"
+            class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall emotion-33"
             tabindex="0"
             type="button"
           >
@@ -1321,42 +2218,42 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
             </svg>
           </button>
           <span
-            class="MuiSlider-root MuiSlider-colorPrimary MuiSlider-sizeMedium c10 css-1uesrtc-MuiSlider-root"
+            class="MuiSlider-root MuiSlider-colorPrimary MuiSlider-sizeMedium emotion-34 emotion-35"
           >
             <span
-              class="MuiSlider-rail css-r64h58-MuiSlider-rail"
+              class="MuiSlider-rail emotion-36"
             />
             <span
-              class="MuiSlider-track css-xvk2i-MuiSlider-track"
+              class="MuiSlider-track emotion-37"
               style="left: 0%; width: 0%;"
             />
             <span
-              class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
+              class="MuiSlider-mark MuiSlider-markActive emotion-38"
               data-index="0"
               style="left: 0%;"
             />
             <span
-              class="MuiSlider-mark css-lq5hqx-MuiSlider-mark"
+              class="MuiSlider-mark emotion-64"
               data-index="1"
               style="left: 25%;"
             />
             <span
-              class="MuiSlider-mark css-lq5hqx-MuiSlider-mark"
+              class="MuiSlider-mark emotion-64"
               data-index="2"
               style="left: 50%;"
             />
             <span
-              class="MuiSlider-mark css-lq5hqx-MuiSlider-mark"
+              class="MuiSlider-mark emotion-64"
               data-index="3"
               style="left: 75%;"
             />
             <span
-              class="MuiSlider-mark css-lq5hqx-MuiSlider-mark"
+              class="MuiSlider-mark emotion-64"
               data-index="4"
               style="left: 100%;"
             />
             <span
-              class="MuiSlider-thumb MuiSlider-thumbSizeMedium MuiSlider-thumbColorPrimary MuiSlider-thumb MuiSlider-thumbSizeMedium MuiSlider-thumbColorPrimary css-1xcmt9q-MuiSlider-thumb"
+              class="MuiSlider-thumb MuiSlider-thumbSizeMedium MuiSlider-thumbColorPrimary MuiSlider-thumb MuiSlider-thumbSizeMedium MuiSlider-thumbColorPrimary emotion-49"
               data-index="0"
               style="left: 0%;"
             >
@@ -1376,7 +2273,7 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
               />
               <span
                 aria-hidden="true"
-                class="MuiSlider-valueLabel css-1asissc-MuiSlider-valueLabel"
+                class="MuiSlider-valueLabel emotion-50"
               >
                 <span
                   class="MuiSlider-valueLabelCircle"
@@ -1392,7 +2289,7 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
           </span>
           <button
             aria-label="Max Fast Forward"
-            class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-dhaj44-MuiButtonBase-root-MuiIconButton-root"
+            class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall emotion-33"
             tabindex="0"
             type="button"
           >

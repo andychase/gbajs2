@@ -1,18 +1,29 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`<ModalFooter /> > container matches snapshot 1`] = `
-.c0 {
+.emotion-0 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
   flex-direction: row;
   gap: 10px;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
   align-items: center;
+  -webkit-box-pack: end;
+  -ms-flex-pack: end;
+  -webkit-justify-content: flex-end;
   justify-content: flex-end;
   border-top: 1px solid #dee2e6;
   padding: 1rem 1rem;
 }
 
 <div
-  class="c0"
+  class="emotion-0 emotion-1"
   data-testid="modal-footer:wrapper"
 >
   Test Footer Content

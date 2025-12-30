@@ -1,5 +1,5 @@
+import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ThemeProvider } from 'styled-components';
 
 import './App.css';
 import { ControlPanel } from './components/controls/control-panel.tsx';
@@ -19,8 +19,10 @@ import { GbaDarkTheme } from './context/theme/theme.tsx';
 
 const queryClient = new QueryClient();
 
+const theme = createTheme(GbaDarkTheme);
+
 export const App = () => (
-  <ThemeProvider theme={GbaDarkTheme}>
+  <ThemeProvider theme={theme}>
     <AppErrorBoundary>
       <ToasterWithDefaults />
       <QueryClientProvider client={queryClient}>

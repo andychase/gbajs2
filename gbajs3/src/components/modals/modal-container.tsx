@@ -1,6 +1,6 @@
 import { useMediaQuery } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 import Modal from 'react-modal';
-import { useTheme } from 'styled-components';
 
 import { useEmulatorContext, useModalContext } from '../../hooks/context.tsx';
 
