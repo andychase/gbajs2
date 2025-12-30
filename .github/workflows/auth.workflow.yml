@@ -34,4 +34,41 @@ jobs:
         run: CGO_ENABLED=0 GOOS=linux go build -a -ldflags '-w -s'
 
       - name: Test
-        run: go test --v --cover --useosfs --race ./...
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          go test -v --cover --useosfs --race ./... | tee /tmp/go-test-output.txt
+
+          # coverage line/percent
+          COVER_LINE="$(grep -Eo 'coverage: [0-9]+(\.[0-9]+)?% of statements' /tmp/go-test-output.txt | tail -n 1)"
+          COVER_PCT="$(echo "$COVER_LINE" | grep -Eo '[0-9]+(\.[0-9]+)?')"
+
+          ICON="🔴"
+          awk "BEGIN { exit !($COVER_PCT >= 85) }" && ICON="🟢"
+
+          # timing summaries
+          awk '
+            found { print }
+            /coverage: .* of statements/ { found = 1 }
+          ' /tmp/go-test-output.txt > /tmp/go-test-summary.txt
+
+          RUN_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+          COMMIT_SHA="$(git rev-parse HEAD)"
+          COMMIT_SHORT="$(git rev-parse --short=7 HEAD)"
+          COMMIT_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/commit/${COMMIT_SHA}"
+
+          META_LINE="_Generated in workflow [#${GITHUB_RUN_NUMBER}](${RUN_URL}) for commit [${COMMIT_SHORT}](${COMMIT_URL})_"
+
+          # job summary output
+          {
+            echo "## Coverage Report for ./auth"
+            echo ""
+            echo "**$ICON $COVER_LINE**"
+            echo ""
+            echo '```'
+            cat /tmp/go-test-summary.txt
+            echo '```'
+            echo ""
+            echo "$META_LINE"
+          } >> "$GITHUB_STEP_SUMMARY"
