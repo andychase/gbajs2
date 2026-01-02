@@ -1,4 +1,4 @@
-name: Close stale issues and PRs
+name: Close stale issues, PRs, and discussions
 
 on:
   schedule:
@@ -12,7 +12,7 @@ permissions:
   discussions: write
 
 jobs:
-  stale:
+  stale_issues_prs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/stale@v9
@@ -28,3 +28,16 @@ jobs:
           days-before-close: '21'
           close-unanswered: 'true'
           dry-run: 'true'
+
+  stale_discussions:
+    runs-on: ubuntu-latest
+    env:
+      ACTIONS_STEP_DEBUG: 'true' # debugging, hopefully will remove soon
+    steps:
+      - uses: thenick775/stalesweeper@main
+        with:
+          message: 'This discussion has been closed due to inactivity.'
+          days-before-close: '21'
+          close-unanswered: 'true'
+          dry-run: 'true'
+          verbose: 'true'
