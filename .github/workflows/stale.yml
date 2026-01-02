@@ -3,6 +3,7 @@ name: Close stale issues and PRs
 on:
   schedule:
     - cron: '30 1 * * *'
+  workflow_dispatch:
 
 permissions:
   actions: write
@@ -19,3 +20,10 @@ jobs:
           stale-pr-message: 'This pr is stale because it has been open three weeks with no activity. Remove stale label or comment, otherwise this will close in 7 days.'
           days-before-stale: 21
           exempt-issue-labels: 'enhancement,bug'
+
+      - uses: thenick775/stalesweeper@main
+        with:
+          message: 'This discussion has been closed due to inactivity.'
+          days-before-close: '21'
+          close-unanswered: 'true'
+          dry-run: 'true'
