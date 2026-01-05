@@ -27,5 +27,6 @@ jobs:
           message: 'This discussion has been closed due to inactivity.'
           days-before-close: '21'
           close-unanswered: 'true'
+          exempt-labels: 'enhancement,bug'
           dry-run: 'true'
           verbose: 'true'
