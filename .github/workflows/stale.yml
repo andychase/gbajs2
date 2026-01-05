@@ -29,4 +29,3 @@ jobs:
           close-unanswered: 'true'
           exempt-labels: 'enhancement,bug'
           dry-run: 'true'
-          verbose: 'true'
