@@ -24,8 +24,7 @@ jobs:
 
       - uses: thenick775/stalesweeper@main
         with:
-          message: 'This discussion has been closed due to inactivity.'
-          days-before-close: '21'
+          message: 'This discussion has been closed due to inactivity, feel free to reopen if your problem has not been resolved.'
+          days-before-close: '28'
           close-unanswered: 'true'
           exempt-labels: 'enhancement,bug'
-          dry-run: 'true'
