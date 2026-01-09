@@ -6,6 +6,9 @@ on:
       upload_coverage:
         type: boolean
         default: false
+      compare_to_master:
+        type: boolean
+        default: false
 
 jobs:
   build:
@@ -55,8 +58,19 @@ jobs:
           name: gbajs3-coverage
           path: ./gbajs3/coverage/**
 
+      - name: Download master baseline coverage artifact
+        if: ${{ inputs.compare_to_master }}
+        uses: dawidd6/action-download-artifact@v8
+        with:
+          branch: master
+          event: push
+          workflow_conclusion: success
+          name: gbajs3-coverage
+          path: coverage-main
+
       - name: Generate coverage report
         uses: davelosert/vitest-coverage-report-action@v2.9.0
         with:
           working-directory: ./gbajs3
           threshold-icons: "{0: '🔴', 70: '🟠', 85: '🟢'}"
+          json-summary-compare-path: ${{ inputs.compare_to_master && '../coverage-main/coverage-summary.json' || '' }}
