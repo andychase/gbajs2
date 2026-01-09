@@ -20,3 +20,5 @@ jobs:
 
   gbajs3:
     uses: ./.github/workflows/gbajs3.workflow.yml
+    with:
+      upload_coverage: ${{ github.event_name == 'push' }}

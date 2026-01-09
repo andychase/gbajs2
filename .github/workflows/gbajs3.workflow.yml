@@ -2,6 +2,10 @@ name: Build Gbajs3
 
 on:
   workflow_call:
+    inputs:
+      upload_coverage:
+        type: boolean
+        default: false
 
 jobs:
   build:
@@ -44,7 +48,14 @@ jobs:
           name: bundle-stats
           path: ./gbajs3/stats.html
 
-      - name: Upload test artifacts
+      - name: Upload coverage artifact
+        if: ${{ inputs.upload_coverage }}
+        uses: actions/upload-artifact@v6
+        with:
+          name: gbajs3-coverage
+          path: ./gbajs3/coverage/**
+
+      - name: Generate coverage report
         uses: davelosert/vitest-coverage-report-action@v2.9.0
         with:
           working-directory: ./gbajs3
