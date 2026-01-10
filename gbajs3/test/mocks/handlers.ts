@@ -96,7 +96,7 @@ export const handlers = [
 
       await delay(100);
 
-      return new HttpResponse(null, { status: romName == '400' ? 400 : 200 });
+      return new HttpResponse(null, { status: romName === '400' ? 400 : 200 });
     }
   ),
 
@@ -109,7 +109,7 @@ export const handlers = [
 
       await delay(100);
 
-      return new HttpResponse(null, { status: saveName == '400' ? 400 : 200 });
+      return new HttpResponse(null, { status: saveName === '400' ? 400 : 200 });
     }
   ),
 

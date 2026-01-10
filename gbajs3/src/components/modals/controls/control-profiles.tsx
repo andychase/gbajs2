@@ -196,7 +196,7 @@ export const ControlProfiles = ({ id }: ControlProfilesProps) => {
   const updateProfile = (id: string, updatedName: string) => {
     setVirtualControlProfiles((prevState) =>
       prevState?.map((profile) => {
-        if (profile.id == id)
+        if (profile.id === id)
           return {
             ...profile,
             name: updatedName

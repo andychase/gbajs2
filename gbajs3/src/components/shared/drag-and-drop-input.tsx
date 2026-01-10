@@ -141,7 +141,7 @@ const validateFile = (validFileExtensions: Extension[], multiple: boolean) => {
     validFileExtensions.slice(0, -1).map(getDescription).join(', ') +
     `, or ${getDescription(validFileExtensions.slice(-1)[0])} file is required`;
 
-  if (validFileExtensions.length == 1) {
+  if (validFileExtensions.length === 1) {
     fileRequiredError = `${prefix} ${getDescription(
       validFileExtensions[0]
     )} file is required`;

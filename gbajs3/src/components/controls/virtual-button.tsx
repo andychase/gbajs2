@@ -131,11 +131,12 @@ export const VirtualButton = ({
   const keyboardEvents = keyId
     ? {
         onKeyDown: (e: KeyboardEvent<HTMLButtonElement>) => {
-          if (e.code == 'Space' || e.key == ' ')
+          if (e.code === 'Space' || e.key === ' ')
             emulator?.simulateKeyDown(keyId);
         },
         onKeyUp: (e: KeyboardEvent<HTMLButtonElement>) => {
-          if (e.code == 'Space' || e.key == ' ') emulator?.simulateKeyUp(keyId);
+          if (e.code === 'Space' || e.key === ' ')
+            emulator?.simulateKeyUp(keyId);
         }
       }
     : undefined;

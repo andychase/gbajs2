@@ -31,9 +31,9 @@ export const usePublicRoms = () => {
 
   const shouldShowPublicRomModal =
     !!romURL &&
-    hasLoadedPublicRoms?.[romURL] != 'loaded' &&
-    hasLoadedPublicRoms?.[romURL] != 'skipped' &&
-    hasLoadedPublicRoms?.[romURL] != 'temporarily-dismissed';
+    hasLoadedPublicRoms?.[romURL] !== 'loaded' &&
+    hasLoadedPublicRoms?.[romURL] !== 'skipped' &&
+    hasLoadedPublicRoms?.[romURL] !== 'temporarily-dismissed';
 
   if (isFirstRender)
     setHasLoadedPublicRoms((prevState) =>
