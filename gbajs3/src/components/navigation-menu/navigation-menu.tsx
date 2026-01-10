@@ -185,6 +185,7 @@ export const NavigationMenu = () => {
 
   const isMenuItemDisabledByAuth = !isAuthenticated();
   const hasApiLocation = !!import.meta.env.VITE_GBA_SERVER_LOCATION;
+  const hasNoLocalRoms = !emulator?.listRoms().length;
 
   useShowLoadPublicRoms();
 
@@ -250,7 +251,7 @@ export const NavigationMenu = () => {
             />
             <NavLeaf
               title="Load Local Rom"
-              $disabled={isRunning}
+              $disabled={isRunning || hasNoLocalRoms}
               icon={<BiRedo />}
               onClick={() => {
                 setModalContent(<LoadLocalRomModal />);

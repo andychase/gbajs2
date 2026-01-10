@@ -22,4 +22,4 @@ jobs:
     uses: ./.github/workflows/gbajs3.workflow.yml
     with:
       upload_coverage: ${{ github.event_name == 'push' }}
-      compare_to_master: ${{ github.event_name == 'pull_request' }}
+      compare_to_master: ${{ github.event_name == 'pull_request' || github.event_name == 'push' }}

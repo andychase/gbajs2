@@ -91,7 +91,6 @@ describe('<NavigationMenu />', () => {
     it.each([
       ['About', <AboutModal />],
       ['Upload Files', <UploadFilesModal />],
-      ['Load Local Rom', <LoadLocalRomModal />],
       ['Controls', <ControlsModal />],
       ['File System', <FileSystemModal />],
       ['Emulator Settings', <EmulatorSettingsModal />],
@@ -163,6 +162,61 @@ describe('<NavigationMenu />', () => {
       }
     );
 
+    it('Load Local Rom opens modal on click when local roms are present', async () => {
+      const setIsModalOpenSpy = vi.fn();
+      const setModalContextSpy = vi.fn();
+      const { useModalContext: original } = await vi.importActual<
+        typeof contextHooks
+      >('../../hooks/context.tsx');
+      const { useEmulatorContext: originalEmulator } = await vi.importActual<
+        typeof contextHooks
+      >('../../hooks/context.tsx');
+
+      vi.spyOn(contextHooks, 'useModalContext').mockImplementation(() => ({
+        ...original(),
+        setModalContent: setModalContextSpy,
+        setIsModalOpen: setIsModalOpenSpy
+      }));
+
+      vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
+        ...originalEmulator(),
+        emulator: {
+          getCurrentGameName: () => '/some_rom.gba',
+          getCurrentAutoSaveStatePath: () => null,
+          listRoms: () => ['some_rom.gba']
+        } as GBAEmulator
+      }));
+
+      renderWithContext(<NavigationMenu />);
+
+      const menuNode = screen.getByText('Load Local Rom');
+
+      expect(menuNode).toBeInTheDocument();
+
+      await userEvent.click(menuNode);
+
+      expect(setModalContextSpy).toHaveBeenCalledWith(<LoadLocalRomModal />);
+      expect(setIsModalOpenSpy).toHaveBeenCalledWith(true);
+    });
+
+    it('Load Local Rom renders as disabled', async () => {
+      const { useRunningContext: originalRunning } = await vi.importActual<
+        typeof contextHooks
+      >('../../hooks/context.tsx');
+
+      vi.spyOn(contextHooks, 'useRunningContext').mockImplementation(() => ({
+        ...originalRunning(),
+        isRunning: false
+      }));
+
+      renderWithContext(<NavigationMenu />);
+
+      const menuNode = screen.getByRole('button', { name: 'Load Local Rom' });
+
+      expect(menuNode).toBeInTheDocument();
+      expect(menuNode).toBeDisabled();
+    });
+
     it('Quick Reload calls hook on click when running', async () => {
       const quickReloadSpy: () => void = vi.fn();
       const { useRunningContext: originalRunning } = await vi.importActual<
@@ -224,7 +278,8 @@ describe('<NavigationMenu />', () => {
         emulator: {
           screenshot: screenshotSpy,
           getCurrentGameName: () => '/some_rom.gba',
-          getCurrentAutoSaveStatePath: () => null
+          getCurrentAutoSaveStatePath: () => null,
+          listRoms: () => ['some_rom.gba']
         } as GBAEmulator,
         canvas: {} as HTMLCanvasElement
       }));
@@ -261,7 +316,8 @@ describe('<NavigationMenu />', () => {
         emulator: {
           screenshot: () => false,
           getCurrentGameName: () => '/some_rom.gba',
-          getCurrentAutoSaveStatePath: () => null
+          getCurrentAutoSaveStatePath: () => null,
+          listRoms: () => ['some_rom.gba']
         } as GBAEmulator,
         canvas: {} as HTMLCanvasElement
       }));

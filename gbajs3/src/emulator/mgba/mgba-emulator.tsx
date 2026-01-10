@@ -131,7 +131,7 @@ const defaultKeyBindings = [
   { gbaInput: 'Right', key: 'ArrowRight', location: KEY_LOCATION_STANDARD }
 ];
 
-const ignorePaths = ['.', '..'];
+const fileIgnorePaths = ['.', '..'];
 
 const isFileExtensionOfType = (
   fileName: string,
@@ -146,7 +146,7 @@ const isFileExtensionOfType = (
 
 const filterSaveStates =
   (baseSaveStateName?: string) => (saveStateName: string) =>
-    !ignorePaths.includes(saveStateName) &&
+    !fileIgnorePaths.includes(saveStateName) &&
     baseSaveStateName &&
     saveStateName.startsWith(baseSaveStateName);
 
@@ -179,7 +179,7 @@ export const mGBAEmulator = (mGBA: mGBAEmulatorTypeDef): GBAEmulator => {
       if (nextNeighbor) recursiveRead(nextNeighbor);
 
       for (const name of mGBA.FS.readdir(path)) {
-        if (ignorePaths.includes(name)) continue;
+        if (fileIgnorePaths.includes(name)) continue;
 
         const currPath = `${path}/${name}`;
         const { mode } = mGBA.FS.lookupPath(currPath, {}).node;
@@ -320,7 +320,8 @@ export const mGBAEmulator = (mGBA: mGBAEmulatorTypeDef): GBAEmulator => {
 
       return exists ? mGBA.FS.readFile(cheatsPath) : new Uint8Array();
     },
-    listRoms: () => mGBA.listRoms(),
+    listRoms: () =>
+      mGBA.listRoms().filter((romName) => !fileIgnorePaths.includes(romName)),
     setVolume: (...args) => mGBA.setVolume(...args),
     getVolume: () => mGBA.getVolume(),
     enableKeyboardInput: () => mGBA.toggleInput(true),

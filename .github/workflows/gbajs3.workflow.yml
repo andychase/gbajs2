@@ -51,13 +51,6 @@ jobs:
           name: bundle-stats
           path: ./gbajs3/stats.html
 
-      - name: Upload coverage artifact
-        if: ${{ inputs.upload_coverage }}
-        uses: actions/upload-artifact@v6
-        with:
-          name: gbajs3-coverage
-          path: ./gbajs3/coverage/**
-
       - name: Download master baseline coverage artifact
         if: ${{ inputs.compare_to_master }}
         uses: dawidd6/action-download-artifact@v8
@@ -67,6 +60,13 @@ jobs:
           workflow_conclusion: success
           name: gbajs3-coverage
           path: coverage-main
+
+      - name: Upload coverage artifact
+        if: ${{ inputs.upload_coverage }}
+        uses: actions/upload-artifact@v6
+        with:
+          name: gbajs3-coverage
+          path: ./gbajs3/coverage/**
 
       - name: Generate coverage report
         uses: davelosert/vitest-coverage-report-action@v2.9.0
