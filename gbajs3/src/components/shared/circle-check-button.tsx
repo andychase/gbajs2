@@ -72,7 +72,7 @@ const CheckPath = styled('path')`
 `;
 
 const CopyWrapper = styled('span')<CopyWrapperProps>`
-  ${({ $isSuccessCheckVisible = false }) =>
+  ${({ $isSuccessCheckVisible }) =>
     $isSuccessCheckVisible && 'visibility: hidden;'}
 `;
 
@@ -86,10 +86,12 @@ export const CircleCheckButton = ({
   const labeledById = useId();
   const [isClicked, setIsClicked] = useState(false);
 
-  const showSuccessAnimation = !!showSuccess && isClicked;
+  const showSuccessAnimation = showSuccess && isClicked;
 
   useInterval(
-    () => setIsClicked(false),
+    () => {
+      setIsClicked(false);
+    },
     showSuccessAnimation ? msDuration : null
   );
 

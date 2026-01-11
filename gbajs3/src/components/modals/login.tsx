@@ -52,8 +52,9 @@ export const LoginModal = () => {
     }
   });
 
-  const onSubmit: SubmitHandler<InputProps> = (formData) =>
+  const onSubmit: SubmitHandler<InputProps> = (formData) => {
     executeLogin(formData);
+  };
 
   return (
     <>
@@ -108,7 +109,12 @@ export const LoginModal = () => {
         <Button form={loginFormId} type="submit" variant="contained">
           Login
         </Button>
-        <Button variant="outlined" onClick={() => setIsModalOpen(false)}>
+        <Button
+          variant="outlined"
+          onClick={() => {
+            setIsModalOpen(false);
+          }}
+        >
           Close
         </Button>
       </ModalFooter>

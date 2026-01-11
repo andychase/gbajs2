@@ -104,7 +104,7 @@ describe('<FileSystemModal />', () => {
     );
     const downloadBlobSpy = vi
       .spyOn(blobUtilities, 'downloadBlob')
-      .mockImplementation(() => {});
+      .mockImplementation(() => new Blob());
     const { useEmulatorContext: original } = await vi.importActual<
       typeof contextHooks
     >('../../hooks/context.tsx');

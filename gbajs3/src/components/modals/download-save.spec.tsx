@@ -50,7 +50,7 @@ describe('<DownloadSaveModal />', () => {
     >('../../hooks/context.tsx');
     const downloadBlobSpy = vi
       .spyOn(blobUtilities, 'downloadBlob')
-      .mockImplementation(() => {});
+      .mockImplementation(() => new Blob());
 
     vi.spyOn(contextHooks, 'useEmulatorContext').mockImplementation(() => ({
       ...original(),

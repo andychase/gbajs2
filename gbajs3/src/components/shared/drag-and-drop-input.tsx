@@ -110,7 +110,9 @@ const AcceptedFiles = ({
           <IconButton
             aria-label={`Delete ${fileName}`}
             sx={{ padding: 0 }}
-            onClick={() => onDeleteFile(fileName)}
+            onClick={() => {
+              onDeleteFile(fileName);
+            }}
           >
             <BiTrash />
           </IconButton>

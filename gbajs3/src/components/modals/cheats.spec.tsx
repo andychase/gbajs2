@@ -108,7 +108,9 @@ describe('<CheatsModal />', () => {
 
     expect(screen.getAllByRole('listitem')).toHaveLength(2);
     // adding a new cheat should cause the create button to scroll into view fully
-    await waitFor(() => expect(scrollIntoViewSpy).toHaveBeenCalledOnce());
+    await waitFor(() => {
+      expect(scrollIntoViewSpy).toHaveBeenCalledOnce();
+    });
   });
 
   it('removes cheat', async () => {
@@ -125,7 +127,7 @@ describe('<CheatsModal />', () => {
   it('submits parsed cheats', async () => {
     const testCheatsFile = new TextEncoder().encode('Some cheat file contents');
     const uploadCheatsSpy: (file: File, cb?: () => void) => void = vi.fn(
-      (_file: File, cb?: () => void) => cb && cb()
+      (_file: File, cb?: () => void) => cb?.()
     );
     const parsedCheatsToFileSpy: (cheatsList: ParsedCheats[]) => File | null =
       vi.fn(() => new File([testCheatsFile], 'rom1.cheats'));
@@ -180,7 +182,7 @@ describe('<CheatsModal />', () => {
   it('submits raw cheats', async () => {
     const testCheatsFile = new TextEncoder().encode('Some cheat file contents');
     const uploadCheatsSpy: (file: File, cb?: () => void) => void = vi.fn(
-      (_file: File, cb?: () => void) => cb && cb()
+      (_file: File, cb?: () => void) => cb?.()
     );
     const getCurrentCheatsFileNameSpy: () => string = vi.fn(
       () => 'rom1.cheats'

@@ -23,7 +23,7 @@ describe('<LoadSaveModal />', () => {
 
   it('loads save from the server', async () => {
     const uploadSaveOrSaveStateSpy: (file: File, cb?: () => void) => void =
-      vi.fn((_file: File, cb?: () => void) => cb && cb());
+      vi.fn((_file: File, cb?: () => void) => cb?.());
     const syncActionIfEnabledSpy = vi.fn();
     const { useEmulatorContext: originalEmulator } = await vi.importActual<
       typeof contextHooks
@@ -66,7 +66,7 @@ describe('<LoadSaveModal />', () => {
       data: [] as string[],
       isPending: false,
       error: null
-    } as UseQueryResult<SaveListResponse, Error>);
+    } as UseQueryResult<SaveListResponse>);
 
     renderWithContext(<LoadSaveModal />);
 
@@ -82,7 +82,7 @@ describe('<LoadSaveModal />', () => {
       data: undefined,
       isPending: false,
       error: new Error('Fetch failed')
-    } as UseQueryResult<SaveListResponse, Error>);
+    } as UseQueryResult<SaveListResponse>);
 
     renderWithContext(<LoadSaveModal />);
 
@@ -94,7 +94,7 @@ describe('<LoadSaveModal />', () => {
       data: undefined,
       isPending: false,
       error: new Error('some error')
-    } as UseMutationResult<File, Error, loadSaveHooks.LoadSaveProps, unknown>);
+    } as UseMutationResult<File, Error, loadSaveHooks.LoadSaveProps>);
 
     renderWithContext(<LoadSaveModal />);
 

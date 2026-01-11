@@ -1,4 +1,4 @@
-import { useTheme , styled } from '@mui/material/styles';
+import { useTheme, styled } from '@mui/material/styles';
 import { PacmanLoader } from 'react-spinners';
 
 import type { ReactNode } from 'react';

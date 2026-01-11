@@ -7,5 +7,9 @@ export const downloadBlob = (name: string, blob: Blob) => {
   link.click();
   link.remove();
 
-  setTimeout(() => URL.revokeObjectURL(link.href), 0);
+  setTimeout(() => {
+    URL.revokeObjectURL(link.href);
+  }, 0);
+
+  return blob;
 };

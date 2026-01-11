@@ -20,7 +20,7 @@ const NavComponentWrapper = styled('li')<ComponentWrapperProps>`
   color: ${({ theme }) => theme.gbaThemeBlue};
   padding: 0 2px;
 
-  ${({ $disabled = false, theme }) =>
+  ${({ $disabled, theme }) =>
     $disabled &&
     `color: ${theme.disabledGray};
      pointer-events: none;

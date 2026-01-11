@@ -47,11 +47,21 @@ describe('<VirtualControls />', () => {
     vi.spyOn(window, 'matchMedia').mockImplementation((query) => ({
       matches: query === GbaDarkTheme.isLargerThanPhone,
       media: '',
-      addListener: () => {},
-      removeListener: () => {},
-      onchange: () => {},
-      addEventListener: () => {},
-      removeEventListener: () => {},
+      addListener: () => {
+        /* empty */
+      },
+      removeListener: () => {
+        /* empty */
+      },
+      onchange: () => {
+        /* empty */
+      },
+      addEventListener: () => {
+        /* empty */
+      },
+      removeEventListener: () => {
+        /* empty */
+      },
       dispatchEvent: () => true
     }));
 
@@ -71,11 +81,21 @@ describe('<VirtualControls />', () => {
       vi.spyOn(window, 'matchMedia').mockImplementation((query) => ({
         matches: query === GbaDarkTheme.isLargerThanPhone,
         media: '',
-        addListener: () => {},
-        removeListener: () => {},
-        onchange: () => {},
-        addEventListener: () => {},
-        removeEventListener: () => {},
+        addListener: () => {
+          /* empty */
+        },
+        removeListener: () => {
+          /* empty */
+        },
+        onchange: () => {
+          /* empty */
+        },
+        addEventListener: () => {
+          /* empty */
+        },
+        removeEventListener: () => {
+          /* empty */
+        },
         dispatchEvent: () => true
       }));
 

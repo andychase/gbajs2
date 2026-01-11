@@ -44,6 +44,8 @@ export const useUnloadEmulator = () => {
     };
 
     window.addEventListener('pagehide', handlePageHide);
-    return () => window.removeEventListener('pagehide', handlePageHide);
+    return () => {
+      window.removeEventListener('pagehide', handlePageHide);
+    };
   }, [emulator, isRunning]);
 };

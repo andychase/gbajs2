@@ -16,9 +16,8 @@ type KeyBindingsFormProps = {
   onAfterSubmit: () => void;
 };
 
-type KeyBindingInputProps = {
-  [gbaInput: string]: KeyBinding;
-};
+// key is the gba input, value is the keybinding itself
+type KeyBindingInputProps = Record<string, KeyBinding>;
 
 const StyledForm = styled('form')`
   display: flex;

@@ -55,7 +55,7 @@ const exportEmscriptenFsAsZip = async (
     (chain, relPath) =>
       chain.then(async () => {
         const bytes = emulator?.getFile('/' + relPath);
-        return bytes && bytes.length
+        return bytes?.length
           ? addUint8ArrayToZip(writer, relPath, bytes).then(() => void 0)
           : Promise.resolve();
       }),
@@ -179,7 +179,12 @@ export const ImportExportModal = () => {
         >
           Export
         </Button>
-        <Button variant="outlined" onClick={() => setIsModalOpen(false)}>
+        <Button
+          variant="outlined"
+          onClick={() => {
+            setIsModalOpen(false);
+          }}
+        >
           Close
         </Button>
       </ModalFooter>

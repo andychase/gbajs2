@@ -134,7 +134,9 @@ describe('<DragAndDropInput />', () => {
     fireEvent.dragEnter(dropArea, data);
     fireEvent.drop(dropArea, data);
 
-    await waitFor(() => expect(onDropSpy).toHaveBeenCalledOnce());
+    await waitFor(() => {
+      expect(onDropSpy).toHaveBeenCalledOnce();
+    });
 
     expect(onDropSpy).toHaveBeenCalledWith(testFiles);
 
@@ -179,7 +181,9 @@ describe('<DragAndDropInput />', () => {
     fireEvent.dragEnter(dropArea, data);
     fireEvent.drop(dropArea, data);
 
-    await waitFor(() => expect(onDropSpy).toHaveBeenCalledOnce());
+    await waitFor(() => {
+      expect(onDropSpy).toHaveBeenCalledOnce();
+    });
 
     expect(onDropSpy).toHaveBeenCalledWith(testFiles);
 

@@ -24,16 +24,18 @@ describe('useUnloadEmulator hook', () => {
       isRunning: false
     }));
 
-    renderHookWithContext(() => useUnloadEmulator());
+    renderHookWithContext(() => {
+      useUnloadEmulator();
+    });
 
     fireEvent(window, new Event('pagehide'));
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(setItemSpy).not.toHaveBeenCalledWith(
         emulatorAutoSaveUnloadLocalStorageKey,
         expect.anything()
-      )
-    );
+      );
+    });
   });
 
   it('persists the auto save state if emulator is running', async () => {
@@ -64,11 +66,15 @@ describe('useUnloadEmulator hook', () => {
       isRunning: true
     }));
 
-    renderHookWithContext(() => useUnloadEmulator());
+    renderHookWithContext(() => {
+      useUnloadEmulator();
+    });
 
     fireEvent(window, new Event('pagehide'));
 
-    await waitFor(() => expect(forceAutoSaveStateSpy).toHaveBeenCalledOnce());
+    await waitFor(() => {
+      expect(forceAutoSaveStateSpy).toHaveBeenCalledOnce();
+    });
 
     expect(getAutoSaveStateSpy).toHaveBeenCalledOnce();
 

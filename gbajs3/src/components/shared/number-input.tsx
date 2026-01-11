@@ -3,11 +3,15 @@ import {
   InputAdornment,
   Stack,
   TextField,
+  type SxProps,
+  type Theme,
   type IconButtonProps,
   type TextFieldProps
 } from '@mui/material';
-import { useRef, type MouseEvent, type KeyboardEvent } from 'react';
-import { BiSolidUpArrow, BiSolidDownArrow } from 'react-icons/bi';
+import { useRef, type KeyboardEvent, type MouseEvent } from 'react';
+import { BiSolidDownArrow, BiSolidUpArrow } from 'react-icons/bi';
+
+import type { SlotComponentProps } from '@mui/utils/types';
 
 type NumberInputProps = TextFieldProps & {
   max?: number | string;
@@ -20,10 +24,44 @@ const commonAdornmentButtonProps: IconButtonProps = {
   sx: { p: '1px' }
 };
 
-const preventDefault = (event: MouseEvent<HTMLButtonElement>) =>
+const preventDefault = (event: MouseEvent<HTMLButtonElement>) => {
   event.preventDefault();
+};
 
 const replaceLeadingZeros = (value: string) => value.replace(/^0+/, '');
+
+function resolveSlotComponentProps<
+  TSlotComponent extends React.ElementType,
+  TOverrides,
+  TOwnerState
+>(
+  value:
+    | SlotComponentProps<TSlotComponent, TOverrides, TOwnerState>
+    | undefined,
+  ownerState: TOwnerState
+): Partial<TOverrides> {
+  if (!value) return {};
+  return typeof value === 'function' ? value(ownerState) : value;
+}
+
+type InferSystemStyleObject<S, T = object> = S extends readonly unknown[]
+  ? never
+  : S extends (theme: T) => unknown
+  ? never
+  : S;
+
+type SystemStyleObject<T extends object> = InferSystemStyleObject<
+  SxProps<T>,
+  T
+>;
+
+const isSxArray = (
+  sx?: SxProps<Theme>
+): sx is readonly (
+  | boolean
+  | SystemStyleObject<Theme>
+  | ((theme: Theme) => SystemStyleObject<Theme>)
+)[] => Array.isArray(sx);
 
 export const NumberInput = ({
   disabled = false,
@@ -61,53 +99,63 @@ export const NumberInput = ({
 
   const increment = (e: MouseEvent<HTMLButtonElement>) => {
     preventDefault(e);
+    if (!internalRef.current) return;
 
-    if (internalRef.current) {
-      const currentValue = internalRef.current.valueAsNumber;
-      const newValue = clamp(currentValue + step);
-      dispatchEvent(newValue);
-    }
+    const currentValue = internalRef.current.valueAsNumber;
+    dispatchEvent(clamp(currentValue + step));
   };
 
   const decrement = (e: MouseEvent<HTMLButtonElement>) => {
     preventDefault(e);
+    if (!internalRef.current) return;
 
-    if (internalRef.current) {
-      const currentValue = internalRef.current.valueAsNumber;
-      const newValue = clamp(currentValue - step);
-      dispatchEvent(newValue);
-    }
+    const currentValue = internalRef.current.valueAsNumber;
+    dispatchEvent(clamp(currentValue - step));
   };
 
   const enforceRange = () => {
-    if (internalRef.current) {
-      const currentValue = Number(internalRef.current.valueAsNumber || 0);
-      internalRef.current.value = clamp(currentValue);
-      internalRef.current.dispatchEvent(new Event('input', { bubbles: true }));
-    }
+    if (!internalRef.current) return;
+
+    const currentValue = internalRef.current.valueAsNumber || 0;
+    internalRef.current.value = clamp(currentValue);
+    internalRef.current.dispatchEvent(new Event('input', { bubbles: true }));
   };
 
   const sanitizeInput = () => {
-    if (internalRef.current && !isIntermediateValue.current) {
-      const value = internalRef.current.valueAsNumber;
+    if (!internalRef.current || isIntermediateValue.current) return;
 
-      if (isNaN(value)) internalRef.current.value = '0';
-      else internalRef.current.value = clamp(value).toString();
-    }
+    const value = internalRef.current.valueAsNumber;
+    internalRef.current.value = Number.isNaN(value) ? '0' : clamp(value);
   };
 
   const handleIntermediateValue = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === '-') {
-      if (min !== undefined && Number(min) >= 0) {
-        e.preventDefault();
-      } else if (internalRef.current) {
-        internalRef.current.value = replaceLeadingZeros(
-          internalRef.current.value
-        );
-        isIntermediateValue.current = true;
-      }
-    } else isIntermediateValue.current = false;
+    if (e.key !== '-') {
+      isIntermediateValue.current = false;
+      return;
+    }
+
+    if (min !== undefined && Number(min) >= 0) {
+      e.preventDefault();
+      return;
+    }
+
+    if (internalRef.current) {
+      internalRef.current.value = replaceLeadingZeros(
+        internalRef.current.value
+      );
+      isIntermediateValue.current = true;
+    }
   };
+
+  const ownerState = { disabled, size, ...rest };
+  const inputSlotProps = resolveSlotComponentProps(
+    slotProps?.input,
+    ownerState
+  );
+  const htmlInputSlotProps = resolveSlotComponentProps(
+    slotProps?.htmlInput,
+    ownerState
+  );
 
   return (
     <TextField
@@ -153,22 +201,25 @@ export const NumberInput = ({
           onInput: sanitizeInput,
           onKeyDown: handleIntermediateValue,
           onBlur: enforceRange,
-          ...slotProps?.input
+          ...inputSlotProps
         },
         htmlInput: {
-          min: min,
-          max: max,
-          step: step,
-          ...slotProps?.htmlInput
+          min,
+          max,
+          step,
+          ...htmlInputSlotProps
         }
       }}
-      sx={{
-        'input::-webkit-outer-spin-button, input::-webkit-inner-spin-button': {
-          WebkitAppearance: 'none',
-          margin: 0
+      sx={[
+        {
+          'input::-webkit-outer-spin-button, input::-webkit-inner-spin-button':
+            {
+              WebkitAppearance: 'none',
+              margin: 0
+            }
         },
-        ...sx
-      }}
+        ...(isSxArray(sx) ? sx : sx ? [sx] : [])
+      ]}
       {...rest}
     />
   );

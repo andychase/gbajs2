@@ -9,7 +9,11 @@ const subscribe = (callback: () => void) => {
   return () => listeners.delete(callback);
 };
 
-const trigger = () => listeners.forEach((cb) => cb());
+const trigger = () => {
+  listeners.forEach((cb) => {
+    cb();
+  });
+};
 
 export const useFileStat = (path?: string | null) => {
   const { emulator } = useEmulatorContext();

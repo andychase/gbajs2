@@ -20,7 +20,9 @@ describe('<AppErrorBoundary/>', () => {
   });
 
   it('renders fallback on uncaught error', () => {
-    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {
+      /* empty */
+    });
 
     renderWithContext(
       <AppErrorBoundary>
@@ -37,7 +39,9 @@ describe('<AppErrorBoundary/>', () => {
 
 describe('fallbackRender', () => {
   beforeEach(() => {
-    vi.spyOn(console, 'error').mockImplementation(() => {});
+    vi.spyOn(console, 'error').mockImplementation(() => {
+      /* empty */
+    });
   });
 
   it('renders styled fallback', () => {

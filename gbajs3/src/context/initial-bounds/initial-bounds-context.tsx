@@ -1,8 +1,6 @@
 import { createContext } from 'react';
 
-export type InitialBounds = {
-  [key: string]: DOMRect | undefined;
-};
+export type InitialBounds = Record<string, DOMRect | undefined>;
 
 type InitialBoundsContextProps = {
   initialBounds?: InitialBounds;

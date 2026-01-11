@@ -42,7 +42,9 @@ describe('useContext hooks', () => {
     'throws error when used outside of the proper provider',
     (contextHook, contextName) => {
       // silence console errors as they are expected
-      vi.spyOn(console, 'error').mockImplementation(() => {});
+      vi.spyOn(console, 'error').mockImplementation(() => {
+        /* empty */
+      });
 
       expect(() => {
         renderHook(() => contextHook());
@@ -54,7 +56,9 @@ describe('useContext hooks', () => {
 
   it('throws error with default message if no context display name', async () => {
     // silence console errors as they are expected
-    vi.spyOn(console, 'error').mockImplementation(() => {});
+    vi.spyOn(console, 'error').mockImplementation(() => {
+      /* empty */
+    });
 
     vi.doMock('../context/auth/auth-context.tsx', async () => {
       const { AuthContext: original, ...rest } = await vi.importActual<

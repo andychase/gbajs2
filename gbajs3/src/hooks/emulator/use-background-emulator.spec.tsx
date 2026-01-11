@@ -40,9 +40,9 @@ describe('useBackgroundEmulator hook', () => {
       .mockReturnValueOnce(false)
       .mockReturnValue(true);
 
-    const { rerender } = renderHookWithContext(() =>
-      useBackgroundEmulator({ isPaused: false })
-    );
+    const { rerender } = renderHookWithContext(() => {
+      useBackgroundEmulator({ isPaused: false });
+    });
 
     expect(emulatorPauseSpy).toHaveBeenCalledOnce();
     expect(emulatorForceAutoSaveStateSpy).toHaveBeenCalledOnce();

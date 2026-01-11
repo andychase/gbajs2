@@ -31,7 +31,7 @@ const NavLeafWrapper = styled('li')<LeafWrapperProps>`
   list-style-type: none;
   padding: 0 2px;
 
-  ${({ $disabled = false, theme }) =>
+  ${({ $disabled, theme }) =>
     $disabled &&
     `color: ${theme.disabledGray};
      pointer-events: none;
@@ -51,8 +51,7 @@ const NavLeafButton = styled(ButtonBase)<NavLeafButtonProps>`
   height: 100%;
   margin: 0;
 
-  padding: 0.5rem
-    ${({ $withPadding = false }) => ($withPadding ? '1rem' : '0.5rem')};
+  padding: 0.5rem ${({ $withPadding }) => ($withPadding ? '1rem' : '0.5rem')};
 
   text-align: inherit;
   width: 100%;
@@ -69,15 +68,14 @@ const NavLink = styled('a')<NavLinkProps>`
   color: unset;
   outline-offset: 0;
 
-  padding: 0.5rem
-    ${({ $withPadding = false }) => ($withPadding ? '1rem' : '0.5rem')};
+  padding: 0.5rem ${({ $withPadding }) => ($withPadding ? '1rem' : '0.5rem')};
 `;
 
 export const NavLeaf = ({
   title,
   icon,
-  onClick = undefined,
-  $link = undefined,
+  onClick,
+  $link,
   $disabled = false,
   $withPadding = false
 }: NavLeafProps) => {

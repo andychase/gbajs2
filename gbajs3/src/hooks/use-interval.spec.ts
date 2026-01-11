@@ -11,7 +11,9 @@ describe('useInterval', () => {
   it('should call the callback at the specified interval', () => {
     const callback = vi.fn();
 
-    renderHook(() => useInterval(callback, 1000));
+    renderHook(() => {
+      useInterval(callback, 1000);
+    });
 
     act(() => {
       vi.advanceTimersByTime(3000);
@@ -23,7 +25,9 @@ describe('useInterval', () => {
   it('should not call the callback if delay is null', () => {
     const callback = vi.fn();
 
-    renderHook(() => useInterval(callback, null));
+    renderHook(() => {
+      useInterval(callback, null);
+    });
 
     act(() => {
       vi.advanceTimersByTime(1000);
@@ -35,7 +39,9 @@ describe('useInterval', () => {
   it('should not call the callback after unmounting', () => {
     const callback = vi.fn();
 
-    const { unmount } = renderHook(() => useInterval(callback, 1000));
+    const { unmount } = renderHook(() => {
+      useInterval(callback, 1000);
+    });
 
     act(() => {
       vi.advanceTimersByTime(1000);
@@ -57,7 +63,9 @@ describe('useInterval', () => {
     const updatedCallback = vi.fn();
 
     const { rerender } = renderHook(
-      ({ callback }) => useInterval(callback, 1000),
+      ({ callback }) => {
+        useInterval(callback, 1000);
+      },
       {
         initialProps: { callback: initialCallback }
       }
@@ -84,7 +92,9 @@ describe('useInterval', () => {
     const callback = vi.fn();
 
     const { rerender } = renderHook(
-      ({ delay }) => useInterval(callback, delay),
+      ({ delay }) => {
+        useInterval(callback, delay);
+      },
       {
         initialProps: { delay: 1000 }
       }
@@ -110,7 +120,9 @@ describe('useInterval', () => {
     const initialProps: { delay: number | null } = { delay: 1000 };
 
     const { rerender } = renderHook(
-      ({ delay }: { delay: number | null }) => useInterval(callback, delay),
+      ({ delay }: { delay: number | null }) => {
+        useInterval(callback, delay);
+      },
       {
         initialProps: initialProps
       }

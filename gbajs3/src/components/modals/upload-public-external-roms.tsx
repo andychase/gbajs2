@@ -84,7 +84,9 @@ export const UploadPublicExternalRomsModal = ({
     <>
       <ModalHeader
         title="Upload Public Rom"
-        onClose={() => onLoadOrDismiss('temporarily-dismissed')}
+        onClose={() => {
+          onLoadOrDismiss('temporarily-dismissed');
+        }}
       />
       <ModalBody>
         <LoadingIndicator

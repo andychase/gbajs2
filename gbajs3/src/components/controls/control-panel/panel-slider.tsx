@@ -90,7 +90,11 @@ export const PanelSlider = ({ ButtonIcon, ...rest }: PanelSliderProps) => {
     <Tooltip
       open={isTooltipOpen}
       title={
-        <ClickAwayListener onClickAway={() => setIsTooltipOpen(false)}>
+        <ClickAwayListener
+          onClickAway={() => {
+            setIsTooltipOpen(false);
+          }}
+        >
           <Slider {...rest} />
         </ClickAwayListener>
       }
@@ -104,7 +108,9 @@ export const PanelSlider = ({ ButtonIcon, ...rest }: PanelSliderProps) => {
       placement="bottom-end"
     >
       <PanelControlButton
-        onClick={() => setIsTooltipOpen((prevState) => !prevState)}
+        onClick={() => {
+          setIsTooltipOpen((prevState) => !prevState);
+        }}
         $controlled={rest.controlled}
       >
         <ButtonIcon style={{ maxHeight: '100%' }} />

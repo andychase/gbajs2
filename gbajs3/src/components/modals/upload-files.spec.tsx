@@ -205,12 +205,12 @@ describe('<UploadFilesModal />', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Upload' }));
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(writeFileToEmulatorSpy).toHaveBeenCalledWith(
         expect.objectContaining({ name: 'good_rom.gba' }),
         'rom'
-      )
-    );
+      );
+    });
     expect(syncActionIfEnabledSpy).toHaveBeenCalledOnce();
     expect(setIsModalOpenSpy).toHaveBeenCalledWith(false);
   });
@@ -265,7 +265,9 @@ describe('<UploadFilesModal />', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Upload' }));
 
-    await waitFor(() => expect(writeFileToEmulatorSpy).toHaveBeenCalled());
+    await waitFor(() => {
+      expect(writeFileToEmulatorSpy).toHaveBeenCalled();
+    });
 
     expect(writeFileToEmulatorSpy).toHaveBeenCalledWith(
       expect.objectContaining({ name: 'good_rom.gba' }),

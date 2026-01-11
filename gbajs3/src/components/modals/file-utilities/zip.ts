@@ -17,8 +17,8 @@ import { z } from 'zod';
 import { downloadBlob } from './blob.ts';
 
 export type ZipTarget = {
-  writer: ZipWriter<void | Blob>;
-  finalize: () => Promise<void>;
+  writer: ZipWriter<Blob>;
+  finalize: () => Promise<Blob>;
 };
 
 const zipTypes: FilePickerAcceptType[] = [
@@ -54,7 +54,7 @@ export const setupZipTarget = async (
       types: zipTypes
     });
     const sink = await handle.createWritable();
-    const writer = new ZipWriter<void>(sink, opts);
+    const writer = new ZipWriter<Blob>(sink, opts);
     return { writer, finalize: () => writer.close() };
   }
 
@@ -74,7 +74,7 @@ export const stripLeadingSlashes = (filePath: string) =>
   filePath.replace(/^\/+/, '');
 
 export const addLocalStorageToZip = (
-  writer: ZipWriter<void | Blob>
+  writer: ZipWriter<Blob>
 ): Promise<EntryMetaData> =>
   writer.add(
     'local-storage.json',
@@ -88,11 +88,13 @@ export const restoreLocalStorageFromZip = async (
   const textJson = await entry.getData(new TextWriter());
   const json = storageSchema.parse(JSON.parse(textJson));
 
-  Object.entries(json).forEach(([k, v]) => localStorage.setItem(k, String(v)));
+  Object.entries(json).forEach(([k, v]) => {
+    localStorage.setItem(k, String(v));
+  });
 };
 
 export const addUint8ArrayToZip = (
-  writer: ZipWriter<void | Blob>,
+  writer: ZipWriter<Blob>,
   relativePath: string,
   bytes: Uint8Array
 ) => writer.add(relativePath, new Uint8ArrayReader(bytes), zipOptions);

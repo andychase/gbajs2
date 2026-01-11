@@ -138,7 +138,9 @@ describe('useWriteFileToEmulator hook', () => {
       const uploadCheatsSpy = vi.fn((_f: File, cb?: () => void) => cb?.());
       const uploadPatchSpy = vi.fn((_f: File, cb?: () => void) => cb?.());
       const uploadScreenshotSpy = vi.fn((_f: File, cb?: () => void) => cb?.());
-      const uploadAutoSaveStateSpy = vi.fn(async () => {});
+      const uploadAutoSaveStateSpy = vi.fn(async () => {
+        /* empty */
+      });
       const isFileExtensionOfTypeSpy = vi.fn(
         (fileName: string, type: keyof FileTypes) => {
           const fileExtension = `.${fileName.split('.').pop()}`;
@@ -262,8 +264,7 @@ describe('useWriteFileToEmulator hook', () => {
     const { result } = renderHookWithContext(() => useWriteFileToEmulator());
     const file = makeFile('unknown.unknown');
 
-    const ret = await act(async () => result.current(file));
-    expect(ret).toBeUndefined();
+    await act(async () => result.current(file));
 
     expect(emulator.uploadRom).not.toHaveBeenCalled();
     expect(emulator.uploadSaveOrSaveState).not.toHaveBeenCalled();

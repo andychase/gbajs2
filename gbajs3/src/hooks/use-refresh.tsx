@@ -8,9 +8,9 @@ export const refreshAccessTokenQueryKey = 'refreshAccessToken';
 const apiLocation = import.meta.env.VITE_GBA_SERVER_LOCATION;
 
 export const useRefreshAccessToken = (
-  options?: Omit<UseQueryOptions<string | null, Error>, 'queryKey'>
+  options?: Omit<UseQueryOptions<string | null>, 'queryKey'>
 ) => {
-  return useQuery<string | null, Error>({
+  return useQuery<string | null>({
     queryKey: [refreshAccessTokenQueryKey],
     queryFn: async () => {
       const url = `${apiLocation}/api/tokens/refresh`;

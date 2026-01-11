@@ -1,6 +1,6 @@
 import { createContext } from 'react';
 
-import type { Dispatch, SetStateAction} from 'react';
+import type { Dispatch, SetStateAction } from 'react';
 
 type RunningContextProps = {
   isRunning: boolean;

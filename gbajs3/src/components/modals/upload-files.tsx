@@ -159,7 +159,9 @@ const AdditionalFileActions = ({
     <RunRomCheckboxProps
       fileName={fileName}
       checked={isChecked || fileName === selectedFileName}
-      onChange={() => setSelectedFileName(isChecked ? null : fileName)}
+      onChange={() => {
+        setSelectedFileName(isChecked ? null : fileName);
+      }}
     />
   );
 };
@@ -196,8 +198,9 @@ export const UploadFilesModal = () => {
       ?.name;
 
   const onDrop = useCallback(
-    (acceptedFiles: File[]) =>
-      setValue('files', acceptedFiles, { shouldValidate: true }),
+    (acceptedFiles: File[]) => {
+      setValue('files', acceptedFiles, { shouldValidate: true });
+    },
     [setValue]
   );
 
@@ -294,9 +297,12 @@ export const UploadFilesModal = () => {
                     renderAdditionalFileActions={({ fileName }) => (
                       <AdditionalFileActions
                         selectedFileName={watch('romFileToRun')}
-                        setSelectedFileName={(name) =>
-                          setValue('romFileToRun', name ?? defaultNoSelectedRom)
-                        }
+                        setSelectedFileName={(name) => {
+                          setValue(
+                            'romFileToRun',
+                            name ?? defaultNoSelectedRom
+                          );
+                        }}
                         isRomFile={
                           emulator?.isFileExtensionOfType(fileName, 'rom') ??
                           false
@@ -343,7 +349,9 @@ export const UploadFilesModal = () => {
                                   <IconButton
                                     aria-label={`Remove URL ${index}`}
                                     sx={{ padding: '5px' }}
-                                    onClick={() => remove(index)}
+                                    onClick={() => {
+                                      remove(index);
+                                    }}
                                   >
                                     <BiTrash />
                                   </IconButton>
@@ -397,7 +405,9 @@ export const UploadFilesModal = () => {
               <IconButton
                 aria-label={`Add upload url`}
                 sx={{ padding: 0, marginTop: '10px' }}
-                onClick={() => append(defaultFileUrl)}
+                onClick={() => {
+                  append(defaultFileUrl);
+                }}
               >
                 <StyledBiPlus />
               </IconButton>
@@ -434,7 +444,9 @@ export const UploadFilesModal = () => {
         <Button
           style={{ minWidth: 'fit-content' }}
           variant="outlined"
-          onClick={() => setIsModalOpen(false)}
+          onClick={() => {
+            setIsModalOpen(false);
+          }}
         >
           Close
         </Button>

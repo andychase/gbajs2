@@ -104,14 +104,15 @@ export const VirtualControls = () => {
   const verticalStartPos = controlPanelBounds.bottom;
   const horizontalStartPos = controlPanelBounds.left;
 
-  const positionVariations: {
-    [key: string]: {
+  const positionVariations: Record<
+    string,
+    {
       mobileWithUrlBar?: { top?: string; left?: string };
       largerThanPhone?: { top?: string; left?: string };
       defaultMobile: { top: string; left: string };
       mobileLandscape?: { top: string; left: string };
-    };
-  } = {
+    }
+  > = {
     'a-button': {
       defaultMobile: {
         top: `calc(${verticalStartPos}px + 12%)`,

@@ -64,8 +64,8 @@ const VirtualButtonBase = styled(ButtonBase)`
 const CircularButton = styled(VirtualButtonBase, {
   shouldForwardProp: (propName) => propName !== '$areItemsDraggable'
 })<CircularButtonProps>`
-  width: ${({ $diameter = 60 }) => $diameter}px;
-  height: ${({ $diameter = 60 }) => $diameter}px;
+  width: ${({ $diameter }) => $diameter}px;
+  height: ${({ $diameter }) => $diameter}px;
   border-radius: 100px;
   border-color: ${({ $areItemsDraggable = false, theme }) =>
     $areItemsDraggable ? theme.gbaThemeBlue : 'rgba(255, 255, 255, 0.9)'};
@@ -165,9 +165,9 @@ export const VirtualButton = ({
       positionOffset={initialOffset}
       position={position}
       disabled={!areItemsDraggable}
-      onStop={(_, data) =>
-        setLayout(inputName, { position: { x: data.x, y: data.y } })
-      }
+      onStop={(_, data) => {
+        setLayout(inputName, { position: { x: data.x, y: data.y } });
+      }}
     >
       {isRectangular ? (
         <RectangularButton {...commonProps}>{children}</RectangularButton>

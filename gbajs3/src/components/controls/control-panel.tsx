@@ -75,7 +75,7 @@ const Panel = styled('ul', {
     gap: 10px;
   `}
 
-  ${({ $areItemsDraggable = false, theme }) =>
+  ${({ $areItemsDraggable, theme }) =>
     $areItemsDraggable &&
     `
     outline-color: ${theme.gbaThemeBlue};
@@ -206,8 +206,8 @@ export const ControlPanel = () => {
     setFastForwardMultiplier(ffMultiplier);
 
     const shouldMuteNext =
-      (emulatorSettings?.muteOnFastForward && ffMultiplier > 1) ||
-      (emulatorSettings?.muteOnSlowdown && ffMultiplier < 1);
+      (!!emulatorSettings?.muteOnFastForward && ffMultiplier > 1) ||
+      (!!emulatorSettings?.muteOnSlowdown && ffMultiplier < 1);
 
     if (shouldMuteNext) {
       if (!emulatorVolumeBeforeAutoMute)
@@ -393,14 +393,18 @@ export const ControlPanel = () => {
               <SliderButton
                 aria-label="Mute Volume"
                 icon={<BiVolumeMute style={{ maxHeight: '100%' }} />}
-                onClick={() => setVolume(0)}
+                onClick={() => {
+                  setVolume(0);
+                }}
               />
             }
             maxIcon={
               <SliderButton
                 aria-label="Max Volume"
                 icon={<BiVolumeFull style={{ maxHeight: '100%' }} />}
-                onClick={() => setVolume(1)}
+                onClick={() => {
+                  setVolume(1);
+                }}
               />
             }
             valueLabelFormat={`${currentEmulatorVolume * 100}`}
@@ -427,14 +431,18 @@ export const ControlPanel = () => {
               <SliderButton
                 aria-label="Regular Speed"
                 icon={<AiOutlineForward style={{ maxHeight: '100%' }} />}
-                onClick={() => setFastForward(1)}
+                onClick={() => {
+                  setFastForward(1);
+                }}
               />
             }
             maxIcon={
               <SliderButton
                 aria-label="Max Fast Forward"
                 icon={<AiOutlineFastForward style={{ maxHeight: '100%' }} />}
-                onClick={() => setFastForward(5)}
+                onClick={() => {
+                  setFastForward(5);
+                }}
               />
             }
             valueLabelFormat={(value) =>

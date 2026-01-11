@@ -80,7 +80,9 @@ export const EmulatorFileSystem = ({
           <IconButton
             aria-label={`Download ${nodeName}`}
             sx={{ padding: 0, margin: 0 }}
-            onClick={() => downloadFile(node.path)}
+            onClick={() => {
+              downloadFile(node.path);
+            }}
           >
             <BiCloudDownload />
           </IconButton>

@@ -157,7 +157,7 @@ export const mGBAEmulator = (mGBA: mGBAEmulatorTypeDef): GBAEmulator => {
   const filepathToFileName = (path?: string, extension?: string) => {
     let fileName = path?.split('/').pop();
     if (extension) {
-      const ext = '.' + fileName?.split('.').pop();
+      const ext = '.' + (fileName?.split('.').pop() ?? '');
       fileName = fileName?.replace(ext, extension);
     }
 
@@ -205,16 +205,13 @@ export const mGBAEmulator = (mGBA: mGBAEmulatorTypeDef): GBAEmulator => {
     const lines = cheatsStr.split('\n');
     const ignoreLines = [/^cheats = \d+$/, /^$/];
 
-    if (!lines[0]?.match('^cheats = [0-9]+$')) return [];
+    if (!/^cheats = [0-9]+$/.exec(lines[0])) return [];
 
-    const assembledCheats: {
-      [cheatNumber: string]:
-        | {
-            [cheatType: string]: string | boolean;
-          }
-        | undefined;
-    } = {};
-    const propertyMap: { [key: string]: keyof ParsedCheats } = {
+    const assembledCheats: Record<
+      string,
+      Record<'desc' | 'code' | 'enable', string | boolean> | undefined
+    > = {};
+    const propertyMap: Record<string, keyof ParsedCheats> = {
       desc: 'desc',
       code: 'code',
       enable: 'enable'
@@ -223,14 +220,15 @@ export const mGBAEmulator = (mGBA: mGBAEmulatorTypeDef): GBAEmulator => {
     for (const cheatLine of lines) {
       if (ignoreLines.some((regex) => regex.test(cheatLine))) continue;
 
-      const match = cheatLine
-        .trim()
-        .match(/^cheat([0-9]+)_([a-zA-Z]+)\s*=\s*"?([a-zA-Z0-9\s+:_]+)"?$/);
+      const match =
+        /^cheat([0-9]+)_([a-zA-Z]+)\s*=\s*"?([a-zA-Z0-9\s+:_]+)"?$/.exec(
+          cheatLine.trim()
+        );
 
       if (match) {
         const [, cheatNumber, cheatType, value] = match;
         const propertyName = propertyMap[cheatType];
-        assembledCheats[cheatNumber] = assembledCheats[cheatNumber] || {
+        assembledCheats[cheatNumber] = assembledCheats[cheatNumber] ?? {
           desc: '',
           code: '',
           enable: false
@@ -243,7 +241,7 @@ export const mGBAEmulator = (mGBA: mGBAEmulatorTypeDef): GBAEmulator => {
       }
     }
 
-    return Object.values(assembledCheats) as ParsedCheats[];
+    return Object.values(assembledCheats).filter((v): v is ParsedCheats => !!v);
   };
 
   const parsedCheatsToFile = (cheatsList: ParsedCheats[]): File | null => {
@@ -299,7 +297,9 @@ export const mGBAEmulator = (mGBA: mGBAEmulatorTypeDef): GBAEmulator => {
 
   return {
     coreName: 'mGBA',
-    addCoreCallbacks: (...args) => mGBA.addCoreCallbacks(...args),
+    addCoreCallbacks: (...args) => {
+      mGBA.addCoreCallbacks(...args);
+    },
     autoLoadCheats: () => mGBA.autoLoadCheats(),
     createSaveState: (...args) => mGBA.saveState(...args),
     // note: this solution will not be accurate for all keyboard types
@@ -323,14 +323,25 @@ export const mGBAEmulator = (mGBA: mGBAEmulatorTypeDef): GBAEmulator => {
     },
     listRoms: () =>
       mGBA.listRoms().filter((romName) => !fileIgnorePaths.includes(romName)),
-    setVolume: (...args) => mGBA.setVolume(...args),
+    setVolume: (...args) => {
+      mGBA.setVolume(...args);
+    },
     getVolume: () => mGBA.getVolume(),
-    enableKeyboardInput: () => mGBA.toggleInput(true),
-    disableKeyboardInput: () => mGBA.toggleInput(false),
-    simulateKeyDown: (...args) => mGBA.buttonPress(...args),
-    simulateKeyUp: (...args) => mGBA.buttonUnpress(...args),
-    setFastForwardMultiplier: (...args) =>
-      mGBA.setFastForwardMultiplier(...args),
+    enableKeyboardInput: () => {
+      mGBA.toggleInput(true);
+    },
+    disableKeyboardInput: () => {
+      mGBA.toggleInput(false);
+    },
+    simulateKeyDown: (...args) => {
+      mGBA.buttonPress(...args);
+    },
+    simulateKeyUp: (...args) => {
+      mGBA.buttonUnpress(...args);
+    },
+    setFastForwardMultiplier: (...args) => {
+      mGBA.setFastForwardMultiplier(...args);
+    },
     isFastForwardEnabled: () => mGBA.getFastForwardMultiplier() > 1,
     isSlowdownEnabled: () => mGBA.getFastForwardMultiplier() < -1,
     isFileExtensionOfType,
@@ -340,30 +351,50 @@ export const mGBAEmulator = (mGBA: mGBAEmulatorTypeDef): GBAEmulator => {
     getCurrentGameName: () => filepathToFileName(mGBA.gameName),
     getCurrentSave: () => (mGBA.saveName ? mGBA.getSave() : null),
     getCurrentSaveName: () => filepathToFileName(mGBA.saveName),
-    getCurrentAutoSaveStatePath: () =>
-      mGBA.autoSaveStateName ? mGBA.autoSaveStateName : null,
+    getCurrentAutoSaveStatePath: () => mGBA.autoSaveStateName ?? null,
     getFile: (path) => mGBA.FS.readFile(path),
     getStat: (path) => mGBA.FS.stat(path),
-    uploadCheats: (...args) => mGBA.uploadCheats(...args),
-    uploadPatch: (...args) => mGBA.uploadPatch(...args),
-    uploadRom: (...args) => mGBA.uploadRom(...args),
-    uploadSaveOrSaveState: (...args) => mGBA.uploadSaveOrSaveState(...args),
+    uploadCheats: (...args) => {
+      mGBA.uploadCheats(...args);
+    },
+    uploadPatch: (...args) => {
+      mGBA.uploadPatch(...args);
+    },
+    uploadRom: (...args) => {
+      mGBA.uploadRom(...args);
+    },
+    uploadSaveOrSaveState: (...args) => {
+      mGBA.uploadSaveOrSaveState(...args);
+    },
     deleteSaveState: (slot) => {
-      const saveStateName = filepathToFileName(mGBA.gameName, '.ss' + slot);
+      const saveStateName = filepathToFileName(
+        mGBA.gameName,
+        '.ss' + slot.toString()
+      );
       const saveStatePath = `${paths.saveStatePath}/${saveStateName}`;
 
       mGBA.FS.unlink(saveStatePath);
     },
-    uploadScreenshot: (...args) => mGBA.uploadScreenshot(...args),
+    uploadScreenshot: (...args) => {
+      mGBA.uploadScreenshot(...args);
+    },
     deleteFile: mGBA.FS.unlink,
-    pause: () => mGBA.pauseGame(),
+    pause: () => {
+      mGBA.pauseGame();
+    },
     resume: async () => {
       await resumeAudio();
       mGBA.resumeGame();
     },
-    quitGame: () => mGBA.quitGame(),
-    quitEmulator: () => mGBA.quitMgba(),
-    quickReload: () => mGBA.quickReload(),
+    quitGame: () => {
+      mGBA.quitGame();
+    },
+    quitEmulator: () => {
+      mGBA.quitMgba();
+    },
+    quickReload: () => {
+      mGBA.quickReload();
+    },
     getCurrentCheatsFile: () => {
       const cheatsName = filepathToFileName(mGBA.gameName, '.cheats');
       const cheatsPath = `${paths.cheatsPath}/${cheatsName}`;
@@ -374,14 +405,22 @@ export const mGBAEmulator = (mGBA: mGBAEmulatorTypeDef): GBAEmulator => {
     getCurrentCheatsFileName: () =>
       filepathToFileName(mGBA.gameName, '.cheats'),
     screenshot: (...args) => mGBA.screenshot(...args),
-    remapKeyBindings: (keyBindings) =>
-      keyBindings.forEach((keyBinding) =>
-        mGBA.bindKey(handleKeyBindingEdgeCases(keyBinding), keyBinding.gbaInput)
-      ),
+    remapKeyBindings: (keyBindings) => {
+      keyBindings.forEach((keyBinding) => {
+        mGBA.bindKey(
+          handleKeyBindingEdgeCases(keyBinding),
+          keyBinding.gbaInput
+        );
+      });
+    },
     filePaths: () => mGBA.filePaths(),
     fsSync: () => mGBA.FSSync(),
-    toggleRewind: (...args) => mGBA.toggleRewind(...args),
-    setCoreSettings: (...args) => mGBA.setCoreSettings(...args),
+    toggleRewind: (...args) => {
+      mGBA.toggleRewind(...args);
+    },
+    setCoreSettings: (...args) => {
+      mGBA.setCoreSettings(...args);
+    },
     forceAutoSaveState: () => mGBA.forceAutoSaveState(),
     loadAutoSaveState: () => mGBA.loadAutoSaveState(),
     getAutoSaveState: () => mGBA.getAutoSaveState(),

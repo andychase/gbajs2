@@ -25,7 +25,7 @@ describe('<LoadRomModal />', () => {
 
   it('loads rom from the server', async () => {
     const uploadRomSpy: (file: File, cb?: () => void) => void = vi.fn(
-      (_file: File, cb?: () => void) => cb && cb()
+      (_file: File, cb?: () => void) => cb?.()
     );
     const runGameSpy = vi.fn();
     const syncActionIfEnabledSpy = vi.fn();
@@ -74,7 +74,7 @@ describe('<LoadRomModal />', () => {
       data: [] as string[],
       isPending: false,
       error: null
-    } as UseQueryResult<RomListResponse, Error>);
+    } as UseQueryResult<RomListResponse>);
 
     renderWithContext(<LoadRomModal />);
 
@@ -90,7 +90,7 @@ describe('<LoadRomModal />', () => {
       data: undefined,
       isPending: false,
       error: new Error('Fetch failed')
-    } as UseQueryResult<RomListResponse, Error>);
+    } as UseQueryResult<RomListResponse>);
 
     renderWithContext(<LoadRomModal />);
 
@@ -102,7 +102,7 @@ describe('<LoadRomModal />', () => {
       data: undefined,
       isPaused: false,
       error: new Error('some error')
-    } as UseMutationResult<File, Error, LoadRomProps, unknown>);
+    } as UseMutationResult<File, Error, LoadRomProps>);
 
     renderWithContext(<LoadRomModal />);
 

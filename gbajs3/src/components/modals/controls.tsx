@@ -96,7 +96,9 @@ const ControlTabs = ({
     setIsSuccessfulSubmit(false);
   };
 
-  const onAfterSubmit = () => setIsSuccessfulSubmit(true);
+  const onAfterSubmit = () => {
+    setIsSuccessfulSubmit(true);
+  };
 
   const clearLayoutsAndInitialBounds = () => {
     clearInitialBounds();
@@ -169,7 +171,12 @@ export const ControlsModal = () => {
             showSuccess={isSuccessfulSubmit}
           />
         )}
-        <Button variant="outlined" onClick={() => setIsModalOpen(false)}>
+        <Button
+          variant="outlined"
+          onClick={() => {
+            setIsModalOpen(false);
+          }}
+        >
           Close
         </Button>
       </ModalFooter>

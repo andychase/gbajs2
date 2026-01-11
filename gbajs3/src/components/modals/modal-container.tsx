@@ -42,11 +42,13 @@ export const ModalContainer = () => {
 
   return (
     <Modal
-      appElement={document.getElementById('root') || undefined}
+      appElement={document.getElementById('root') ?? undefined}
       closeTimeoutMS={400}
       isOpen={isModalOpen}
       style={isMobileLandscape ? landscapeModalStyles : modalStyles}
-      onRequestClose={() => setIsModalOpen(false)}
+      onRequestClose={() => {
+        setIsModalOpen(false);
+      }}
       onAfterOpen={emulator?.disableKeyboardInput}
       onAfterClose={emulator?.enableKeyboardInput}
       aria={{ labelledby: 'modalHeader' }}

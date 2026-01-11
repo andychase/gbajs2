@@ -16,7 +16,9 @@ expect.addSnapshotSerializer(createSerializer());
 // MSW setup
 vi.stubEnv('VITE_GBA_SERVER_LOCATION', gbaServerLocationPlaceholder);
 
-beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));
+beforeAll(() => {
+  server.listen({ onUnhandledRequest: 'error' });
+});
 
 beforeEach(() => {
   HTMLElement.prototype.scrollIntoView = vi.fn();
@@ -46,7 +48,9 @@ beforeEach(() => {
   });
 });
 
-afterAll(() => server.close());
+afterAll(() => {
+  server.close();
+});
 
 afterEach(() => {
   localStorage.clear();

@@ -236,8 +236,9 @@ export const EmulatorSettingsModal = () => {
     });
   };
 
-  const handleTabChange = (_: React.SyntheticEvent, tabIndex: number) =>
+  const handleTabChange = (_: React.SyntheticEvent, tabIndex: number) => {
     setTabValue(tabIndex);
+  };
 
   return (
     <>
@@ -502,7 +503,12 @@ export const EmulatorSettingsModal = () => {
         >
           Reset
         </Button>
-        <Button variant="outlined" onClick={() => setIsModalOpen(false)}>
+        <Button
+          variant="outlined"
+          onClick={() => {
+            setIsModalOpen(false);
+          }}
+        >
           Close
         </Button>
       </ModalFooter>

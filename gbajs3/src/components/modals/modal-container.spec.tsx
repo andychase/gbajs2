@@ -14,7 +14,9 @@ const DismissModalButton = () => {
   return (
     <button
       data-testid="dismiss-modal-button"
-      onClick={() => setIsModalOpen((prevState) => !prevState)}
+      onClick={() => {
+        setIsModalOpen((prevState) => !prevState);
+      }}
     />
   );
 };
@@ -132,6 +134,8 @@ describe('<ModalContainer />', () => {
     await userEvent.click(screen.getByTestId('dismiss-modal-button'));
     await userEvent.click(screen.getByTestId('dismiss-modal-button'));
 
-    await waitFor(() => expect(enableKeyboardInputSpy).toHaveBeenCalledOnce());
+    await waitFor(() => {
+      expect(enableKeyboardInputSpy).toHaveBeenCalledOnce();
+    });
   });
 });

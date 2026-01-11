@@ -12,11 +12,10 @@ export type Layout = {
   isLargerThanPhone?: boolean;
 };
 
-export type Layouts = {
-  [key: string]: Partial<
-    Record<'portrait' | 'landscape' | 'desktop', Layout> | undefined
-  >;
-};
+export type Layouts = Record<
+  string,
+  Partial<Record<'portrait' | 'landscape' | 'desktop', Layout> | undefined>
+>;
 
 type LayoutContextProps = {
   layouts: Layouts;

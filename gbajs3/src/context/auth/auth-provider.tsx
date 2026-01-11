@@ -1,5 +1,5 @@
 import { useQueryClient } from '@tanstack/react-query';
-import { jwtDecode, type JwtPayload } from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 import { useCallback, type ReactNode } from 'react';
 
 import { AuthContext } from './auth-context.tsx';
@@ -8,14 +8,16 @@ import {
   useRefreshAccessToken
 } from '../../hooks/use-refresh.tsx';
 
-type AuthProviderProps = { children: ReactNode };
+type AuthProviderProps = {
+  children: ReactNode;
+};
 
 const fourMinutesInMS = 240 * 1000;
 
 const isTokenAuthenticated = (accessToken?: string | null) => {
   if (!accessToken) return false;
 
-  const { exp } = jwtDecode<JwtPayload>(accessToken);
+  const { exp } = jwtDecode(accessToken);
   return !!exp && Date.now() <= exp * 1000;
 };
 

@@ -10,7 +10,9 @@ import { LayoutContext } from './layout-context.tsx';
 
 import type { Layout, Layouts } from './layout-context.tsx';
 
-type LayoutProviderProps = { children: ReactNode };
+type LayoutProviderProps = {
+  children: ReactNode;
+};
 
 const layoutLocalStorageKey = 'componentLayoutsV2';
 
@@ -24,7 +26,9 @@ export const LayoutProvider = ({ children }: LayoutProviderProps) => {
   const isMobileLandscape = useMediaQuery(theme.isMobileLandscape);
   const orientation = useOrientation();
 
-  const clearLayouts = useCallback(() => setLayouts({}), [setLayouts]);
+  const clearLayouts = useCallback(() => {
+    setLayouts({});
+  }, [setLayouts]);
 
   const layoutType =
     isLargerThanPhone && !isMobileLandscape
@@ -34,7 +38,7 @@ export const LayoutProvider = ({ children }: LayoutProviderProps) => {
       : 'portrait';
 
   const setLayout = useCallback(
-    (layoutKey: string, layout: Layout) =>
+    (layoutKey: string, layout: Layout) => {
       setLayouts((prevState) => {
         return {
           ...prevState,
@@ -46,7 +50,8 @@ export const LayoutProvider = ({ children }: LayoutProviderProps) => {
             }
           }
         };
-      }),
+      });
+    },
     [setLayouts, layoutType]
   );
 

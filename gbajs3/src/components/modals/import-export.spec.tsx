@@ -74,7 +74,7 @@ describe('<ImportExportModal />', () => {
 
   // only uint8 array style (no blobs) will work in jsdom
   const makeEntries = async (
-    items: Array<{ name: string; data?: string; directory?: boolean }>
+    items: { name: string; data?: string; directory?: boolean }[]
   ): Promise<Entry[]> => {
     const u8w = new Uint8ArrayWriter();
     const zw = new ZipWriter(u8w);
@@ -144,8 +144,12 @@ describe('<ImportExportModal />', () => {
 
     expect(readZipSpy).toHaveBeenCalledOnce();
     expect(readZipSpy).toHaveBeenCalledWith(testZip, expect.any(Function));
-    await waitFor(() => expect(syncActionIfEnabledSpy).toHaveBeenCalledOnce());
-    await waitFor(() => expect(setIsModalOpenSpy).toHaveBeenCalledWith(false));
+    await waitFor(() => {
+      expect(syncActionIfEnabledSpy).toHaveBeenCalledOnce();
+    });
+    await waitFor(() => {
+      expect(setIsModalOpenSpy).toHaveBeenCalledWith(false);
+    });
   });
 
   it('dispatches imported entries to the correct emulator handlers', async () => {
@@ -198,7 +202,9 @@ describe('<ImportExportModal />', () => {
       setIsModalOpen: setIsModalOpenSpy
     }));
 
-    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {
+      /* empty */
+    });
 
     const restoreLocalStorageFromZipSpy = vi.spyOn(
       zipUtils,
@@ -243,7 +249,9 @@ describe('<ImportExportModal />', () => {
     await userEvent.upload(screen.getByTestId('hidden-file-input'), testZip);
     await userEvent.click(screen.getByRole('button', { name: 'Import' }));
 
-    await waitFor(() => expect(uploadRomSpy).toHaveBeenCalledTimes(5));
+    await waitFor(() => {
+      expect(uploadRomSpy).toHaveBeenCalledTimes(5);
+    });
 
     expect(uploadAutoSaveStateSpy).toHaveBeenCalledTimes(1);
 
@@ -309,27 +317,29 @@ describe('<ImportExportModal />', () => {
       zipUtils.zipOptions
     );
 
-    await waitFor(() => expect(finalizeSpy).toHaveBeenCalledOnce());
+    await waitFor(() => {
+      expect(finalizeSpy).toHaveBeenCalledOnce();
+    });
 
     expect(addUint8ArrayToZipSpy).toHaveBeenCalledTimes(3);
 
     expect(addUint8ArrayToZipSpy).toHaveBeenNthCalledWith(
       1,
-      expect.any(ZipWriter<void | Blob>),
+      expect.any(ZipWriter<Blob>),
       'autosave/rom1_auto.ss',
       expect.anything()
     );
 
     expect(zipUtils.addUint8ArrayToZip).toHaveBeenNthCalledWith(
       2,
-      expect.any(ZipWriter<void | Blob>),
+      expect.any(ZipWriter<Blob>),
       'data/games/rom1.gba',
       expect.anything()
     );
 
     expect(zipUtils.addUint8ArrayToZip).toHaveBeenNthCalledWith(
       3,
-      expect.any(ZipWriter<void | Blob>),
+      expect.any(ZipWriter<Blob>),
       'data/games/rom1.sav',
       expect.anything()
     );

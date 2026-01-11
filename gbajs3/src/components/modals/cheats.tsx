@@ -34,7 +34,7 @@ const Cheat = styled('li')`
 
 const CheatsList = styled('ul')<OptionallyHiddenProps>`
   list-style: none;
-  display: ${({ $shouldHide = false }) => ($shouldHide ? 'none' : 'flex')};
+  display: ${({ $shouldHide }) => ($shouldHide ? 'none' : 'flex')};
   flex-direction: column;
   gap: 10px;
   padding: 10px;
@@ -64,7 +64,7 @@ const HelpText = styled('p')<HelpTextProps>`
   margin-bottom: 0;
   margin-left: 0;
   margin-right: 0;
-  margin-top: ${({ $withMargin = false }) => ($withMargin ? '5px' : '0')};
+  margin-top: ${({ $withMargin }) => ($withMargin ? '5px' : '0')};
 `;
 
 export const CheatsModal = () => {
@@ -198,7 +198,9 @@ export const CheatsModal = () => {
                     <IconButton
                       aria-label="Remove Cheat"
                       sx={{ padding: '5px' }}
-                      onClick={() => remove(index)}
+                      onClick={() => {
+                        remove(index);
+                      }}
                     >
                       <BiTrash />
                     </IconButton>
@@ -241,11 +243,18 @@ export const CheatsModal = () => {
         <Button
           color="info"
           variant="contained"
-          onClick={() => setViewRawCheats((prevState) => !prevState)}
+          onClick={() => {
+            setViewRawCheats((prevState) => !prevState);
+          }}
         >
           {viewRawCheats ? 'Parsed' : 'Raw'}
         </Button>
-        <Button variant="outlined" onClick={() => setIsModalOpen(false)}>
+        <Button
+          variant="outlined"
+          onClick={() => {
+            setIsModalOpen(false);
+          }}
+        >
           Close
         </Button>
       </ModalFooter>

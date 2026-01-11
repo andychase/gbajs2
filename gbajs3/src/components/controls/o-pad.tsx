@@ -74,7 +74,7 @@ const CenterKnob = styled('div')<CenterKnobProps>`
   border: 2px solid ${({ theme }) => theme.gbaThemeBlue};
   border-radius: 50%;
   background-color: ${({ theme }) => theme.pureBlack};
-  transition: ${({ $isControlled = false }) =>
+  transition: ${({ $isControlled }) =>
     $isControlled ? `transform 0.3s ease-in-out` : `none`};
 
   &:before {
@@ -146,24 +146,20 @@ export const OPad = ({ initialPosition }: OPadProps) => {
     });
   }, [isKeyDown, emulator]);
 
-  const pressEmulatorArrow = useCallback(
-    (keyId: string, pointerId: number) =>
-      setIsKeyDown((prevState) => ({ ...prevState, [keyId]: pointerId })),
-    []
-  );
+  const pressEmulatorArrow = useCallback((keyId: string, pointerId: number) => {
+    setIsKeyDown((prevState) => ({ ...prevState, [keyId]: pointerId }));
+  }, []);
 
-  const unpressEmulatorArrow = useCallback(
-    (pointerId: number) =>
-      setIsKeyDown((prevState) =>
-        Object.fromEntries(
-          Object.entries(prevState).map(([key, value]) => [
-            key,
-            value === pointerId ? undefined : value
-          ])
-        )
-      ),
-    []
-  );
+  const unpressEmulatorArrow = useCallback((pointerId: number) => {
+    setIsKeyDown((prevState) =>
+      Object.fromEntries(
+        Object.entries(prevState).map(([key, value]) => [
+          key,
+          value === pointerId ? undefined : value
+        ])
+      )
+    );
+  }, []);
 
   const getKeyId = ({ x, y }: Position) => {
     // Rotate the x and y axis 45 degrees,
@@ -215,7 +211,7 @@ export const OPad = ({ initialPosition }: OPadProps) => {
 
       const keyId = getKeyId({ x, y });
 
-      if (keyId && !isKeyDown[keyId as keyof typeof isKeyDown]) {
+      if (keyId && !isKeyDown[keyId]) {
         unpressEmulatorArrow(event.pointerId);
         pressEmulatorArrow(keyId, event.pointerId);
       }
@@ -270,9 +266,9 @@ export const OPad = ({ initialPosition }: OPadProps) => {
       nodeRef={containerDragRef}
       disabled={!areItemsDraggable}
       position={dragPosition}
-      onStop={(_, data) =>
-        setLayout('oPad', { position: { x: data.x, y: data.y } })
-      }
+      onStop={(_, data) => {
+        setLayout('oPad', { position: { x: data.x, y: data.y } });
+      }}
     >
       <BackgroundContainer
         aria-label="O-Pad"

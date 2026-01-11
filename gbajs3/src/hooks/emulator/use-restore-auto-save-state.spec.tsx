@@ -26,24 +26,26 @@ describe('useRestoreAutoSaveStateData hook', () => {
       })
     );
 
-    renderHook(() => useRestoreAutoSaveStateData(emu));
+    renderHook(() => {
+      useRestoreAutoSaveStateData(emu);
+    });
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(uploadAutoSaveStateSpy).toHaveBeenCalledWith(
         'autosave.ss0',
         new Uint8Array([
           116, 101, 115, 116, 32, 98, 105, 110, 97, 114, 121, 32, 98, 108, 111,
           98
         ]) // "test binary blob"
-      )
-    );
+      );
+    });
     expect(uploadAutoSaveStateSpy).toHaveBeenCalledOnce();
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(localStorage.getItem(emulatorAutoSaveUnloadLocalStorageKey)).toBe(
         null
-      )
-    );
+      );
+    });
   });
 
   it('does nothing if emulator is null', async () => {
@@ -57,13 +59,15 @@ describe('useRestoreAutoSaveStateData hook', () => {
       })
     );
 
-    renderHook(() => useRestoreAutoSaveStateData(null));
+    renderHook(() => {
+      useRestoreAutoSaveStateData(null);
+    });
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(
         localStorage.getItem(emulatorAutoSaveUnloadLocalStorageKey)
-      ).not.toBe(null)
-    );
+      ).not.toBe(null);
+    });
   });
 
   it('does nothing if localStorage is empty', async () => {
@@ -75,9 +79,13 @@ describe('useRestoreAutoSaveStateData hook', () => {
       ) => Promise<void>
     } as GBAEmulator;
 
-    renderHook(() => useRestoreAutoSaveStateData(emu));
+    renderHook(() => {
+      useRestoreAutoSaveStateData(emu);
+    });
 
-    await waitFor(() => expect(uploadAutoSaveStateSpy).not.toHaveBeenCalled());
+    await waitFor(() => {
+      expect(uploadAutoSaveStateSpy).not.toHaveBeenCalled();
+    });
   });
 
   it('does nothing if filename or data are missing', async () => {
@@ -99,8 +107,12 @@ describe('useRestoreAutoSaveStateData hook', () => {
       })
     );
 
-    renderHook(() => useRestoreAutoSaveStateData(emu));
+    renderHook(() => {
+      useRestoreAutoSaveStateData(emu);
+    });
 
-    await waitFor(() => expect(uploadAutoSaveStateSpy).not.toHaveBeenCalled());
+    await waitFor(() => {
+      expect(uploadAutoSaveStateSpy).not.toHaveBeenCalled();
+    });
   });
 });

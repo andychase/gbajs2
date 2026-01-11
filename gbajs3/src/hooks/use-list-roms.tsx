@@ -6,13 +6,11 @@ import { useAuthContext } from './context.tsx';
 const RomListSchema = z.array(z.string());
 export type RomListResponse = z.infer<typeof RomListSchema>;
 
-export const useListRoms = (
-  options?: UseQueryOptions<RomListResponse, Error>
-) => {
+export const useListRoms = (options?: UseQueryOptions<RomListResponse>) => {
   const apiLocation = import.meta.env.VITE_GBA_SERVER_LOCATION;
   const { accessToken } = useAuthContext();
 
-  return useQuery<RomListResponse, Error>({
+  return useQuery<RomListResponse>({
     queryKey: ['gbaRoms', apiLocation, accessToken],
     queryFn: async () => {
       const url = `${apiLocation}/api/rom/list`;

@@ -17,7 +17,8 @@ export default [
   jsxA11Y.flatConfigs.recommended,
   styledA11y.flatConfigs.recommended,
   jestDom.configs['flat/recommended'],
-  ...tseslint.configs.recommendedTypeChecked,
+  ...tseslint.configs.strictTypeChecked,
+  ...tseslint.configs.stylisticTypeChecked,
   ...pluginQuery.configs['flat/recommended'],
   {
     files: ['**/__tests__/**/*.[jt]s?(x)', '**/*.{test,spec}.[jt]s?(x)'],
@@ -53,6 +54,7 @@ export default [
     rules: {
       eqeqeq: 'error',
       '@typescript-eslint/consistent-type-imports': 'error',
+      '@typescript-eslint/consistent-type-definitions': ['error', 'type'],
       '@typescript-eslint/no-unnecessary-condition': 'error',
       '@typescript-eslint/no-misused-promises': [
         'error',
@@ -60,8 +62,18 @@ export default [
           checksVoidReturn: false
         }
       ],
+      '@typescript-eslint/restrict-template-expressions': [
+        'error',
+        { allowNumber: true }
+      ],
       'react-refresh/only-export-components': 'warn',
       'import/no-default-export': 'error',
+      'import/no-unresolved': [
+        'error',
+        { caseSensitive: true, ignore: ['^react-error-boundary$'] }
+      ],
+      // https://typescript-eslint.io/rules/no-empty-function/#how-to-use
+      'no-empty-function': 'off',
 
       'import/order': [
         'error',
