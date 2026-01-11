@@ -1108,18 +1108,18 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
               style="left: 0%;"
             >
               <input
-                aria-label="Fast Forward Slider"
+                aria-label="Fast Forward/Slowdown Slider"
                 aria-orientation="horizontal"
-                aria-valuemax="5"
-                aria-valuemin="1"
-                aria-valuenow="1"
+                aria-valuemax="8"
+                aria-valuemin="4"
+                aria-valuenow="4"
                 data-index="0"
-                max="5"
-                min="1"
+                max="8"
+                min="4"
                 step="1"
                 style="border: 0px; clip: rect(0px); height: 100%; margin: -1px; overflow: hidden; padding: 0px; position: absolute; white-space: nowrap; width: 100%; direction: ltr;"
                 type="range"
-                value="1"
+                value="4"
               />
               <span
                 aria-hidden="true"
@@ -1131,7 +1131,7 @@ exports[`<ControlPanel /> > renders with default desktop position and size 1`] =
                   <span
                     class="MuiSlider-valueLabelLabel"
                   >
-                    x1
+                    1x
                   </span>
                 </span>
               </span>
@@ -2258,18 +2258,18 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
               style="left: 0%;"
             >
               <input
-                aria-label="Fast Forward Slider"
+                aria-label="Fast Forward/Slowdown Slider"
                 aria-orientation="horizontal"
-                aria-valuemax="5"
-                aria-valuemin="1"
-                aria-valuenow="1"
+                aria-valuemax="8"
+                aria-valuemin="4"
+                aria-valuenow="4"
                 data-index="0"
-                max="5"
-                min="1"
+                max="8"
+                min="4"
                 step="1"
                 style="border: 0px; clip: rect(0px); height: 100%; margin: -1px; overflow: hidden; padding: 0px; position: absolute; white-space: nowrap; width: 100%; direction: ltr;"
                 type="range"
-                value="1"
+                value="4"
               />
               <span
                 aria-hidden="true"
@@ -2281,7 +2281,7 @@ exports[`<ControlPanel /> > renders with default mobile position and size 1`] = 
                   <span
                     class="MuiSlider-valueLabelLabel"
                   >
-                    x1
+                    1x
                   </span>
                 </span>
               </span>

@@ -29,6 +29,7 @@ Do not attempt to log into the server unless you are the server owner or an appr
 - Golang server for logged-in user support
 - Nginx server for gbajs3 content
 - Fast Forward support
+- Slowdown support
 - Re-mappable keyboard bindings
 - Virtual controls (Desktop/Mobile)
 - Movable desktop canvas and controls

@@ -62,6 +62,7 @@ export type GBAEmulator = {
   getCurrentAutoSaveStatePath: () => string | null;
   getVolume: () => number;
   isFastForwardEnabled: () => boolean;
+  isSlowdownEnabled: () => boolean;
   isFileExtensionOfType: (
     fileName: string,
     type: keyof typeof fileTypes
@@ -331,6 +332,7 @@ export const mGBAEmulator = (mGBA: mGBAEmulatorTypeDef): GBAEmulator => {
     setFastForwardMultiplier: (...args) =>
       mGBA.setFastForwardMultiplier(...args),
     isFastForwardEnabled: () => mGBA.getFastForwardMultiplier() > 1,
+    isSlowdownEnabled: () => mGBA.getFastForwardMultiplier() < -1,
     isFileExtensionOfType,
     run: (...args) => mGBA.loadGame(...args),
     getCurrentRom: () =>

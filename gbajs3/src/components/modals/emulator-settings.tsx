@@ -35,6 +35,7 @@ export type EmulatorSettings = {
   frameSkip?: number;
   baseFpsTarget?: number;
   muteOnFastForward: boolean;
+  muteOnSlowdown: boolean;
   muteOnRewind: boolean;
   rewindBufferCapacity?: number;
   rewindBufferInterval?: number;
@@ -54,6 +55,7 @@ export type EmulatorSettings = {
   restoreAutoSaveStateOnLoad?: boolean;
   autoSaveStateLoadNotificationEnabled: boolean;
   autoSaveStateCaptureNotificationEnabled: boolean;
+  slowdownEnabled: boolean;
 };
 
 type TabPanelProps = {
@@ -125,6 +127,7 @@ export const EmulatorSettingsModal = () => {
       allowOpposingDirections:
         emulatorSettings?.allowOpposingDirections ?? true,
       muteOnFastForward: emulatorSettings?.muteOnFastForward ?? true,
+      muteOnSlowdown: emulatorSettings?.muteOnSlowdown ?? true,
       muteOnRewind: emulatorSettings?.muteOnRewind ?? true,
       saveFileName:
         emulatorSettings?.saveFileName ??
@@ -151,7 +154,8 @@ export const EmulatorSettingsModal = () => {
       autoSaveStateLoadNotificationEnabled:
         emulatorSettings?.autoSaveStateLoadNotificationEnabled ?? true,
       autoSaveStateCaptureNotificationEnabled:
-        emulatorSettings?.autoSaveStateCaptureNotificationEnabled ?? true
+        emulatorSettings?.autoSaveStateCaptureNotificationEnabled ?? true,
+      slowdownEnabled: emulatorSettings?.slowdownEnabled ?? true
     }
   });
   const [tabValue, setTabValue] = useState(0);
@@ -329,6 +333,11 @@ export const EmulatorSettingsModal = () => {
                 {...register('rewindEnable')}
               />
               <ManagedCheckbox
+                label="Slowdown enabled"
+                watcher={watch('slowdownEnabled')}
+                {...register('slowdownEnabled')}
+              />
+              <ManagedCheckbox
                 label="Auto save state enabled"
                 watcher={watch('autoSaveStateEnable')}
                 {...register('autoSaveStateEnable')}
@@ -391,6 +400,11 @@ export const EmulatorSettingsModal = () => {
                 label="Mute on fast forward"
                 watcher={watch('muteOnFastForward')}
                 {...register('muteOnFastForward')}
+              />
+              <ManagedCheckbox
+                label="Mute on slowdown"
+                watcher={watch('muteOnSlowdown')}
+                {...register('muteOnSlowdown')}
               />
             </TabPanel>
             <TabPanel value={tabValue} index={2}>

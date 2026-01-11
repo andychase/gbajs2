@@ -94,7 +94,7 @@ describe('<EmulatorSettingsModal />', () => {
 
     expect(setItemSpy).toHaveBeenCalledWith(
       'emulatorSettings',
-      '{"frameSkip":0,"baseFpsTarget":60,"rewindBufferCapacity":600,"rewindBufferInterval":1,"allowOpposingDirections":true,"muteOnFastForward":true,"muteOnRewind":true,"saveFileSystemOnInGameSave":true,"saveFileSystemOnCreateUpdateDelete":true,"fileSystemNotificationsEnabled":true,"audioSampleRate":48000,"audioBufferSize":1024,"timestepSync":true,"videoSync":false,"audioSync":false,"threadedVideo":false,"rewindEnable":true,"showFpsCounter":false,"autoSaveStateTimerIntervalSeconds":30,"autoSaveStateEnable":true,"restoreAutoSaveStateOnLoad":true,"autoSaveStateLoadNotificationEnabled":true,"autoSaveStateCaptureNotificationEnabled":true}'
+      '{"frameSkip":0,"baseFpsTarget":60,"rewindBufferCapacity":600,"rewindBufferInterval":1,"allowOpposingDirections":true,"muteOnFastForward":true,"muteOnSlowdown":true,"muteOnRewind":true,"saveFileSystemOnInGameSave":true,"saveFileSystemOnCreateUpdateDelete":true,"fileSystemNotificationsEnabled":true,"audioSampleRate":48000,"audioBufferSize":1024,"timestepSync":true,"videoSync":false,"audioSync":false,"threadedVideo":false,"rewindEnable":true,"showFpsCounter":false,"autoSaveStateTimerIntervalSeconds":30,"autoSaveStateEnable":true,"restoreAutoSaveStateOnLoad":true,"autoSaveStateLoadNotificationEnabled":true,"autoSaveStateCaptureNotificationEnabled":true,"slowdownEnabled":true}'
     );
 
     expect(addCallbacksSpy).toHaveBeenCalledOnce();
@@ -178,6 +178,7 @@ describe('<EmulatorSettingsModal />', () => {
     const muteOnFastForwardCheckbox = screen.getByLabelText(
       'Mute on fast forward'
     );
+    const muteOnSlowdownCheckbox = screen.getByLabelText('Mute on slowdown');
     const saveFileSystemOnFSOperationCheckbox = screen.getByLabelText(
       'Save file system on create / update / delete'
     );
@@ -202,6 +203,7 @@ describe('<EmulatorSettingsModal />', () => {
     const autoSaveStateLoadNotificationCheckbox = screen.getByLabelText(
       'Auto save state load notification'
     );
+    const slowdownEnabledCheckbox = screen.getByLabelText('Slowdown enabled');
 
     await userEvent.type(frameSkipInput, '25');
 
@@ -224,6 +226,7 @@ describe('<EmulatorSettingsModal />', () => {
     await userEvent.click(fileSystemNotificationsCheckbox);
     await userEvent.click(muteOnRewindCheckbox);
     await userEvent.click(muteOnFastForwardCheckbox);
+    await userEvent.click(muteOnSlowdownCheckbox);
     await userEvent.click(saveFileSystemOnFSOperationCheckbox);
     await userEvent.click(saveOnInGameSaveCheckbox);
     await userEvent.click(timestepSyncCheckbox);
@@ -236,12 +239,13 @@ describe('<EmulatorSettingsModal />', () => {
     await userEvent.click(restoreAutoSaveStateCheckbox);
     await userEvent.click(autoSaveStateCaptureNotificationCheckbox);
     await userEvent.click(autoSaveStateLoadNotificationCheckbox);
+    await userEvent.click(slowdownEnabledCheckbox);
 
     await userEvent.click(screen.getByRole('button', { name: 'Save' }));
 
     expect(setItemSpy).toHaveBeenCalledWith(
       'emulatorSettings',
-      '{"frameSkip":25,"baseFpsTarget":30,"rewindBufferCapacity":1000,"rewindBufferInterval":10,"allowOpposingDirections":false,"muteOnFastForward":false,"muteOnRewind":false,"saveFileSystemOnInGameSave":false,"saveFileSystemOnCreateUpdateDelete":false,"fileSystemNotificationsEnabled":false,"audioSampleRate":48000,"audioBufferSize":1024,"timestepSync":false,"videoSync":true,"audioSync":true,"threadedVideo":true,"rewindEnable":false,"showFpsCounter":true,"autoSaveStateTimerIntervalSeconds":10,"autoSaveStateEnable":false,"restoreAutoSaveStateOnLoad":false,"autoSaveStateLoadNotificationEnabled":false,"autoSaveStateCaptureNotificationEnabled":false,"saveFileName":"custom_save_override.sav"}'
+      '{"frameSkip":25,"baseFpsTarget":30,"rewindBufferCapacity":1000,"rewindBufferInterval":10,"allowOpposingDirections":false,"muteOnFastForward":false,"muteOnSlowdown":false,"muteOnRewind":false,"saveFileSystemOnInGameSave":false,"saveFileSystemOnCreateUpdateDelete":false,"fileSystemNotificationsEnabled":false,"audioSampleRate":48000,"audioBufferSize":1024,"timestepSync":false,"videoSync":true,"audioSync":true,"threadedVideo":true,"rewindEnable":false,"showFpsCounter":true,"autoSaveStateTimerIntervalSeconds":10,"autoSaveStateEnable":false,"restoreAutoSaveStateOnLoad":false,"autoSaveStateLoadNotificationEnabled":false,"autoSaveStateCaptureNotificationEnabled":false,"slowdownEnabled":false,"saveFileName":"custom_save_override.sav"}'
     );
 
     expect(addCallbacksSpy).toHaveBeenCalledOnce();

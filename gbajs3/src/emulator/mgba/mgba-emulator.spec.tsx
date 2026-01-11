@@ -350,6 +350,11 @@ cheat1_code = "XYZ789"`;
     expect(emulator.isFastForwardEnabled()).toBe(true);
   });
 
+  it('should determine if slowdown is enabled', () => {
+    const emulator = createEmulator();
+    expect(emulator.isSlowdownEnabled()).toBe(false);
+  });
+
   it('should get the current ROM as a Uint8Array', () => {
     const emulator = createEmulator();
     expect(emulator.getCurrentRom()).toEqual(new Uint8Array([4, 5, 6]));

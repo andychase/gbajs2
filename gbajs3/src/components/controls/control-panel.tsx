@@ -47,6 +47,8 @@ type PanelProps = {
   $areItemsDraggable: boolean;
 };
 
+type emulatorVolumeBeforeAutoMuteSources = 'rewind' | 'fastForwardSlowdown';
+
 const Panel = styled('ul', {
   shouldForwardProp: (propName) => !propName.toString().startsWith('$')
 })<PanelProps>`
@@ -83,6 +85,22 @@ const Panel = styled('ul', {
   `}
 `;
 
+const FAST_FORWARD_SLOWDOWN_VALUES = [
+  { value: -5, label: '1/5x' },
+  { value: -4, label: '1/4x' },
+  { value: -3, label: '1/3x' },
+  { value: -2, label: '1/2x' },
+  { value: 1, label: '1x' },
+  { value: 2, label: '2x' },
+  { value: 3, label: '3x' },
+  { value: 4, label: '4x' },
+  { value: 5, label: '5x' }
+] as const;
+
+const FAST_FORWARD_SLOWDOWN_BY_VALUE = new Map<number, number>(
+  FAST_FORWARD_SLOWDOWN_VALUES.map((r, i) => [r.value, i])
+);
+
 export const ControlPanel = () => {
   const { emulator } = useEmulatorContext();
   const { isRunning } = useRunningContext();
@@ -110,11 +128,15 @@ export const ControlPanel = () => {
   );
   const [emulatorVolumeBeforeAutoMute, setEmulatorVolumeBeforeAutoMute] =
     useLocalStorage<
-      { volumeBeforeMute: number; type: 'rewind' | 'fastForward' } | undefined
+      | {
+          volumeBeforeMute: number;
+          type: emulatorVolumeBeforeAutoMuteSources;
+        }
+      | undefined
     >('emulatorVolumeBeforeAutoMuteLocalStorageKey');
   const rndRef = useRef<Rnd | null>(null);
 
-  const muteAndPreserveVolume = (type: 'rewind' | 'fastForward') => {
+  const muteAndPreserveVolume = (type: emulatorVolumeBeforeAutoMuteSources) => {
     if (currentEmulatorVolume > 0) {
       setEmulatorVolumeBeforeAutoMute({
         volumeBeforeMute: currentEmulatorVolume,
@@ -125,7 +147,7 @@ export const ControlPanel = () => {
     }
   };
 
-  const restoreVolume = (type: 'rewind' | 'fastForward') => {
+  const restoreVolume = (type: emulatorVolumeBeforeAutoMuteSources) => {
     if (type !== emulatorVolumeBeforeAutoMute?.type) return;
 
     emulator?.setVolume(emulatorVolumeBeforeAutoMute.volumeBeforeMute);
@@ -183,13 +205,18 @@ export const ControlPanel = () => {
     emulator?.setFastForwardMultiplier(ffMultiplier);
     setFastForwardMultiplier(ffMultiplier);
 
-    if (emulatorSettings?.muteOnFastForward) {
-      if (ffMultiplier > 1 && !emulatorVolumeBeforeAutoMute) {
-        muteAndPreserveVolume('fastForward');
-      } else if (ffMultiplier === 1) {
-        restoreVolume('fastForward');
-      }
+    const shouldMuteNext =
+      (emulatorSettings?.muteOnFastForward && ffMultiplier > 1) ||
+      (emulatorSettings?.muteOnSlowdown && ffMultiplier < 1);
+
+    if (shouldMuteNext) {
+      if (!emulatorVolumeBeforeAutoMute)
+        muteAndPreserveVolume('fastForwardSlowdown');
+
+      return;
     }
+
+    restoreVolume('fastForwardSlowdown');
   };
 
   const defaultPosition = isMobileLandscape
@@ -386,14 +413,16 @@ export const ControlPanel = () => {
           />
           <PanelSlider
             id={`${controlPanelId}--fast-forward`}
-            aria-label="Fast Forward Slider"
+            aria-label="Fast Forward/Slowdown Slider"
             gridArea="fastForward"
             controlled={isControlled}
             disablePointerEvents={areItemsDraggable}
-            value={fastForwardMultiplier}
-            step={1}
-            min={1}
-            max={5}
+            value={
+              FAST_FORWARD_SLOWDOWN_BY_VALUE.get(fastForwardMultiplier) ??
+              FAST_FORWARD_SLOWDOWN_BY_VALUE.get(4)
+            }
+            min={emulatorSettings?.slowdownEnabled ? 0 : 4}
+            max={emulatorSettings?.slowdownEnabled ? 8 : 8}
             minIcon={
               <SliderButton
                 aria-label="Regular Speed"
@@ -408,9 +437,17 @@ export const ControlPanel = () => {
                 onClick={() => setFastForward(5)}
               />
             }
-            valueLabelFormat={`x${fastForwardMultiplier}`}
+            valueLabelFormat={(value) =>
+              (
+                FAST_FORWARD_SLOWDOWN_VALUES[value] ??
+                FAST_FORWARD_SLOWDOWN_VALUES[4]
+              ).label
+            }
             onChange={(_, value) => {
-              const ffMultiplier = Number(value);
+              const ffMultiplier = (
+                FAST_FORWARD_SLOWDOWN_VALUES[Number(value)] ??
+                FAST_FORWARD_SLOWDOWN_VALUES[4]
+              ).value;
               setFastForward(ffMultiplier);
             }}
             ButtonIcon={AiOutlineFastForward}

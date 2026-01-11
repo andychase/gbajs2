@@ -48,7 +48,7 @@ describe('<ControlPanel />', () => {
     expect(screen.getByLabelText('Drag Items')).toBeVisible();
     expect(screen.getByLabelText('Resize Items')).toBeVisible();
     expect(screen.getByLabelText('Volume Slider')).toBeVisible();
-    expect(screen.getByLabelText('Fast Forward Slider')).toBeVisible();
+    expect(screen.getByLabelText('Fast Forward/Slowdown Slider')).toBeVisible();
   });
 
   it('renders with default mobile position and size', () => {
@@ -511,8 +511,8 @@ describe('<ControlPanel />', () => {
 
       renderWithContext(<ControlPanel />);
 
-      fireEvent.change(screen.getByLabelText('Fast Forward Slider'), {
-        target: { value: 3 }
+      fireEvent.change(screen.getByLabelText('Fast Forward/Slowdown Slider'), {
+        target: { value: 6 }
       });
 
       expect(ffMultiplierSpy).toHaveBeenCalledOnce();
@@ -555,9 +555,9 @@ describe('<ControlPanel />', () => {
 
       renderWithContext(<ControlPanel />);
 
-      expect(screen.getByLabelText('Fast Forward Slider')).toHaveDisplayValue(
-        '4'
-      );
+      expect(
+        screen.getByLabelText('Fast Forward/Slowdown Slider')
+      ).toHaveDisplayValue('7');
     });
   });
 

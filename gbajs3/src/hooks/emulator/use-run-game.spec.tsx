@@ -35,7 +35,9 @@ describe('useRunGame hook', () => {
         filePaths: () => ({
           gamePath: '/data/games'
         }),
-        setCoreSettings: setCoreSettingsSpy
+        setCoreSettings: setCoreSettingsSpy,
+        isFastForwardEnabled: () => false,
+        isSlowdownEnabled: () => false
       } as GBAEmulator
     }));
 
@@ -123,6 +125,7 @@ describe('useRunGame hook', () => {
       emulator: {
         run: emulatorRunSpy,
         isFastForwardEnabled: () => false,
+        isSlowdownEnabled: () => false,
         setVolume: vi.fn() as (v: number) => void,
         remapKeyBindings: emulatorRemapKeyBindingsSpy,
         setFastForwardMultiplier: emulatorSetFastForwardMultiplierSpy,

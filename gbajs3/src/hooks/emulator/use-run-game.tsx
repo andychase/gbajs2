@@ -39,6 +39,7 @@ export const useRunGame = () => {
       fileSystemNotificationsEnabled: true,
       allowOpposingDirections: true,
       muteOnFastForward: true,
+      muteOnSlowdown: true,
       muteOnRewind: true,
       audioSampleRate: 48000,
       audioBufferSize: 1024,
@@ -49,7 +50,8 @@ export const useRunGame = () => {
       rewindEnable: true,
       showFpsCounter: false,
       autoSaveStateLoadNotificationEnabled: true,
-      autoSaveStateCaptureNotificationEnabled: true
+      autoSaveStateCaptureNotificationEnabled: true,
+      slowdownEnabled: true
     }
   );
   const { addCallbacks } = useAddCallbacks();
@@ -69,7 +71,11 @@ export const useRunGame = () => {
 
         if (currentKeyBindings) emulator?.remapKeyBindings(currentKeyBindings);
 
-        if (fastForwardMultiplier > 1 && !emulator?.isFastForwardEnabled())
+        if (
+          (fastForwardMultiplier > 1 || fastForwardMultiplier < -1) &&
+          !emulator?.isFastForwardEnabled() &&
+          !emulator?.isSlowdownEnabled()
+        )
           emulator?.setFastForwardMultiplier(fastForwardMultiplier);
 
         addCallbacks({
