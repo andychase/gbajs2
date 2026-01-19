@@ -1,5 +1,5 @@
 import { useLocalStorage } from '@uidotdev/usehooks';
-import { useCallback } from 'react';
+import { useCallback, useId } from 'react';
 import toast from 'react-hot-toast';
 
 import { emulatorSettingsLocalStorageKey } from '../../context/emulator/consts.ts';
@@ -31,19 +31,21 @@ export const useAddCallbacks = () => {
   );
   const autoSaveStatePath = emulator?.getCurrentAutoSaveStatePath();
   const { trigger } = useFileStat(autoSaveStatePath);
+  const savedFileSystemToastId = useId();
 
   const syncActionIfEnabled = useCallback(
     async ({ withToast = true }: SyncActionIfEnabledProps = {}) => {
       if (emulatorSettings?.saveFileSystemOnCreateUpdateDelete) {
         await emulator?.fsSync();
         if (emulatorSettings.fileSystemNotificationsEnabled && withToast)
-          toast.success('Saved File System');
+          toast.success('Saved File System', { id: savedFileSystemToastId });
       }
     },
     [
-      emulator,
       emulatorSettings?.saveFileSystemOnCreateUpdateDelete,
-      emulatorSettings?.fileSystemNotificationsEnabled
+      emulatorSettings?.fileSystemNotificationsEnabled,
+      emulator,
+      savedFileSystemToastId
     ]
   );
 
@@ -55,7 +57,9 @@ export const useAddCallbacks = () => {
           async () => {
             await emulator.fsSync();
             if (options.fileSystemNotificationsEnabled)
-              toast.success('Saved File System');
+              toast.success('Saved File System', {
+                id: savedFileSystemToastId
+              });
           }
         ),
         autoSaveStateLoadedCallback: optionalFunc(
@@ -70,7 +74,7 @@ export const useAddCallbacks = () => {
           }
         )
       }),
-    [emulator, trigger]
+    [emulator, savedFileSystemToastId, trigger]
   );
 
   return {

@@ -144,7 +144,9 @@ describe('useAddCallbacks hook', () => {
 
       expect(emulatorFSSyncSpy).toHaveBeenCalledOnce();
       expect(toastSuccessSpy).toHaveBeenCalledOnce();
-      expect(toastSuccessSpy).toHaveBeenCalledWith('Saved File System');
+      expect(toastSuccessSpy).toHaveBeenCalledWith('Saved File System', {
+        id: expect.any(String)
+      });
     });
 
     it('should only sync files', async () => {
