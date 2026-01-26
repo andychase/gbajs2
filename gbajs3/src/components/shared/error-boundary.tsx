@@ -1,6 +1,10 @@
 import { Button } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import { ErrorBoundary } from 'react-error-boundary';
+import {
+  ErrorBoundary,
+  getErrorMessage,
+  type FallbackProps
+} from 'react-error-boundary';
 
 import {
   BodyWrapper,
@@ -10,11 +14,6 @@ import {
 } from './styled.tsx';
 
 import type { ReactNode } from 'react';
-
-type FallbackRendererProps = {
-  error: Error;
-  resetErrorBoundary: () => void;
-};
 
 const ErrorWrapper = styled('div')`
   background-color: ${({ theme }) => theme.pureWhite};
@@ -75,10 +74,7 @@ const AttributionLink = styled('a')`
 
 const RightArrow = () => <span>&rarr;</span>;
 
-const fallbackRender = ({
-  error,
-  resetErrorBoundary
-}: FallbackRendererProps) => (
+const fallbackRender = ({ error, resetErrorBoundary }: FallbackProps) => (
   <Overlay data-testid="fallback-renderer">
     <ErrorWrapper role="alert">
       <CenteredHeaderWrapper>
@@ -97,7 +93,7 @@ const fallbackRender = ({
             Font by NACreative
           </AttributionLink>
         </ImageWrapper>
-        <p style={{ color: 'red' }}>{error.message}</p>
+        <p style={{ color: 'red' }}>{getErrorMessage(error)}</p>
         <p>
           Please use the buttons below to copy the stack trace and create an
           issue, this helps a lot with error reporting!
@@ -109,7 +105,9 @@ const fallbackRender = ({
           variant="contained"
           onClick={async () => {
             await navigator.clipboard.writeText(
-              error.stack ?? 'No stack available'
+              error instanceof Error
+                ? (error.stack ?? 'Error had empty stack')
+                : 'No stack available'
             );
           }}
         >

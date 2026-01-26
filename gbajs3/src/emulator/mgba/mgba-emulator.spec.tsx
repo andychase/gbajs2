@@ -10,7 +10,7 @@ import type { ParsedCheats } from './mgba-emulator.tsx';
 import type { mGBAEmulator as mGBAEmulatorTypeDef } from '@thenick775/mgba-wasm';
 
 describe('mGBAEmulator - Full Functionality Test Suite', () => {
-  const mockMGBA: Partial<mGBAEmulatorTypeDef> = {
+  const mockMGBA: () => Partial<mGBAEmulatorTypeDef> = () => ({
     filePaths: vi.fn(() => ({
       root: '/data',
       saveStatePath: '/data/states',
@@ -32,7 +32,7 @@ describe('mGBAEmulator - Full Functionality Test Suite', () => {
     } as unknown as typeof FS,
     SDL2: {
       audioContext: {
-        state: 'suspended',
+        state: 'running',
         resume: vi.fn().mockResolvedValue(undefined),
         suspend: vi.fn().mockResolvedValue(undefined),
         close: vi.fn().mockResolvedValue(undefined)
@@ -45,13 +45,21 @@ describe('mGBAEmulator - Full Functionality Test Suite', () => {
     resumeGame: vi.fn(),
     toggleInput: vi.fn(),
     bindKey: vi.fn()
+  });
+
+  const createEmulator = (overrides: Partial<mGBAEmulatorTypeDef> = {}) => {
+    const mock = mockMGBA();
+    return {
+      emulator: mGBAEmulator({
+        ...mock,
+        ...overrides
+      } as mGBAEmulatorTypeDef),
+      mock: { ...mock, ...overrides }
+    };
   };
 
-  const createEmulator = (overrides: Partial<mGBAEmulatorTypeDef> = {}) =>
-    mGBAEmulator({ ...mockMGBA, ...overrides } as mGBAEmulatorTypeDef);
-
   it('should return the default key bindings', () => {
-    const emulator = createEmulator();
+    const { emulator } = createEmulator();
     expect(emulator.defaultKeyBindings()).toEqual([
       { gbaInput: 'A', key: 'X', location: KEY_LOCATION_STANDARD },
       { gbaInput: 'B', key: 'Z', location: KEY_LOCATION_STANDARD },
@@ -67,21 +75,21 @@ describe('mGBAEmulator - Full Functionality Test Suite', () => {
   });
 
   it('should return the default sample rates', () => {
-    const emulator = createEmulator();
+    const { emulator } = createEmulator();
     expect(emulator.defaultAudioSampleRates()).toEqual([
       22050, 32000, 44100, 48000
     ]);
   });
 
   it('should return the default buffer sizes', () => {
-    const emulator = createEmulator();
+    const { emulator } = createEmulator();
     expect(emulator.defaultAudioBufferSizes()).toEqual([
       256, 512, 768, 1024, 1536, 2048, 3072, 4096
     ]);
   });
 
   it('should parse a cheats string in libretro format', () => {
-    const emulator = createEmulator();
+    const { emulator } = createEmulator();
     const cheatsStr = `cheats = 2
 cheat0_desc = "Infinite Lives"
 cheat0_enable = true
@@ -97,7 +105,7 @@ cheat1_code = "XYZ789"`;
   });
 
   it('should parse a cheats string with spaces and empty lines', () => {
-    const emulator = createEmulator();
+    const { emulator } = createEmulator();
     const cheatsStr = `cheats = 2
 cheat0_desc = "Infinite Lives" 
 cheat0_enable = true 
@@ -114,7 +122,7 @@ cheat1_code = "XYZ789"`;
   });
 
   it('should return empty cheats list if header line does not match', () => {
-    const emulator = createEmulator();
+    const { emulator } = createEmulator();
     const cheatsStr = `cheat0_desc = "Infinite Lives"
 cheat0_enable = true
 cheat0_code = "ABC123"
@@ -126,7 +134,7 @@ cheat1_code = "XYZ789"`;
   });
 
   it('should generate a valid cheats file from a list of cheats', async () => {
-    const emulator = createEmulator();
+    const { emulator } = createEmulator();
     const cheatsList = [
       { desc: 'Infinite Lives', enable: true, code: 'ABC123' },
       { desc: 'All Weapons', enable: false, code: 'XYZ789' }
@@ -147,7 +155,7 @@ cheat1_code = "XYZ789"`;
   });
 
   it('should return null if current game path is invalid', () => {
-    const emulator = createEmulator({ gameName: '/data/games/' });
+    const { emulator } = createEmulator({ gameName: '/data/games/' });
     const cheatsList = [
       { desc: 'Infinite Lives', enable: true, code: 'ABC123' },
       { desc: 'All Weapons', enable: false, code: 'XYZ789' }
@@ -159,7 +167,7 @@ cheat1_code = "XYZ789"`;
   });
 
   it('should generate only a header if cheats list is empty', async () => {
-    const emulator = createEmulator();
+    const { emulator } = createEmulator();
     const cheatsList: ParsedCheats[] = [];
 
     const cheatsFile = emulator.parsedCheatsToFile(cheatsList);
@@ -174,15 +182,15 @@ cheat1_code = "XYZ789"`;
   });
 
   it('should retrieve the current cheats file', () => {
-    const emulator = createEmulator();
+    const { emulator, mock } = createEmulator();
     expect(emulator.getCurrentCheatsFile()).toEqual(new Uint8Array([1, 2, 3]));
-    expect(mockMGBA.FS?.readFile).toHaveBeenCalledWith(
+    expect(mock.FS?.readFile).toHaveBeenCalledWith(
       '/data/cheats/testGame.cheats'
     );
   });
 
   it('should return an empty Uint8Array when cheats file does not exist', () => {
-    const emulator = createEmulator({
+    const { emulator } = createEmulator({
       FS: {
         analyzePath: vi.fn(() => ({ exists: false }))
       } as unknown as typeof FS
@@ -191,41 +199,41 @@ cheat1_code = "XYZ789"`;
   });
 
   it('should enable keyboard input', () => {
-    const emulator = createEmulator();
+    const { emulator, mock } = createEmulator();
     emulator.enableKeyboardInput();
-    expect(mockMGBA.toggleInput).toHaveBeenCalledExactlyOnceWith(true);
+    expect(mock.toggleInput).toHaveBeenCalledExactlyOnceWith(true);
   });
 
   it('should disable keyboard input', () => {
-    const emulator = createEmulator();
+    const { emulator, mock } = createEmulator();
     emulator.disableKeyboardInput();
-    expect(mockMGBA.toggleInput).toHaveBeenCalledExactlyOnceWith(false);
+    expect(mock.toggleInput).toHaveBeenCalledExactlyOnceWith(false);
   });
 
   it('should properly remap key bindings', () => {
-    const emulator = createEmulator();
+    const { emulator, mock } = createEmulator();
     emulator.remapKeyBindings([{ gbaInput: 'A', key: 'X', location: 0 }]);
-    expect(mockMGBA.bindKey).toHaveBeenCalledWith('X', 'A');
+    expect(mock.bindKey).toHaveBeenCalledWith('X', 'A');
   });
 
   it('should handle key remapping edge cases', () => {
-    const emulator = createEmulator();
+    const { emulator, mock } = createEmulator();
     emulator.remapKeyBindings([
       { gbaInput: 'Start', key: 'Enter', location: 0 },
       { gbaInput: 'Up', key: 'ArrowUp', location: 0 },
       { gbaInput: '5', key: '5', location: KEY_LOCATION_NUMPAD }
     ]);
 
-    expect(mockMGBA.bindKey).toHaveBeenCalledTimes(3);
-    expect(mockMGBA.bindKey).toHaveBeenCalledWith('Return', 'Start');
-    expect(mockMGBA.bindKey).toHaveBeenCalledWith('Up', 'Up');
-    expect(mockMGBA.bindKey).toHaveBeenCalledWith('Keypad 5', '5');
+    expect(mock.bindKey).toHaveBeenCalledTimes(3);
+    expect(mock.bindKey).toHaveBeenCalledWith('Return', 'Start');
+    expect(mock.bindKey).toHaveBeenCalledWith('Up', 'Up');
+    expect(mock.bindKey).toHaveBeenCalledWith('Keypad 5', '5');
   });
 
   it('should list all current save states based on the game name', () => {
-    const emulator = createEmulator({
+    const { emulator } = createEmulator({
       FS: {
-        ...mockMGBA.FS,
+        ...mockMGBA().FS,
         readdir: vi.fn(() => [
           'testGame.ss1',
           'testGame.ss2',
@@ -241,16 +249,14 @@ cheat1_code = "XYZ789"`;
   });
 
   it('should delete a save state', () => {
-    const emulator = createEmulator();
+    const { emulator, mock } = createEmulator();
     emulator.deleteSaveState(3);
-    expect(mockMGBA.FS?.unlink).toHaveBeenCalledWith(
-      '/data/states/testGame.ss3'
-    );
+    expect(mock.FS?.unlink).toHaveBeenCalledWith('/data/states/testGame.ss3');
   });
 
   it('should list all files', () => {
-    // const emulator = createEmulator();
-    const emulator = createEmulator({
+    // const { emulator } =createEmulator();
+    const { emulator } = createEmulator({
       FS: {
         readdir: vi.fn((path: string) => {
           if (path === '/data')
@@ -325,93 +331,106 @@ cheat1_code = "XYZ789"`;
   });
 
   it('should resume the emulator', async () => {
-    const emulator = createEmulator();
+    const { emulator, mock } = createEmulator();
     await emulator.resume();
-    expect(mockMGBA.SDL2?.audioContext.resume).toHaveBeenCalled();
-    expect(mockMGBA.resumeGame).toHaveBeenCalled();
+    expect(mock.resumeGame).toHaveBeenCalled();
   });
 
   it('should resume emulator and audio if audio context is suspended', async () => {
-    const emulator = createEmulator({
+    const resumeSpy = vi.fn();
+    const { emulator, mock } = createEmulator({
       SDL2: {
         audioContext: {
-          ...mockMGBA.SDL2?.audioContext,
+          resume: resumeSpy,
+          state: 'suspended'
+        }
+      } as unknown as mGBAEmulatorTypeDef['SDL2']
+    });
+    await emulator.resume();
+    expect(resumeSpy).toHaveBeenCalled();
+    expect(mock.resumeGame).toHaveBeenCalled();
+  });
+
+  it('should resume emulator and audio if audio context is interrupted', async () => {
+    const resumeSpy = vi.fn();
+    const { emulator, mock } = createEmulator({
+      SDL2: {
+        audioContext: {
+          resume: resumeSpy,
           state: 'interrupted'
         }
       } as unknown as mGBAEmulatorTypeDef['SDL2']
     });
     await emulator.resume();
-    expect(mockMGBA.SDL2?.audioContext.resume).toHaveBeenCalled();
-    expect(mockMGBA.resumeGame).toHaveBeenCalled();
+    expect(resumeSpy).toHaveBeenCalled();
+    expect(mock.resumeGame).toHaveBeenCalled();
   });
 
   it('should determine if fast forward is enabled', () => {
-    const emulator = createEmulator();
+    const { emulator } = createEmulator();
     expect(emulator.isFastForwardEnabled()).toBe(true);
   });
 
   it('should determine if slowdown is enabled', () => {
-    const emulator = createEmulator();
+    const { emulator } = createEmulator();
     expect(emulator.isSlowdownEnabled()).toBe(false);
   });
 
   it('should get the current ROM as a Uint8Array', () => {
-    const emulator = createEmulator();
+    const { emulator, mock } = createEmulator();
     expect(emulator.getCurrentRom()).toEqual(new Uint8Array([4, 5, 6]));
-    expect(mockMGBA.FS?.readFile).toHaveBeenCalledOnce();
-    expect(mockMGBA.FS?.readFile).toHaveBeenCalledWith(
-      '/data/games/testGame.gba'
-    );
+    expect(mock.FS?.readFile).toHaveBeenCalledOnce();
+    expect(mock.FS?.readFile).toHaveBeenCalledWith('/data/games/testGame.gba');
   });
 
   it('should return null if there is no game loaded', () => {
-    const emulator = createEmulator({ gameName: undefined });
+    const { emulator } = createEmulator({ gameName: undefined });
     expect(emulator.getCurrentRom()).toBeNull();
   });
 
   it('should return the current game name', () => {
-    const emulator = createEmulator();
+    const { emulator } = createEmulator();
     expect(emulator.getCurrentGameName()).toBe('testGame.gba');
   });
 
   it('should return the current save file as a Uint8Array', () => {
-    const emulator = createEmulator();
+    const { emulator, mock } = createEmulator();
     expect(emulator.getCurrentSave()).toEqual(new Uint8Array([4, 5, 6]));
-    expect(mockMGBA.getSave).toHaveBeenCalled();
+    expect(mock.getSave).toHaveBeenCalled();
   });
 
   it('should return null if there is no save loaded', () => {
-    const emulator = createEmulator({ saveName: undefined });
+    const { emulator } = createEmulator({ saveName: undefined });
     expect(emulator.getCurrentSave()).toBeNull();
   });
 
   it('should return the current save name without extension', () => {
-    const emulator = createEmulator();
+    const { emulator } = createEmulator();
     expect(emulator.getCurrentSaveName()).toBe('testGame.sav');
   });
 
   it('should retrieve an arbitrary file using getFile', () => {
-    const emulator = createEmulator();
+    const { emulator, mock } = createEmulator();
     const filePath = '/mockGame';
     expect(emulator.getFile(filePath)).toEqual(new Uint8Array([4, 5, 6]));
-    expect(mockMGBA.FS?.readFile).toHaveBeenCalledWith(filePath);
+    expect(mock.FS?.readFile).toHaveBeenCalledWith(filePath);
   });
 
   it('should properly quit the emulator', () => {
     const quitMgbaMock = vi.fn();
-    const emulator = createEmulator({ quitMgba: quitMgbaMock });
+    const { emulator } = createEmulator({ quitMgba: quitMgbaMock });
     emulator.quitEmulator();
     expect(quitMgbaMock).toHaveBeenCalled();
   });
 
   it('should get current cheats file name', () => {
-    const emulator = createEmulator();
+    const { emulator } = createEmulator();
     const cheatsFileName = emulator.getCurrentCheatsFileName();
     expect(cheatsFileName).toEqual('testGame.cheats');
   });
 
   it('should get current save name', () => {
-    const emulator = createEmulator();
+    const { emulator } = createEmulator();
     const saveName = emulator.getCurrentSaveName();
     expect(saveName).toEqual('testGame.sav');
   });

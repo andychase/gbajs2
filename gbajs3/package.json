@@ -20,7 +20,7 @@
     "@mui/material": "^7.0.1",
     "@mui/x-tree-view": "^8.3.0",
     "@tanstack/react-query": "^5.90.7",
-    "@thenick775/mgba-wasm": "^2.4.0",
+    "@thenick775/mgba-wasm": "^2.4.1",
     "@uidotdev/usehooks": "^2.4.1",
     "@zip.js/zip.js": "^2.7.72",
     "jwt-decode": "^4.0.0",

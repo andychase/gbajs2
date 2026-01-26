@@ -9,6 +9,17 @@ const ThrowError = () => {
   throw new Error('A test error');
 };
 
+const ThrowEmptyError = () => {
+  const e = new Error();
+  e.stack = undefined;
+  throw e;
+};
+
+const ThrowNonErrorObject = () => {
+  // eslint-disable-next-line @typescript-eslint/only-throw-error
+  throw 'A test error';
+};
+
 describe('<AppErrorBoundary/>', () => {
   it('renders children', () => {
     renderWithContext(
@@ -68,7 +79,7 @@ describe('fallbackRender', () => {
     expect(screen.getByTestId('fallback-renderer')).toMatchSnapshot();
   });
 
-  it('copies clipboard text', async () => {
+  it('copies error stack clipboard', async () => {
     const user = userEvent.setup();
     renderWithContext(
       <AppErrorBoundary>
@@ -82,5 +93,39 @@ describe('fallbackRender', () => {
 
     const copiedText = await window.navigator.clipboard.readText();
     expect(copiedText).toContain('Error: A test error\n    at');
+  });
+
+  it('copies error stack clipboard text fallback', async () => {
+    const user = userEvent.setup();
+
+    renderWithContext(
+      <AppErrorBoundary>
+        <ThrowEmptyError />
+      </AppErrorBoundary>
+    );
+
+    expect(screen.getByText('Copy trace')).toBeVisible();
+
+    await user.click(screen.getByText('Copy trace'));
+
+    const copiedText = await window.navigator.clipboard.readText();
+    expect(copiedText).toBe('Error had empty stack');
+  });
+
+  it('copies clipboard text fallback', async () => {
+    const user = userEvent.setup();
+
+    renderWithContext(
+      <AppErrorBoundary>
+        <ThrowNonErrorObject />
+      </AppErrorBoundary>
+    );
+
+    expect(screen.getByText('Copy trace')).toBeVisible();
+
+    await user.click(screen.getByText('Copy trace'));
+
+    const copiedText = await window.navigator.clipboard.readText();
+    expect(copiedText).toBe('No stack available');
   });
 });
