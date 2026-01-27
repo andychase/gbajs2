@@ -161,7 +161,9 @@ export default defineConfig(({ mode }) => {
               'scheduler'
             ],
 
-            mui: ['@mui/material', '@emotion/react', '@emotion/styled'],
+            emotion: ['@emotion/react', '@emotion/styled'],
+
+            mui: ['@mui/material'],
 
             'mui-x': ['@mui/x-tree-view'],
 
