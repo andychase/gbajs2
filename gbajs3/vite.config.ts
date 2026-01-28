@@ -4,6 +4,7 @@ import { visualizer } from 'rollup-plugin-visualizer';
 import { defineConfig } from 'vite';
 import { createHtmlPlugin } from 'vite-plugin-html';
 import { VitePWA } from 'vite-plugin-pwa';
+import { viteStaticCopy } from 'vite-plugin-static-copy';
 import { coverageConfigDefaults } from 'vitest/config';
 
 // eslint-disable-next-line import/no-default-export
@@ -135,6 +136,14 @@ export default defineConfig(({ mode }) => {
               }
             }
           : {})
+      }),
+      viteStaticCopy({
+        targets: [
+          {
+            src: 'node_modules/@thenick775/mgba-wasm/dist/*.wasm.map',
+            dest: 'assets'
+          }
+        ]
       }),
       visualizer({ gzipSize: true })
     ],
