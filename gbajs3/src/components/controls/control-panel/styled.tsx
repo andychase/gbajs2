@@ -13,7 +13,7 @@ type PanelControlSliderProps = {
   $gridArea: string;
 } & ControlledProps;
 
-const InteractivePanelControlStyle = ({
+const interactivePanelControlStyle = ({
   $controlled,
   theme
 }: ControlledProps & { theme: Theme }) => css`
@@ -47,7 +47,7 @@ export const ContentSpan = styled('span')`
 
 export const PanelControlSlider = styled('div')<PanelControlSliderProps>`
   ${(props) =>
-    InteractivePanelControlStyle({
+    interactivePanelControlStyle({
       $controlled: props.$controlled,
       theme: props.theme
     })}
@@ -68,7 +68,7 @@ export const PanelControlButton = styled(ButtonBase)<
   ControlledProps & { $gridArea?: string }
 >`
   ${({ $controlled, theme }) =>
-    InteractivePanelControlStyle({
+    interactivePanelControlStyle({
       $controlled: $controlled,
       theme: theme
     })}
