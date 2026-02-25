@@ -945,7 +945,7 @@ class ARMCoreArm {
 
 			if (r) {
 				mask &= cpu.USER_MASK | cpu.PRIV_MASK | cpu.STATE_MASK;
-				cpu.spsr = (cpu.spsr & ~mask) | (operand & mask);
+				cpu.spsr = (cpu.spsr & ~mask) | (operand & mask) | 0x00000010;
 			} else {
 				if (mask & cpu.USER_MASK) {
 					cpu.cpsrN = operand >> 31;
@@ -1127,7 +1127,7 @@ class ARMCoreArm {
 			} else {
 				cpu.cpsrN = d >> 31;
 				cpu.cpsrZ = !(d & 0xffffffff);
-				cpu.cpsrC = cpu.shifterOperand >>> 0 >= d >>> 0;
+				cpu.cpsrC = cpu.shifterOperand >>> 0 >= n >>> 0;
 				cpu.cpsrV =
 					cpu.shifterOperand >> 31 != n >> 31 &&
 					cpu.shifterOperand >> 31 != d >> 31;
@@ -1164,7 +1164,7 @@ class ARMCoreArm {
 			} else {
 				cpu.cpsrN = d >> 31;
 				cpu.cpsrZ = !(d & 0xffffffff);
-				cpu.cpsrC = gprs[rn] >>> 0 >= d >>> 0;
+				cpu.cpsrC = gprs[rn] >>> 0 >= shifterOperand >>> 0;
 				cpu.cpsrV =
 					gprs[rn] >> 31 != shifterOperand >> 31 &&
 					gprs[rn] >> 31 != d >> 31;

@@ -562,11 +562,11 @@ class GameBoyAdvanceMMU {
 			1 + this.waitstatesSeq32[memory >>> this.BASE_OFFSET];
 	}
 	waitMul(rs) {
-		if (rs & (0xffffff00 == 0xffffff00) || !(rs & 0xffffff00)) {
+		if ((rs & 0xffffff00) == 0xffffff00 || !(rs & 0xffffff00)) {
 			this.cpu.cycles += 1;
-		} else if (rs & (0xffff0000 == 0xffff0000) || !(rs & 0xffff0000)) {
+		} else if ((rs & 0xffff0000) == 0xffff0000 || !(rs & 0xffff0000)) {
 			this.cpu.cycles += 2;
-		} else if (rs & (0xff000000 == 0xff000000) || !(rs & 0xff000000)) {
+		} else if ((rs & 0xff000000) == 0xff000000 || !(rs & 0xff000000)) {
 			this.cpu.cycles += 3;
 		} else {
 			this.cpu.cycles += 4;

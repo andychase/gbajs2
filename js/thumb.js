@@ -645,7 +645,7 @@ class ARMCoreThumb {
 			var d = (gprs[rd] >>> 0) - m;
 			cpu.cpsrN = d >> 31;
 			cpu.cpsrZ = !(d & 0xffffffff);
-			cpu.cpsrC = gprs[rd] >>> 0 >= d >>> 0;
+			cpu.cpsrC = gprs[rd] >>> 0 >= m >>> 0;
 			cpu.cpsrV = (gprs[rd] ^ m) >> 31 && (gprs[rd] ^ d) >> 31;
 			gprs[rd] = d;
 		};
