@@ -106,31 +106,56 @@ class BIOSView extends MemoryView {
 		this.PAGE_MASK = (2 << this.ICACHE_PAGE_BITS) - 1;
 		this.icache = new Array(1);
 	}
+	/**
+	 * Checks if the CPU is trying to read BIOS memory from outside the BIOS region.
+	 * The BIOS is mapped to 0x00000000 - 0x00003FFF.
+	 * If the Program Counter (PC) is >= 0x4000, it means game code is trying to 
+	 * access protected BIOS memory, which should trigger Open Bus behavior.
+	 */
+	_checkProtection() {
+		return this.mmu && this.mmu.cpu.gprs[this.mmu.cpu.PC] >= 0x00004000;
+	}
+
 	load8(offset) {
+		if (this._checkProtection()) {
+			return this.mmu.badMemory.load8(offset);
+		}
 		if (offset >= this.buffer.byteLength) {
 			return -1;
 		}
 		return this.view.getInt8(offset);
 	}
 	load16(offset) {
+		if (this._checkProtection()) {
+			return this.mmu.badMemory.load16(offset);
+		}
 		if (offset >= this.buffer.byteLength) {
 			return -1;
 		}
 		return this.view.getInt16(offset, true);
 	}
 	loadU8(offset) {
+		if (this._checkProtection()) {
+			return this.mmu.badMemory.loadU8(offset);
+		}
 		if (offset >= this.buffer.byteLength) {
 			return -1;
 		}
 		return this.view.getUint8(offset);
 	}
 	loadU16(offset) {
+		if (this._checkProtection()) {
+			return this.mmu.badMemory.loadU16(offset);
+		}
 		if (offset >= this.buffer.byteLength) {
 			return -1;
 		}
 		return this.view.getUint16(offset, true);
 	}
 	load32(offset) {
+		if (this._checkProtection()) {
+			return this.mmu.badMemory.load32(offset);
+		}
 		if (offset >= this.buffer.byteLength) {
 			return -1;
 		}
@@ -178,7 +203,7 @@ class BadMemory {
 	load32(offset) {
 		if (this.cpu.execMode == this.cpu.MODE_ARM) {
 			return this.mmu.load32(
-				this.cpu.gprs[this.cpu.gprs.PC] - this.cpu.instructionWidth
+				this.cpu.gprs[this.cpu.PC] - this.cpu.instructionWidth
 			);
 		} else {
 			var halfword = this.mmu.loadU16(
@@ -352,6 +377,7 @@ class GameBoyAdvanceMMU {
 	loadBios(bios, real) {
 		this.bios = new BIOSView(bios);
 		this.bios.real = !!real;
+		this.bios.mmu = this;
 	}
 	loadRom(rom, process) {
 		var cart = {
