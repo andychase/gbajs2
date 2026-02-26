@@ -41,6 +41,55 @@ class GameBoyAdvanceKeypad {
 
 		this.remappingKeyId = "";
 	}
+
+	virtualpadHandler(code, e) {
+		if (canVibrate) navigator.vibrate(50);
+
+		var toggle = 0;
+
+		switch (code) {
+			case 'START':
+				toggle = this.START;
+				break;
+			case 'SELECT':
+				toggle = this.SELECT;
+				break;
+			case 'A':
+				toggle = this.A;
+				break;
+			case 'B':
+				toggle = this.B;
+				break;
+			case 'L':
+				toggle = this.L;
+				break;
+			case 'R':
+				toggle = this.R;
+				break;
+			case 'UP':
+				toggle = this.UP;
+				break;
+			case 'RIGHT':
+				toggle = this.RIGHT;
+				break;
+			case 'DOWN':
+				toggle = this.DOWN;
+				break;
+			case 'LEFT':
+				toggle = this.LEFT;
+				break;
+			default:
+				return;
+		}
+
+		toggle = 1 << toggle;
+		if (e.type == "touchstart" || e.type == "mousedown") {
+			this.currentDown &= ~toggle;
+		} else {
+			this.currentDown |= toggle;
+		}
+	}
+
 	keyboardHandler(e) {
 		var toggle = 0;
 
@@ -164,6 +213,23 @@ class GameBoyAdvanceKeypad {
 		}
 	}
 	registerHandlers() {
+		if (g_bMobile) {
+			var childNodes = document.getElementById('virtual-pad').childNodes;
+			for (var i = 0; i < childNodes.length; i++) {
+				var childNode = childNodes[i];
+				if (childNode.nodeName === "BUTTON") {
+					var code = childNode.id;
+					childNode.addEventListener(
+						'touchstart',
+						this.virtualpadHandler.bind(this, code)
+					);
+					childNode.addEventListener(
+						'touchend',
+						this.virtualpadHandler.bind(this, code)
+					);
+				}
+			}
+		}
 		window.addEventListener(
 			"keydown",
 			this.keyboardHandler.bind(this),
