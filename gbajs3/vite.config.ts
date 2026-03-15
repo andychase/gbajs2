@@ -1,10 +1,11 @@
-/// <reference types="vitest/config" />
 import react from '@vitejs/plugin-react-swc';
 import { visualizer } from 'rollup-plugin-visualizer';
-import { defineConfig } from 'vite';
+// eslint-disable-next-line import/no-unresolved
+import { defineConfig, type PluginOption } from 'vite';
 import { createHtmlPlugin } from 'vite-plugin-html';
 import { VitePWA } from 'vite-plugin-pwa';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
+// eslint-disable-next-line import/no-unresolved
 import { coverageConfigDefaults } from 'vitest/config';
 
 // eslint-disable-next-line import/no-default-export
@@ -145,7 +146,7 @@ export default defineConfig(({ mode }) => {
           }
         ]
       }),
-      visualizer({ gzipSize: true })
+      visualizer({ gzipSize: true }) as PluginOption
     ],
     optimizeDeps: {
       exclude: ['@thenick775/mgba-wasm']
@@ -158,52 +159,55 @@ export default defineConfig(({ mode }) => {
     },
     build: {
       sourcemap: true,
-      rollupOptions: {
+      rolldownOptions: {
         output: {
-          manualChunks: {
-            react: [
-              'react',
-              'react-dom',
-              'react-dom/client',
-              'react/jsx-runtime',
-              'react/jsx-dev-runtime',
-              'scheduler'
-            ],
-
-            emotion: ['@emotion/react', '@emotion/styled'],
-
-            mui: ['@mui/material'],
-
-            'mui-x': ['@mui/x-tree-view'],
-
-            mgba: ['@thenick775/mgba-wasm'],
-
-            onboarding: ['react-ios-pwa-prompt-ts'],
-
-            dnd: ['react-draggable', 'react-dropzone', 'react-rnd'],
-
-            query: ['@tanstack/react-query', 'zod'],
-
-            ui: [
-              'react-modal',
-              'react-hot-toast',
-              'react-spinners',
-              'react-animate-height',
-              'react-icons',
-              'react-icons/tb',
-              'react-icons/fa',
-              'react-icons/ai',
-              'react-icons/bi',
-              'react-error-boundary'
-            ],
-
-            hooks: [
-              'react-hook-form',
-              '@uidotdev/usehooks',
-              'jwt-decode',
-              'nanoid'
-            ],
-            zip: ['@zip.js/zip.js']
+          codeSplitting: {
+            groups: [
+              {
+                name: 'react',
+                test: /node_modules[\\/](react|react-dom|scheduler)([\\/]|$)/
+              },
+              {
+                name: 'emotion',
+                test: /node_modules[\\/]@emotion[\\/](react|styled)([\\/]|$)/
+              },
+              {
+                name: 'mui',
+                test: /node_modules[\\/]@mui[\\/]material([\\/]|$)/
+              },
+              {
+                name: 'mui-x',
+                test: /node_modules[\\/]@mui[\\/]x-tree-view([\\/]|$)/
+              },
+              {
+                name: 'mgba',
+                test: /node_modules[\\/]@thenick775[\\/]mgba-wasm([\\/]|$)/
+              },
+              {
+                name: 'onboarding',
+                test: /node_modules[\\/]react-ios-pwa-prompt-ts([\\/]|$)/
+              },
+              {
+                name: 'dnd',
+                test: /node_modules[\\/](react-draggable|react-dropzone|react-rnd)([\\/]|$)/
+              },
+              {
+                name: 'query',
+                test: /node_modules[\\/](?:@tanstack|zod)([\\/]|$)/
+              },
+              {
+                name: 'ui',
+                test: /node_modules[\\/](react-modal|react-hot-toast|react-spinners|react-animate-height|react-icons|react-error-boundary)([\\/]|$)/
+              },
+              {
+                name: 'hooks',
+                test: /node_modules[\\/](react-hook-form|@uidotdev[\\/]usehooks|jwt-decode|nanoid)([\\/]|$)/
+              },
+              {
+                name: 'zip',
+                test: /node_modules[\\/]@zip\.js[\\/]zip\.js([\\/]|$)/
+              }
+            ]
           }
         }
       }
