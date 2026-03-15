@@ -19,13 +19,13 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           sparse-checkout: gbajs3
           sparse-checkout-cone-mode: false
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: 24.14.0
 
@@ -46,7 +46,7 @@ jobs:
           npm run coverage -- --test-timeout=10000
 
       - name: Upload Visualizer Report
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: bundle-stats
           path: ./gbajs3/stats.html
@@ -63,13 +63,13 @@ jobs:
 
       - name: Upload coverage artifact
         if: ${{ inputs.upload_coverage }}
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: gbajs3-coverage
           path: ./gbajs3/coverage/**
 
       - name: Generate coverage report
-        uses: davelosert/vitest-coverage-report-action@v2.9.0
+        uses: davelosert/vitest-coverage-report-action@v2.9.3
         with:
           working-directory: ./gbajs3
           threshold-icons: "{0: '🔴', 70: '🟠', 85: '🟢'}"

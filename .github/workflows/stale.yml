@@ -15,7 +15,7 @@ jobs:
   stale:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/stale@v9
+      - uses: actions/stale@v10
         with:
           stale-issue-message: 'This issue is stale because it has been open three weeks with no activity. Remove stale label or comment, otherwise this will close in 7 days.'
           stale-pr-message: 'This pr is stale because it has been open three weeks with no activity. Remove stale label or comment, otherwise this will close in 7 days.'
