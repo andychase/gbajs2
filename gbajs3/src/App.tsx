@@ -31,12 +31,14 @@ export const App = () => (
             <InitialBoundsProvider>
               <LayoutProvider>
                 <ModalProvider>
-                  <PwaPrompt />
-                  <NavigationMenu />
-                  <Screen />
-                  <ControlPanel />
-                  <VirtualControls />
-                  <ModalContainer />
+                  <main>
+                    <PwaPrompt />
+                    <NavigationMenu />
+                    <Screen />
+                    <ControlPanel />
+                    <VirtualControls />
+                    <ModalContainer />
+                  </main>
                 </ModalProvider>
               </LayoutProvider>
             </InitialBoundsProvider>
