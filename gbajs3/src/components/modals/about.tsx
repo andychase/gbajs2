@@ -32,12 +32,12 @@ export const AboutModal = () => {
         <p>Getting Started:</p>
         <ul>
           <li>
-            Using the <i>Pre Game Actions</i> menu, upload a sav file if you
-            have one available
+            Using the <i>Pre Game Actions</i> menu, select the{' '}
+            <i>Upload Files</i> menu item
           </li>
+          <li>Add a save file if you have one available</li>
           <li>
-            Then, load a rom of your choice through the <i>Upload Rom</i> or{' '}
-            <i>Load Local Rom</i> menu items
+            Add a rom file, and click <i>Upload</i>
           </li>
           <li>Enjoy, your game will boot!</li>
         </ul>

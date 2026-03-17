@@ -20,7 +20,7 @@ It began as a re-skin of the [gbajs2](https://github.com/andychase/gbajs2) fork 
 
 This project was driven specifically by a need to play modern GBA rom hacks outside of desktop applications, without side loading or building through xcode. It is designed as an all-in-one mono repo containing the backend services and frontend services.
 
-Use it online! <https://gba.nicholas-vancise.dev>
+[Try it online!](<https://gba.nicholas-vancise.dev?romURL=https://raw.githubusercontent.com/vbaemulator/GBA-Roms/main/Pokemon%20-%20Ruby%20Version%20(USA%2C%20Europe)%20(Rev%202).zip>)
 
 Do not attempt to log into the server unless you are the server owner or an approved user, your IP may be banned.
 
@@ -89,7 +89,6 @@ All control positions can be modified if the default layouts do not suit your de
 ## Getting Started
 
 - Local builds require [docker](https://www.docker.com)
-
   - today, the project is only compatible with [docker compose v2](https://docs.docker.com/compose/releases/migrate/) and above
 
 - Run the bootstrap script and follow the interactive prompts:
@@ -99,7 +98,6 @@ All control positions can be modified if the default layouts do not suit your de
   ```
 
 - The bootstrap script will do the following:
-
   - copy env files from the examples in all directories
   - create default local directories
   - generate a local test ssl certificate pair with prompting from OpenSSL (if installed)
@@ -161,7 +159,6 @@ All control positions can be modified if the default layouts do not suit your de
 - Once docker has created the containers, the web server will be available at https://localhost
 
 - The Admin UI can be found at https://localhost/admin
-
   - The default admin user credentials from the provided sample database dump are:
 
   ```
