@@ -15,6 +15,15 @@ See the [issues page](https://github.com/andychase/gbajs2/issues) for feature su
 * Pure javascript, allowing easy API access
 * Realtime clock gamepad support (Pokemon Ruby)
 * Save games
+* Optional local loading of a full 16 KiB GBA BIOS for BIOS services
+
+## Development
+
+Run the compatibility regression suite with Node.js:
+
+```sh
+node --test test/compatibility-regressions.test.cjs
+```
 
 ## License
 Original work by Endrift. Repo: (Archived / No longer maintained) https://github.com/endrift/gbajs

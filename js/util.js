@@ -43,26 +43,26 @@ class Pointer {
 }
 
 class Serializer {
-	TAG_INT = 1;
-	TAG_STRING = 2;
-	TAG_STRUCT = 3;
-	TAG_BLOB = 4;
-	TAG_BOOLEAN = 5;
-	TYPE = "application/octet-stream";
+	static TAG_INT = 1;
+	static TAG_STRING = 2;
+	static TAG_STRUCT = 3;
+	static TAG_BLOB = 4;
+	static TAG_BOOLEAN = 5;
+	static TYPE = "application/octet-stream";
 
-	pack(value) {
+	static pack(value) {
 		var object = new DataView(new ArrayBuffer(4));
 		object.setUint32(0, value, true);
 		return object.buffer;
 	}
 
-	pack8(value) {
+	static pack8(value) {
 		var object = new DataView(new ArrayBuffer(1));
 		object.setUint8(0, value, true);
 		return object.buffer;
 	}
 
-	prefix(value) {
+	static prefix(value) {
 		return new Blob(
 			[
 				Serializer.pack(value.size || value.length || value.byteLength),
@@ -72,10 +72,10 @@ class Serializer {
 		);
 	}
 
-	serialize(stream) {
+	static serialize(stream) {
 		var parts = [];
 		var size = 4;
-		for (i in stream) {
+		for (var i in stream) {
 			if (stream.hasOwnProperty(i)) {
 				var tag;
 				var head = Serializer.prefix(i);
@@ -119,20 +119,28 @@ class Serializer {
 		return new Blob(parts);
 	}
 
-	deserialize(blob, callback) {
+	static deserialize(blob, callback) {
 		var reader = new FileReader();
 		reader.onload = function (data) {
-			callback(
-				Serializer.deserealizeStream(
+			var state;
+			try {
+				state = Serializer.deserealizeStream(
 					new DataView(data.target.result),
 					new Pointer()
-				)
-			);
+				);
+			} catch (error) {
+				callback(null, error);
+				return;
+			}
+			callback(state);
+		};
+		reader.onerror = function (event) {
+			callback(null, event.target.error || new Error("Could not read save state"));
 		};
 		reader.readAsArrayBuffer(blob);
 	}
 
-	deserealizeStream(view, pointer) {
+	static deserealizeStream(view, pointer) {
 		pointer.push();
 		var object = {};
 		var remaining = view.getUint32(pointer.advance(4), true);
@@ -170,7 +178,7 @@ class Serializer {
 		return object;
 	}
 
-	serializePNG(blob, base, callback) {
+	static serializePNG(blob, base, callback) {
 		var canvas = document.createElement("canvas");
 		var context = canvas.getContext("2d");
 		var pixels = base
@@ -220,13 +228,13 @@ class Serializer {
 					} else {
 						var byte = view[pointer++];
 						newPixels.data[pixelPointer++] =
-							pixels.data[(oldX + oldY * base.width) * 4 + 0] |
+							(pixels.data[(oldX + oldY * base.width) * 4 + 0] & 0xf8) |
 							(byte & 7);
 						newPixels.data[pixelPointer++] =
-							pixels.data[(oldX + oldY * base.width) * 4 + 1] |
+							(pixels.data[(oldX + oldY * base.width) * 4 + 1] & 0xf8) |
 							((byte >> 3) & 7);
 						newPixels.data[pixelPointer++] =
-							pixels.data[(oldX + oldY * base.width) * 4 + 2] |
+							(pixels.data[(oldX + oldY * base.width) * 4 + 2] & 0xf8) |
 							((byte >> 6) & 7);
 						newPixels.data[pixelPointer++] =
 							pixels.data[(oldX + oldY * base.width) * 4 + 3];
@@ -240,51 +248,62 @@ class Serializer {
 		return canvas;
 	}
 
-	deserializePNG(blob, callback) {
+	static deserializePNG(blob, callback) {
 		var reader = new FileReader();
 		reader.onload = function (data) {
 			var image = document.createElement("img");
-			image.setAttribute("src", data.target.result);
-			var canvas = document.createElement("canvas");
-			canvas.setAttribute("height", image.height);
-			canvas.setAttribute("width", image.width);
-			var context = canvas.getContext("2d");
-			context.drawImage(image, 0, 0);
-			var pixels = context.getImageData(
-				0,
-				0,
-				canvas.width,
-				canvas.height
-			);
-			var data = [];
-			for (var y = 0; y < canvas.height; ++y) {
-				for (var x = 0; x < canvas.width; ++x) {
-					if (!pixels.data[(x + y * canvas.width) * 4 + 3]) {
-						data.push(pixels.data[(x + y * canvas.width) * 4 + 0]);
-						data.push(pixels.data[(x + y * canvas.width) * 4 + 1]);
-						data.push(pixels.data[(x + y * canvas.width) * 4 + 2]);
-					} else {
-						var byte = 0;
-						byte |= pixels.data[(x + y * canvas.width) * 4 + 0] & 7;
-						byte |=
-							(pixels.data[(x + y * canvas.width) * 4 + 1] & 7) <<
-							3;
-						byte |=
-							(pixels.data[(x + y * canvas.width) * 4 + 2] & 7) <<
-							6;
-						data.push(byte);
+			image.onload = function () {
+				try {
+					var width = image.naturalWidth || image.width;
+					var height = image.naturalHeight || image.height;
+					if (!width || !height) {
+						throw new Error("Save-state image is empty");
 					}
+					var canvas = document.createElement("canvas");
+					canvas.width = width;
+					canvas.height = height;
+					var context = canvas.getContext("2d");
+					context.drawImage(image, 0, 0);
+					var pixels = context.getImageData(0, 0, width, height);
+					var bytes = [];
+					for (var y = 0; y < height; ++y) {
+						for (var x = 0; x < width; ++x) {
+							var pixel = (x + y * width) * 4;
+							if (!pixels.data[pixel + 3]) {
+								bytes.push(
+									pixels.data[pixel],
+									pixels.data[pixel + 1],
+									pixels.data[pixel + 2]
+								);
+							} else {
+								bytes.push(
+									(pixels.data[pixel] & 7) |
+									((pixels.data[pixel + 1] & 7) << 3) |
+									((pixels.data[pixel + 2] & 7) << 6)
+								);
+							}
+						}
+					}
+					var newBlob = new Blob(
+						bytes.map(function (byte) {
+							var array = new Uint8Array(1);
+							array[0] = byte;
+							return array;
+						}),
+						{ type: Serializer.TYPE }
+					);
+					Serializer.deserialize(newBlob, callback);
+				} catch (error) {
+					callback(null, error);
 				}
-			}
-			newBlob = new Blob(
-				data.map(function (byte) {
-					var array = new Uint8Array(1);
-					array[0] = byte;
-					return array;
-				}),
-				{ type: Serializer.TYPE }
-			);
-			Serializer.deserialize(newBlob, callback);
+			};
+			image.onerror = function () {
+				callback(null, new Error("Could not decode save-state image"));
+			};
+			image.setAttribute("src", data.target.result);
+		};
+		reader.onerror = function (event) {
+			callback(null, event.target.error || new Error("Could not read save state"));
 		};
 		reader.readAsDataURL(blob);
 	}

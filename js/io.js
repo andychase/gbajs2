@@ -161,36 +161,46 @@ class GameBoyAdvanceIO {
 	}
 	defrost(frost) {
 		this.registers = new Uint16Array(frost.registers);
+		// FIFO reset command bits are not persistent hardware state. Older
+		// save states may contain them because earlier writes kept them set.
+		this.registers[this.SOUNDCNT_HI >> 1] &= 0x770f;
 		// Video registers don't serialize themselves
 		for (var i = 0; i <= this.BLDY; i += 2) {
 			this.store16(i, this.registers[i >> 1]);
 		}
 	}
 	load8(offset) {
-		throw "Unimplmeneted unaligned I/O access";
+		return (this.loadU8(offset) << 24) >> 24;
 	}
 	load16(offset) {
 		return (this.loadU16(offset) << 16) >> 16;
 	}
 	load32(offset) {
+		var rotate = (offset & 3) << 3;
 		offset &= 0xfffffffc;
+		var value;
 		switch (offset) {
 			case this.DMA0CNT_LO:
 			case this.DMA1CNT_LO:
 			case this.DMA2CNT_LO:
 			case this.DMA3CNT_LO:
-				return this.loadU16(offset | 2) << 16;
+				value = this.loadU16(offset | 2) << 16;
+				break;
 			case this.IME:
-				return this.loadU16(offset) & 0xffff;
+				value = this.loadU16(offset) & 0xffff;
+				break;
 			case this.JOY_RECV:
 			case this.JOY_TRANS:
 				this.core.STUB(
 					"Unimplemented JOY register read: 0x" + offset.toString(16)
 				);
-				return 0;
+				value = 0;
+				break;
+			default:
+				value = this.loadU16(offset) | (this.loadU16(offset | 2) << 16);
 		}
 
-		return this.loadU16(offset) | (this.loadU16(offset | 2) << 16);
+		return (value >>> rotate) | (value << (32 - rotate));
 	}
 	loadU8(offset) {
 		var odd = offset & 0x0001;
@@ -222,7 +232,6 @@ class GameBoyAdvanceIO {
 			case this.DMA1CNT_HI:
 			case this.DMA2CNT_HI:
 			case this.DMA3CNT_HI:
-			case this.RCNT:
 			case this.WAITCNT:
 			case this.IE:
 			case this.IF:
@@ -253,9 +262,46 @@ class GameBoyAdvanceIO {
 				return this.registers[offset >> 1] & 0xff00;
 			case this.SOUND4CNT_HI:
 				return this.registers[offset >> 1] & 0x40ff;
-			case this.SOUNDCNT_X:
-				this.core.STUB("Unimplemented sound register read: SOUNDCNT_X");
-				return this.registers[offset >> 1] | 0x0000;
+			case this.SOUNDCNT_X: {
+				var soundStatus = this.audio
+					? (this.audio.enabled ? 0x0080 : 0)
+					: this.registers[offset >> 1] & 0x0080;
+				if (this.audio) {
+					if (
+						this.audio.squareChannels &&
+						this.audio.squareChannels[0] &&
+						this.audio.squareChannels[0].playing
+					) {
+						soundStatus |= 0x0001;
+					}
+					if (
+						this.audio.squareChannels &&
+						this.audio.squareChannels[1] &&
+						this.audio.squareChannels[1].playing
+					) {
+						soundStatus |= 0x0002;
+					}
+					if (this.audio.playingChannel3) {
+						soundStatus |= 0x0004;
+					}
+					if (this.audio.playingChannel4) {
+						soundStatus |= 0x0008;
+					}
+				}
+				return soundStatus;
+			}
+			case this.WAVE_RAM0_LO:
+			case this.WAVE_RAM0_HI:
+			case this.WAVE_RAM1_LO:
+			case this.WAVE_RAM1_HI:
+			case this.WAVE_RAM2_LO:
+			case this.WAVE_RAM2_HI:
+			case this.WAVE_RAM3_LO:
+			case this.WAVE_RAM3_HI:
+				if (this.audio && this.audio.readWaveData) {
+					return this.audio.readWaveData(offset - this.WAVE_RAM0_LO);
+				}
+				return this.registers[offset >> 1];
 
 			// Timers
 			case this.TM0CNT_LO:
@@ -270,13 +316,14 @@ class GameBoyAdvanceIO {
 			// SIO
 			case this.SIOCNT:
 				return this.sio.readSIOCNT();
+			case this.RCNT:
+				return this.sio.readRCNT();
 
 			case this.KEYINPUT:
 				this.keypad.pollGamepads();
 				return this.keypad.currentDown;
 			case this.KEYCNT:
-				this.core.STUB("Unimplemented I/O register read: KEYCNT");
-				return 0;
+				return this.registers[offset >> 1] & 0xc3ff;
 
 			case this.BG0HOFS:
 			case this.BG0VOFS:
@@ -349,6 +396,12 @@ class GameBoyAdvanceIO {
 				return this.sio.read((offset - this.SIOMULTI0) >> 1);
 
 			case this.SIODATA8:
+				if (
+					this.sio.mode == this.sio.SIO_NORMAL_8 ||
+					this.sio.mode == this.sio.SIO_MULTI
+				) {
+					return this.sio.readData8();
+				}
 				this.core.STUB(
 					"Unimplemented SIO register read: 0x" + offset.toString(16)
 				);
@@ -369,6 +422,14 @@ class GameBoyAdvanceIO {
 		return this.registers[offset >> 1];
 	}
 	store8(offset, value) {
+		if (offset >= this.FIFO_A_LO && offset < this.FIFO_A_LO + 4) {
+			this.audio.appendToFifoA(value, offset - this.FIFO_A_LO, 1);
+			return;
+		}
+		if (offset >= this.FIFO_B_LO && offset < this.FIFO_B_LO + 4) {
+			this.audio.appendToFifoB(value, offset - this.FIFO_B_LO, 1);
+			return;
+		}
 		switch (offset) {
 			case this.WININ:
 				this.value & 0x3f;
@@ -419,6 +480,30 @@ class GameBoyAdvanceIO {
 					this.core.STUB("Stop");
 				}
 				return;
+			case this.SIOMULTI0:
+			case this.SIOMULTI0 | 1:
+			case this.SIOMULTI1:
+			case this.SIOMULTI1 | 1:
+				if (this.sio.mode == this.sio.SIO_NORMAL_32) {
+					break;
+				}
+				this.STUB_REG("SIO", offset);
+				break;
+			case this.SIOMULTI2:
+			case this.SIOMULTI2 | 1:
+			case this.SIOMULTI3:
+			case this.SIOMULTI3 | 1:
+				this.STUB_REG("SIO", offset);
+				break;
+			case this.SIODATA8:
+			case this.SIODATA8 | 1:
+				if (
+					this.sio.mode != this.sio.SIO_NORMAL_8 &&
+					this.sio.mode != this.sio.SIO_MULTI
+				) {
+					this.STUB_REG("SIO", offset);
+				}
+				break;
 			default:
 				this.STUB_REG("8-bit I/O", offset);
 				break;
@@ -637,11 +722,25 @@ class GameBoyAdvanceIO {
 			case this.SOUNDCNT_HI:
 				value &= 0xff0f;
 				this.audio.writeSoundControlHi(value);
+				// FIFO reset bits trigger the reset above, then read back as zero.
+				value &= ~0x8800;
 				break;
 			case this.SOUNDCNT_X:
 				value &= 0x0080;
 				this.audio.writeEnable(value);
 				break;
+			case this.SOUNDBIAS:
+				value &= 0xc3fe;
+				this.audio.writeSoundBias(value);
+				break;
+			case this.FIFO_A_LO:
+			case this.FIFO_A_HI:
+				this.audio.appendToFifoA(value, offset - this.FIFO_A_LO, 2);
+				return;
+			case this.FIFO_B_LO:
+			case this.FIFO_B_HI:
+				this.audio.appendToFifoB(value, offset - this.FIFO_B_LO, 2);
+				return;
 			case this.WAVE_RAM0_LO:
 			case this.WAVE_RAM0_HI:
 			case this.WAVE_RAM1_LO:
@@ -747,17 +846,31 @@ class GameBoyAdvanceIO {
 			// SIO
 			case this.SIOMULTI0:
 			case this.SIOMULTI1:
+				if (this.sio.mode == this.sio.SIO_NORMAL_32) {
+					break;
+				}
+				this.STUB_REG("SIO", offset);
+				break;
 			case this.SIOMULTI2:
 			case this.SIOMULTI3:
-			case this.SIODATA8:
 				this.STUB_REG("SIO", offset);
+				break;
+			case this.SIODATA8:
+				if (
+					this.sio.mode != this.sio.SIO_NORMAL_8 &&
+					this.sio.mode != this.sio.SIO_MULTI
+				) {
+					this.STUB_REG("SIO", offset);
+				} else if (this.sio.mode == this.sio.SIO_NORMAL_8) {
+					value &= 0x00ff;
+				}
 				break;
 			case this.RCNT:
 				this.sio.setMode(
 					((value >> 12) & 0xc) |
 						((this.registers[this.SIOCNT >> 1] >> 12) & 0x3)
 				);
-				this.sio.writeRCNT(value);
+				value = this.sio.writeRCNT(value);
 				break;
 			case this.SIOCNT:
 				this.sio.setMode(
@@ -765,7 +878,15 @@ class GameBoyAdvanceIO {
 						((this.registers[this.RCNT >> 1] >> 12) & 0xc)
 				);
 				this.sio.writeSIOCNT(value);
+				this.registers[offset >> 1] = value;
 				return;
+			case this.KEYINPUT:
+				return;
+			case this.KEYCNT:
+				var previousKeyControl = this.registers[offset >> 1];
+				value &= 0xc3ff;
+				this.cpu.irq.keypadControlChanged(previousKeyControl, value);
+				break;
 			case this.JOYCNT:
 			case this.JOYSTAT:
 				this.STUB_REG("JOY", offset);

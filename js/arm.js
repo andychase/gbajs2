@@ -1,3 +1,41 @@
+function multiply32To64(a, b, signed) {
+	// 16-bit limbs keep each Number intermediate within exact integer precision.
+	var aLow = a & 0xffff;
+	var aHigh = a >>> 16;
+	var bLow = b & 0xffff;
+	var bHigh = b >>> 16;
+	var lowProduct = aLow * bLow;
+	var middle = aHigh * bLow + aLow * bHigh + (lowProduct >>> 16);
+	var low = ((middle & 0xffff) << 16) | (lowProduct & 0xffff);
+	var high = aHigh * bHigh + Math.floor(middle / 0x10000);
+	if (signed) {
+		// Correct the unsigned product's high word for two's-complement inputs.
+		if (a < 0) {
+			high -= b >>> 0;
+		}
+		if (b < 0) {
+			high -= a >>> 0;
+		}
+	}
+	return [low | 0, high | 0];
+}
+
+function readArmOperand1(cpu, register, shiftOp) {
+	var value = cpu.gprs[register];
+	if (register == cpu.PC && shiftOp.registerShift) {
+		// ARM7 reads PC+12, rather than PC+8, when Operand2 uses a
+		// register-controlled shift.
+		return (value + cpu.WORD_SIZE_ARM) | 0;
+	}
+	return value;
+}
+
+function restoreCPSRForTestToPC(cpu, register) {
+	if (register == cpu.PC && cpu.hasSPSR()) {
+		cpu.unpackCPSR(cpu.spsr);
+	}
+}
+
 class ARMCoreArm {
 	constructor(cpu) {
 		this.cpu = cpu;
@@ -301,7 +339,7 @@ class ARMCoreArm {
 	constructAddressingMode1ASR(rs, rm) {
 		var cpu = this.cpu;
 		var gprs = cpu.gprs;
-		return function () {
+		var shift = function () {
 			++cpu.cycles;
 			var shift = gprs[rs];
 			if (rs == cpu.PC) {
@@ -326,6 +364,8 @@ class ARMCoreArm {
 				cpu.shifterCarryOut = 0;
 			}
 		};
+		shift.registerShift = true;
+		return shift;
 	}
 	constructAddressingMode1Immediate(immediate) {
 		var cpu = this.cpu;
@@ -345,7 +385,7 @@ class ARMCoreArm {
 	constructAddressingMode1LSL(rs, rm) {
 		var cpu = this.cpu;
 		var gprs = cpu.gprs;
-		return function () {
+		var shift = function () {
 			++cpu.cycles;
 			var shift = gprs[rs];
 			if (rs == cpu.PC) {
@@ -370,11 +410,13 @@ class ARMCoreArm {
 				cpu.shifterCarryOut = 0;
 			}
 		};
+		shift.registerShift = true;
+		return shift;
 	}
 	constructAddressingMode1LSR(rs, rm) {
 		var cpu = this.cpu;
 		var gprs = cpu.gprs;
-		return function () {
+		var shift = function () {
 			++cpu.cycles;
 			var shift = gprs[rs];
 			if (rs == cpu.PC) {
@@ -399,11 +441,13 @@ class ARMCoreArm {
 				cpu.shifterCarryOut = 0;
 			}
 		};
+		shift.registerShift = true;
+		return shift;
 	}
 	constructAddressingMode1ROR(rs, rm) {
 		var cpu = this.cpu;
 		var gprs = cpu.gprs;
-		return function () {
+		var shift = function () {
 			++cpu.cycles;
 			var shift = gprs[rs];
 			if (rs == cpu.PC) {
@@ -420,13 +464,15 @@ class ARMCoreArm {
 				cpu.shifterCarryOut = cpu.cpsrC;
 			} else if (rotate) {
 				cpu.shifterOperand =
-					(gprs[rm] >>> rotate) | (gprs[rm] << (32 - rotate));
+					(shiftVal >>> rotate) | (shiftVal << (32 - rotate));
 				cpu.shifterCarryOut = shiftVal & (1 << (rotate - 1));
 			} else {
 				cpu.shifterOperand = shiftVal;
 				cpu.shifterCarryOut = shiftVal >> 31;
 			}
 		};
+		shift.registerShift = true;
+		return shift;
 	}
 	constructAddressingMode23Immediate(instruction, immediate, condOp) {
 		var rn = (instruction & 0x000f0000) >> 16;
@@ -480,7 +526,7 @@ class ARMCoreArm {
 			}
 			shiftOp();
 			var shifterOperand = (cpu.shifterOperand >>> 0) + !!cpu.cpsrC;
-			gprs[rd] = (gprs[rn] >>> 0) + shifterOperand;
+			gprs[rd] = (readArmOperand1(cpu, rn, shiftOp) >>> 0) + shifterOperand;
 		};
 	}
 	constructADCS(rd, rn, shiftOp, condOp) {
@@ -493,7 +539,7 @@ class ARMCoreArm {
 			}
 			shiftOp();
 			var shifterOperand = (cpu.shifterOperand >>> 0) + !!cpu.cpsrC;
-			var d = (gprs[rn] >>> 0) + shifterOperand;
+			var d = (readArmOperand1(cpu, rn, shiftOp) >>> 0) + shifterOperand;
 			if (rd == cpu.PC && cpu.hasSPSR()) {
 				cpu.unpackCPSR(cpu.spsr);
 			} else {
@@ -501,9 +547,7 @@ class ARMCoreArm {
 				cpu.cpsrZ = !(d & 0xffffffff);
 				cpu.cpsrC = d > 0xffffffff;
 				cpu.cpsrV =
-					gprs[rn] >> 31 == shifterOperand >> 31 &&
-					gprs[rn] >> 31 != d >> 31 &&
-					shifterOperand >> 31 != d >> 31;
+					((~(readArmOperand1(cpu, rn, shiftOp) ^ cpu.shifterOperand) & (readArmOperand1(cpu, rn, shiftOp) ^ d)) >>> 31) != 0;
 			}
 			gprs[rd] = d;
 		};
@@ -517,7 +561,7 @@ class ARMCoreArm {
 				return;
 			}
 			shiftOp();
-			gprs[rd] = (gprs[rn] >>> 0) + (cpu.shifterOperand >>> 0);
+			gprs[rd] = (readArmOperand1(cpu, rn, shiftOp) >>> 0) + (cpu.shifterOperand >>> 0);
 		};
 	}
 	constructADDS(rd, rn, shiftOp, condOp) {
@@ -529,7 +573,7 @@ class ARMCoreArm {
 				return;
 			}
 			shiftOp();
-			var d = (gprs[rn] >>> 0) + (cpu.shifterOperand >>> 0);
+			var d = (readArmOperand1(cpu, rn, shiftOp) >>> 0) + (cpu.shifterOperand >>> 0);
 			if (rd == cpu.PC && cpu.hasSPSR()) {
 				cpu.unpackCPSR(cpu.spsr);
 			} else {
@@ -537,8 +581,8 @@ class ARMCoreArm {
 				cpu.cpsrZ = !(d & 0xffffffff);
 				cpu.cpsrC = d > 0xffffffff;
 				cpu.cpsrV =
-					gprs[rn] >> 31 == cpu.shifterOperand >> 31 &&
-					gprs[rn] >> 31 != d >> 31 &&
+					readArmOperand1(cpu, rn, shiftOp) >> 31 == cpu.shifterOperand >> 31 &&
+					readArmOperand1(cpu, rn, shiftOp) >> 31 != d >> 31 &&
 					cpu.shifterOperand >> 31 != d >> 31;
 			}
 			gprs[rd] = d;
@@ -553,7 +597,7 @@ class ARMCoreArm {
 				return;
 			}
 			shiftOp();
-			gprs[rd] = gprs[rn] & cpu.shifterOperand;
+			gprs[rd] = readArmOperand1(cpu, rn, shiftOp) & cpu.shifterOperand;
 		};
 	}
 	constructANDS(rd, rn, shiftOp, condOp) {
@@ -565,7 +609,7 @@ class ARMCoreArm {
 				return;
 			}
 			shiftOp();
-			gprs[rd] = gprs[rn] & cpu.shifterOperand;
+			gprs[rd] = readArmOperand1(cpu, rn, shiftOp) & cpu.shifterOperand;
 			if (rd == cpu.PC && cpu.hasSPSR()) {
 				cpu.unpackCPSR(cpu.spsr);
 			} else {
@@ -596,7 +640,7 @@ class ARMCoreArm {
 				return;
 			}
 			shiftOp();
-			gprs[rd] = gprs[rn] & ~cpu.shifterOperand;
+			gprs[rd] = readArmOperand1(cpu, rn, shiftOp) & ~cpu.shifterOperand;
 		};
 	}
 	constructBICS(rd, rn, shiftOp, condOp) {
@@ -608,7 +652,7 @@ class ARMCoreArm {
 				return;
 			}
 			shiftOp();
-			gprs[rd] = gprs[rn] & ~cpu.shifterOperand;
+			gprs[rd] = readArmOperand1(cpu, rn, shiftOp) & ~cpu.shifterOperand;
 			if (rd == cpu.PC && cpu.hasSPSR()) {
 				cpu.unpackCPSR(cpu.spsr);
 			} else {
@@ -653,14 +697,15 @@ class ARMCoreArm {
 				return;
 			}
 			shiftOp();
-			var aluOut = (gprs[rn] >>> 0) + (cpu.shifterOperand >>> 0);
+			var aluOut = (readArmOperand1(cpu, rn, shiftOp) >>> 0) + (cpu.shifterOperand >>> 0);
 			cpu.cpsrN = aluOut >> 31;
 			cpu.cpsrZ = !(aluOut & 0xffffffff);
 			cpu.cpsrC = aluOut > 0xffffffff;
 			cpu.cpsrV =
-				gprs[rn] >> 31 == cpu.shifterOperand >> 31 &&
-				gprs[rn] >> 31 != aluOut >> 31 &&
+				readArmOperand1(cpu, rn, shiftOp) >> 31 == cpu.shifterOperand >> 31 &&
+				readArmOperand1(cpu, rn, shiftOp) >> 31 != aluOut >> 31 &&
 				cpu.shifterOperand >> 31 != aluOut >> 31;
+			restoreCPSRForTestToPC(cpu, rd);
 		};
 	}
 	constructCMP(rd, rn, shiftOp, condOp) {
@@ -672,13 +717,14 @@ class ARMCoreArm {
 				return;
 			}
 			shiftOp();
-			var aluOut = gprs[rn] - cpu.shifterOperand;
+			var aluOut = readArmOperand1(cpu, rn, shiftOp) - cpu.shifterOperand;
 			cpu.cpsrN = aluOut >> 31;
 			cpu.cpsrZ = !(aluOut & 0xffffffff);
-			cpu.cpsrC = gprs[rn] >>> 0 >= cpu.shifterOperand >>> 0;
+			cpu.cpsrC = readArmOperand1(cpu, rn, shiftOp) >>> 0 >= cpu.shifterOperand >>> 0;
 			cpu.cpsrV =
-				gprs[rn] >> 31 != cpu.shifterOperand >> 31 &&
-				gprs[rn] >> 31 != aluOut >> 31;
+				readArmOperand1(cpu, rn, shiftOp) >> 31 != cpu.shifterOperand >> 31 &&
+				readArmOperand1(cpu, rn, shiftOp) >> 31 != aluOut >> 31;
+			restoreCPSRForTestToPC(cpu, rd);
 		};
 	}
 	constructEOR(rd, rn, shiftOp, condOp) {
@@ -690,7 +736,7 @@ class ARMCoreArm {
 				return;
 			}
 			shiftOp();
-			gprs[rd] = gprs[rn] ^ cpu.shifterOperand;
+			gprs[rd] = readArmOperand1(cpu, rn, shiftOp) ^ cpu.shifterOperand;
 		};
 	}
 	constructEORS(rd, rn, shiftOp, condOp) {
@@ -702,7 +748,7 @@ class ARMCoreArm {
 				return;
 			}
 			shiftOp();
-			gprs[rd] = gprs[rn] ^ cpu.shifterOperand;
+			gprs[rd] = readArmOperand1(cpu, rn, shiftOp) ^ cpu.shifterOperand;
 			if (rd == cpu.PC && cpu.hasSPSR()) {
 				cpu.unpackCPSR(cpu.spsr);
 			} else {
@@ -840,7 +886,7 @@ class ARMCoreArm {
 				return;
 			}
 			++cpu.cycles;
-			cpu.mmu.waitMul(rs);
+			cpu.mmu.waitMul(gprs[rs]);
 			if (gprs[rm] & 0xffff0000 && gprs[rs] & 0xffff0000) {
 				// Our data type is a double--we'll lose bits if we do it all at once!
 				var hi = ((gprs[rm] & 0xffff0000) * gprs[rs]) & 0xffffffff;
@@ -860,7 +906,7 @@ class ARMCoreArm {
 				return;
 			}
 			++cpu.cycles;
-			cpu.mmu.waitMul(rs);
+			cpu.mmu.waitMul(gprs[rs]);
 			if (gprs[rm] & 0xffff0000 && gprs[rs] & 0xffff0000) {
 				// Our data type is a double--we'll lose bits if we do it all at once!
 				var hi = ((gprs[rm] & 0xffff0000) * gprs[rs]) & 0xffffffff;
@@ -1041,7 +1087,7 @@ class ARMCoreArm {
 				return;
 			}
 			shiftOp();
-			gprs[rd] = gprs[rn] | cpu.shifterOperand;
+			gprs[rd] = readArmOperand1(cpu, rn, shiftOp) | cpu.shifterOperand;
 		};
 	}
 	constructORRS(rd, rn, shiftOp, condOp) {
@@ -1053,7 +1099,7 @@ class ARMCoreArm {
 				return;
 			}
 			shiftOp();
-			gprs[rd] = gprs[rn] | cpu.shifterOperand;
+			gprs[rd] = readArmOperand1(cpu, rn, shiftOp) | cpu.shifterOperand;
 			if (rd == cpu.PC && cpu.hasSPSR()) {
 				cpu.unpackCPSR(cpu.spsr);
 			} else {
@@ -1072,7 +1118,7 @@ class ARMCoreArm {
 				return;
 			}
 			shiftOp();
-			gprs[rd] = cpu.shifterOperand - gprs[rn];
+			gprs[rd] = cpu.shifterOperand - readArmOperand1(cpu, rn, shiftOp);
 		};
 	}
 	constructRSBS(rd, rn, shiftOp, condOp) {
@@ -1084,15 +1130,15 @@ class ARMCoreArm {
 				return;
 			}
 			shiftOp();
-			var d = cpu.shifterOperand - gprs[rn];
+			var d = cpu.shifterOperand - readArmOperand1(cpu, rn, shiftOp);
 			if (rd == cpu.PC && cpu.hasSPSR()) {
 				cpu.unpackCPSR(cpu.spsr);
 			} else {
 				cpu.cpsrN = d >> 31;
 				cpu.cpsrZ = !(d & 0xffffffff);
-				cpu.cpsrC = cpu.shifterOperand >>> 0 >= gprs[rn] >>> 0;
+				cpu.cpsrC = cpu.shifterOperand >>> 0 >= readArmOperand1(cpu, rn, shiftOp) >>> 0;
 				cpu.cpsrV =
-					cpu.shifterOperand >> 31 != gprs[rn] >> 31 &&
+					cpu.shifterOperand >> 31 != readArmOperand1(cpu, rn, shiftOp) >> 31 &&
 					cpu.shifterOperand >> 31 != d >> 31;
 			}
 			gprs[rd] = d;
@@ -1107,7 +1153,8 @@ class ARMCoreArm {
 				return;
 			}
 			shiftOp();
-			var n = (gprs[rn] >>> 0) + !cpu.cpsrC;
+			var borrow = !cpu.cpsrC;
+			var n = (readArmOperand1(cpu, rn, shiftOp) >>> 0) + borrow;
 			gprs[rd] = (cpu.shifterOperand >>> 0) - n;
 		};
 	}
@@ -1120,17 +1167,20 @@ class ARMCoreArm {
 				return;
 			}
 			shiftOp();
-			var n = (gprs[rn] >>> 0) + !cpu.cpsrC;
+			var borrow = !cpu.cpsrC;
+			var n = (readArmOperand1(cpu, rn, shiftOp) >>> 0) + borrow;
 			var d = (cpu.shifterOperand >>> 0) - n;
 			if (rd == cpu.PC && cpu.hasSPSR()) {
 				cpu.unpackCPSR(cpu.spsr);
 			} else {
 				cpu.cpsrN = d >> 31;
 				cpu.cpsrZ = !(d & 0xffffffff);
-				cpu.cpsrC = cpu.shifterOperand >>> 0 >= n >>> 0;
+				cpu.cpsrC =
+					(cpu.shifterOperand >>> 0) >= (readArmOperand1(cpu, rn, shiftOp) >>> 0) + borrow;
 				cpu.cpsrV =
-					cpu.shifterOperand >> 31 != n >> 31 &&
-					cpu.shifterOperand >> 31 != d >> 31;
+					(((cpu.shifterOperand ^ readArmOperand1(cpu, rn, shiftOp)) &
+						(cpu.shifterOperand ^ d)) >>>
+						31) != 0;
 			}
 			gprs[rd] = d;
 		};
@@ -1144,8 +1194,9 @@ class ARMCoreArm {
 				return;
 			}
 			shiftOp();
-			var shifterOperand = (cpu.shifterOperand >>> 0) + !cpu.cpsrC;
-			gprs[rd] = (gprs[rn] >>> 0) - shifterOperand;
+			var borrow = !cpu.cpsrC;
+			var shifterOperand = (cpu.shifterOperand >>> 0) + borrow;
+			gprs[rd] = (readArmOperand1(cpu, rn, shiftOp) >>> 0) - shifterOperand;
 		};
 	}
 	constructSBCS(rd, rn, shiftOp, condOp) {
@@ -1157,24 +1208,25 @@ class ARMCoreArm {
 				return;
 			}
 			shiftOp();
-			var shifterOperand = (cpu.shifterOperand >>> 0) + !cpu.cpsrC;
-			var d = (gprs[rn] >>> 0) - shifterOperand;
+			var borrow = !cpu.cpsrC;
+			var shifterOperand = (cpu.shifterOperand >>> 0) + borrow;
+			var d = (readArmOperand1(cpu, rn, shiftOp) >>> 0) - shifterOperand;
 			if (rd == cpu.PC && cpu.hasSPSR()) {
 				cpu.unpackCPSR(cpu.spsr);
 			} else {
 				cpu.cpsrN = d >> 31;
 				cpu.cpsrZ = !(d & 0xffffffff);
-				cpu.cpsrC = gprs[rn] >>> 0 >= shifterOperand >>> 0;
+				cpu.cpsrC = (readArmOperand1(cpu, rn, shiftOp) >>> 0) >= (cpu.shifterOperand >>> 0) + borrow;
 				cpu.cpsrV =
-					gprs[rn] >> 31 != shifterOperand >> 31 &&
-					gprs[rn] >> 31 != d >> 31;
+					(((readArmOperand1(cpu, rn, shiftOp) ^ cpu.shifterOperand) &
+						(readArmOperand1(cpu, rn, shiftOp) ^ d)) >>>
+						31) != 0;
 			}
 			gprs[rd] = d;
 		};
 	}
 	constructSMLAL(rd, rn, rs, rm, condOp) {
 		var cpu = this.cpu;
-		var SHIFT_32 = 1 / 0x100000000;
 		var gprs = cpu.gprs;
 		return function () {
 			cpu.mmu.waitPrefetch32(gprs[cpu.PC]);
@@ -1182,17 +1234,18 @@ class ARMCoreArm {
 				return;
 			}
 			cpu.cycles += 2;
-			cpu.mmu.waitMul(rs);
-			var hi = (gprs[rm] & 0xffff0000) * gprs[rs];
-			var lo = (gprs[rm] & 0x0000ffff) * gprs[rs];
-			var carry = (gprs[rn] >>> 0) + hi + lo;
-			gprs[rn] = carry;
-			gprs[rd] += Math.floor(carry * SHIFT_32);
+			cpu.mmu.waitMul(gprs[rs]);
+			var product = multiply32To64(gprs[rm], gprs[rs], true);
+			var low = (gprs[rn] >>> 0) + (product[0] >>> 0);
+			gprs[rn] = low;
+			gprs[rd] =
+				(gprs[rd] >>> 0) +
+				(product[1] >>> 0) +
+				(low > 0xffffffff);
 		};
 	}
 	constructSMLALS(rd, rn, rs, rm, condOp) {
 		var cpu = this.cpu;
-		var SHIFT_32 = 1 / 0x100000000;
 		var gprs = cpu.gprs;
 		return function () {
 			cpu.mmu.waitPrefetch32(gprs[cpu.PC]);
@@ -1200,19 +1253,20 @@ class ARMCoreArm {
 				return;
 			}
 			cpu.cycles += 2;
-			cpu.mmu.waitMul(rs);
-			var hi = (gprs[rm] & 0xffff0000) * gprs[rs];
-			var lo = (gprs[rm] & 0x0000ffff) * gprs[rs];
-			var carry = (gprs[rn] >>> 0) + hi + lo;
-			gprs[rn] = carry;
-			gprs[rd] += Math.floor(carry * SHIFT_32);
+			cpu.mmu.waitMul(gprs[rs]);
+			var product = multiply32To64(gprs[rm], gprs[rs], true);
+			var low = (gprs[rn] >>> 0) + (product[0] >>> 0);
+			gprs[rn] = low;
+			gprs[rd] =
+				(gprs[rd] >>> 0) +
+				(product[1] >>> 0) +
+				(low > 0xffffffff);
 			cpu.cpsrN = gprs[rd] >> 31;
-			cpu.cpsrZ = !(gprs[rd] & 0xffffffff || gprs[rn] & 0xffffffff);
+			cpu.cpsrZ = !(gprs[rd] || gprs[rn]);
 		};
 	}
 	constructSMULL(rd, rn, rs, rm, condOp) {
 		var cpu = this.cpu;
-		var SHIFT_32 = 1 / 0x100000000;
 		var gprs = cpu.gprs;
 		return function () {
 			cpu.mmu.waitPrefetch32(gprs[cpu.PC]);
@@ -1221,15 +1275,13 @@ class ARMCoreArm {
 			}
 			++cpu.cycles;
 			cpu.mmu.waitMul(gprs[rs]);
-			var hi = ((gprs[rm] & 0xffff0000) >> 0) * (gprs[rs] >> 0);
-			var lo = ((gprs[rm] & 0x0000ffff) >> 0) * (gprs[rs] >> 0);
-			gprs[rn] = ((hi & 0xffffffff) + (lo & 0xffffffff)) & 0xffffffff;
-			gprs[rd] = Math.floor(hi * SHIFT_32 + lo * SHIFT_32);
+			var product = multiply32To64(gprs[rm], gprs[rs], true);
+			gprs[rn] = product[0];
+			gprs[rd] = product[1];
 		};
 	}
 	constructSMULLS(rd, rn, rs, rm, condOp) {
 		var cpu = this.cpu;
-		var SHIFT_32 = 1 / 0x100000000;
 		var gprs = cpu.gprs;
 		return function () {
 			cpu.mmu.waitPrefetch32(gprs[cpu.PC]);
@@ -1238,12 +1290,11 @@ class ARMCoreArm {
 			}
 			++cpu.cycles;
 			cpu.mmu.waitMul(gprs[rs]);
-			var hi = ((gprs[rm] & 0xffff0000) >> 0) * (gprs[rs] >> 0);
-			var lo = ((gprs[rm] & 0x0000ffff) >> 0) * (gprs[rs] >> 0);
-			gprs[rn] = ((hi & 0xffffffff) + (lo & 0xffffffff)) & 0xffffffff;
-			gprs[rd] = Math.floor(hi * SHIFT_32 + lo * SHIFT_32);
+			var product = multiply32To64(gprs[rm], gprs[rs], true);
+			gprs[rn] = product[0];
+			gprs[rd] = product[1];
 			cpu.cpsrN = gprs[rd] >> 31;
-			cpu.cpsrZ = !(gprs[rd] & 0xffffffff || gprs[rn] & 0xffffffff);
+			cpu.cpsrZ = !(gprs[rd] || gprs[rn]);
 		};
 	}
 	constructSTM(rs, address, condOp) {
@@ -1261,7 +1312,10 @@ class ARMCoreArm {
 			var m, i;
 			for (m = rs, i = 0; m; m >>= 1, ++i) {
 				if (m & 1) {
-					mmu.store32(addr, gprs[i]);
+					mmu.store32(
+						addr,
+						i == cpu.PC ? gprs[i] + cpu.WORD_SIZE_ARM : gprs[i]
+					);
 					addr += 4;
 					++total;
 				}
@@ -1286,7 +1340,10 @@ class ARMCoreArm {
 			cpu.switchMode(cpu.MODE_SYSTEM);
 			for (m = rs, i = 0; m; m >>= 1, ++i) {
 				if (m & 1) {
-					mmu.store32(addr, gprs[i]);
+					mmu.store32(
+						addr,
+						i == cpu.PC ? gprs[i] + cpu.WORD_SIZE_ARM : gprs[i]
+					);
 					addr += 4;
 					++total;
 				}
@@ -1303,8 +1360,10 @@ class ARMCoreArm {
 				cpu.mmu.waitPrefetch32(gprs[cpu.PC]);
 				return;
 			}
+			var value =
+				rd == cpu.PC ? gprs[rd] + cpu.WORD_SIZE_ARM : gprs[rd];
 			var addr = address();
-			cpu.mmu.store32(addr, gprs[rd]);
+			cpu.mmu.store32(addr, value);
 			cpu.mmu.wait32(addr);
 			cpu.mmu.wait32(gprs[cpu.PC]);
 		};
@@ -1317,8 +1376,9 @@ class ARMCoreArm {
 				cpu.mmu.waitPrefetch32(gprs[cpu.PC]);
 				return;
 			}
+			var value = rd == cpu.PC ? gprs[rd] + cpu.WORD_SIZE_ARM : gprs[rd];
 			var addr = address();
-			cpu.mmu.store8(addr, gprs[rd]);
+			cpu.mmu.store8(addr, value);
 			cpu.mmu.wait(addr);
 			cpu.mmu.wait32(gprs[cpu.PC]);
 		};
@@ -1331,8 +1391,9 @@ class ARMCoreArm {
 				cpu.mmu.waitPrefetch32(gprs[cpu.PC]);
 				return;
 			}
+			var value = rd == cpu.PC ? gprs[rd] + cpu.WORD_SIZE_ARM : gprs[rd];
 			var addr = address();
-			cpu.mmu.store16(addr, gprs[rd]);
+			cpu.mmu.store16(addr, value);
 			cpu.mmu.wait(addr);
 			cpu.mmu.wait32(gprs[cpu.PC]);
 		};
@@ -1346,7 +1407,7 @@ class ARMCoreArm {
 				return;
 			}
 			shiftOp();
-			gprs[rd] = gprs[rn] - cpu.shifterOperand;
+			gprs[rd] = readArmOperand1(cpu, rn, shiftOp) - cpu.shifterOperand;
 		};
 	}
 	constructSUBS(rd, rn, shiftOp, condOp) {
@@ -1358,15 +1419,15 @@ class ARMCoreArm {
 				return;
 			}
 			shiftOp();
-			var d = gprs[rn] - cpu.shifterOperand;
+			var d = readArmOperand1(cpu, rn, shiftOp) - cpu.shifterOperand;
 			if (rd == cpu.PC && cpu.hasSPSR()) {
 				cpu.unpackCPSR(cpu.spsr);
 			} else {
 				cpu.cpsrN = d >> 31;
 			cpu.cpsrZ = !(d & 0xFFFFFFFF);
-			cpu.cpsrC = (gprs[rn] >>> 0) >= (cpu.shifterOperand >>> 0);
-			cpu.cpsrV = (gprs[rn] >> 31) != (cpu.shifterOperand >> 31) &&
-						(gprs[rn] >> 31) != (d >> 31);
+			cpu.cpsrC = (readArmOperand1(cpu, rn, shiftOp) >>> 0) >= (cpu.shifterOperand >>> 0);
+			cpu.cpsrV = (readArmOperand1(cpu, rn, shiftOp) >> 31) != (cpu.shifterOperand >> 31) &&
+						(readArmOperand1(cpu, rn, shiftOp) >> 31) != (d >> 31);
 			}
 			gprs[rd] = d;
 		};
@@ -1409,7 +1470,7 @@ class ARMCoreArm {
 			}
 			cpu.mmu.wait(gprs[rn]);
 			cpu.mmu.wait(gprs[rn]);
-			var d = cpu.mmu.load8(gprs[rn]);
+			var d = cpu.mmu.loadU8(gprs[rn]);
 			cpu.mmu.store8(gprs[rn], gprs[rm]);
 			gprs[rd] = d;
 			++cpu.cycles;
@@ -1424,10 +1485,11 @@ class ARMCoreArm {
 				return;
 			}
 			shiftOp();
-			var aluOut = gprs[rn] ^ cpu.shifterOperand;
+			var aluOut = readArmOperand1(cpu, rn, shiftOp) ^ cpu.shifterOperand;
 			cpu.cpsrN = aluOut >> 31;
 			cpu.cpsrZ = !(aluOut & 0xffffffff);
 			cpu.cpsrC = cpu.shifterCarryOut;
+			restoreCPSRForTestToPC(cpu, rd);
 		};
 	}
 	constructTST(rd, rn, shiftOp, condOp) {
@@ -1439,15 +1501,15 @@ class ARMCoreArm {
 				return;
 			}
 			shiftOp();
-			var aluOut = gprs[rn] & cpu.shifterOperand;
+			var aluOut = readArmOperand1(cpu, rn, shiftOp) & cpu.shifterOperand;
 			cpu.cpsrN = aluOut >> 31;
 			cpu.cpsrZ = !(aluOut & 0xffffffff);
 			cpu.cpsrC = cpu.shifterCarryOut;
+			restoreCPSRForTestToPC(cpu, rd);
 		};
 	}
 	constructUMLAL(rd, rn, rs, rm, condOp) {
 		var cpu = this.cpu;
-		var SHIFT_32 = 1 / 0x100000000;
 		var gprs = cpu.gprs;
 		return function () {
 			cpu.mmu.waitPrefetch32(gprs[cpu.PC]);
@@ -1455,17 +1517,18 @@ class ARMCoreArm {
 				return;
 			}
 			cpu.cycles += 2;
-			cpu.mmu.waitMul(rs);
-			var hi = ((gprs[rm] & 0xffff0000) >>> 0) * (gprs[rs] >>> 0);
-			var lo = (gprs[rm] & 0x0000ffff) * (gprs[rs] >>> 0);
-			var carry = (gprs[rn] >>> 0) + hi + lo;
-			gprs[rn] = carry;
-			gprs[rd] += carry * SHIFT_32;
+			cpu.mmu.waitMul(gprs[rs]);
+			var product = multiply32To64(gprs[rm], gprs[rs], false);
+			var low = (gprs[rn] >>> 0) + (product[0] >>> 0);
+			gprs[rn] = low;
+			gprs[rd] =
+				(gprs[rd] >>> 0) +
+				(product[1] >>> 0) +
+				(low > 0xffffffff);
 		};
 	}
 	constructUMLALS(rd, rn, rs, rm, condOp) {
 		var cpu = this.cpu;
-		var SHIFT_32 = 1 / 0x100000000;
 		var gprs = cpu.gprs;
 		return function () {
 			cpu.mmu.waitPrefetch32(gprs[cpu.PC]);
@@ -1473,19 +1536,20 @@ class ARMCoreArm {
 				return;
 			}
 			cpu.cycles += 2;
-			cpu.mmu.waitMul(rs);
-			var hi = ((gprs[rm] & 0xffff0000) >>> 0) * (gprs[rs] >>> 0);
-			var lo = (gprs[rm] & 0x0000ffff) * (gprs[rs] >>> 0);
-			var carry = (gprs[rn] >>> 0) + hi + lo;
-			gprs[rn] = carry;
-			gprs[rd] += carry * SHIFT_32;
+			cpu.mmu.waitMul(gprs[rs]);
+			var product = multiply32To64(gprs[rm], gprs[rs], false);
+			var low = (gprs[rn] >>> 0) + (product[0] >>> 0);
+			gprs[rn] = low;
+			gprs[rd] =
+				(gprs[rd] >>> 0) +
+				(product[1] >>> 0) +
+				(low > 0xffffffff);
 			cpu.cpsrN = gprs[rd] >> 31;
-			cpu.cpsrZ = !(gprs[rd] & 0xffffffff || gprs[rn] & 0xffffffff);
+			cpu.cpsrZ = !(gprs[rd] || gprs[rn]);
 		};
 	}
 	constructUMULL(rd, rn, rs, rm, condOp) {
 		var cpu = this.cpu;
-		var SHIFT_32 = 1 / 0x100000000;
 		var gprs = cpu.gprs;
 		return function () {
 			cpu.mmu.waitPrefetch32(gprs[cpu.PC]);
@@ -1494,15 +1558,13 @@ class ARMCoreArm {
 			}
 			++cpu.cycles;
 			cpu.mmu.waitMul(gprs[rs]);
-			var hi = ((gprs[rm] & 0xffff0000) >>> 0) * (gprs[rs] >>> 0);
-			var lo = ((gprs[rm] & 0x0000ffff) >>> 0) * (gprs[rs] >>> 0);
-			gprs[rn] = ((hi & 0xffffffff) + (lo & 0xffffffff)) & 0xffffffff;
-			gprs[rd] = (hi * SHIFT_32 + lo * SHIFT_32) >>> 0;
+			var product = multiply32To64(gprs[rm], gprs[rs], false);
+			gprs[rn] = product[0];
+			gprs[rd] = product[1];
 		};
 	}
 	constructUMULLS(rd, rn, rs, rm, condOp) {
 		var cpu = this.cpu;
-		var SHIFT_32 = 1 / 0x100000000;
 		var gprs = cpu.gprs;
 		return function () {
 			cpu.mmu.waitPrefetch32(gprs[cpu.PC]);
@@ -1511,12 +1573,11 @@ class ARMCoreArm {
 			}
 			++cpu.cycles;
 			cpu.mmu.waitMul(gprs[rs]);
-			var hi = ((gprs[rm] & 0xffff0000) >>> 0) * (gprs[rs] >>> 0);
-			var lo = ((gprs[rm] & 0x0000ffff) >>> 0) * (gprs[rs] >>> 0);
-			gprs[rn] = ((hi & 0xffffffff) + (lo & 0xffffffff)) & 0xffffffff;
-			gprs[rd] = (hi * SHIFT_32 + lo * SHIFT_32) >>> 0;
+			var product = multiply32To64(gprs[rm], gprs[rs], false);
+			gprs[rn] = product[0];
+			gprs[rd] = product[1];
 			cpu.cpsrN = gprs[rd] >> 31;
-			cpu.cpsrZ = !(gprs[rd] & 0xffffffff || gprs[rn] & 0xffffffff);
+			cpu.cpsrZ = !(gprs[rd] || gprs[rn]);
 		};
 	}
 }

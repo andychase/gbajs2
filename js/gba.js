@@ -54,6 +54,8 @@ class GameBoyAdvance {
 		this.keypad.registerHandlers();
 		this.doStep = this.waitFrame;
 		this.paused = false;
+		this.running = false;
+		this.runGeneration = 0;
 
 		this.seenFrame = false;
 		this.seenSave = false;
@@ -61,11 +63,21 @@ class GameBoyAdvance {
 
 		this.queue = null;
 		this.reportFPS = null;
-		this.throttle = 16; // This is rough, but the 2/3ms difference gives us a good overhead
+		// Pace emulated frames at the GBA refresh rate (280,896 cycles at
+		// 16,777,216 Hz). Carry fractional milliseconds across timers because
+		// browser setTimeout implementations may round each delay to an integer.
+		this.throttle = (this.video.TOTAL_LENGTH * 1000) / 16777216;
+		this.throttleRemainder = 0;
 
 		var self = this;
 		window.queueFrame = function (f) {
-			self.queue = window.setTimeout(f, self.throttle);
+			var delay = Math.floor(self.throttle);
+			self.throttleRemainder += self.throttle - delay;
+			if (self.throttleRemainder >= 1) {
+				++delay;
+				--self.throttleRemainder;
+			}
+			self.queue = window.setTimeout(f, delay);
 		};
 
 		window.URL = window.URL || window.webkitURL;
@@ -102,6 +114,13 @@ class GameBoyAdvance {
 		this.video.setBacking(this.context);
 	}
 	setBios(bios, real) {
+		if (real && (!bios || bios.byteLength !== this.mmu.SIZE_BIOS)) {
+			throw new RangeError(
+				"A real GBA BIOS image must be exactly " +
+				this.mmu.SIZE_BIOS +
+				" bytes"
+			);
+		}
 		this.mmu.loadBios(bios, real);
 	}
 	setRom(rom) {
@@ -118,18 +137,47 @@ class GameBoyAdvance {
 		return !!this.rom;
 	}
 	loadRomFromFile(romFile, callback) {
-		var reader = new FileReader();
 		var self = this;
-		reader.onload = function (e) {
-			var result = self.setRom(e.target.result);
+		var completed = false;
+		var finish = function (result) {
+			if (completed) {
+				return;
+			}
+			completed = true;
 			if (callback) {
 				callback(result);
 			}
 		};
-		reader.readAsArrayBuffer(romFile);
+		if (!romFile) {
+			finish(false);
+			return;
+		}
+		var reader;
+		try {
+			reader = new FileReader();
+		} catch (error) {
+			finish(false);
+			return;
+		}
+		reader.onload = function (e) {
+			finish(self.setRom(e.target.result));
+		};
+		reader.onerror = function () {
+			finish(false);
+		};
+		reader.onabort = function () {
+			finish(false);
+		};
+		try {
+			reader.readAsArrayBuffer(romFile);
+		} catch (error) {
+			finish(false);
+		}
 	}
 	reset() {
-		this.audio.pause(true);
+		// Reset replaces the CPU and video state, so invalidate any queued run
+		// callbacks before clearing the old cartridge and its pending writes.
+		this.pause();
 
 		this.mmu.clear();
 		this.io.clear();
@@ -145,6 +193,9 @@ class GameBoyAdvance {
 		this.mmu.mmap(this.mmu.REGION_VRAM, this.video.renderPath.vram);
 		this.mmu.mmap(this.mmu.REGION_OAM, this.video.renderPath.oam);
 
+		if (this.mmu.bios && typeof this.mmu.bios.beginHLEBoot == "function") {
+			this.mmu.bios.beginHLEBoot();
+		}
 		this.cpu.resetCPU(0);
 	}
 	step() {
@@ -159,10 +210,23 @@ class GameBoyAdvance {
 	}
 	pause() {
 		this.paused = true;
+		this.running = false;
+		this.runGeneration = (this.runGeneration || 0) + 1;
 		this.audio.pause(true);
 		if (this.queue) {
 			clearTimeout(this.queue);
 			this.queue = null;
+		}
+		// Save writes are normally persisted one frame after the cartridge has
+		// gone idle. Pausing or resetting during that grace frame must not leave
+		// the newest game progress only in memory.
+		if (
+			this.mmu.save &&
+			(this.seenSave || this.mmu.saveNeedsFlush())
+		) {
+			this.storeSavedata();
+			this.mmu.flushSave();
+			this.seenSave = false;
 		}
 	}
 	advanceFrame() {
@@ -180,26 +244,56 @@ class GameBoyAdvance {
 		}
 	}
 	runStable() {
-		if (this.interval) {
+		if (this.running) {
 			return; // Already running
 		}
 		var self = this;
+		this.paused = false;
+		this.running = true;
+		this.runGeneration = (this.runGeneration || 0) + 1;
+		var runGeneration = this.runGeneration;
+		var runIsActive = function () {
+			return (
+				self.running &&
+				!self.paused &&
+				self.runGeneration === runGeneration
+			);
+		};
 		var timer = 0;
 		var frames = 0;
 		var runFunc;
 		var start = Date.now();
-		this.paused = false;
+		var rendererHasPendingFrame = function () {
+			var renderPath = self.video && self.video.renderPath;
+			return !!(
+				renderPath &&
+				renderPath.worker &&
+				!renderPath.workerFailed &&
+				renderPath.delay > 0
+			);
+		};
+		var waitForRenderer = function () {
+			// Let the worker drain its queued frame before the next emulated
+			// frame. This preserves short-lived visual effects instead of
+			// silently dropping the frame that contains them.
+			if (runIsActive()) {
+				self.queue = window.setTimeout(runFunc, 1);
+			}
+		};
 		this.audio.pause(false);
 
 		if (this.reportFPS) {
 			runFunc = function () {
 				try {
-					timer += Date.now() - start;
-					if (self.paused) {
+					if (!runIsActive()) {
 						return;
-					} else {
-						queueFrame(runFunc);
 					}
+					if (rendererHasPendingFrame()) {
+						waitForRenderer();
+						return;
+					}
+					timer += Date.now() - start;
+					queueFrame(runFunc);
 					start = Date.now();
 					self.advanceFrame();
 					++frames;
@@ -219,11 +313,14 @@ class GameBoyAdvance {
 		} else {
 			runFunc = function () {
 				try {
-					if (self.paused) {
+					if (!runIsActive()) {
 						return;
-					} else {
-						queueFrame(runFunc);
 					}
+					if (rendererHasPendingFrame()) {
+						waitForRenderer();
+						return;
+					}
+					queueFrame(runFunc);
 					self.advanceFrame();
 				} catch (exception) {
 					self.ERROR(exception);
@@ -240,12 +337,36 @@ class GameBoyAdvance {
 		this.mmu.loadSavedata(data);
 	}
 	loadSavedataFromFile(saveFile) {
-		var reader = new FileReader();
 		var self = this;
-		reader.onload = function (e) {
-			self.setSavedata(e.target.result);
-		};
-		reader.readAsArrayBuffer(saveFile);
+		return new Promise(function (resolve) {
+			var reader;
+			try {
+				reader = new FileReader();
+			} catch (error) {
+				self.WARN("Could not read savedata file: " + error);
+				resolve(false);
+				return;
+			}
+			reader.onload = function (e) {
+				try {
+					self.setSavedata(e.target.result);
+					resolve(true);
+				} catch (error) {
+					self.WARN("Could not load savedata! " + error);
+					resolve(false);
+				}
+			};
+			reader.onerror = function () {
+				self.WARN("Could not read savedata file");
+				resolve(false);
+			};
+			try {
+				reader.readAsArrayBuffer(saveFile);
+			} catch (error) {
+				self.WARN("Could not read savedata file: " + error);
+				resolve(false);
+			}
+		});
 	}
 	decodeSavedata(string) {
 		this.setSavedata(this.decodeBase64(string));
@@ -315,6 +436,9 @@ class GameBoyAdvance {
 	}
 	storeSavedata() {
 		var sram = this.mmu.save;
+		if (!sram || !this.mmu.cart) {
+			return;
+		}
 		try {
 			var storage = window.localStorage;
 			storage[this.SYS_ID + "." + this.mmu.cart.code] = this.encodeBase64(
@@ -343,6 +467,7 @@ class GameBoyAdvance {
 			mmu: this.mmu.freeze(),
 			irq: this.irq.freeze(),
 			io: this.io.freeze(),
+			sio: this.sio.freeze(),
 			audio: this.audio.freeze(),
 			video: this.video.freeze()
 		};
@@ -350,10 +475,15 @@ class GameBoyAdvance {
 	defrost(frost) {
 		this.cpu.defrost(frost.cpu);
 		this.mmu.defrost(frost.mmu);
-		this.audio.defrost(frost.audio);
 		this.video.defrost(frost.video);
 		this.irq.defrost(frost.irq);
 		this.io.defrost(frost.io);
+		this.sio.defrost(frost.sio);
+		this.audio.defrost(
+			frost.audio,
+			this.io.registers[this.io.SOUNDBIAS >> 1]
+		);
+		this.irq.pollNextEvent();
 	}
 	log(level, message) {}
 	setLogger(logger) {

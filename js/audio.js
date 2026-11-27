@@ -6,7 +6,19 @@ class GameBoyAdvanceAudio {
 			this.context = new AudioContext();
 			this.bufferSize = 0;
 			this.bufferSize = 4096;
-			this.maxSamples = this.bufferSize << 2;
+			// SOUNDBIAS can raise the emulated PWM rate to 262.144 kHz. Size
+			// the source-sample ring for four WebAudio callbacks at that rate;
+			// keeping only the default-rate capacity lets high-rate output wrap
+			// over unread samples before a callback can consume them.
+			var maxSampleRate = 32768 << 3;
+			var outputRate = this.context.sampleRate || 32768;
+			var requiredSamples = Math.ceil(
+				(this.bufferSize << 2) * Math.max(1, maxSampleRate / outputRate)
+			);
+			this.maxSamples = 1;
+			while (this.maxSamples < requiredSamples) {
+				this.maxSamples <<= 1;
+			}
 			this.buffers = [
 				new Float32Array(this.maxSamples),
 				new Float32Array(this.maxSamples)
@@ -38,6 +50,12 @@ class GameBoyAdvanceAudio {
 	clear() {
 		this.fifoA = [];
 		this.fifoB = [];
+		this.fifoAWriteBuffer = new Array(8).fill(0);
+		this.fifoBWriteBuffer = new Array(8).fill(0);
+		this.fifoAWriteIndex = 0;
+		this.fifoBWriteIndex = 0;
+		this.fifoAInternal = [];
+		this.fifoBInternal = [];
 		this.fifoASample = 0;
 		this.fifoBSample = 0;
 
@@ -48,8 +66,6 @@ class GameBoyAdvanceAudio {
 			} catch (e) {}
 		}
 
-		this.enableChannel3 = false;
-		this.enableChannel4 = false;
 		this.enableChannelA = false;
 		this.enableChannelB = false;
 		this.enableRightChannelA = false;
@@ -62,6 +78,8 @@ class GameBoyAdvanceAudio {
 
 		this.volumeLeft = 0;
 		this.volumeRight = 0;
+		this.masterVolumeLeft = 0;
+		this.masterVolumeRight = 0;
 		this.ratioChannelA = 1;
 		this.ratioChannelB = 1;
 		this.enabledLeft = 0;
@@ -78,7 +96,6 @@ class GameBoyAdvanceAudio {
 		this.squareChannels = new Array();
 		for (var i = 0; i < 2; ++i) {
 			this.squareChannels[i] = {
-				enabled: false,
 				playing: false,
 				sample: 0,
 				duty: 0.5,
@@ -152,11 +169,51 @@ class GameBoyAdvanceAudio {
 	}
 	freeze() {
 		return {
-			nextSample: this.nextSample
+			nextSample: this.nextSample,
+			soundBias: this.soundBias,
+			fifoA: (this.fifoA || []).slice(),
+			fifoB: (this.fifoB || []).slice(),
+			fifoASample: this.fifoASample || 0,
+			fifoBSample: this.fifoBSample || 0,
+			fifoAInternal: (this.fifoAInternal || []).slice(),
+			fifoBInternal: (this.fifoBInternal || []).slice(),
+			fifoAWriteBuffer: (this.fifoAWriteBuffer || []).slice(),
+			fifoBWriteBuffer: (this.fifoBWriteBuffer || []).slice(),
+			fifoAWriteIndex: this.fifoAWriteIndex || 0,
+			fifoBWriteIndex: this.fifoBWriteIndex || 0
 		};
 	}
-	defrost(frost) {
+	defrost(frost, soundBias) {
 		this.nextSample = frost.nextSample;
+		this.fifoA = (frost.fifoA || []).slice();
+		this.fifoB = (frost.fifoB || []).slice();
+		this.fifoASample = frost.fifoASample || 0;
+		this.fifoBSample = frost.fifoBSample || 0;
+		this.fifoAInternal = (frost.fifoAInternal || []).slice();
+		this.fifoBInternal = (frost.fifoBInternal || []).slice();
+		this.fifoAWriteBuffer = new Array(8);
+		this.fifoBWriteBuffer = new Array(8);
+		for (var i = 0; i < 8; ++i) {
+			this.fifoAWriteBuffer[i] =
+				((frost.fifoAWriteBuffer || [])[i] || 0) >>> 0;
+			this.fifoBWriteBuffer[i] =
+				((frost.fifoBWriteBuffer || [])[i] || 0) >>> 0;
+		}
+		this.fifoAWriteIndex = (frost.fifoAWriteIndex || 0) & 7;
+		this.fifoBWriteIndex = (frost.fifoBWriteIndex || 0) & 7;
+		if (soundBias === undefined) {
+			soundBias = frost.soundBias;
+		}
+		if (soundBias === undefined) {
+			soundBias = 0x200;
+		}
+		this.soundBias = soundBias & 0xc3fe;
+		var resolution = (this.soundBias >>> 14) & 0x3;
+		this.sampleRate = 32768 << resolution;
+		this.sampleInterval = this.cpuFrequency / this.sampleRate;
+		this.resampleRatio = this.context
+			? this.sampleRate / this.context.sampleRate
+			: 1;
 	}
 	pause(paused) {
 		if (this.context) {
@@ -172,103 +229,139 @@ class GameBoyAdvanceAudio {
 		}
 	}
 	updateTimers() {
-		var cycles = this.cpu.cycles;
-		if (
-			!this.enabled ||
-			(cycles < this.nextEvent && cycles < this.nextSample)
-		) {
+		if (!this.enabled) {
 			return;
 		}
 
-		if (cycles >= this.nextEvent) {
-			var channel = this.squareChannels[0];
-			this.nextEvent = Infinity;
-			if (channel.playing) {
-				this.updateSquareChannel(channel, cycles);
+		// A long DMA stall can leave many audio samples and channel steps due.
+		// Catch them up iteratively so the delay cannot exhaust the JS call stack.
+		while (true) {
+			var cycles = this.cpu.cycles;
+			if (cycles < this.nextEvent && cycles < this.nextSample) {
+				return;
 			}
 
-			channel = this.squareChannels[1];
-			if (channel.playing) {
-				this.updateSquareChannel(channel, cycles);
-			}
+			if (cycles >= this.nextEvent) {
+				var channel = this.squareChannels[0];
+				this.nextEvent = Infinity;
+				if (channel.playing) {
+					this.updateSquareChannel(channel, cycles);
+				}
 
-			if (this.enableChannel3 && this.playingChannel3) {
-				if (cycles >= this.channel3Next) {
-					if (this.channel3Write) {
-						var sample = this.waveData[this.channel3Pointer >> 1];
-					this.channel3Sample = (((sample >> ((this.channel3Pointer & 1) << 2)) & 0xF) - 0x8) / 8;
-					this.channel3Pointer = (this.channel3Pointer + 1);
+				channel = this.squareChannels[1];
+				if (channel.playing) {
+					this.updateSquareChannel(channel, cycles);
+				}
+
+				if (this.playingChannel3) {
+					if (cycles >= this.channel3Next) {
+						if (this.channel3Write) {
+							var sampleBank = this.channel3Bank ? 16 : 0;
+							if (
+								this.channel3Dimension &&
+								this.channel3Pointer >= 32
+							) {
+								sampleBank ^= 16;
+							}
+							var sample =
+								this.waveData[
+									sampleBank + ((this.channel3Pointer & 31) >> 1)
+								];
+							var sampleShift =
+								((this.channel3Pointer & 1) ^ 1) << 2;
+							this.channel3Sample =
+								(((sample >> sampleShift) & 0xf) - 0x8) / 8;
+							this.channel3Pointer++;
+							if (this.channel3Dimension) {
+								if (this.channel3Pointer >= 64) {
+									this.channel3Pointer -= 64;
+								}
+							} else if (this.channel3Pointer >= 32) {
+								this.channel3Pointer -= 32;
+							}
+						}
+						this.channel3Next += this.channel3Interval;
 						if (
-							this.channel3Dimension &&
-							this.channel3Pointer >= 64
+							this.channel3Interval &&
+							this.nextEvent > this.channel3Next
 						) {
-							this.channel3Pointer -= 64;
-						} else if (
-							!this.channel3Bank &&
-							this.channel3Pointer >= 32
-						) {
-							this.channel3Pointer -= 32;
-						} else if (this.channel3Pointer >= 64) {
-							this.channel3Pointer -= 32;
+							this.nextEvent = this.channel3Next;
 						}
 					}
-					this.channel3Next += this.channel3Interval;
-					if (
-						this.channel3Interval &&
-						this.nextEvent > this.channel3Next
-					) {
-						this.nextEvent = this.channel3Next;
+					if (this.channel3Timed && cycles >= this.channel3End) {
+						this.playingChannel3 = false;
 					}
 				}
-				if (this.channel3Timed && cycles >= this.channel3End) {
-					this.playingChannel3 = false;
-				}
-			}
 
-			if (this.enableChannel4 && this.playingChannel4) {
-				if (this.channel4.timed && cycles >= this.channel4.end) {
-					this.playingChannel4 = false;
-				} else {
-					if (cycles >= this.channel4.next) {
-						this.channel4.lfsr >>= 1;
-						var sample = this.channel4.lfsr & 1;
-						this.channel4.lfsr |=
-							(((this.channel4.lfsr >> 1) & 1) ^ sample) <<
-							(this.channel4.width - 1);
-						this.channel4.next += this.channel4.interval;
-						this.channel4.sample =
-							(sample - 0.5) * 2 * this.channel4.volume;
-					}
-					this.updateEnvelope(this.channel4, cycles);
-					if (this.nextEvent > this.channel4.next) {
-						this.nextEvent = this.channel4.next;
-					}
-					if (
-						this.channel4.timed &&
-						this.nextEvent > this.channel4.end
-					) {
-						this.nextEvent = this.channel4.end;
+				if (this.playingChannel4) {
+					if (this.channel4.timed && cycles >= this.channel4.end) {
+						this.playingChannel4 = false;
+					} else {
+						if (cycles >= this.channel4.next) {
+							var sample = this.clockChannel4();
+							this.channel4.next += this.channel4.interval;
+							this.channel4.sample =
+								(sample - 0.5) * 2 * this.channel4.volume;
+						}
+						this.updateEnvelope(this.channel4, cycles);
+						if (this.nextEvent > this.channel4.next) {
+							this.nextEvent = this.channel4.next;
+						}
+						if (
+							this.channel4.timed &&
+							this.nextEvent > this.channel4.end
+						) {
+							this.nextEvent = this.channel4.end;
+						}
 					}
 				}
 			}
-		}
 
-		if (cycles >= this.nextSample) {
-			this.sample();
-			this.nextSample += this.sampleInterval;
-		}
+			if (cycles >= this.nextSample) {
+				this.sample();
+				this.nextSample += this.sampleInterval;
+			}
 
-		this.nextEvent = Math.ceil(this.nextEvent);
-		if (this.nextEvent < cycles || this.nextSample < cycles) {
-			// STM instructions may take a long time
-			this.updateTimers();
+			this.nextEvent = Math.ceil(this.nextEvent);
 		}
+	}
+	clockChannel4() {
+		var channel = this.channel4;
+		// XOR the current low two taps before shifting. Computing feedback from
+		// the shifted state locks the polynomial counter at zero after one cycle.
+		var feedback = (channel.lfsr ^ (channel.lfsr >>> 1)) & 1;
+		channel.lfsr =
+			(channel.lfsr >>> 1) | (feedback << (channel.width - 1));
+		return channel.lfsr & 1;
 	}
 	writeEnable(value) {
 		this.enabled = !!value;
 		this.nextEvent = this.cpu.cycles;
 		this.nextSample = this.nextEvent;
 		this.updateTimers();
+		if (!this.enabled) {
+			var io = this.core.io;
+			if (io && io.registers) {
+				// Turning off SOUNDCNT_X clears all PSG registers through
+				// SOUNDCNT_L. SOUNDCNT_H keeps its upper-byte routing and timer
+				// fields while resetting the lower-byte volume controls.
+				for (
+					var offset = io.SOUND1CNT_LO;
+					offset <= io.SOUNDCNT_LO;
+					offset += 2
+				) {
+					io.registers[offset >> 1] = 0;
+				}
+				var soundControlHi = io.SOUNDCNT_HI >> 1;
+				io.registers[soundControlHi] &= 0xff00;
+				this.writeSoundControlLo(0);
+				// Bits 11 and 15 are FIFO reset commands, not persistent control
+				// state. The stored register may retain them, so mask them before
+				// syncing the audio engine to avoid an unintended FIFO flush.
+				this.writeSoundControlHi(io.registers[soundControlHi] & 0x77ff);
+			}
+			this.resetPSGChannels();
+		}
 		this.core.irq.pollNextEvent();
 		if (this.context) {
 			if (value) {
@@ -280,22 +373,102 @@ class GameBoyAdvanceAudio {
 			}
 		}
 	}
-	writeSoundControlLo(value) {
-		this.masterVolumeLeft = value & 0x7;
-		this.masterVolumeRight = (value >> 4) & 0x7;
-		this.enabledLeft = (value >> 8) & 0xf;
-		this.enabledRight = (value >> 12) & 0xf;
+	resetPSGChannels() {
+		for (var i = 0; i < this.squareChannels.length; ++i) {
+			var channel = this.squareChannels[i];
+			channel.playing = false;
+			channel.sample = 0;
+			channel.duty = 0.125;
+			channel.increment = -1 / 16;
+			channel.step = 0;
+			channel.initialVolume = 0;
+			channel.volume = 0;
+			channel.frequency = 0;
+			channel.interval = this.cpuFrequency / 64;
+			channel.sweepSteps = 0;
+			channel.sweepIncrement = 1;
+			channel.sweepInterval = 0;
+			channel.doSweep = false;
+			channel.nextSweep = 0;
+			channel.raise = 0;
+			channel.lower = 0;
+			channel.nextStep = 0;
+			channel.timed = false;
+			channel.length = 0;
+			channel.end = 0;
+		}
 
-		this.setSquareChannelEnabled(
-			this.squareChannels[0],
-			(this.enabledLeft | this.enabledRight) & 0x1
-		);
-		this.setSquareChannelEnabled(
-			this.squareChannels[1],
-			(this.enabledLeft | this.enabledRight) & 0x2
-		);
-		this.enableChannel3 = (this.enabledLeft | this.enabledRight) & 0x4;
-		this.setChannel4Enabled((this.enabledLeft | this.enabledRight) & 0x8);
+		this.channel3Write = false;
+		this.playingChannel3 = false;
+		this.channel3Dimension = 0;
+		this.channel3Bank = 0;
+		this.channel3Volume = 0;
+		this.channel3Interval = 0;
+		this.channel3Next = 0;
+		this.channel3Length = 0;
+		this.channel3Timed = false;
+		this.channel3End = 0;
+		this.channel3Pointer = 0;
+		this.channel3Sample = 0;
+
+		this.playingChannel4 = false;
+		this.channel4.sample = 0;
+		this.channel4.lfsr = 0x4000;
+		this.channel4.width = 15;
+		this.channel4.interval = this.cpuFrequency / 524288;
+		this.channel4.increment = -1 / 16;
+		this.channel4.step = 0;
+		this.channel4.initialVolume = 0;
+		this.channel4.volume = 0;
+		this.channel4.nextStep = 0;
+		this.channel4.timed = false;
+		this.channel4.length = 0;
+		this.channel4.end = 0;
+		this.channel4.next = 0;
+
+		this.masterVolumeLeft = 0;
+		this.masterVolumeRight = 0;
+		this.enabledLeft = 0;
+		this.enabledRight = 0;
+	}
+	stopPSGChannels() {
+		for (var i = 0; i < this.squareChannels.length; ++i) {
+			this.squareChannels[i].playing = false;
+			this.squareChannels[i].sample = 0;
+		}
+		this.playingChannel3 = false;
+		this.channel3Sample = 0;
+		this.playingChannel4 = false;
+		this.channel4.sample = 0;
+	}
+	writeSoundBias(value) {
+		value &= 0xc3fe;
+		var cycles = this.cpu.cycles;
+		var oldSampleInterval = this.sampleInterval;
+		if (this.enabled) {
+			this.updateTimers();
+		}
+		var lastSampleCycle = this.enabled
+			? this.nextSample - oldSampleInterval
+			: cycles;
+		this.soundBias = value;
+		var resolution = (value >>> 14) & 0x3;
+		this.sampleRate = 32768 << resolution;
+		this.sampleInterval = this.cpuFrequency / this.sampleRate;
+		this.resampleRatio = this.context
+			? this.sampleRate / this.context.sampleRate
+			: 1;
+		if (this.enabled) {
+			this.nextSample = lastSampleCycle + this.sampleInterval;
+			this.updateTimers();
+		}
+		this.core.irq.pollNextEvent();
+	}
+	writeSoundControlLo(value) {
+		this.masterVolumeRight = value & 0x7;
+		this.masterVolumeLeft = (value >> 4) & 0x7;
+		this.enabledRight = (value >> 8) & 0xf;
+		this.enabledLeft = (value >> 12) & 0xf;
 
 		this.updateTimers();
 		this.core.irq.pollNextEvent();
@@ -306,7 +479,7 @@ class GameBoyAdvanceAudio {
 				this.soundRatio = 0.25;
 				break;
 			case 1:
-		this.soundRatio = 0.50;
+				this.soundRatio = 0.50;
 				break;
 			case 2:
 				this.soundRatio = 1;
@@ -321,6 +494,9 @@ class GameBoyAdvanceAudio {
 		this.soundTimerA = value & 0x0400;
 		if (value & 0x0800) {
 			this.fifoA = [];
+			this.fifoAWriteIndex = 0;
+			this.fifoAInternal = [];
+			this.fifoASample = 0;
 		}
 		this.enableRightChannelB = value & 0x1000;
 		this.enableLeftChannelB = value & 0x2000;
@@ -328,39 +504,34 @@ class GameBoyAdvanceAudio {
 		this.soundTimerB = value & 0x4000;
 		if (value & 0x8000) {
 			this.fifoB = [];
+			this.fifoBWriteIndex = 0;
+			this.fifoBInternal = [];
+			this.fifoBSample = 0;
 		}
 	}
 	resetSquareChannel(channel) {
 		if (channel.step) {
 			channel.nextStep = this.cpu.cycles + channel.step;
 		}
-		if (channel.enabled && !channel.playing) {
-			channel.raise = this.cpu.cycles;
-			channel.lower = channel.raise + channel.duty * channel.interval;
-			channel.end = this.cpu.cycles + channel.length;
-			this.nextEvent = this.cpu.cycles;
-		}
-		channel.playing = channel.enabled;
+		channel.raise = this.cpu.cycles;
+		channel.lower = channel.raise + channel.duty * channel.interval;
+		channel.end = this.cpu.cycles + channel.length;
+		channel.playing = true;
+		this.nextEvent = this.cpu.cycles;
 		this.updateTimers();
 		this.core.irq.pollNextEvent();
-	}
-	setSquareChannelEnabled(channel, enable) {
-		if (!(channel.enabled && channel.playing) && enable) {
-			channel.enabled = !!enable;
-			this.updateTimers();
-			this.core.irq.pollNextEvent();
-		} else {
-			channel.enabled = !!enable;
-		}
 	}
 	writeSquareChannelSweep(channelId, value) {
 		var channel = this.squareChannels[channelId];
 		channel.sweepSteps = value & 0x07;
-	channel.sweepIncrement = (value & 0x08) ? -1 : 1;
-	channel.sweepInterval = ((value >> 4) & 0x7) * this.cpuFrequency / 128;
+		channel.sweepIncrement = (value & 0x08) ? -1 : 1;
+		channel.sweepInterval = ((value >> 4) & 0x7) * this.cpuFrequency / 128;
 		channel.doSweep = !!channel.sweepInterval;
 		channel.nextSweep = this.cpu.cycles + channel.sweepInterval;
-		this.resetSquareChannel(channel);
+		if (channel.playing) {
+			this.updateTimers();
+			this.core.irq.pollNextEvent();
+		}
 	}
 	writeSquareChannelDLE(channelId, value) {
 		var channel = this.squareChannels[channelId];
@@ -380,7 +551,10 @@ class GameBoyAdvanceAudio {
 				break;
 		}
 		this.writeChannelLE(channel, value);
-		this.resetSquareChannel(channel);
+		if (channel.playing) {
+			this.updateTimers();
+			this.core.irq.pollNextEvent();
+		}
 	}
 	writeSquareChannelFC(channelId, value) {
 		var channel = this.squareChannels[channelId];
@@ -390,8 +564,11 @@ class GameBoyAdvanceAudio {
 		channel.timed = !!(value & 0x4000);
 
 		if (value & 0x8000) {
-			this.resetSquareChannel(channel);
 			channel.volume = channel.initialVolume;
+			this.resetSquareChannel(channel);
+		} else if (channel.playing) {
+			this.updateTimers();
+			this.core.irq.pollNextEvent();
 		}
 	}
 	updateSquareChannel(channel, cycles) {
@@ -444,12 +621,11 @@ class GameBoyAdvanceAudio {
 		this.channel3Dimension = value & 0x20;
 		this.channel3Bank = value & 0x40;
 		var enable = value & 0x80;
-		if (!this.channel3Write && enable) {
-			this.channel3Write = enable;
-			this.resetChannel3();
-		} else {
-			this.channel3Write = enable;
+		this.channel3Write = enable;
+		if (!enable) {
+			this.playingChannel3 = false;
 		}
+		this.core.irq.pollNextEvent();
 	}
 	writeChannel3Hi(value) {
 		this.channel3Length =
@@ -476,12 +652,15 @@ class GameBoyAdvanceAudio {
 		this.channel3Interval =
 			(this.cpuFrequency * (2048 - (value & 0x7ff))) / 2097152;
 		this.channel3Timed = !!(value & 0x4000);
-		if (this.channel3Write) {
+		if (value & 0x8000) {
+			// A frequency-only write must not restart the current wave position.
 			this.resetChannel3();
 		}
 	}
 	resetChannel3() {
 		this.channel3Next = this.cpu.cycles;
+		// Triggering channel 3 restarts its 32/64-sample waveform at sample 0.
+		this.channel3Pointer = 0;
 		this.nextEvent = this.channel3Next;
 		this.channel3End = this.cpu.cycles + this.channel3Length;
 		this.playingChannel3 = this.channel3Write;
@@ -489,7 +668,11 @@ class GameBoyAdvanceAudio {
 		this.core.irq.pollNextEvent();
 	}
 	writeWaveData(offset, data, width) {
-		if (!this.channel3Bank) {
+		// With the master sound circuit off, SOUND3CNT_L is reset and Wave RAM
+		// accesses always address bank 1. While sound is on, software writes the
+		// bank opposite the one currently selected for playback.
+		var writeBank = this.enabled ? !this.channel3Bank : 1;
+		if (writeBank) {
 			offset += 16;
 		}
 		if (width == 2) {
@@ -499,23 +682,21 @@ class GameBoyAdvanceAudio {
 		}
 		this.waveData[offset] = data & 0xff;
 	}
-	setChannel4Enabled(enable) {
-		if (!this.enableChannel4 && enable) {
-			this.channel4.next = this.cpu.cycles;
-			this.channel4.end = this.cpu.cycles + this.channel4.length;
-			this.enableChannel4 = true;
-			this.playingChannel4 = true;
-			this.nextEvent = this.cpu.cycles;
-			this.updateEnvelope(this.channel4);
-			this.updateTimers();
-			this.core.irq.pollNextEvent();
-		} else {
-			this.enableChannel4 = enable;
+	readWaveData(offset) {
+		// CPU reads see the accessible bank, not the last value written to the
+		// corresponding I/O register. Sound-off access is fixed to bank 1.
+		var readBank = this.enabled ? !this.channel3Bank : 1;
+		if (readBank) {
+			offset += 16;
 		}
+		return this.waveData[offset] | (this.waveData[offset + 1] << 8);
 	}
 	writeChannel4LE(value) {
 		this.writeChannelLE(this.channel4, value);
-		this.resetChannel4();
+		if (this.playingChannel4) {
+			this.updateTimers();
+			this.core.irq.pollNextEvent();
+		}
 	}
 	writeChannel4FC(value) {
 		this.channel4.timed = !!(value & 0x4000);
@@ -528,25 +709,23 @@ class GameBoyAdvanceAudio {
 		var interval = (this.cpuFrequency * (r * (2 << s))) / 524288;
 		if (interval != this.channel4.interval) {
 			this.channel4.interval = interval;
-			this.resetChannel4();
 		}
 
 		var width = value & 0x8 ? 7 : 15;
 		if (width != this.channel4.width) {
 			this.channel4.width = width;
-			this.resetChannel4();
 		}
 
 		if (value & 0x8000) {
 			this.resetChannel4();
+		} else if (this.playingChannel4) {
+			this.updateTimers();
+			this.core.irq.pollNextEvent();
 		}
 	}
 	resetChannel4() {
-		if (this.channel4.width == 15) {
-			this.channel4.lfsr = 0x4000;
-		} else {
-			this.channel4.lfsr = 0x40;
-		}
+		// The hardware starts its 7- or 15-stage polynomial counter at all ones.
+		this.channel4.lfsr = (1 << this.channel4.width) - 1;
 		this.channel4.volume = this.channel4.initialVolume;
 		if (this.channel4.step) {
 			this.channel4.nextStep = this.cpu.cycles + this.channel4.step;
@@ -555,7 +734,7 @@ class GameBoyAdvanceAudio {
 		this.channel4.next = this.cpu.cycles;
 		this.nextEvent = this.channel4.next;
 
-		this.playingChannel4 = this.enableChannel4;
+		this.playingChannel4 = true;
 		this.updateTimers();
 		this.core.irq.pollNextEvent();
 	}
@@ -588,53 +767,138 @@ class GameBoyAdvanceAudio {
 			}
 		}
 	}
-	appendToFifoA(value) {
-		var b;
-		if (this.fifoA.length > 28) {
-			this.fifoA = this.fifoA.slice(-28);
+	appendToFifoA(value, byteOffset, byteWidth) {
+		this.appendToFifo("A", value, byteOffset, byteWidth);
+	}
+	appendToFifoB(value, byteOffset, byteWidth) {
+		this.appendToFifo("B", value, byteOffset, byteWidth);
+	}
+	appendToFifo(channel, value, byteOffset, byteWidth) {
+		var suffix = channel == "A" ? "A" : "B";
+		var fifo = this["fifo" + suffix];
+		if (!fifo) {
+			fifo = this["fifo" + suffix] = [];
 		}
-		for (var i = 0; i < 4; ++i) {
-			b = (value & 0xff) << 24;
-			value >>= 8;
-			this.fifoA.push(b / 0x80000000);
+		var writeBufferKey = "fifo" + suffix + "WriteBuffer";
+		var writeIndexKey = "fifo" + suffix + "WriteIndex";
+		var writeBuffer = this[writeBufferKey];
+		if (!writeBuffer) {
+			writeBuffer = this[writeBufferKey] = new Array(8).fill(0);
+		}
+		var writeIndex = this[writeIndexKey] || 0;
+		var word = writeBuffer[writeIndex] >>> 0;
+		if (byteOffset === undefined) {
+			byteOffset = 0;
+		}
+		if (byteWidth === undefined) {
+			byteWidth = 4;
+		}
+		for (var i = 0; i < byteWidth; ++i) {
+			var shift = ((byteOffset + i) & 3) << 3;
+			var byte = (value >>> (i << 3)) & 0xff;
+			word = (word & ~(0xff << shift)) | (byte << shift);
+		}
+		word >>>= 0;
+		writeBuffer[writeIndex] = word;
+		this[writeIndexKey] = (writeIndex + 1) % 8;
+
+		if (fifo.length >= 28) {
+			// The eight-slot ring keeps one slot empty to distinguish full from
+			// empty, so a CPU/DMA write at seven queued words overruns the FIFO.
+			// Hardware drops the queue on overrun; retaining the newest samples
+			// would incorrectly hide the fault and shift the audio stream.
+			this["fifo" + suffix] = [];
+			return;
+		}
+		for (var sampleIndex = 0; sampleIndex < 4; ++sampleIndex) {
+			var sampleByte = (word >>> (sampleIndex << 3)) & 0xff;
+			var signedSample = sampleByte << 24;
+			fifo.push(signedSample / 0x80000000);
 		}
 	}
-	appendToFifoB(value) {
-		var b;
-		if (this.fifoB.length > 28) {
-			this.fifoB = this.fifoB.slice(-28);
+	fifoDma(number, fifoRegister) {
+		if (number < 0) {
+			return null;
 		}
-		for (var i = 0; i < 4; ++i) {
-			b = (value & 0xff) << 24;
-			value >>= 8;
-			this.fifoB.push(b / 0x80000000);
+		var dma = this.core.irq.dma[number];
+		if (
+			!dma ||
+			!dma.enable ||
+			dma.timing != this.cpu.mmu.DMA_TIMING_CUSTOM ||
+			dma.dest != (this.cpu.mmu.BASE_IO | fifoRegister)
+		) {
+			return null;
 		}
+		return dma;
 	}
 	sampleFifoA() {
-		if (this.fifoA.length <= 16) {
-			var dma = this.core.irq.dma[this.dmaA];
-			dma.nextCount = 4;
-			this.core.mmu.serviceDma(this.dmaA, dma);
+		// An empty FIFO holds its last DAC sample instead of outputting an
+		// undefined value, which would poison the mixed WebAudio buffer with NaN.
+		var fifo = this.fifoA || (this.fifoA = []);
+		var internal = this.fifoAInternal || (this.fifoAInternal = []);
+		// The seven-word ring is separate from the active 32-bit playback word.
+		// Its DMA request is checked at timer overflow before the next word moves
+		// into that internal buffer. Four of the seven usable FIFO slots must be
+		// empty, so three queued words (12 samples) is the low-water mark.
+		if (fifo.length <= 12 && this.dmaA >= 0) {
+			var dma = this.fifoDma(this.dmaA, this.cpu.irq.io.FIFO_A_LO);
+			if (dma) {
+				dma.nextCount = 4;
+				this.core.mmu.serviceDma(this.dmaA, dma);
+			} else {
+				this.dmaA = -1;
+			}
 		}
-		this.fifoASample = this.fifoA.shift();
+		if (!internal.length && fifo.length) {
+			this.fifoAInternal = fifo.splice(0, 4);
+			internal = this.fifoAInternal;
+		}
+		var sample = internal.shift();
+		if (sample !== undefined) {
+			this.fifoASample = sample;
+		}
 	}
 	sampleFifoB() {
-		if (this.fifoB.length <= 16) {
-			var dma = this.core.irq.dma[this.dmaB];
-			dma.nextCount = 4;
-			this.core.mmu.serviceDma(this.dmaB, dma);
+		var fifo = this.fifoB || (this.fifoB = []);
+		var internal = this.fifoBInternal || (this.fifoBInternal = []);
+		if (fifo.length <= 12 && this.dmaB >= 0) {
+			var dma = this.fifoDma(this.dmaB, this.cpu.irq.io.FIFO_B_LO);
+			if (dma) {
+				dma.nextCount = 4;
+				this.core.mmu.serviceDma(this.dmaB, dma);
+			} else {
+				this.dmaB = -1;
+			}
 		}
-		this.fifoBSample = this.fifoB.shift();
+		if (!internal.length && fifo.length) {
+			this.fifoBInternal = fifo.splice(0, 4);
+			internal = this.fifoBInternal;
+		}
+		var sample = internal.shift();
+		if (sample !== undefined) {
+			this.fifoBSample = sample;
+		}
 	}
 	scheduleFIFODma(number, info) {
+		// A DMA channel can feed only the FIFO selected by its current
+		// destination. Drop any previous association before reusing the channel.
+		if (this.dmaA == number) {
+			this.dmaA = -1;
+		}
+		if (this.dmaB == number) {
+			this.dmaB = -1;
+		}
 		switch (info.dest) {
 			case this.cpu.mmu.BASE_IO | this.cpu.irq.io.FIFO_A_LO:
-				// FIXME: is this needed or a hack?
 				info.dstControl = 2;
+				// FIFO requests always transfer four 32-bit words, regardless of
+				// the transfer width programmed in DMA CNT_HI.
+				info.width = 4;
 				this.dmaA = number;
 				break;
 			case this.cpu.mmu.BASE_IO | this.cpu.irq.io.FIFO_B_LO:
 				info.dstControl = 2;
+				info.width = 4;
 				this.dmaB = number;
 				break;
 			default:
@@ -695,6 +959,10 @@ class GameBoyAdvanceAudio {
 				sampleRight += sample;
 			}
 		}
+		// SOUNDCNT_L applies independently to the PSG mix; Direct Sound is
+		// controlled by SOUNDCNT_H and must bypass these volume multipliers.
+		sampleLeft *= this.masterVolumeLeft + 1;
+		sampleRight *= this.masterVolumeRight + 1;
 
 		if (this.enableChannelA) {
 			sample = this.fifoASample * this.FIFO_MAX * this.ratioChannelA;
@@ -737,16 +1005,33 @@ class GameBoyAdvanceAudio {
 				if (o >= this.maxSamples) {
 					o -= this.maxSamples;
 				}
-				if ((o | 0) == this.samplePointer) {
+				var sampleIndex = o | 0;
+				if (sampleIndex == this.samplePointer) {
 					++this.backup;
 					break;
 				}
-				left[i] = this.buffers[0][o | 0];
-				right[i] = this.buffers[1][o | 0];
+				var nextSampleIndex = (sampleIndex + 1) & this.sampleMask;
+				var fraction = o - sampleIndex;
+				var leftSample = this.buffers[0][sampleIndex];
+				var rightSample = this.buffers[1][sampleIndex];
+				var nextLeftSample =
+					nextSampleIndex == this.samplePointer
+						? leftSample
+						: this.buffers[0][nextSampleIndex];
+				var nextRightSample =
+					nextSampleIndex == this.samplePointer
+						? rightSample
+						: this.buffers[1][nextSampleIndex];
+				left[i] = leftSample + (nextLeftSample - leftSample) * fraction;
+				right[i] =
+					rightSample + (nextRightSample - rightSample) * fraction;
 			}
 			for (; i < this.bufferSize; ++i) {
 				left[i] = 0;
 				right[i] = 0;
+			}
+			if (o >= this.maxSamples) {
+				o -= this.maxSamples;
 			}
 			this.outputPointer = o;
 			++this.totalSamples;

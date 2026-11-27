@@ -1,26 +1,38 @@
 class SRAMSavedata extends MemoryView {
 	constructor(size) {
 		super(new ArrayBuffer(size), 0);
+		new Uint8Array(this.buffer).fill(0xff);
 
 		this.writePending = false;
 	}
 	store8(offset, value) {
-		this.view.setInt8(offset, value);
+		this.view.setUint8(offset & this.mask8, value & 0xff);
 		this.writePending = true;
+	}
+	load16(offset) {
+		var value = this.loadU8(offset);
+		return ((value | (value << 8)) << 16) >> 16;
+	}
+	loadU16(offset) {
+		var value = this.loadU8(offset);
+		return value | (value << 8);
+	}
+	load32(offset) {
+		var value = this.loadU8(offset);
+		return (value * 0x01010101) | 0;
 	}
 	store16(offset, value) {
-		this.view.setInt16(offset, value, true);
-		this.writePending = true;
+		this.store8(offset, value >>> ((offset & 1) << 3));
 	}
 	store32(offset, value) {
-		this.view.setInt32(offset, value, true);
-		this.writePending = true;
+		this.store8(offset, value >>> ((offset & 3) << 3));
 	}
 }
 
 class FlashSavedata extends MemoryView {
 	constructor(size) {
 		super(new ArrayBuffer(size), 0);
+		new Uint8Array(this.buffer).fill(0xff);
 
 		this.COMMAND_WIPE = 0x10;
 		this.COMMAND_ERASE_SECTOR = 0x30;
@@ -52,6 +64,7 @@ class FlashSavedata extends MemoryView {
 		this.pendingCommand = 0;
 	}
 	load8(offset) {
+		offset &= 0x0000ffff;
 		if (this.idMode && offset < 2) {
 			return (this.id >> (offset << 3)) & 0xff;
 		} else if (offset < 0x10000) {
@@ -61,23 +74,23 @@ class FlashSavedata extends MemoryView {
 		}
 	}
 	load16(offset) {
-		return (this.load8(offset) & 0xff) | (this.load8(offset + 1) << 8);
+		var value = this.loadU8(offset);
+		return ((value | (value << 8)) << 16) >> 16;
 	}
 	load32(offset) {
-		return (
-			(this.load8(offset) & 0xff) |
-			(this.load8(offset + 1) << 8) |
-			(this.load8(offset + 2) << 16) |
-			(this.load8(offset + 3) << 24)
-		);
+		var value = this.loadU8(offset);
+		return (value * 0x01010101) | 0;
 	}
 	loadU8(offset) {
 		return this.load8(offset) & 0xff;
 	}
 	loadU16(offset) {
-		return (this.loadU8(offset) & 0xff) | (this.loadU8(offset + 1) << 8);
+		var value = this.loadU8(offset);
+		return value | (value << 8);
 	}
 	store8(offset, value) {
+		offset &= 0x0000ffff;
+		value &= 0xff;
 		switch (this.command) {
 			case 0:
 				if (offset == 0x5555) {
@@ -119,6 +132,7 @@ class FlashSavedata extends MemoryView {
 							for (var i = 0; i < this.view.byteLength; i += 4) {
 								this.view.setInt32(i, -1);
 							}
+							this.writePending = true;
 						}
 						break;
 					case this.COMMAND_ERASE_SECTOR:
@@ -126,6 +140,7 @@ class FlashSavedata extends MemoryView {
 							for (var i = offset; i < offset + 0x1000; i += 4) {
 								this.bank.setInt32(i, -1);
 							}
+							this.writePending = true;
 						}
 						break;
 				}
@@ -151,10 +166,13 @@ class FlashSavedata extends MemoryView {
 		}
 	}
 	store16(offset, value) {
-		throw new Error('Unaligned save to flash!');
+		if (offset & 1) {
+			value >>>= 8;
+		}
+		this.store8(offset, value);
 	}
 	store32(offset, value) {
-		throw new Error('Unaligned save to flash!');
+		this.store8(offset, value >>> ((offset & 3) << 3));
 	}
 	replaceData(memory) {
 		var bank = this.view === this.bank1;
@@ -173,6 +191,7 @@ class FlashSavedata extends MemoryView {
 class EEPROMSavedata extends MemoryView {
 	constructor(size, mmu) {
 		super(new ArrayBuffer(size), 0);
+		new Uint8Array(this.buffer).fill(0xff);
 
 		this.writeAddress = 0;
 		this.readBitsRemaining = 0;
@@ -194,13 +213,15 @@ class EEPROMSavedata extends MemoryView {
 		this.COMMAND_READ = 4;
 	}
 	load8(offset) {
-		throw new Error('Unsupported 8-bit access!');
+		// EEPROM data is exposed as one serial bit on the cartridge bus. Treat
+		// byte reads as one halfword transaction instead of aborting emulation.
+		return this.loadU16(offset);
 	}
 	load16(offset) {
 		return this.loadU16(offset);
 	}
 	loadU8(offset) {
-		throw new Error('Unsupported 8-bit access!');
+		return this.loadU16(offset);
 	}
 	loadU16(offset) {
 		if (this.command != this.COMMAND_READ || !this.dma.enable) {
@@ -220,10 +241,12 @@ class EEPROMSavedata extends MemoryView {
 		return 0;
 	}
 	load32(offset) {
-		throw new Error('Unsupported 32-bit access!');
+		var low = this.loadU16(offset);
+		var high = this.loadU16(offset + 2);
+		return low | (high << 16);
 	}
 	store8(offset, value) {
-		throw new Error('Unsupported 8-bit access!');
+		this.store16(offset, value);
 	}
 	store16(offset, value) {
 		switch (this.command) {
@@ -286,7 +309,8 @@ class EEPROMSavedata extends MemoryView {
 		}
 	}
 	store32(offset, value) {
-		throw new Error('Unsupported 32-bit access!');
+		this.store16(offset, value & 0xffff);
+		this.store16(offset + 2, value >>> 16);
 	}
 	replaceData(memory) {
 		MemoryView.prototype.replaceData.call(this, memory, 0);

@@ -63,7 +63,10 @@ class MemoryBlock extends MemoryView {
 		this.icache = new Array(size >> (this.ICACHE_PAGE_BITS + 1));
 	}
 	invalidatePage(address) {
-		var page = this.icache[(address & this.mask) >> this.ICACHE_PAGE_BITS];
+		var page =
+			this.icache[
+				(address & this.mask) >> (this.ICACHE_PAGE_BITS + 1)
+			];
 		if (page) {
 			page.invalid = true;
 		}
@@ -76,8 +79,63 @@ class ROMView extends MemoryView {
 		this.ICACHE_PAGE_BITS = 10;
 		this.PAGE_MASK = (2 << this.ICACHE_PAGE_BITS) - 1;
 		this.icache = new Array(rom.byteLength >> (this.ICACHE_PAGE_BITS + 1));
+		this.mirrorSize = rom.byteLength == 0x00100000 ? 0x00100000 : 0;
 		this.mask = 0x01ffffff;
 		this.resetMask();
+	}
+	// Cartridge reads past the image expose address-derived bus data; a ROM
+	// access should never turn an emulated bus read into a DataView exception.
+	getReadOffset(offset) {
+		if (this.mirrorSize && offset < (this.mirrorSize << 2)) {
+			return offset & (this.mirrorSize - 1);
+		}
+		return offset;
+	}
+	load8(offset) {
+		var readOffset = this.getReadOffset(offset);
+		if (readOffset < this.view.byteLength) {
+			return this.view.getInt8(readOffset);
+		}
+		var value = (offset >>> 1) >>> ((offset & 1) << 3);
+		return (value & 0xff) << 24 >> 24;
+	}
+	load16(offset) {
+		var alignedOffset = offset & 0xfffffffe;
+		var readOffset = this.getReadOffset(alignedOffset);
+		if (readOffset + 2 <= this.view.byteLength) {
+			return this.view.getInt16(readOffset, true);
+		}
+		var value = (alignedOffset >>> 1) & 0xffff;
+		return (value << 16) >> 16;
+	}
+	loadU8(offset) {
+		var readOffset = this.getReadOffset(offset);
+		if (readOffset < this.view.byteLength) {
+			return this.view.getUint8(readOffset);
+		}
+		return ((offset >>> 1) >>> ((offset & 1) << 3)) & 0xff;
+	}
+	loadU16(offset) {
+		var alignedOffset = offset & 0xfffffffe;
+		var readOffset = this.getReadOffset(alignedOffset);
+		if (readOffset + 2 <= this.view.byteLength) {
+			return this.view.getUint16(readOffset, true);
+		}
+		return (alignedOffset >>> 1) & 0xffff;
+	}
+	load32(offset) {
+		var alignedOffset = offset & 0xfffffffc;
+		var readOffset = this.getReadOffset(alignedOffset);
+		var value;
+		if (readOffset + 4 <= this.view.byteLength) {
+			value = this.view.getInt32(readOffset, true);
+		} else {
+			value =
+				((alignedOffset >>> 1) & 0xffff) |
+				((((alignedOffset + 2) >>> 1) & 0xffff) << 16);
+		}
+		var rotate = (offset & 3) << 3;
+		return (value >>> rotate) | (value << (32 - rotate));
 	}
 	store8(offset, value) {}
 	store16(offset, value) {
@@ -105,20 +163,108 @@ class BIOSView extends MemoryView {
 		this.ICACHE_PAGE_BITS = 16;
 		this.PAGE_MASK = (2 << this.ICACHE_PAGE_BITS) - 1;
 		this.icache = new Array(1);
+		this.lastFetchedOpcode = 0;
+		this.hleStartupPending = false;
+		this.hleIRQHandoffPending = false;
+		this.hleIRQReturnPending = false;
+	}
+	recordFetchedOpcode(opcode, width) {
+		if (width == 2) {
+			var halfword = opcode & 0xffff;
+			this.lastFetchedOpcode = halfword | (halfword << 16);
+		} else {
+			this.lastFetchedOpcode = opcode >>> 0;
+		}
+	}
+	recordHLESWIReturn(opcode) {
+		// HLE calls skip the BIOS SWI handler, but the hardware leaves its final
+		// fetched BIOS opcode on the bus when control returns to the cartridge.
+		var address = opcode == 0x00 ? 0x0e4 : 0x0190;
+		if (this.real) {
+			return;
+		}
+		if (this.buffer.byteLength >= address + 4) {
+			this.recordFetchedOpcode(this.view.getUint32(address, true), 4);
+		} else {
+			// The built-in HLE BIOS is only a few hundred bytes and does not
+			// contain the official SWI return sequence at 0x0190. Preserve the
+			// documented BIOS bus value for the common HLE return path.
+			this.recordFetchedOpcode(
+				opcode == 0x00 ? 0xe129f000 : 0xe3a02004,
+				4
+			);
+		}
+	}
+	beginHLEBoot() {
+		this.lastFetchedOpcode = 0;
+		this.hleStartupPending =
+			!this.real && this.buffer.byteLength < this.mmu.SIZE_BIOS;
+		this.hleIRQHandoffPending = false;
+		this.hleIRQReturnPending = false;
+	}
+	recordHLEStartupExit() {
+		if (!this.hleStartupPending || this.real) {
+			return;
+		}
+		// The official BIOS leaves the opcode at 0x00DC+8 on the bus after
+		// startup. The compact HLE boot stub does not execute that BIOS path.
+		this.lastFetchedOpcode = 0xe129f000;
+		this.hleStartupPending = false;
+	}
+	recordHLEIRQHandoff() {
+		if (this.real || this.buffer.byteLength >= this.mmu.SIZE_BIOS) {
+			return;
+		}
+		// The compact HLE vector transfers directly to the game's IRQ routine.
+		// Hardware has already prefetched the BIOS return instruction by then.
+		this.lastFetchedOpcode = 0xe25ef004;
+		this.hleIRQHandoffPending = false;
+		this.hleIRQReturnPending = true;
+	}
+	recordHLEIRQReturn() {
+		if (this.real || this.buffer.byteLength >= this.mmu.SIZE_BIOS) {
+			return;
+		}
+		// After the IRQ wrapper restores the interrupted context, the official
+		// BIOS leaves the opcode at 0x013C+8 on the bus.
+		this.lastFetchedOpcode = 0xe55ec002;
+		this.hleIRQReturnPending = false;
+	}
+	getProtectedWord(offset) {
+		var rotate = (offset & 3) << 3;
+		var value = this.lastFetchedOpcode;
+		return (value >>> rotate) | (value << (32 - rotate));
+	}
+	loadInstruction16(offset) {
+		return this.view.getInt16(offset & 0xfffffffe, true);
+	}
+	loadInstruction32(offset) {
+		return this.view.getInt32(offset & 0xfffffffc, true);
 	}
 	/**
-	 * Checks if the CPU is trying to read BIOS memory from outside the BIOS region.
-	 * The BIOS is mapped to 0x00000000 - 0x00003FFF.
-	 * If the Program Counter (PC) is >= 0x4000, it means game code is trying to 
-	 * access protected BIOS memory, which should trigger Open Bus behavior.
+	 * Checks whether the instruction performing this read is outside the BIOS.
+	 * The CPU's PC is pipelined: while an instruction executes it points two
+	 * instruction widths past that instruction.
 	 */
 	_checkProtection() {
-		return this.mmu && this.mmu.cpu.gprs[this.mmu.cpu.PC] >= 0x00004000;
+		if (!this.mmu) {
+			return false;
+		}
+		var cpu = this.mmu.cpu;
+		// Before the first fetch after a reset or branch, the PC is only one
+		// instruction width past the fetch address. During execution it is two
+		// widths past the current instruction.
+		var pipelineWidth =
+			(cpu.instruction ? 2 : 1) * cpu.instructionWidth;
+		var instructionAddress =
+			(cpu.gprs[cpu.PC] - pipelineWidth) >>> 0;
+		return instructionAddress >= this.mmu.SIZE_BIOS;
 	}
 
 	load8(offset) {
 		if (this._checkProtection()) {
-			return this.mmu.badMemory.load8(offset);
+			var value = this.getProtectedWord(offset);
+			return (value << 24) >> 24;
 		}
 		if (offset >= this.buffer.byteLength) {
 			return -1;
@@ -127,7 +273,8 @@ class BIOSView extends MemoryView {
 	}
 	load16(offset) {
 		if (this._checkProtection()) {
-			return this.mmu.badMemory.load16(offset);
+			var value = this.getProtectedWord(offset);
+			return (value << 16) >> 16;
 		}
 		if (offset >= this.buffer.byteLength) {
 			return -1;
@@ -136,7 +283,7 @@ class BIOSView extends MemoryView {
 	}
 	loadU8(offset) {
 		if (this._checkProtection()) {
-			return this.mmu.badMemory.loadU8(offset);
+			return this.getProtectedWord(offset) & 0xff;
 		}
 		if (offset >= this.buffer.byteLength) {
 			return -1;
@@ -145,7 +292,7 @@ class BIOSView extends MemoryView {
 	}
 	loadU16(offset) {
 		if (this._checkProtection()) {
-			return this.mmu.badMemory.loadU16(offset);
+			return this.getProtectedWord(offset) & 0xffff;
 		}
 		if (offset >= this.buffer.byteLength) {
 			return -1;
@@ -153,13 +300,18 @@ class BIOSView extends MemoryView {
 		return this.view.getUint16(offset, true);
 	}
 	load32(offset) {
+		var value;
 		if (this._checkProtection()) {
-			return this.mmu.badMemory.load32(offset);
+			value = this.lastFetchedOpcode;
+		} else {
+			var alignedOffset = offset & 0xfffffffc;
+			if (alignedOffset >= this.buffer.byteLength) {
+				return -1;
+			}
+			value = this.view.getInt32(alignedOffset, true);
 		}
-		if (offset >= this.buffer.byteLength) {
-			return -1;
-		}
-		return this.view.getInt32(offset, true);
+		var rotate = (offset & 3) << 3;
+		return (value >>> rotate) | (value << (32 - rotate));
 	}
 	store8(offset, value) {}
 	store16(offset, value) {}
@@ -218,6 +370,18 @@ class BadMemory {
 	invalidatePage(address) {}
 }
 
+class NoSavedata {
+	load8() { return -1; }
+	load16() { return -1; }
+	loadU8() { return 0xff; }
+	loadU16() { return 0xffff; }
+	load32() { return -1; }
+	store8() {}
+	store16() {}
+	store32() {}
+	invalidatePage() {}
+}
+
 class GameBoyAdvanceMMU {
 	constructor() {
 		// this.inherit();
@@ -232,6 +396,7 @@ class GameBoyAdvanceMMU {
 		this.REGION_CART1 = 0xa;
 		this.REGION_CART2 = 0xc;
 		this.REGION_CART_SRAM = 0xe;
+		this.REGION_CART_SRAM_MIRROR = 0xf;
 
 		this.BASE_BIOS = 0x00000000;
 		this.BASE_WORKING_RAM = 0x02000000;
@@ -244,6 +409,7 @@ class GameBoyAdvanceMMU {
 		this.BASE_CART1 = 0x0a000000;
 		this.BASE_CART2 = 0x0c000000;
 		this.BASE_CART_SRAM = 0x0e000000;
+		this.BASE_CART_SRAM_MIRROR = 0x0f000000;
 
 		this.BASE_MASK = 0x0f000000;
 		this.BASE_OFFSET = 24;
@@ -277,7 +443,7 @@ class GameBoyAdvanceMMU {
 		this.DMA_OFFSET = [1, -1, 0, 1];
 
 		this.WAITSTATES = [0, 0, 2, 0, 0, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4];
-		this.WAITSTATES_32 = [0, 0, 5, 0, 0, 1, 0, 1, 7, 7, 9, 9, 13, 13, 8];
+		this.WAITSTATES_32 = [0, 0, 5, 0, 0, 1, 1, 0, 7, 7, 9, 9, 13, 13, 8];
 		this.WAITSTATES_SEQ = [0, 0, 2, 0, 0, 0, 0, 0, 2, 2, 4, 4, 8, 8, 4];
 		this.WAITSTATES_SEQ_32 = [
 			0,
@@ -286,8 +452,8 @@ class GameBoyAdvanceMMU {
 			0,
 			0,
 			1,
-			0,
 			1,
+			0,
 			5,
 			5,
 			9,
@@ -323,6 +489,7 @@ class GameBoyAdvanceMMU {
 	}
 	clear() {
 		this.badMemory = new BadMemory(this, this.cpu);
+		this.noSavedata = new NoSavedata();
 		this.memory = [
 			this.bios,
 			this.badMemory,
@@ -338,8 +505,8 @@ class GameBoyAdvanceMMU {
 			this.badMemory,
 			this.badMemory,
 			this.badMemory,
-			this.badMemory,
-			this.badMemory // Unused
+			this.noSavedata,
+			this.noSavedata // Unused
 		];
 		for (var i = 16; i < 256; ++i) {
 			this.memory[i] = this.badMemory;
@@ -351,6 +518,18 @@ class GameBoyAdvanceMMU {
 		this.waitstatesSeq32 = this.WAITSTATES_SEQ_32.slice(0);
 		this.waitstatesPrefetch = this.WAITSTATES_SEQ.slice(0);
 		this.waitstatesPrefetch32 = this.WAITSTATES_SEQ_32.slice(0);
+		this.waitstates[this.REGION_CART_SRAM_MIRROR] = this.waitstates[
+			this.REGION_CART_SRAM
+		];
+		this.waitstatesSeq[this.REGION_CART_SRAM_MIRROR] = this.waitstatesSeq[
+			this.REGION_CART_SRAM
+		];
+		this.waitstates32[this.REGION_CART_SRAM_MIRROR] = this.waitstates32[
+			this.REGION_CART_SRAM
+		];
+		this.waitstatesSeq32[this.REGION_CART_SRAM_MIRROR] = this.waitstatesSeq32[
+			this.REGION_CART_SRAM
+		];
 
 		this.cart = null;
 		this.save = null;
@@ -363,23 +542,73 @@ class GameBoyAdvanceMMU {
 		];
 	}
 	freeze() {
-		return {
+		var frost = {
 			ram: Serializer.prefix(this.memory[this.REGION_WORKING_RAM].buffer),
 			iram: Serializer.prefix(
 				this.memory[this.REGION_WORKING_IRAM].buffer
 			)
 		};
+		if (this.bios) {
+			frost.biosLastFetchedOpcode = this.bios.lastFetchedOpcode;
+			frost.biosHLEStartupPending = this.bios.hleStartupPending;
+			frost.biosHLEIRQHandoffPending = this.bios.hleIRQHandoffPending;
+			frost.biosHLEIRQReturnPending = this.bios.hleIRQReturnPending;
+		}
+		return frost;
 	}
 	defrost(frost) {
 		this.memory[this.REGION_WORKING_RAM].replaceData(frost.ram);
 		this.memory[this.REGION_WORKING_IRAM].replaceData(frost.iram);
+		if (this.bios) {
+			this.bios.lastFetchedOpcode =
+				typeof frost.biosLastFetchedOpcode == "number"
+					? frost.biosLastFetchedOpcode >>> 0
+					: 0;
+			this.bios.hleStartupPending =
+				typeof frost.biosHLEStartupPending == "boolean"
+					? frost.biosHLEStartupPending && !this.bios.real
+					: false;
+			this.bios.hleIRQHandoffPending =
+				typeof frost.biosHLEIRQHandoffPending == "boolean"
+					? frost.biosHLEIRQHandoffPending && !this.bios.real
+					: false;
+			this.bios.hleIRQReturnPending =
+				typeof frost.biosHLEIRQReturnPending == "boolean"
+					? frost.biosHLEIRQReturnPending && !this.bios.real
+				: false;
+		}
+	}
+	loadInstruction16(address) {
+		if (this.bios && address >= 0 && address < this.SIZE_BIOS) {
+			return this.bios.loadInstruction16(address);
+		}
+		return this.load16(address);
+	}
+	loadInstruction32(address) {
+		if (this.bios && address >= 0 && address < this.SIZE_BIOS) {
+			return this.bios.loadInstruction32(address);
+		}
+		return this.load32(address);
 	}
 	loadBios(bios, real) {
 		this.bios = new BIOSView(bios);
 		this.bios.real = !!real;
 		this.bios.mmu = this;
+		if (this.memory) {
+			this.memory[this.REGION_BIOS] = this.bios;
+		}
+		if (this.cpu) {
+			this.cpu.instruction = null;
+			this.cpu.page = null;
+			this.cpu.pageRegion = -1;
+		}
 	}
 	loadRom(rom, process) {
+		// A GBA cartridge header occupies 0xC0 bytes. Reject truncated files
+		// before ROMView or header parsing can read beyond the supplied buffer.
+		if (!rom || typeof rom.byteLength != "number" || rom.byteLength < 0xc0) {
+			return null;
+		}
 		var cart = {
 			title: null,
 			code: null,
@@ -508,11 +737,10 @@ class GameBoyAdvanceMMU {
 						break;
 				}
 			}
-			if (!this.save) {
-				// Assume we have SRAM
-				this.save = this.memory[
+			if (this.save) {
+				this.memory[this.REGION_CART_SRAM_MIRROR] = this.memory[
 					this.REGION_CART_SRAM
-				] = new SRAMSavedata(this.SIZE_CART_SRAM);
+				];
 			}
 		}
 
@@ -520,48 +748,138 @@ class GameBoyAdvanceMMU {
 		return cart;
 	}
 	loadSavedata(save) {
-		this.save.replaceData(save);
+		if (!this.save) {
+			throw new Error("No cartridge save memory is available");
+		}
+		var input;
+		if (Object.prototype.toString.call(save) == "[object ArrayBuffer]") {
+			input = new Uint8Array(save);
+		} else if (ArrayBuffer.isView(save)) {
+			input = new Uint8Array(save.buffer, save.byteOffset, save.byteLength);
+		} else {
+			throw new TypeError("Savedata must be an ArrayBuffer or byte array");
+		}
+
+		var expectedSize = this.save.buffer.byteLength;
+		var isValidSmallEEPROM =
+			this.save instanceof EEPROMSavedata && input.byteLength == 0x200;
+		if (
+			!input.byteLength ||
+			(input.byteLength < expectedSize && !isValidSmallEEPROM)
+		) {
+			throw new RangeError(
+				"Savedata is too small for this cartridge's " + expectedSize +
+				" byte save memory"
+			);
+		}
+
+		var normalized = new ArrayBuffer(expectedSize);
+		var normalizedBytes = new Uint8Array(normalized);
+		normalizedBytes.fill(0xff);
+		normalizedBytes.set(input.subarray(0, expectedSize));
+		this.save.replaceData(normalized);
+		// Loading an external save must also make it eligible for browser
+		// persistence, including when the player pauses before the next write.
+		if (typeof this.save.writePending == "boolean") {
+			this.save.writePending = true;
+		}
+		if (
+			input.byteLength != expectedSize &&
+			!isValidSmallEEPROM &&
+			this.core &&
+			typeof this.core.WARN == "function"
+		) {
+			this.core.WARN(
+				"Savedata size " + input.byteLength +
+				" bytes does not match this cartridge's " + expectedSize +
+				" byte save memory; data was padded or truncated"
+			);
+		}
+	}
+	normalizeMemoryOffset(region, offset) {
+		offset &= this.OFFSET_MASK;
+		if (region == this.REGION_VRAM) {
+			// VRAM's 128 KiB mirror maps its upper 32 KiB onto 0x10000-0x17FFF.
+			offset &= 0x0001ffff;
+			if (offset >= this.SIZE_VRAM) {
+				offset -= 0x00008000;
+			}
+		} else if (region == this.REGION_OAM) {
+			offset &= this.SIZE_OAM - 1;
+		}
+		return offset;
 	}
 	load8(offset) {
-		return this.memory[offset >>> this.BASE_OFFSET].load8(
-			offset & 0x00ffffff
+		var region = offset >>> this.BASE_OFFSET;
+		return this.memory[region].load8(
+			this.normalizeMemoryOffset(region, offset)
 		);
 	}
 	load16(offset) {
-		return this.memory[offset >>> this.BASE_OFFSET].load16(
-			offset & 0x00ffffff
+		var region = offset >>> this.BASE_OFFSET;
+		if (offset & 1) {
+			// ARM7TDMI implements an odd-address LDRSH as an LDRSB.
+			return this.load8(offset);
+		}
+		return this.memory[region].load16(
+			this.normalizeMemoryOffset(region, offset & 0x00fffffe)
 		);
 	}
 	load32(offset) {
-		return this.memory[offset >>> this.BASE_OFFSET].load32(
-			offset & 0x00ffffff
+		var region = offset >>> this.BASE_OFFSET;
+		return this.memory[region].load32(
+			this.normalizeMemoryOffset(region, offset)
 		);
 	}
 	loadU8(offset) {
-		return this.memory[offset >>> this.BASE_OFFSET].loadU8(
-			offset & 0x00ffffff
+		var region = offset >>> this.BASE_OFFSET;
+		return this.memory[region].loadU8(
+			this.normalizeMemoryOffset(region, offset)
 		);
 	}
 	loadU16(offset) {
-		return this.memory[offset >>> this.BASE_OFFSET].loadU16(
-			offset & 0x00ffffff
+		var region = offset >>> this.BASE_OFFSET;
+		var saveRegion =
+			region == this.REGION_CART_SRAM ||
+			region == this.REGION_CART_SRAM_MIRROR;
+		var readOffset = saveRegion ? offset : offset & 0x00fffffe;
+		var value = this.memory[region].loadU16(
+			this.normalizeMemoryOffset(region, readOffset)
 		);
+		// GBA LDRH keeps the odd-address bus rotation in bits 0-7 and 24-31.
+		var rotate = (offset & 1) << 3;
+		return (value >>> rotate) | (value << (32 - rotate));
 	}
 	store8(offset, value) {
-		var maskedOffset = offset & 0x00ffffff;
-		var memory = this.memory[offset >>> this.BASE_OFFSET];
+		var region = offset >>> this.BASE_OFFSET;
+		var maskedOffset = this.normalizeMemoryOffset(region, offset);
+		var memory = this.memory[region];
 		memory.store8(maskedOffset, value);
 		memory.invalidatePage(maskedOffset);
 	}
 	store16(offset, value) {
-		var maskedOffset = offset & 0x00fffffe;
-		var memory = this.memory[offset >>> this.BASE_OFFSET];
+		var region = offset >>> this.BASE_OFFSET;
+		var saveRegion =
+			region == this.REGION_CART_SRAM ||
+			region == this.REGION_CART_SRAM_MIRROR;
+		var maskedOffset = this.normalizeMemoryOffset(
+			region,
+			saveRegion ? offset : offset & 0x00fffffe
+		);
+		var memory = this.memory[region];
 		memory.store16(maskedOffset, value);
 		memory.invalidatePage(maskedOffset);
 	}
 	store32(offset, value) {
-		var maskedOffset = offset & 0x00fffffc;
-		var memory = this.memory[offset >>> this.BASE_OFFSET];
+		var region = offset >>> this.BASE_OFFSET;
+		var saveRegion =
+			region == this.REGION_CART_SRAM ||
+			region == this.REGION_CART_SRAM_MIRROR;
+		var maskedOffset = this.normalizeMemoryOffset(
+			region,
+			saveRegion ? offset : offset & 0x00fffffc
+		);
+		var memory = this.memory[region];
 		memory.store32(maskedOffset, value);
 		memory.invalidatePage(maskedOffset);
 		memory.invalidatePage(maskedOffset + 2);
@@ -604,7 +922,18 @@ class GameBoyAdvanceMMU {
 			(1 + this.waitstatesSeq32[memory >>> this.BASE_OFFSET]) * (seq - 1);
 	}
 	addressToPage(region, address) {
-		return address >> this.memory[region].ICACHE_PAGE_BITS;
+		var memory = this.memory[region];
+		if (!memory) {
+			memory = this.memory[region] = new BadMemory(this, this.cpu);
+		}
+		if (memory.ICACHE_PAGE_BITS === undefined) {
+			memory.ICACHE_PAGE_BITS = this.ICACHE_PAGE_BITS;
+			memory.PAGE_MASK = (2 << memory.ICACHE_PAGE_BITS) - 1;
+		}
+		if (!memory.icache) {
+			memory.icache = [];
+		}
+		return address >> (memory.ICACHE_PAGE_BITS + 1);
 	}
 	accessPage(region, pageId) {
 		var memory = this.memory[region];
@@ -640,30 +969,50 @@ class GameBoyAdvanceMMU {
 						this.cpu.irq.audio.scheduleFIFODma(number, info);
 						break;
 					case 3:
-						this.cpu.irq.video.scheduleVCaptureDma(dma, info);
+						// The DMA3 special-event source is not emulated. Avoid the old
+						// video-capture hook, which does not exist in this renderer.
+						this.core.WARN("DMA3 special timing is not supported");
 						break;
 				}
 		}
 	}
-	runHblankDmas() {
+	runHblankDmas(eventCycle) {
 		var dma;
+		if (eventCycle === undefined) {
+			eventCycle = this.cpu.cycles;
+		}
+		var nextDmaCycle = eventCycle;
 		for (var i = 0; i < this.cpu.irq.dma.length; ++i) {
 			dma = this.cpu.irq.dma[i];
-			if (dma.enable && dma.timing == this.DMA_TIMING_HBLANK) {
-				this.serviceDma(i, dma);
+			if (
+				dma.enable &&
+				dma.timing == this.DMA_TIMING_HBLANK &&
+				(!dma.busyUntil || dma.busyUntil <= eventCycle)
+			) {
+				this.serviceDma(i, dma, nextDmaCycle);
+				nextDmaCycle = Math.max(nextDmaCycle, dma.busyUntil);
 			}
 		}
 	}
-	runVblankDmas() {
+	runVblankDmas(eventCycle) {
 		var dma;
+		if (eventCycle === undefined) {
+			eventCycle = this.cpu.cycles;
+		}
+		var nextDmaCycle = eventCycle;
 		for (var i = 0; i < this.cpu.irq.dma.length; ++i) {
 			dma = this.cpu.irq.dma[i];
-			if (dma.enable && dma.timing == this.DMA_TIMING_VBLANK) {
-				this.serviceDma(i, dma);
+			if (
+				dma.enable &&
+				dma.timing == this.DMA_TIMING_VBLANK &&
+				(!dma.busyUntil || dma.busyUntil <= eventCycle)
+			) {
+				this.serviceDma(i, dma, nextDmaCycle);
+				nextDmaCycle = Math.max(nextDmaCycle, dma.busyUntil);
 			}
 		}
 	}
-	serviceDma(number, info) {
+	serviceDma(number, info, startCycle) {
 		if (!info.enable) {
 			// There was a DMA scheduled that got canceled
 			return;
@@ -673,27 +1022,80 @@ class GameBoyAdvanceMMU {
 		var sourceOffset = this.DMA_OFFSET[info.srcControl] * width;
 		var destOffset = this.DMA_OFFSET[info.dstControl] * width;
 		var wordsRemaining = info.nextCount;
-		var source = info.nextSource & this.OFFSET_MASK;
-		var dest = info.nextDest & this.OFFSET_MASK;
-		var sourceRegion = info.nextSource >>> this.BASE_OFFSET;
-		var destRegion = info.nextDest >>> this.BASE_OFFSET;
+		var sourceAddress = info.nextSource >>> 0;
+		var destAddress = info.nextDest >>> 0;
+		if (width == 4) {
+			sourceAddress &= 0xfffffffc;
+			destAddress &= 0xfffffffc;
+		} else if (width == 2) {
+			sourceAddress &= 0xfffffffe;
+			destAddress &= 0xfffffffe;
+		}
+		var sourceStartAddress = sourceAddress;
+		var destStartAddress = destAddress;
+		var source = sourceAddress & this.OFFSET_MASK;
+		var dest = destAddress & this.OFFSET_MASK;
+		var sourceRegion = sourceAddress >>> this.BASE_OFFSET;
+		var destRegion = destAddress >>> this.BASE_OFFSET;
 		var sourceBlock = this.memory[sourceRegion];
 		var destBlock = this.memory[destRegion];
+		var transferCount = wordsRemaining;
+		var sourceLastAddress =
+			(sourceStartAddress + Math.max(0, transferCount - 1) * sourceOffset) >>> 0;
+		var destLastAddress =
+			(destStartAddress + Math.max(0, transferCount - 1) * destOffset) >>> 0;
+		// The fast path below holds one memory object for the entire transfer.
+		// DMA addresses can cross a 16 MiB bus region, where the mapped object
+		// changes (for example, EWRAM to IWRAM). Use MMU accesses for those rare
+		// transfers so each halfword/word is resolved against its actual region.
+		var crossesRegion =
+			(sourceAddress >>> this.BASE_OFFSET) !==
+				(sourceLastAddress >>> this.BASE_OFFSET) ||
+			(destAddress >>> this.BASE_OFFSET) !==
+				(destLastAddress >>> this.BASE_OFFSET);
+		// DMA has a three-cycle startup delay and two setup cycles before the
+		// first non-sequential bus accesses.
+		var transferCycles = transferCount ? 5 : 0;
+		var transferStartCycle =
+			startCycle === undefined ? this.cpu.cycles : startCycle;
 		var sourceView = null;
 		var destView = null;
 		var sourceMask = 0xffffffff;
 		var destMask = 0xffffffff;
 		var word;
 
-		if (destBlock.ICACHE_PAGE_BITS) {
-			var endPage =
-				(dest + wordsRemaining * width) >> destBlock.ICACHE_PAGE_BITS;
-			for (
-				var i = dest >> destBlock.ICACHE_PAGE_BITS;
-				i <= endPage;
-				++i
-			) {
-				destBlock.invalidatePage(i << destBlock.ICACHE_PAGE_BITS);
+		if (transferCount) {
+			var waitstates = width == 4 ? this.waitstates32 : this.waitstates;
+			var waitstatesSeq = width == 4 ? this.waitstatesSeq32 : this.waitstatesSeq;
+			var cycleSource = sourceStartAddress;
+			var cycleDest = destStartAddress;
+			for (var i = 0; i < transferCount; ++i) {
+				var cycleSourceRegion = cycleSource >>> this.BASE_OFFSET;
+				var cycleDestRegion = cycleDest >>> this.BASE_OFFSET;
+				var waitTable = i ? waitstatesSeq : waitstates;
+				transferCycles +=
+					waitTable[cycleSourceRegion] + waitTable[cycleDestRegion];
+				cycleSource += sourceOffset;
+				cycleDest += destOffset;
+			}
+		}
+
+		if (
+			!crossesRegion &&
+			transferCount &&
+			destBlock &&
+			destBlock.ICACHE_PAGE_BITS !== undefined
+		) {
+			var cachePageShift = destBlock.ICACHE_PAGE_BITS + 1;
+			var firstDestAddress =
+				Math.min(destStartAddress, destLastAddress) & this.OFFSET_MASK;
+			var lastDestAddress =
+				Math.max(destStartAddress, destLastAddress) & this.OFFSET_MASK;
+			var firstPage = firstDestAddress >> cachePageShift;
+			var lastPage =
+				(lastDestAddress + width - 1) >> cachePageShift;
+			for (var page = firstPage; page <= lastPage; ++page) {
+				destBlock.invalidatePage(page << cachePageShift);
 			}
 		}
 
@@ -707,29 +1109,45 @@ class GameBoyAdvanceMMU {
 
 		if (
 			sourceRegion == this.REGION_WORKING_RAM ||
-			sourceRegion == this.REGION_WORKING_IRAM ||
-			sourceRegion == this.REGION_CART0 ||
-			sourceRegion == this.REGION_CART1
+			sourceRegion == this.REGION_WORKING_IRAM
 		) {
 			sourceView = sourceBlock.view;
 			sourceMask = sourceBlock.mask;
 		}
 
-		if (sourceBlock && destBlock) {
+		if (crossesRegion) {
+			while (wordsRemaining--) {
+				word =
+					width == 4
+						? this.load32(sourceAddress)
+						: this.loadU16(sourceAddress);
+				if (width == 4) {
+					this.store32(destAddress, word);
+				} else {
+					this.store16(destAddress, word);
+				}
+				sourceAddress = (sourceAddress + sourceOffset) >>> 0;
+				destAddress = (destAddress + destOffset) >>> 0;
+			}
+			source = sourceAddress & this.OFFSET_MASK;
+			dest = destAddress & this.OFFSET_MASK;
+			sourceRegion = sourceAddress >>> this.BASE_OFFSET;
+			destRegion = destAddress >>> this.BASE_OFFSET;
+		} else if (sourceBlock && destBlock) {
 			if (sourceView && destView) {
 				if (width == 4) {
 					source &= 0xfffffffc;
 					dest &= 0xfffffffc;
 					while (wordsRemaining--) {
-						word = sourceView.getInt32(source & sourceMask);
-						destView.setInt32(dest & destMask, word);
+						word = sourceView.getInt32(source & sourceMask, true);
+						destView.setInt32(dest & destMask, word, true);
 						source += sourceOffset;
 						dest += destOffset;
 					}
 				} else {
 					while (wordsRemaining--) {
-						word = sourceView.getUint16(source & sourceMask);
-						destView.setUint16(dest & destMask, word);
+						word = sourceView.getUint16(source & sourceMask, true);
+						destView.setUint16(dest & destMask, word, true);
 						source += sourceOffset;
 						dest += destOffset;
 					}
@@ -740,14 +1158,20 @@ class GameBoyAdvanceMMU {
 					dest &= 0xfffffffc;
 					while (wordsRemaining--) {
 						word = sourceView.getInt32(source & sourceMask, true);
-						destBlock.store32(dest, word);
+						destBlock.store32(
+							this.normalizeMemoryOffset(destRegion, dest),
+							word
+						);
 						source += sourceOffset;
 						dest += destOffset;
 					}
 				} else {
 					while (wordsRemaining--) {
 						word = sourceView.getUint16(source & sourceMask, true);
-						destBlock.store16(dest, word);
+						destBlock.store16(
+							this.normalizeMemoryOffset(destRegion, dest),
+							word
+						);
 						source += sourceOffset;
 						dest += destOffset;
 					}
@@ -757,15 +1181,25 @@ class GameBoyAdvanceMMU {
 					source &= 0xfffffffc;
 					dest &= 0xfffffffc;
 					while (wordsRemaining--) {
-						word = sourceBlock.load32(source);
-						destBlock.store32(dest, word);
+						word = sourceBlock.load32(
+							this.normalizeMemoryOffset(sourceRegion, source)
+						);
+						destBlock.store32(
+							this.normalizeMemoryOffset(destRegion, dest),
+							word
+						);
 						source += sourceOffset;
 						dest += destOffset;
 					}
 				} else {
 					while (wordsRemaining--) {
-						word = sourceBlock.loadU16(source);
-						destBlock.store16(dest, word);
+						word = sourceBlock.loadU16(
+							this.normalizeMemoryOffset(sourceRegion, source)
+						);
+						destBlock.store16(
+							this.normalizeMemoryOffset(destRegion, dest),
+							word
+						);
 						source += sourceOffset;
 						dest += destOffset;
 					}
@@ -776,27 +1210,27 @@ class GameBoyAdvanceMMU {
 		}
 
 		if (info.doIrq) {
-			info.nextIRQ = this.cpu.cycles + 2;
-			info.nextIRQ +=
-				width == 4
-					? this.waitstates32[sourceRegion] +
-					  this.waitstates32[destRegion]
-					: this.waitstates[sourceRegion] +
-					  this.waitstates[destRegion];
-			info.nextIRQ +=
-				(info.count - 1) *
-				(width == 4
-					? this.waitstatesSeq32[sourceRegion] +
-					  this.waitstatesSeq32[destRegion]
-					: this.waitstatesSeq[sourceRegion] +
-					  this.waitstatesSeq[destRegion]);
+			info.nextIRQ = transferStartCycle + transferCycles;
 		}
+		info.busyUntil = transferStartCycle + transferCycles;
+		// DMA owns the bus for the whole transfer. Its data is copied above as a
+		// single operation, but the CPU and hardware clocks must still spend the
+		// corresponding non-sequential and sequential bus cycles.
+		this.cpu.cycles += Math.max(
+			0,
+			transferStartCycle + transferCycles - this.cpu.cycles
+		);
 
-		info.nextSource = source | (sourceRegion << this.BASE_OFFSET);
-		info.nextDest = dest | (destRegion << this.BASE_OFFSET);
+		info.nextSource =
+			(sourceStartAddress + sourceOffset * transferCount) >>> 0;
+		info.nextDest =
+			(destStartAddress + destOffset * transferCount) >>> 0;
 		info.nextCount = wordsRemaining;
 
-		if (!info.repeat) {
+		// Immediate DMA has no later start condition to wait for. The hardware
+		// treats Repeat as ineffective for this timing mode; rescheduling it here
+		// would synchronously recurse forever through scheduleDma/serviceDma.
+		if (!info.repeat || info.timing == this.DMA_TIMING_NOW) {
 			info.enable = false;
 
 			// Clear the enable bit in memory
@@ -824,6 +1258,10 @@ class GameBoyAdvanceMMU {
 		this.waitstatesSeq[this.REGION_CART_SRAM] = this.ROM_WS[sram];
 		this.waitstates32[this.REGION_CART_SRAM] = this.ROM_WS[sram];
 		this.waitstatesSeq32[this.REGION_CART_SRAM] = this.ROM_WS[sram];
+		this.waitstates[this.REGION_CART_SRAM_MIRROR] = this.ROM_WS[sram];
+		this.waitstatesSeq[this.REGION_CART_SRAM_MIRROR] = this.ROM_WS[sram];
+		this.waitstates32[this.REGION_CART_SRAM_MIRROR] = this.ROM_WS[sram];
+		this.waitstatesSeq32[this.REGION_CART_SRAM_MIRROR] = this.ROM_WS[sram];
 
 		this.waitstates[this.REGION_CART0] = this.waitstates[
 			this.REGION_CART0 + 1
@@ -929,10 +1367,12 @@ class GameBoyAdvanceMMU {
 		}
 	}
 	saveNeedsFlush() {
-		return this.save.writePending;
+		return !!(this.save && this.save.writePending);
 	}
 	flushSave() {
-		this.save.writePending = false;
+		if (this.save) {
+			this.save.writePending = false;
+		}
 	}
 	allocGPIO(rom) {
 		return new GameBoyAdvanceGPIO(this.core, rom);
