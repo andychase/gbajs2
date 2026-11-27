@@ -1015,6 +1015,15 @@ test("cartridges without a save signature expose an open-bus save region", () =>
 	}
 });
 
+test("versioned fast-SRAM markers map to standard 32 KiB SRAM", () => {
+	for (const marker of ["SRAM_F_V", "SRAM_F_V103"]) {
+		const mmu = saveMemoryMmu(marker);
+		assert.equal(mmu.cart.saveType, "SRAM_F_V");
+		assert.ok(mmu.save instanceof SRAMSavedata);
+		assert.equal(mmu.save.buffer.byteLength, 0x8000);
+	}
+});
+
 test("save-less cartridges can advance frames without save-state dereferences", () => {
 	const gba = Object.create(GBA.prototype);
 	const mmu = saveMemoryMmu("");

@@ -691,6 +691,8 @@ class GameBoyAdvanceMMU {
 					case "SRA":
 					case "SRAM":
 					case "SRAM_":
+					case "SRAM_F":
+					case "SRAM_F_":
 					case "E":
 					case "EE":
 					case "EEP":
@@ -703,6 +705,7 @@ class GameBoyAdvanceMMU {
 					case "FLASH512_V":
 					case "FLASH1M_V":
 					case "SRAM_V":
+					case "SRAM_F_V":
 					case "EEPROM_V":
 						terminal = true;
 						break;
@@ -726,6 +729,7 @@ class GameBoyAdvanceMMU {
 						] = new FlashSavedata(this.SIZE_CART_FLASH1M);
 						break;
 					case "SRAM_V":
+					case "SRAM_F_V":
 						this.save = this.memory[
 							this.REGION_CART_SRAM
 						] = new SRAMSavedata(this.SIZE_CART_SRAM);
