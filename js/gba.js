@@ -338,6 +338,8 @@ class GameBoyAdvance {
 	}
 	loadSavedataFromFile(saveFile) {
 		var self = this;
+		var targetMMU = this.mmu;
+		var targetCart = targetMMU && targetMMU.cart;
 		return new Promise(function (resolve) {
 			var reader;
 			try {
@@ -348,6 +350,14 @@ class GameBoyAdvance {
 				return;
 			}
 			reader.onload = function (e) {
+				if (
+					targetMMU &&
+					(self.mmu !== targetMMU || self.mmu.cart !== targetCart)
+				) {
+					self.WARN("Could not load savedata: the cartridge changed while reading");
+					resolve(false);
+					return;
+				}
 				try {
 					self.setSavedata(e.target.result);
 					resolve(true);
@@ -358,6 +368,10 @@ class GameBoyAdvance {
 			};
 			reader.onerror = function () {
 				self.WARN("Could not read savedata file");
+				resolve(false);
+			};
+			reader.onabort = function () {
+				self.WARN("Savedata file read was cancelled");
 				resolve(false);
 			};
 			try {
@@ -415,23 +429,100 @@ class GameBoyAdvance {
 		}
 		return data.join("");
 	}
-	downloadSavedata() {
-		var sram = this.mmu.save;
-		if (!sram) {
-			this.WARN("No save data available");
+	getSavedataView() {
+		var save = this.mmu.save;
+		if (!save) {
 			return null;
 		}
-		if (window.URL) {
-			var url = window.URL.createObjectURL(
-				new Blob([sram.buffer], { type: "application/octet-stream" })
+		var size =
+			save instanceof EEPROMSavedata
+				? save.exportSize
+				: save.buffer.byteLength;
+		if (!Number.isInteger(size) || size <= 0 || size > save.buffer.byteLength) {
+			size = save.buffer.byteLength;
+		}
+		return new DataView(save.buffer, 0, size);
+	}
+	downloadSavedata() {
+		var saveView = this.getSavedataView();
+		if (!saveView) {
+			this.WARN("No save data available");
+			return false;
+		}
+		var cartCode =
+			(this.mmu.cart && this.mmu.cart.code) ||
+			(this.rom && this.rom.code) ||
+			"game";
+		var filename = String(cartCode).replace(/[^a-zA-Z0-9_-]/g, "_") + ".sav";
+		var urlAPI = window.URL || window.webkitURL;
+		var objectURL = null;
+		var anchor = null;
+		var parent = null;
+		var attached = false;
+		try {
+			var bytes = new Uint8Array(
+				saveView.buffer,
+				saveView.byteOffset,
+				saveView.byteLength
 			);
-			window.open(url);
-		} else {
-			var data = this.encodeBase64(sram.view);
-			window.open(
-				"data:application/octet-stream;base64," + data,
-				this.rom.code + ".sav"
-			);
+			var blob = new Blob([bytes], { type: "application/octet-stream" });
+			var href;
+			if (urlAPI && typeof urlAPI.createObjectURL == "function") {
+				try {
+					objectURL = urlAPI.createObjectURL(blob);
+					href = objectURL;
+				} catch (error) {
+					// Some browser contexts disable object URLs. A data URL still
+					// lets the download link work for these small save files.
+					href =
+						"data:application/octet-stream;base64," +
+						this.encodeBase64(saveView);
+				}
+			} else {
+				href =
+					"data:application/octet-stream;base64," +
+					this.encodeBase64(saveView);
+			}
+
+			anchor = document.createElement("a");
+			anchor.href = href;
+			anchor.download = filename;
+			if (anchor.style) {
+				anchor.style.display = "none";
+			}
+			parent = document.body || document.documentElement;
+			if (!parent || typeof anchor.click != "function") {
+				throw new Error("Browser download links are unavailable");
+			}
+			parent.appendChild(anchor);
+			attached = true;
+			anchor.click();
+			parent.removeChild(anchor);
+			attached = false;
+			anchor = null;
+
+			if (objectURL && urlAPI && urlAPI.revokeObjectURL) {
+				var savedURL = objectURL;
+				var releaseURL = function () {
+					urlAPI.revokeObjectURL(savedURL);
+				};
+				if (window.setTimeout) {
+					window.setTimeout(releaseURL, 10000);
+				} else {
+					setTimeout(releaseURL, 10000);
+				}
+				objectURL = null;
+			}
+			return true;
+		} catch (error) {
+			if (attached && anchor && parent) {
+				parent.removeChild(anchor);
+			}
+			if (objectURL && urlAPI && urlAPI.revokeObjectURL) {
+				urlAPI.revokeObjectURL(objectURL);
+			}
+			this.WARN("Could not download savedata! " + error);
+			return false;
 		}
 	}
 	storeSavedata() {
@@ -442,7 +533,7 @@ class GameBoyAdvance {
 		try {
 			var storage = window.localStorage;
 			storage[this.SYS_ID + "." + this.mmu.cart.code] = this.encodeBase64(
-				sram.view
+				this.getSavedataView()
 			);
 		} catch (e) {
 			this.WARN("Could not store savedata! " + e);

@@ -199,9 +199,27 @@
 				if (!file) {
 					return;
 				}
+				document.getElementById('saveloader').value = '';
+				setSavedataStatus(
+					'Save selected. It will be applied after you select a ROM.'
+				);
 				runCommands.push(function () {
-					return gba.loadSavedataFromFile(file);
+					setSavedataStatus('Loading save…');
+					return gba.loadSavedataFromFile(file).then(function (loaded) {
+						setSavedataStatus(
+							loaded
+								? 'Save loaded.'
+								: 'Could not load save. Check the ROM and .sav file.'
+						);
+						return loaded;
+					});
 				});
+			}
+
+			function setSavedataStatus(message) {
+				let status = document.getElementById('savedata-status');
+				status.textContent = message;
+				status.hidden = !message;
 			}
 
 			function togglePause() {
@@ -396,6 +414,7 @@
 			</table>
 		</section>
 		<section id="controls">
+			<p id="savedata-status" role="status" aria-live="polite" hidden></p>
 			<div id="preload">
 				<button
 					class="bigbutton"
@@ -426,6 +445,7 @@
 				<input
 					id="saveloader"
 					type="file"
+					accept=".sav,.srm,.bin"
 					onchange="uploadSavedataPending(this.files[0]);"
 				/>
 			</div>

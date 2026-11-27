@@ -778,6 +778,17 @@ class GameBoyAdvanceMMU {
 		normalizedBytes.fill(0xff);
 		normalizedBytes.set(input.subarray(0, expectedSize));
 		this.save.replaceData(normalized);
+		if (this.save instanceof EEPROMSavedata) {
+			// Preserve the actual .sav size when known. The allocated EEPROM bus
+			// backing is always 8 KiB, even for 512-byte EEPROM cartridges.
+			var detectedEEPROMSize = this.save.realSize;
+			this.save.exportSize =
+				detectedEEPROMSize == 0x200 || detectedEEPROMSize == expectedSize
+					? detectedEEPROMSize
+					: isValidSmallEEPROM
+						? 0x200
+						: expectedSize;
+		}
 		// Loading an external save must also make it eligible for browser
 		// persistence, including when the player pauses before the next write.
 		if (typeof this.save.writePending == "boolean") {

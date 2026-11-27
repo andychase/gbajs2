@@ -175,7 +175,6 @@ class FlashSavedata extends MemoryView {
 		this.store8(offset, value >>> ((offset & 3) << 3));
 	}
 	replaceData(memory) {
-		var bank = this.view === this.bank1;
 		MemoryView.prototype.replaceData.call(this, memory, 0);
 
 		this.bank0 = new DataView(this.buffer, 0, 0x00010000);
@@ -184,7 +183,12 @@ class FlashSavedata extends MemoryView {
 		} else {
 			this.bank1 = null;
 		}
-		this.bank = bank ? this.bank1 : this.bank0;
+		this.bank = this.bank0;
+		this.idMode = false;
+		this.first = 0;
+		this.second = 0;
+		this.command = 0;
+		this.pendingCommand = 0;
 	}
 }
 
@@ -202,6 +206,9 @@ class EEPROMSavedata extends MemoryView {
 
 		this.realSize = 0;
 		this.addressBits = 0;
+		// EEPROM supports both 512-byte and 8 KiB cartridges. Keep the raw save
+		// file length separate from the protocol size detected on first access.
+		this.exportSize = size;
 		this.writePending = false;
 
 		this.dma = mmu.core.irq.dma[3];
@@ -263,6 +270,7 @@ class EEPROMSavedata extends MemoryView {
 						var bits = this.dma.count - 67;
 						this.realSize = 8 << bits;
 						this.addressBits = bits;
+						this.exportSize = this.realSize;
 					}
 					this.commandBitsRemaining = this.addressBits + 64 + 1;
 					this.writeAddress = 0;
@@ -271,6 +279,7 @@ class EEPROMSavedata extends MemoryView {
 						var bits = this.dma.count - 3;
 						this.realSize = 8 << bits;
 						this.addressBits = bits;
+						this.exportSize = this.realSize;
 					}
 					this.commandBitsRemaining = this.addressBits + 1;
 					this.readAddress = 0;
@@ -314,5 +323,13 @@ class EEPROMSavedata extends MemoryView {
 	}
 	replaceData(memory) {
 		MemoryView.prototype.replaceData.call(this, memory, 0);
+		// A save may be imported while the cartridge is paused partway through
+		// an EEPROM command. Discard that partial transfer, but retain the
+		// cartridge geometry learned from its DMA sizes.
+		this.writeAddress = 0;
+		this.readBitsRemaining = 0;
+		this.readAddress = 0;
+		this.command = this.COMMAND_NULL;
+		this.commandBitsRemaining = 0;
 	}
 }

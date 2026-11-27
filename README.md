@@ -17,6 +17,14 @@ See the [issues page](https://github.com/andychase/gbajs2/issues) for feature su
 * Save games
 * Optional local loading of a full 16 KiB GBA BIOS for BIOS services
 
+### Battery saves
+
+The browser stores cartridge saves locally by game code. To import an external
+`.sav`, choose **Upload Savegame** before selecting the ROM; the save is applied
+when that ROM finishes loading. **Download Savegame** exports a raw `.sav` file
+named with the cartridge code. SRAM and Flash exports use the cartridge's full
+save size; EEPROM exports use its detected 512-byte or 8 KiB size.
+
 ## Development
 
 Run the compatibility regression suite with Node.js:

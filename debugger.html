@@ -117,7 +117,7 @@ window.onunload = function() {
 		</section>
 		<section id="saving">
 			<button onclick="document.getElementById('uploadSave').click()">Load savedata</button>
-			<input type="file" id="uploadSave" onchange="gba.loadSavedataFromFile(this.files[0])" style="display: none">
+			<input type="file" id="uploadSave" onchange="gba.loadSavedataFromFile(this.files[0]); this.value = '';" style="display: none">
 			<button onclick="gba.downloadSavedata()">Download savedata</button>
 			<button onclick="gba.storeSavedata()">Store savedata</button>
 			<button onclick="savestate()">Freeze</button>

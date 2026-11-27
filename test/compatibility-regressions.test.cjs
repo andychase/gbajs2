@@ -405,6 +405,79 @@ test("savedata file loading resolves only after applying or rejecting the file",
 		gba.setSavedata = () => { throw new Error("invalid save"); };
 		assert.equal(await gba.loadSavedataFromFile(file), false);
 		assert.equal(warnings, 1);
+
+		context.FileReader = class AbortedFileReader {
+			readAsArrayBuffer() {
+				this.onabort();
+			}
+		};
+		assert.equal(await gba.loadSavedataFromFile(file), false);
+		assert.equal(warnings, 2);
+	} finally {
+		context.FileReader = originalFileReader;
+	}
+});
+
+test("save file imports apply the exact bytes and reject a wrong-size file atomically", async () => {
+	const originalFileReader = context.FileReader;
+	const mmu = saveMemoryMmu("SRAM_V");
+	const gba = Object.create(GBA.prototype);
+	let warnings = 0;
+	const validSave = new Uint8Array(mmu.SIZE_CART_SRAM);
+	validSave[0] = 0x12;
+	validSave[0x7fff] = 0xa7;
+	const file = validSave.buffer;
+	context.FileReader = class FileReaderTest {
+		readAsArrayBuffer(input) {
+			assert.equal(input, file);
+			this.onload({ target: { result: file } });
+		}
+	};
+	try {
+		gba.mmu = mmu;
+		gba.WARN = () => { ++warnings; };
+		assert.equal(await gba.loadSavedataFromFile(file), true);
+		assert.equal(mmu.save.loadU8(0), 0x12);
+		assert.equal(mmu.save.loadU8(0x7fff), 0xa7);
+		assert.equal(mmu.save.writePending, true);
+
+		const shortFile = new ArrayBuffer(0x100);
+		context.FileReader = class ShortFileReader {
+			readAsArrayBuffer() {
+				this.onload({ target: { result: shortFile } });
+			}
+		};
+		assert.equal(await gba.loadSavedataFromFile(shortFile), false);
+		assert.equal(mmu.save.loadU8(0), 0x12);
+		assert.equal(mmu.save.loadU8(0x7fff), 0xa7);
+		assert.equal(warnings, 1);
+	} finally {
+		context.FileReader = originalFileReader;
+	}
+});
+
+test("a save read cannot overwrite a cartridge selected while the read was pending", async () => {
+	const originalFileReader = context.FileReader;
+	const originalCart = {};
+	const replacementCart = {};
+	let reader = null;
+	let warnings = 0;
+	let applied = false;
+	context.FileReader = class DelayedFileReader {
+		readAsArrayBuffer() { reader = this; }
+	};
+	try {
+		const gba = Object.create(GBA.prototype);
+		gba.mmu = { cart: originalCart };
+		gba.setSavedata = () => { applied = true; };
+		gba.WARN = () => { ++warnings; };
+		const load = gba.loadSavedataFromFile(new ArrayBuffer(32));
+		assert.ok(reader);
+		gba.mmu.cart = replacementCart;
+		reader.onload({ target: { result: new ArrayBuffer(32) } });
+		assert.equal(await load, false);
+		assert.equal(applied, false);
+		assert.equal(warnings, 1);
 	} finally {
 		context.FileReader = originalFileReader;
 	}
@@ -985,11 +1058,262 @@ test("512-byte EEPROM saves fit the full cartridge backing without out-of-bounds
 	save[0x1ff] = 0x7e;
 	mmu.loadSavedata(save.buffer);
 	assert.equal(mmu.save.buffer.byteLength, mmu.SIZE_CART_EEPROM);
+	assert.equal(mmu.save.exportSize, 0x200);
 	assert.equal(mmu.save.view.getUint8(0x1ff), 0x7e);
 	assert.equal(mmu.save.view.getUint8(0x200), 0xff);
 	assert.equal(mmu.save.view.getUint8(0x1fff), 0xff);
 	assert.doesNotThrow(() => mmu.save.view.getUint8(0x1fff));
 	assert.equal(mmu.save.realSize, 0);
+});
+
+test("EEPROM read and write commands select the matching raw save export size", () => {
+	for (const [dmaCount, commandBit, expectedSize, addressBits] of [
+		[9, 1, 0x200, 6],
+		[73, 0, 0x200, 6],
+		[13, 1, 0x2000, 10],
+		[77, 0, 0x2000, 10]
+	]) {
+		const mmu = saveMemoryMmu("EEPROM_V");
+		const save = mmu.save;
+		save.dma.count = dmaCount;
+		save.store16(0, 1);
+		save.store16(0, commandBit);
+		assert.equal(save.realSize, expectedSize);
+		assert.equal(save.addressBits, addressBits);
+		assert.equal(save.exportSize, expectedSize);
+	}
+});
+
+test("EEPROM save imports preserve the cartridge geometry when file sizes differ", () => {
+	for (const [cartridgeSize, addressBits, fileSize] of [
+		[0x200, 6, 0x2000],
+		[0x2000, 10, 0x200]
+	]) {
+		const mmu = saveMemoryMmu("EEPROM_V");
+		mmu.save.realSize = cartridgeSize;
+		mmu.save.addressBits = addressBits;
+		mmu.loadSavedata(new ArrayBuffer(fileSize));
+		assert.equal(mmu.save.exportSize, cartridgeSize);
+		assert.equal(mmu.save.realSize, cartridgeSize);
+	}
+});
+
+test("replacing Flash and EEPROM saves resets partial cartridge commands", () => {
+	const flash = new FlashSavedata(0x20000);
+	flash.bank = flash.bank1;
+	flash.idMode = true;
+	flash.first = 0xaa;
+	flash.second = 0x55;
+	flash.command = flash.COMMAND_WRITE;
+	flash.pendingCommand = flash.COMMAND_ERASE;
+	flash.replaceData(new ArrayBuffer(0x20000));
+	assert.equal(flash.bank, flash.bank0);
+	assert.equal(flash.idMode, false);
+	assert.equal(flash.first, 0);
+	assert.equal(flash.second, 0);
+	assert.equal(flash.command, 0);
+	assert.equal(flash.pendingCommand, 0);
+
+	const eeprom = new EEPROMSavedata(0x2000, {
+		core: { irq: { dma: [{}, {}, {}, { count: 9, enable: false }] } }
+	});
+	eeprom.realSize = 0x200;
+	eeprom.addressBits = 6;
+	eeprom.writeAddress = 17;
+	eeprom.readAddress = 32;
+	eeprom.readBitsRemaining = 4;
+	eeprom.command = eeprom.COMMAND_READ;
+	eeprom.commandBitsRemaining = 3;
+	eeprom.replaceData(new ArrayBuffer(0x2000));
+	assert.equal(eeprom.realSize, 0x200);
+	assert.equal(eeprom.addressBits, 6);
+	assert.equal(eeprom.writeAddress, 0);
+	assert.equal(eeprom.readAddress, 0);
+	assert.equal(eeprom.readBitsRemaining, 0);
+	assert.equal(eeprom.command, eeprom.COMMAND_NULL);
+	assert.equal(eeprom.commandBitsRemaining, 0);
+});
+
+test("EEPROM browser persistence stores only the detected raw save size", () => {
+	const originalWindow = context.window;
+	const localStorage = {};
+	context.window = { localStorage };
+	try {
+		const mmu = saveMemoryMmu("EEPROM_V");
+		mmu.save.exportSize = 0x200;
+		mmu.cart.code = "TEST";
+		const gba = Object.create(GBA.prototype);
+		gba.mmu = mmu;
+		gba.SYS_ID = "test.emulator";
+		gba.encodeBase64 = (view) => "bytes:" + view.byteLength;
+		gba.storeSavedata();
+		assert.equal(localStorage["test.emulator.TEST"], "bytes:512");
+	} finally {
+		context.window = originalWindow;
+	}
+});
+
+test("EEPROM save data round-trips through browser storage without padding 512-byte files", () => {
+	const originalWindow = context.window;
+	const originalBtoa = context.btoa;
+	const originalAtob = context.atob;
+	const localStorage = {};
+	context.window = { localStorage };
+	context.btoa = globalThis.btoa;
+	context.atob = globalThis.atob;
+	try {
+		const sourceMMU = saveMemoryMmu("EEPROM_V");
+		sourceMMU.cart.code = "TEST";
+		const input = new Uint8Array(0x200);
+		input[0] = 0x13;
+		input[0x1ff] = 0xa7;
+		sourceMMU.loadSavedata(input.buffer);
+		const sourceGBA = Object.create(GBA.prototype);
+		sourceGBA.mmu = sourceMMU;
+		sourceGBA.SYS_ID = "test.emulator";
+		sourceGBA.storeSavedata();
+		assert.equal(localStorage["test.emulator.TEST"].length, 684);
+
+		const destinationMMU = saveMemoryMmu("EEPROM_V");
+		destinationMMU.cart.code = "TEST";
+		const destinationGBA = Object.create(GBA.prototype);
+		destinationGBA.mmu = destinationMMU;
+		destinationGBA.SYS_ID = "test.emulator";
+		destinationGBA.WARN = () => {};
+		assert.equal(destinationGBA.retrieveSavedata(), true);
+		assert.equal(destinationMMU.save.exportSize, 0x200);
+		assert.equal(destinationMMU.save.view.getUint8(0), 0x13);
+		assert.equal(destinationMMU.save.view.getUint8(0x1ff), 0xa7);
+	} finally {
+		context.window = originalWindow;
+		if (originalBtoa === undefined) {
+			delete context.btoa;
+		} else {
+			context.btoa = originalBtoa;
+		}
+		if (originalAtob === undefined) {
+			delete context.atob;
+		} else {
+			context.atob = originalAtob;
+		}
+	}
+});
+
+test("save export downloads a named .sav file with the exact EEPROM byte length", async () => {
+	const originalWindow = context.window;
+	const originalDocument = context.document;
+	let createdBlob = null;
+	let clickedLink = null;
+	let revokedUrl = null;
+	let releaseDownload = null;
+	const children = [];
+	const parent = {
+		appendChild(link) { children.push(link); },
+		removeChild(link) { children.splice(children.indexOf(link), 1); }
+	};
+	const link = {
+		href: "",
+		download: "",
+		style: {},
+		click() { clickedLink = { href: this.href, download: this.download }; }
+	};
+	context.window = {
+		URL: {
+			createObjectURL(blob) {
+				createdBlob = blob;
+				return "blob:save-test";
+			},
+			revokeObjectURL(url) { revokedUrl = url; }
+		},
+		setTimeout(callback, delay) {
+			assert.equal(delay, 10000);
+			releaseDownload = callback;
+		}
+	};
+	context.document = {
+		body: parent,
+		createElement(name) {
+			assert.equal(name, "a");
+			return link;
+		}
+	};
+	try {
+		const eeprom = new EEPROMSavedata(0x2000, {
+			core: { irq: { dma: [{}, {}, {}, {}] } }
+		});
+		eeprom.exportSize = 0x200;
+		new Uint8Array(eeprom.buffer).fill(0xff);
+		new Uint8Array(eeprom.buffer)[0] = 0x12;
+		new Uint8Array(eeprom.buffer)[0x1ff] = 0xa7;
+		const gba = Object.create(GBA.prototype);
+		gba.mmu = { save: eeprom, cart: { code: "TEST" } };
+		gba.WARN = () => {};
+
+		assert.equal(gba.downloadSavedata(), true);
+		assert.deepEqual(clickedLink, {
+			href: "blob:save-test",
+			download: "TEST.sav"
+		});
+		assert.equal(children.length, 0);
+		assert.equal(createdBlob.size, 0x200);
+		const exported = new Uint8Array(await createdBlob.arrayBuffer());
+		assert.equal(exported[0], 0x12);
+		assert.equal(exported[0x1ff], 0xa7);
+		releaseDownload();
+		assert.equal(revokedUrl, "blob:save-test");
+	} finally {
+		context.window = originalWindow;
+		if (originalDocument === undefined) {
+			delete context.document;
+		} else {
+			context.document = originalDocument;
+		}
+	}
+});
+
+test("save export uses a byte-exact data URL when object URLs are unavailable", () => {
+	const originalWindow = context.window;
+	const originalDocument = context.document;
+	const originalBtoa = context.btoa;
+	let clickedLink = null;
+	const link = {
+		href: "",
+		download: "",
+		style: {},
+		click() { clickedLink = { href: this.href, download: this.download }; }
+	};
+	context.window = {};
+	context.document = {
+		body: { appendChild() {}, removeChild() {} },
+		createElement() { return link; }
+	};
+	context.btoa = globalThis.btoa;
+	try {
+		const sram = new SRAMSavedata(4);
+		new Uint8Array(sram.buffer).set([0, 1, 0xfe, 0xff]);
+		const gba = Object.create(GBA.prototype);
+		gba.mmu = { save: sram, cart: { code: "ALT" } };
+		gba.WARN = () => {};
+		assert.equal(gba.downloadSavedata(), true);
+		assert.deepEqual(clickedLink, {
+			href:
+				"data:application/octet-stream;base64," +
+				globalThis.btoa(String.fromCharCode(0, 1, 0xfe, 0xff)),
+			download: "ALT.sav"
+		});
+	} finally {
+		context.window = originalWindow;
+		if (originalDocument === undefined) {
+			delete context.document;
+		} else {
+			context.document = originalDocument;
+		}
+		if (originalBtoa === undefined) {
+			delete context.btoa;
+		} else {
+			context.btoa = originalBtoa;
+		}
+	}
 });
 
 test("new SRAM, Flash, and EEPROM chips start in their erased 0xFF state", () => {
