@@ -92,21 +92,48 @@ class ARMCore {
 		var gprs = this.gprs;
 		var mmu = this.mmu;
 		this.step = function () {
+			if (typeof this.irq.resumeHLEBIOSCallIfReady == "function") {
+				if (this.irq.resumeHLEBIOSCallIfReady()) {
+					return;
+				}
+			}
+			if (this.irq.halted && this.irq.stepHalt()) {
+				return;
+			}
 			var instruction =
 				this.instruction ||
 				(this.instruction = this.loadInstruction(
 					gprs[this.PC] - this.instructionWidth
 				));
+			if (!instruction.writesPC) {
+				if (instruction.next == null) {
+					instruction.next = this.loadInstruction(gprs[this.PC]);
+				}
+				if (
+					instruction.next.next == null &&
+					!instruction.next.writesPC
+				) {
+					instruction.next.next = this.loadInstruction(
+						gprs[this.PC] + this.instructionWidth
+					);
+				}
+			}
 			gprs[this.PC] += this.instructionWidth;
 			this.conditionPassed = true;
 			instruction();
+			if (
+				typeof this.irq.isHLEBIOSCallBlocking == "function" &&
+				this.irq.isHLEBIOSCallBlocking()
+			) {
+				this.instruction = null;
+				return;
+			}
 
 			if (!instruction.writesPC) {
 				if (this.instruction != null) {
 					// We might have gotten an interrupt from the instruction
 					if (
-						instruction.next == null ||
-						instruction.next.page.invalid
+						instruction.next == null
 					) {
 						instruction.next = this.loadInstruction(
 							gprs[this.PC] - this.instructionWidth
@@ -303,9 +330,14 @@ class ARMCore {
 		var offset = (address & this.pageMask) >> 2;
 		next = this.page.arm[offset];
 		if (next) {
+			this.recordBIOSOpcode(address, next.opcode, this.WORD_SIZE_ARM);
 			return next;
 		}
-		var instruction = this.mmu.load32(address) >>> 0;
+		var instruction =
+			this.mmu.loadInstruction32 && address < this.mmu.SIZE_BIOS
+				? this.mmu.loadInstruction32(address) >>> 0
+				: this.mmu.load32(address) >>> 0;
+		this.recordBIOSOpcode(address, instruction, this.WORD_SIZE_ARM);
 		next = this.compileArm(instruction);
 		next.next = null;
 		next.page = this.page;
@@ -320,9 +352,14 @@ class ARMCore {
 		var offset = (address & this.pageMask) >> 1;
 		next = this.page.thumb[offset];
 		if (next) {
+			this.recordBIOSOpcode(address, next.opcode, this.WORD_SIZE_THUMB);
 			return next;
 		}
-		var instruction = this.mmu.load16(address);
+		var instruction =
+			this.mmu.loadInstruction16 && address < this.mmu.SIZE_BIOS
+				? this.mmu.loadInstruction16(address)
+				: this.mmu.load16(address);
+		this.recordBIOSOpcode(address, instruction, this.WORD_SIZE_THUMB);
 		next = this.compileThumb(instruction);
 		next.next = null;
 		next.page = this.page;
@@ -330,6 +367,40 @@ class ARMCore {
 		next.opcode = instruction;
 		this.page.thumb[offset] = next;
 		return next;
+	}
+	recordBIOSOpcode(address, opcode, width) {
+		var bios = this.mmu && this.mmu.bios;
+		if (
+			bios &&
+			typeof bios.recordFetchedOpcode == "function" &&
+			address >= 0 &&
+			address < this.mmu.SIZE_BIOS
+		) {
+			bios.recordFetchedOpcode(opcode, width);
+			if (
+				!bios.real &&
+				bios.buffer.byteLength < this.mmu.SIZE_BIOS &&
+				this.mode == this.MODE_IRQ &&
+				address == 0x5c &&
+				(opcode >>> 0) == 0xe510f004
+			) {
+				// The built-in BIOS IRQ stub loads the user handler at 0x5C. The
+				// hardware pipeline has also fetched the BIOS return instruction.
+				bios.hleIRQHandoffPending = true;
+			}
+		} else if (
+			bios &&
+			typeof bios.recordHLEStartupExit == "function" &&
+			address >= this.mmu.SIZE_BIOS
+		) {
+			if (bios.hleStartupPending) {
+				bios.recordHLEStartupExit();
+			} else if (bios.hleIRQHandoffPending && this.mode == this.MODE_IRQ) {
+				bios.recordHLEIRQHandoff();
+			} else if (bios.hleIRQReturnPending && this.mode != this.MODE_IRQ) {
+				bios.recordHLEIRQReturn();
+			}
+		}
 	}
 	selectBank(mode) {
 		switch (mode) {
@@ -451,11 +522,30 @@ class ARMCore {
 		this.switchExecMode(this.MODE_ARM);
 		this.cpsrI = true;
 	}
-	badOp(instruction) {
+	raiseUndefinedInstruction() {
+		var cpsr = this.packCPSR();
+		var instructionWidth = this.instructionWidth;
+		this.switchMode(this.MODE_UNDEFINED);
+		this.spsr = cpsr;
+		this.gprs[this.LR] = this.gprs[this.PC] - instructionWidth;
+		this.gprs[this.PC] = this.BASE_UNDEF + this.WORD_SIZE_ARM;
+		this.instruction = null;
+		this.switchExecMode(this.MODE_ARM);
+		this.cpsrI = true;
+	}
+	badOp(instruction, condOp) {
+		var cpu = this;
 		var func = function () {
-			throw "Illegal instruction: 0x" + instruction.toString(16);
+			if (!condOp || condOp()) {
+				cpu.raiseUndefinedInstruction();
+			}
+			if (cpu.instructionWidth == cpu.WORD_SIZE_ARM) {
+				cpu.mmu.waitPrefetch32(cpu.gprs[cpu.PC]);
+			} else {
+				cpu.mmu.waitPrefetch(cpu.gprs[cpu.PC]);
+			}
 		};
-		func.writesPC = true;
+		func.writesPC = false;
 		func.fixedJump = false;
 		return func;
 	}
@@ -600,12 +690,11 @@ class ARMCore {
 		return shiftOp;
 	}
 	compileArm(instruction) {
-		var op = this.badOp(instruction);
+		var condOp = this.conds[(instruction & 0xf0000000) >>> 28];
+		var op = this.badOp(instruction, condOp);
 		var i = instruction & 0x0e000000;
 		var cpu = this;
 		var gprs = this.gprs;
-
-		var condOp = this.conds[(instruction & 0xf0000000) >>> 28];
 		if ((instruction & 0x0ffffff0) == 0x012fff10) {
 			// BX
 			var rm = instruction & 0xf;
@@ -963,7 +1052,8 @@ class ARMCore {
 						}
 						break;
 				}
-				op.writesPC = rd == this.PC;
+				var testOpcode = opcode >= 0x01000000 && opcode <= 0x01600000;
+				op.writesPC = rd == this.PC && !testOpcode;
 			}
 		} else if ((instruction & 0x0fb00ff0) == 0x01000090) {
 			// Single data swap
@@ -1172,7 +1262,7 @@ class ARMCore {
 								);
 							}
 						}
-						op.writesPC = rd == this.PC || address.writesPC;
+						op.writesPC = (load && rd == this.PC) || address.writesPC;
 					}
 					break;
 				case 0x04000000:
@@ -1259,7 +1349,7 @@ class ARMCore {
 							);
 						}
 					}
-					op.writesPC = rd == this.PC || address.writesPC;
+						op.writesPC = (load && rd == this.PC) || address.writesPC;
 					break;
 				case 0x08000000:
 					// Block data transfer
@@ -1269,19 +1359,30 @@ class ARMCore {
 					var u = instruction & 0x00800000;
 					var p = instruction & 0x01000000;
 					var rs = instruction & 0x0000ffff;
+					var emptyList = rs === 0;
 					var rn = (instruction & 0x000f0000) >> 16;
 
 					var address;
 					var immediate = 0;
 					var offset = 0;
 					var overlap = false;
-					if (u) {
+					if (emptyList) {
+						// An empty list transfers PC, but the address span and
+						// writeback behave as if all 16 registers were listed.
+						if (u) {
+							immediate = p ? 4 : 0;
+							offset = 0x40;
+						} else {
+							immediate = p ? -0x40 : -0x3c;
+							offset = -0x40;
+						}
+					} else if (u) {
 						if (p) {
 							immediate = 4;
 						}
 						for (var m = 0x01, i = 0; i < 16; m <<= 1, ++i) {
 							if (rs & m) {
-								if (w && i == rn && !offset) {
+								if (!load && w && i == rn && !offset) {
 									rs &= ~m;
 									immediate += 4;
 									overlap = true;
@@ -1295,7 +1396,7 @@ class ARMCore {
 						}
 						for (var m = 0x01, i = 0; i < 16; m <<= 1, ++i) {
 							if (rs & m) {
-								if (w && i == rn && !offset) {
+								if (!load && w && i == rn && !offset) {
 									rs &= ~m;
 									immediate += 4;
 									overlap = true;
@@ -1318,33 +1419,34 @@ class ARMCore {
 							rn
 						);
 					}
+					var transferRs = emptyList ? 1 << this.PC : rs;
 					if (load) {
 						// LDM
 						if (user) {
 							op = this.armCompiler.constructLDMS(
-								rs,
+								transferRs,
 								address,
 								condOp
 							);
 						} else {
 							op = this.armCompiler.constructLDM(
-								rs,
+								transferRs,
 								address,
 								condOp
 							);
 						}
-						op.writesPC = !!(rs & (1 << 15));
+						op.writesPC = emptyList || !!(rs & (1 << 15));
 					} else {
 						// STM
 						if (user) {
 							op = this.armCompiler.constructSTMS(
-								rs,
+								transferRs,
 								address,
 								condOp
 							);
 						} else {
 							op = this.armCompiler.constructSTM(
-								rs,
+								transferRs,
 								address,
 								condOp
 							);
@@ -1381,7 +1483,7 @@ class ARMCore {
 					}
 					break;
 				default:
-					throw "Bad opcode: 0x" + instruction.toString(16);
+					op = this.badOp(instruction, condOp);
 			}
 		}
 
@@ -1738,7 +1840,7 @@ class ARMCore {
 						// STMIA
 						op = this.thumbCompiler.constructSTMIA(rn, rs);
 					}
-					op.writesPC = false;
+					op.writesPC = !!(instruction & 0x0800) && rs === 0;
 					break;
 				case 0x5000:
 					// Conditional branch
@@ -1748,6 +1850,9 @@ class ARMCore {
 						// SWI
 						op = this.thumbCompiler.constructSWI(immediate);
 						op.writesPC = false;
+					} else if (cond == 0xe) {
+						// Condition 0xE is reserved in Thumb state.
+						op = this.badOp(instruction);
 					} else {
 						// B(1)
 						if (instruction & 0x0080) {
@@ -1808,7 +1913,7 @@ class ARMCore {
 					);
 			}
 		} else {
-			throw "Bad opcode: 0x" + instruction.toString(16);
+			op = this.badOp(instruction);
 		}
 
 		op.execMode = this.MODE_THUMB;

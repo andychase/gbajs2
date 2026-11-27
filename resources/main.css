@@ -81,6 +81,12 @@ a:link, a:visited {
 	padding: 8px 25px;
 }
 
+#bios-status {
+	display: block;
+	margin: 6px 330px 0 auto;
+	font-size: 14px;
+}
+
 #moreinfo {
 	position: absolute;
 	right: 0;

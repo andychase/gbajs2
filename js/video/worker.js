@@ -9,6 +9,9 @@ self.finishDraw = function(pixelData) {
 }
 
 function receiveDirty(dirty) {
+	if (!dirty) {
+		return;
+	}
 	for (var type in dirty) {
 		switch (type) {
 		case 'DISPCNT':
@@ -123,11 +126,36 @@ function receiveMemory(memory) {
 	}
 	if (memory.vram) {
 		for (var i = 0; i < 12; ++i) {
-			if (memory.vram[i]) {
-				video.vram.insert(i << 12, new Uint16Array(memory.vram[i]));
+			var snapshot = memory.vram[i];
+			// Reset/restore messages carry full blocks; ordinary writes may carry
+			// only the dirty pages captured for this scanline.
+			if (snapshot && typeof snapshot.byteLength == 'number') {
+				video.vram.insert(i << 12, new Uint16Array(snapshot));
+			} else if (snapshot && snapshot.patches) {
+				for (var patch = 0; patch < snapshot.patches.length; ++patch) {
+					var update = snapshot.patches[patch];
+					video.vram.insert(
+						(i << 12) + (update.offset >> 1),
+						new Uint16Array(update.buffer)
+					);
+				}
 			}
 		}
 	}
+}
+
+function primeObjOamForLineZero(snapshot) {
+	if (!snapshot) {
+		return;
+	}
+	video.oam.overwrite(new Uint16Array(snapshot));
+	video.primeObjOamForLineZero();
+}
+
+function drawQueuedScanline(scanline) {
+	primeObjOamForLineZero(scanline.oamPrime);
+	receiveDirty(scanline.dirty);
+	video.drawScanline(scanline.y, proxyBacking);
 }
 
 var handlers = {
@@ -136,6 +164,7 @@ var handlers = {
 	},
 
 	scanline: function(data) {
+		primeObjOamForLineZero(data.oamPrime);
 		receiveDirty(data.dirty);
 		video.drawScanline(data.y, proxyBacking);
 	},
@@ -153,8 +182,7 @@ var handlers = {
 				video.drawScanline(y, proxyBacking);
 			}
 			scanline = data.scanlines[i].y + 1;
-			receiveDirty(data.scanlines[i].dirty);
-			video.drawScanline(data.scanlines[i].y, proxyBacking);
+			drawQueuedScanline(data.scanlines[i]);
 		}
 		for (var y = scanline; y < 160; ++y) {
 			video.drawScanline(y, proxyBacking);

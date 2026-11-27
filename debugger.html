@@ -7,7 +7,9 @@
 <link href="resources/console.css" rel="stylesheet">
 <script>
 window.onmessage = function(message) {
-	if (message.origin != document.domain && (message.origin != 'file://' || document.domain)) {
+	var expectedOrigin = window.location.origin;
+	if (message.source !== window.opener ||
+		(expectedOrigin !== 'null' && message.origin !== expectedOrigin)) {
 		console.log('Failed XSS');
 		return;
 	}
@@ -15,7 +17,7 @@ window.onmessage = function(message) {
 	case 'connect':
 		master = message.source;
 		initialize(master.gba);
-		master.postMessage('connected', document.domain || '*');
+		master.postMessage('connected', expectedOrigin === 'null' ? '*' : expectedOrigin);
 		break;
 	case 'disconnect':
 		master = null;
@@ -51,9 +53,17 @@ function savestate() {
 
 function loadSavestate(state) {
 	try {
-		Serializer.deserializePNG(state, function (result) {
-			gba.defrost(result);
-			gba.DEBUG('Loaded state');
+		Serializer.deserializePNG(state, function (result, error) {
+			if (error || !result) {
+				gba.ERROR('Failed to load savestate', error);
+				return;
+			}
+			try {
+				gba.defrost(result);
+				gba.DEBUG('Loaded state');
+			} catch (exception) {
+				gba.ERROR('Failed to load savestate', exception);
+			}
 		});
 	} catch (exception) {
 		gba.ERROR('Failed to load savestate', exception);
@@ -62,14 +72,16 @@ function loadSavestate(state) {
 
 window.onload = function() {
 	if (window.opener) {
-		window.opener.postMessage('connect', document.domain || '*');
+		var targetOrigin = window.location.origin === 'null' ? '*' : window.location.origin;
+		window.opener.postMessage('connect', targetOrigin);
 	}
 }
 
 window.onunload = function() {
 	gba.doStep = gba.waitFrame;
 	if (window.master) {
-		window.master.postMessage('disconnect', document.domain || '*');
+		var targetOrigin = window.location.origin === 'null' ? '*' : window.location.origin;
+		window.master.postMessage('disconnect', targetOrigin);
 	}
 }
 </script>

@@ -10,13 +10,12 @@ class ARMCoreThumb {
 			var m = (gprs[rm] >>> 0) + !!cpu.cpsrC;
 			var oldD = gprs[rd];
 			var d = (oldD >>> 0) + m;
-			var oldDn = oldD >> 31;
 			var dn = d >> 31;
-			var mn = m >> 31;
 			cpu.cpsrN = dn;
 			cpu.cpsrZ = !(d & 0xffffffff);
 			cpu.cpsrC = d > 0xffffffff;
-			cpu.cpsrV = oldDn == mn && oldDn != dn && mn != dn;
+			cpu.cpsrV =
+				((~(oldD ^ gprs[rm]) & (oldD ^ d)) >>> 31) != 0;
 			gprs[rd] = d;
 		};
 	}
@@ -282,6 +281,12 @@ class ARMCoreThumb {
 		return function () {
 			cpu.mmu.waitPrefetch(gprs[cpu.PC]);
 			var address = gprs[rn];
+			if (!rs) {
+				gprs[cpu.PC] = cpu.mmu.load32(address & 0xfffffffc);
+				cpu.mmu.waitMulti32(address + 4, 1);
+				gprs[rn] += 0x40;
+				return;
+			}
 			var total = 0;
 			var m, i;
 			for (m = 0x01, i = 0; i < 8; m <<= 1, ++i) {
@@ -641,12 +646,14 @@ class ARMCoreThumb {
 		var gprs = cpu.gprs;
 		return function () {
 			cpu.mmu.waitPrefetch(gprs[cpu.PC]);
-			var m = (gprs[rm] >>> 0) + !cpu.cpsrC;
+			var borrow = !cpu.cpsrC;
+			var m = (gprs[rm] >>> 0) + borrow;
 			var d = (gprs[rd] >>> 0) - m;
 			cpu.cpsrN = d >> 31;
 			cpu.cpsrZ = !(d & 0xffffffff);
-			cpu.cpsrC = gprs[rd] >>> 0 >= m >>> 0;
-			cpu.cpsrV = (gprs[rd] ^ m) >> 31 && (gprs[rd] ^ d) >> 31;
+			cpu.cpsrC = (gprs[rd] >>> 0) >= (gprs[rm] >>> 0) + borrow;
+			cpu.cpsrV =
+				(((gprs[rd] ^ gprs[rm]) & (gprs[rd] ^ d)) >>> 31) != 0;
 			gprs[rd] = d;
 		};
 	}
@@ -656,11 +663,29 @@ class ARMCoreThumb {
 		return function () {
 			cpu.mmu.wait(gprs[cpu.PC]);
 			var address = gprs[rn];
+			if (!rs) {
+				cpu.mmu.store32(address, gprs[cpu.PC] + 2);
+				address += 0x40;
+				cpu.mmu.waitMulti32(address, 1);
+				gprs[rn] = address;
+				return;
+			}
 			var total = 0;
 			var m, i;
+			var firstRegister = 0;
+			while (!(rs & (1 << firstRegister))) {
+				++firstRegister;
+			}
+			var finalBase = address;
+			for (m = rs; m; m &= m - 1) {
+				finalBase += 4;
+			}
 			for (m = 0x01, i = 0; i < 8; m <<= 1, ++i) {
 				if (rs & m) {
-					cpu.mmu.store32(address, gprs[i]);
+					cpu.mmu.store32(
+						address,
+						i == rn && i != firstRegister ? finalBase : gprs[i]
+					);
 					address += 4;
 					++total;
 					break;
@@ -668,7 +693,10 @@ class ARMCoreThumb {
 			}
 			for (m <<= 1, ++i; i < 8; m <<= 1, ++i) {
 				if (rs & m) {
-					cpu.mmu.store32(address, gprs[i]);
+					cpu.mmu.store32(
+						address,
+						i == rn && i != firstRegister ? finalBase : gprs[i]
+					);
 					address += 4;
 					++total;
 				}

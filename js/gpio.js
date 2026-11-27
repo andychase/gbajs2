@@ -26,13 +26,34 @@ class GameBoyAdvanceGPIO {
 				);
 		}
 		if (this.readWrite) {
-			var old = this.rom.view.getUint16(offset, true);
-			old &= ~this.direction;
-			this.rom.view.setUint16(
-				offset,
-				old | (value & this.direction),
-				true
-			);
+			switch (offset) {
+				case 0xc4: {
+					// The data register mixes output latches and input pin states.
+					var old = this.rom.view.getUint16(offset, true);
+					old &= ~this.direction;
+					this.rom.view.setUint16(
+						offset,
+						old | (value & this.direction),
+						true
+					);
+					break;
+				}
+				case 0xc6:
+					this.rom.view.setUint16(offset, this.direction, true);
+					break;
+				case 0xc8:
+					this.rom.view.setUint16(offset, this.readWrite, true);
+					break;
+			}
+		}
+	}
+	store32(offset, value) {
+		// The GPIO window is made of adjacent 16-bit registers. A 32-bit ROM
+		// write can cover two registers, but the word at 0xC8 must not spill into
+		// ordinary ROM bytes at 0xCA.
+		this.store16(offset, value & 0xffff);
+		if (offset + 2 < 0xca) {
+			this.store16(offset + 2, value >>> 16);
 		}
 	}
 	outputPins(nybble) {
@@ -108,35 +129,36 @@ class GameBoyAdvanceRTC {
 				}
 				break;
 			case 2:
-				if (!(nybble & 1)) {
+				// Dropping chip select aborts a transfer regardless of the clock
+				// level. Check it before interpreting a low SCK as a data phase.
+				if (!(nybble & 4)) {
+					this.bitsRead = 0;
+					this.bytesRemaining = 0;
+					this.command = -1;
+					this.transferStep = 0;
+					this.gpio.outputPins(2);
+				} else if (!(nybble & 1)) {
 					this.bits &= ~(1 << this.bitsRead);
 					this.bits |= ((nybble & 2) >> 1) << this.bitsRead;
 				} else {
-					if (nybble & 4) {
-						// SIO direction should always != this.read
-						if (this.direction & 2 && !this.read) {
-							++this.bitsRead;
-							if (this.bitsRead == 8) {
-								this.processByte();
-							}
-						} else {
-							this.gpio.outputPins(
-								5 | (this.sioOutputPin() << 1)
-							);
-							++this.bitsRead;
-							if (this.bitsRead == 8) {
-								--this.bytesRemaining;
-								if (this.bytesRemaining <= 0) {
-									this.command = -1;
-								}
-								this.bitsRead = 0;
-							}
+					// The CPU drives SIO only while sending command data.
+					if (this.direction & 2 && !this.reading) {
+						++this.bitsRead;
+						if (this.bitsRead == 8) {
+							this.processByte();
 						}
 					} else {
-						this.bitsRead = 0;
-						this.bytesRemaining = 0;
-						this.command = -1;
-						this.transferStep = 0;
+						this.gpio.outputPins(
+							5 | (this.sioOutputPin() << 1)
+						);
+						++this.bitsRead;
+						if (this.bitsRead == 8) {
+							--this.bytesRemaining;
+							if (this.bytesRemaining <= 0) {
+								this.command = -1;
+							}
+							this.bitsRead = 0;
+						}
 					}
 				}
 				break;
@@ -173,7 +195,8 @@ class GameBoyAdvanceRTC {
 				break;
 			case 4:
 				// Control
-				this.control = this.bits & 0x40;
+				// Keep the writable control/status bits visible on later reads.
+				this.control = this.bits & 0x6a;
 				break;
 		}
 		this.bits = 0;
@@ -196,20 +219,20 @@ class GameBoyAdvanceRTC {
 		var output = (outputByte >> this.bitsRead) & 1;
 		return output;
 	}
-	updateClock() {
-		var date = new Date();
-		this.time[0] = this.bcd(date.getFullYear());
+	updateClock(date) {
+		date = date || new Date();
+		// The GBA cartridge RTC stores years 2000-2099 as two BCD digits.
+		this.time[0] = this.bcd(date.getFullYear() % 100);
 		this.time[1] = this.bcd(date.getMonth() + 1);
 		this.time[2] = this.bcd(date.getDate());
-		this.time[3] = date.getDay() - 1;
-		if (this.time[3] < 0) {
-			this.time[3] = 6;
-		}
+		// RTC weekday numbering starts at Sunday (0), matching Date#getDay().
+		this.time[3] = date.getDay();
 		if (this.control & 0x40) {
 			// 24 hour
 			this.time[4] = this.bcd(date.getHours());
 		} else {
-			this.time[4] = this.bcd(date.getHours() % 2);
+			// GBA RTC 12-hour mode encodes 12 o'clock as 00 and stores PM in bit 7.
+			this.time[4] = this.bcd(date.getHours() % 12);
 			if (date.getHours() >= 12) {
 				this.time[4] |= 0x80;
 			}

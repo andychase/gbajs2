@@ -35,6 +35,8 @@ class GameBoyAdvanceKeypad {
 		this.L = 9;
 
 		this.currentDown = 0x03ff;
+		this.keyboardDown = 0x03ff;
+		this.gamepadDown = 0x03ff;
 		this.eatInput = false;
 
 		this.gamepads = [];
@@ -88,80 +90,133 @@ class GameBoyAdvanceKeypad {
 		}
 
 		toggle = 1 << toggle;
+		var previousDown = this.currentDown;
 		if (e.type == "keydown") {
-			this.currentDown &= ~toggle;
+			this.keyboardDown &= ~toggle;
 		} else {
-			this.currentDown |= toggle;
+			this.keyboardDown |= toggle;
 		}
+		this.updateCurrentDown(previousDown);
 
 		if (this.eatInput) {
 			e.preventDefault();
 		}
 	}
+	keyboardBlurHandler() {
+		if (this.keyboardDown == 0x03ff) {
+			return;
+		}
+		var previousDown = this.currentDown;
+		this.keyboardDown = 0x03ff;
+		this.updateCurrentDown(previousDown);
+	}
 	gamepadHandler(gamepad) {
 		var value = 0;
-		if (gamepad.buttons[this.GAMEPAD_LEFT] > this.GAMEPAD_THRESHOLD) {
+		if (this.isButtonPressed(gamepad.buttons[this.GAMEPAD_LEFT])) {
 			value |= 1 << this.LEFT;
 		}
-		if (gamepad.buttons[this.GAMEPAD_UP] > this.GAMEPAD_THRESHOLD) {
+		if (this.isButtonPressed(gamepad.buttons[this.GAMEPAD_UP])) {
 			value |= 1 << this.UP;
 		}
-		if (gamepad.buttons[this.GAMEPAD_RIGHT] > this.GAMEPAD_THRESHOLD) {
+		if (this.isButtonPressed(gamepad.buttons[this.GAMEPAD_RIGHT])) {
 			value |= 1 << this.RIGHT;
 		}
-		if (gamepad.buttons[this.GAMEPAD_DOWN] > this.GAMEPAD_THRESHOLD) {
+		if (this.isButtonPressed(gamepad.buttons[this.GAMEPAD_DOWN])) {
 			value |= 1 << this.DOWN;
 		}
-		if (gamepad.buttons[this.GAMEPAD_START] > this.GAMEPAD_THRESHOLD) {
+		if (this.isButtonPressed(gamepad.buttons[this.GAMEPAD_START])) {
 			value |= 1 << this.START;
 		}
-		if (gamepad.buttons[this.GAMEPAD_SELECT] > this.GAMEPAD_THRESHOLD) {
+		if (this.isButtonPressed(gamepad.buttons[this.GAMEPAD_SELECT])) {
 			value |= 1 << this.SELECT;
 		}
-		if (gamepad.buttons[this.GAMEPAD_A] > this.GAMEPAD_THRESHOLD) {
+		if (this.isButtonPressed(gamepad.buttons[this.GAMEPAD_A])) {
 			value |= 1 << this.A;
 		}
-		if (gamepad.buttons[this.GAMEPAD_B] > this.GAMEPAD_THRESHOLD) {
+		if (this.isButtonPressed(gamepad.buttons[this.GAMEPAD_B])) {
 			value |= 1 << this.B;
 		}
-		if (gamepad.buttons[this.GAMEPAD_L] > this.GAMEPAD_THRESHOLD) {
+		if (this.isButtonPressed(gamepad.buttons[this.GAMEPAD_L])) {
 			value |= 1 << this.L;
 		}
-		if (gamepad.buttons[this.GAMEPAD_R] > this.GAMEPAD_THRESHOLD) {
+		if (this.isButtonPressed(gamepad.buttons[this.GAMEPAD_R])) {
 			value |= 1 << this.R;
 		}
 
-		this.currentDown = ~value & 0x3ff;
+		this.setGamepadDown(~value & 0x3ff);
+	}
+	isButtonPressed(button) {
+		if (typeof button === "number") {
+			return button > this.GAMEPAD_THRESHOLD;
+		}
+		return !!(
+			button &&
+			(typeof button.pressed === "boolean"
+				? button.pressed
+				: button.value > this.GAMEPAD_THRESHOLD)
+		);
+	}
+	notifyInputChange(previousDown) {
+		if (this.core && this.core.irq) {
+			this.core.irq.keypadInputChanged(previousDown, this.currentDown);
+		}
 	}
 	gamepadConnectHandler(gamepad) {
-		this.gamepads.push(gamepad);
+		this.gamepads.push(gamepad && gamepad.gamepad ? gamepad.gamepad : gamepad);
 	}
 	gamepadDisconnectHandler(gamepad) {
-		this.gamepads = self.gamepads.filter(function (other) {
-			return other != gamepad;
+		gamepad = gamepad && gamepad.gamepad ? gamepad.gamepad : gamepad;
+		this.gamepads = this.gamepads.filter(function (other) {
+			return (
+				other !== gamepad &&
+				(gamepad.index === undefined || other.index !== gamepad.index)
+			);
 		});
+		if (!this.gamepads.length) {
+			this.setGamepadDown(0x03ff);
+		}
 	}
 	pollGamepads() {
 		var navigatorList = [];
-		if (navigator.webkitGetGamepads) {
-			navigatorList = navigator.webkitGetGamepads();
-		} else if (navigator.getGamepads) {
-			navigatorList = navigator.getGamepads();
+		var hasGamepadApi = false;
+		if (
+			typeof navigator !== "undefined" &&
+			typeof navigator.webkitGetGamepads == "function"
+		) {
+			navigatorList = navigator.webkitGetGamepads() || [];
+			hasGamepadApi = true;
+		} else if (
+			typeof navigator !== "undefined" &&
+			typeof navigator.getGamepads == "function"
+		) {
+			navigatorList = navigator.getGamepads() || [];
+			hasGamepadApi = true;
 		}
 
 		// Let's all give a shout out to Chrome for making us get the gamepads EVERY FRAME
 		/* How big of a performance draw is this? Would it be worth letting users know? */
-		if (navigatorList.length) {
+		if (hasGamepadApi) {
 			this.gamepads = [];
-		}
-		for (var i = 0; i < navigatorList.length; ++i) {
-			if (navigatorList[i]) {
-				this.gamepads.push(navigatorList[i]);
+			for (var i = 0; i < navigatorList.length; ++i) {
+				if (navigatorList[i]) {
+					this.gamepads.push(navigatorList[i]);
+				}
 			}
 		}
 		if (this.gamepads.length > 0) {
 			this.gamepadHandler(this.gamepads[0]);
+		} else if (hasGamepadApi) {
+			this.setGamepadDown(0x03ff);
 		}
+	}
+	setGamepadDown(value) {
+		var previousDown = this.currentDown;
+		this.gamepadDown = value & 0x03ff;
+		this.updateCurrentDown(previousDown);
+	}
+	updateCurrentDown(previousDown) {
+		this.currentDown = this.keyboardDown & this.gamepadDown;
+		this.notifyInputChange(previousDown);
 	}
 	registerHandlers() {
 		window.addEventListener(
@@ -170,6 +225,11 @@ class GameBoyAdvanceKeypad {
 			true
 		);
 		window.addEventListener("keyup", this.keyboardHandler.bind(this), true);
+		window.addEventListener(
+			"blur",
+			this.keyboardBlurHandler.bind(this),
+			true
+		);
 
 		window.addEventListener(
 			"gamepadconnected",

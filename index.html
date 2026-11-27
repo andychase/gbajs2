@@ -112,6 +112,9 @@
 			}
 
 			function run(file) {
+				if (!file) {
+					return;
+				}
 				let dead = document.getElementById('loader');
 				dead.value = '';
 				let load = document.getElementById('select');
@@ -121,13 +124,17 @@
 				pause.textContent = 'PAUSE';
 				gba.loadRomFromFile(file, function (result) {
 					if (result) {
+						let pending = Promise.resolve();
 						for (let i = 0; i < runCommands.length; ++i) {
-							runCommands[i]();
+							pending = pending.then(runCommands[i]);
 						}
 						runCommands = [];
-						fadeOut('preload', 'ingame');
-						fadeOut('instructions', null, true);
-						gba.runStable();
+						let start = function () {
+							fadeOut('preload', 'ingame');
+							fadeOut('instructions', null, true);
+							gba.runStable();
+						};
+						pending.then(start, start);
 					} else {
 						load.textContent = 'FAILED';
 						setTimeout(function () {
@@ -138,6 +145,28 @@
 						}, 3000);
 					}
 				});
+			}
+
+			function loadBiosFromFile(file) {
+				if (!file) {
+					return;
+				}
+				let status = document.getElementById('bios-status');
+				document.getElementById('biosloader').value = '';
+				status.textContent = 'Reading BIOS…';
+				let reader = new FileReader();
+				reader.onload = function (event) {
+					try {
+						gba.setBios(event.target.result, true);
+						status.textContent = 'Using selected BIOS';
+					} catch (error) {
+						status.textContent = 'BIOS must be exactly 16 KiB';
+					}
+				};
+				reader.onerror = function () {
+					status.textContent = 'Could not read BIOS file';
+				};
+				reader.readAsArrayBuffer(file);
 			}
 
 			function reset() {
@@ -167,8 +196,11 @@
 			}
 
 			function uploadSavedataPending(file) {
+				if (!file) {
+					return;
+				}
 				runCommands.push(function () {
-					gba.loadSavedataFromFile(file);
+					return gba.loadSavedataFromFile(file);
 				});
 			}
 
@@ -243,10 +275,18 @@
 			}
 
 			function enableDebug() {
+				function debugTargetOrigin() {
+					return window.location.origin === 'null'
+						? '*'
+						: window.location.origin;
+				}
+
 				window.onmessage = function (message) {
+					let expectedOrigin = window.location.origin;
 					if (
-						message.origin != document.domain &&
-						(message.origin != 'file://' || document.domain)
+						message.source !== debug ||
+						(expectedOrigin !== 'null' &&
+							message.origin !== expectedOrigin)
 					) {
 						console.log('Failed XSS');
 						return;
@@ -256,7 +296,7 @@
 							if (message.source === debug) {
 								debug.postMessage(
 									'connect',
-									document.domain || '*'
+									debugTargetOrigin()
 								);
 							}
 							break;
@@ -270,13 +310,13 @@
 				};
 				window.onunload = function () {
 					if (debug && debug.postMessage) {
-						debug.postMessage('disconnect', document.domain || '*');
+						debug.postMessage('disconnect', debugTargetOrigin());
 					}
 				};
 				if (!debug || !debug.postMessage) {
 					debug = window.open('debugger.html', 'debug');
 				} else {
-					debug.postMessage('connect', document.domain || '*');
+					debug.postMessage('connect', debugTargetOrigin());
 				}
 			}
 
@@ -370,6 +410,16 @@
 					accept=".gba"
 					onchange="run(this.files[0]);"
 				/>
+				<button onclick="document.getElementById('biosloader').click()">
+					Load BIOS (Optional)
+				</button>
+				<input
+					id="biosloader"
+					type="file"
+					accept=".bin"
+					onchange="loadBiosFromFile(this.files[0]);"
+				/>
+				<span id="bios-status">Using built-in BIOS</span>
 				<button onclick="document.getElementById('saveloader').click()">
 					Upload Savegame
 				</button>
@@ -427,6 +477,10 @@
 				problems. More information and a link to a compatibility table
 				can be found on the sidebar. If you're feeling daring, please
 				submit problem reports to the GitHub page.
+			</p>
+			<p>
+				For better compatibility with games that use BIOS sound features,
+				load your own 16 KiB GBA BIOS file before selecting a game.
 			</p>
 		</section>
 		<footer style="float: left">
